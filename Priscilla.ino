@@ -56,6 +56,22 @@ byte packetBuffer[ NTP_PACKET_SIZE]; //buffer to hold incoming and outgoing pack
 WiFiUDP Udp;
 
 
+static char* messages[] = {
+  "commit",
+  "best nest",
+  "aline is a piglet",
+  "all your base are belong to us",
+  "what time is it      adventure time     ",
+  "sarah is very nice",
+  "do the ham dance",
+  "nuts to brexit",
+  "bobbins",
+  "sam is really clever",
+  "chris cant do this",
+};
+
+#define numMessages (sizeof(messages)/sizeof(char *)) //array size  
+
 // ********* SETUP ************
 
 void setup() {
@@ -130,7 +146,7 @@ void loop() {
 
   if (seconds == 0) {
     if (minutes == 0) {
-      
+      randoMinute = random(0,59);
       updateBrightness();
       
       // Get the time from NTP.
@@ -138,15 +154,12 @@ void loop() {
     }
     
     if (minutes == randoMinute){
-      scrollText("aline is a piglet    ");
-      randoMinute = random(0,59);
+      randoMessage();
     }
 
     // Get the time from the DS1307.
     updateTimeFromRTC();
   }
-  
-
   
   // Show the time on the display by turning it into a numeric
   // value, like 3:30 turns into 330, by multiplying the hour by
@@ -422,6 +435,14 @@ static const uint8_t letters[] = {
   B01101110, // y
   B01011011, // z
 };
+
+void randoMessage(){
+  int messageIndex = random(0,numMessages-1);
+  char* randoMessage = messages[messageIndex];
+  scrollText(randoMessage);
+  scrollText(randoMessage);
+  scrollText(randoMessage);
+}
 
 
 void scrollText(char *stringy){
