@@ -335,10 +335,10 @@ void updateRTCTimeFromNTP(){
   
   rtc.adjust(DateTime(epoch) + utcAdjust);
   
-  scrollText("synchronised");
-  
   Serial.print("Time to adjust time:");
   Serial.println(millis() - startMillis);
+
+  scrollText("synchronised");
 }
 
 
