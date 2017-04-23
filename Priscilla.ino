@@ -293,7 +293,6 @@ void updateRTCTimeFromNTP(){
       if (retries >= maxRetries ) {
         Serial.print("Didn't get a packet back... skipping sync...");
         scrollText("failed to update ntp");
-        delay(1000);
         return;
       }
       timech = millis();
