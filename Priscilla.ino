@@ -425,18 +425,24 @@ static const uint8_t letters[] = {
 
 
 void scrollText(char *stringy){
+  
   clockDisplay.drawColon(0);
   uint8_t charbuffer[4] = { 0,0,0,0 };
-  int stringLength = strlen(stringy);
+  int origLen = strlen(stringy);
+  int extendedLen = origLen + 5;
+  char res[extendedLen];
+  memset(res, 0, extendedLen);
+  memcpy(res,stringy,origLen);
+  
   Serial.print("SCROLLING: ");
   Serial.println(stringy);
   int i;
-  for ( i = 0; i < stringLength; i++ ) {
+  for ( i = 0; i < extendedLen ; i++ ) {
     
     charbuffer[0] = charbuffer[1];
     charbuffer[1] = charbuffer[2];
     charbuffer[2] = charbuffer[3];
-    charbuffer[3] = stringy[i];
+    charbuffer[3] = res[i];
 
     int let = 0;
     for (int a = 0; a < 4; a++) {
