@@ -416,7 +416,7 @@ static const uint8_t letters[] = {
   B01101101, // s
   B01111000, // t
   B00011100, // u
-  B00011000, // v crap
+  B00001100, // v crap
   B01001111, // w crap
   B01000110, // x crap
   B01101110, // y
