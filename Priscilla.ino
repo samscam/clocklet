@@ -47,6 +47,7 @@ unsigned int localPort = 2390;      // local port to listen for UDP packets
 
 IPAddress timeServer(130, 88, 202, 49);//ntp2a.mcc.ac.uk
 //IPAddress timeServer(129, 6, 15, 28); // time.nist.gov NTP server
+//IPAddress timeServer(194,35,252,7); //chronos.csr.net
 
 const int NTP_PACKET_SIZE = 48; // NTP time stamp is in the first 48 bytes of the message
 
