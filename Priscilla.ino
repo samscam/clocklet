@@ -3,9 +3,11 @@
 #include <WiFi101.h>
 #include <WiFiUdp.h>
 #include <Wire.h>
-#include <Adafruit_GFX.h>
+//#include <Adafruit_GFX.h>
 #include <RTClib.h>
-#include "Adafruit_LEDBackpack.h"
+//#include "Adafruit_LEDBackpack.h"
+#include <RGBDigit.h>
+
 
 // ********* CONFIGURATION ************
 
@@ -17,12 +19,14 @@ int utcAdjust = 1 * 3600;
 
 // I2C address of the display.  Stick with the default address of 0x70
 // unless you've changed the address jumpers on the back of the display.
-#define DISPLAY_ADDRESS   0x70
-
+//#define DISPLAY_ADDRESS   0x70
+//Adafruit_7segment clockDisplay = Adafruit_7segment();
+#define DIGIT_COUNT 4
+RGBDigit rgbDigit(DIGIT_COUNT, 11);       // uses default pin 12
 
 // Create display and DS1307 objects.  These are global variables that
 // can be accessed from both the setup and loop function below.
-Adafruit_7segment clockDisplay = Adafruit_7segment();
+
 RTC_DS1307 rtc = RTC_DS1307();
 
 
@@ -88,8 +92,11 @@ void setup() {
 
   Serial.println("Clock starting!");
 
+  rgbDigit.begin();
+  rgbDigit.clearAll();
+  
   // Setup the display.
-  clockDisplay.begin(DISPLAY_ADDRESS);
+  //clockDisplay.begin(DISPLAY_ADDRESS);
   
   scrollText("everything is awesome");
   // check for the presence of the shield:
@@ -161,46 +168,9 @@ void loop() {
     // Get the time from the DS1307.
     updateTimeFromRTC();
   }
+
+  displayTimeRGB();
   
-  // Show the time on the display by turning it into a numeric
-  // value, like 3:30 turns into 330, by multiplying the hour by
-  // 100 and then adding the minutes.
-  int displayValue = hours*100 + minutes;
-
-  // Do 24 hour to 12 hour format conversion when required.
-  if (!TIME_24_HOUR) {
-    // Handle when hours are past 12 by subtracting 12 hours (1200 value).
-    if (hours > 12) {
-      displayValue -= 1200;
-    }
-    // Handle hour 0 (midnight) being shown as 12.
-    else if (hours == 0) {
-      displayValue += 1200;
-    }
-  }
-
-  // Now print the time value to the display.
-  clockDisplay.print(displayValue, DEC);
-
-  // Add zero padding when in 24 hour mode and it's midnight.
-  // In this case the print function above won't have leading 0's
-  // which can look confusing.  Go in and explicitly add these zeros.
-  if (TIME_24_HOUR && hours == 0) {
-    // Pad hour 0.
-    clockDisplay.writeDigitNum(1, 0);
-    // Also pad when the 10's minute is 0 and should be padded.
-    if (minutes < 10) {
-      clockDisplay.writeDigitNum(3, 0);
-    }
-  }
-
-  // Blink the colon by flipping its value every loop iteration
-  // (which happens every second).
-  blinkColon = (seconds % 2) == 0;
-  clockDisplay.drawColon(blinkColon);
-
-  // Now push out to the display the new values that were set above.
-  clockDisplay.writeDisplay();
 
   // Pause for a second for time to elapse.  This value is in milliseconds
   // so 1000 milliseconds = 1 second.
@@ -233,6 +203,69 @@ void loop() {
 }
 
 
+void displayTimeLCD(){
+  
+//  // Show the time on the display by turning it into a numeric
+//  // value, like 3:30 turns into 330, by multiplying the hour by
+//  // 100 and then adding the minutes.
+//  int displayValue = hours*100 + minutes;
+//
+//  // Do 24 hour to 12 hour format conversion when required.
+//  if (!TIME_24_HOUR) {
+//    // Handle when hours are past 12 by subtracting 12 hours (1200 value).
+//    if (hours > 12) {
+//      displayValue -= 1200;
+//    }
+//    // Handle hour 0 (midnight) being shown as 12.
+//    else if (hours == 0) {
+//      displayValue += 1200;
+//    }
+//  }
+//
+//  // Now print the time value to the display.
+//  clockDisplay.print(displayValue, DEC);
+//
+//  // Add zero padding when in 24 hour mode and it's midnight.
+//  // In this case the print function above won't have leading 0's
+//  // which can look confusing.  Go in and explicitly add these zeros.
+//  if (TIME_24_HOUR && hours == 0) {
+//    // Pad hour 0.
+//    clockDisplay.writeDigitNum(1, 0);
+//    // Also pad when the 10's minute is 0 and should be padded.
+//    if (minutes < 10) {
+//      clockDisplay.writeDigitNum(3, 0);
+//    }
+//  }
+//
+//  // Blink the colon by flipping its value every loop iteration
+//  // (which happens every second).
+//  blinkColon = (seconds % 2) == 0;
+//  clockDisplay.drawColon(blinkColon);
+//
+//  // Now push out to the display the new values that were set above.
+//  clockDisplay.writeDisplay();
+}
+
+void displayTimeRGB(){
+  int h = hours;
+  int h1 = h/10;                      // left digit
+  int h2 = h - (h/10)*10;             // right digit
+  rgbDigit.setDigit(h1, 0, 64, 0, 0); // show on digit 0 (=first). Color is rgb(64,0,0).
+  rgbDigit.setDigit(h2, 1, 64, 53, 0);
+  int m = minutes;
+  int m1 = m/10;
+  int m2 = m - (m/10)*10;
+  rgbDigit.setDigit(m1, 2, 0, 64, 15);
+  rgbDigit.setDigit(m2, 3, 0, 20, 64);
+  rgbDigit.showDot(1, 64, 64, 64);    // show dot on digit 1 (=second). Color is rgb(64,0,0).
+
+  blinkColon = (seconds % 2) == 0;
+  if (blinkColon) {
+    rgbDigit.clearDot(1);               // clear dot on digit 3 (=fourth)
+  } else {
+    rgbDigit.showDot(1, 64, 64, 64);
+  }
+}
 
 
 void printWiFiStatus() {
@@ -400,7 +433,7 @@ void updateBrightness(){
     brightness = 15;
   }
   
-  clockDisplay.setBrightness(brightness);
+//  clockDisplay.setBrightness(brightness);
 
 }
 
@@ -445,12 +478,13 @@ void randoMessage(){
 }
 
 
+
 void scrollText(char *stringy){
   
-  clockDisplay.drawColon(0);
-  uint8_t charbuffer[4] = { 0,0,0,0 };
+  //clockDisplay.drawColon(0);
+  char charbuffer[DIGIT_COUNT] = { 0 };
   int origLen = strlen(stringy);
-  int extendedLen = origLen + 5;
+  int extendedLen = origLen + DIGIT_COUNT;
   char res[extendedLen];
   memset(res, 0, extendedLen);
   memcpy(res,stringy,origLen);
@@ -459,21 +493,30 @@ void scrollText(char *stringy){
   Serial.println(stringy);
   int i;
   for ( i = 0; i < extendedLen ; i++ ) {
-    
-    charbuffer[0] = charbuffer[1];
-    charbuffer[1] = charbuffer[2];
-    charbuffer[2] = charbuffer[3];
-    charbuffer[3] = res[i];
-
-    int let = 0;
-    for (int a = 0; a < 4; a++) {
-      uint8_t thisChar = charbuffer[a] - 96;
-      if ( thisChar >= 26 ) { thisChar = 0; }
-      clockDisplay.writeDigitRaw(let,letters[thisChar]); 
-      let++;
-      if (let == 2) { let++; }
+    for ( int d = 0; d < DIGIT_COUNT ; d++ ) {
+      if (d == 3) {
+        charbuffer[d] = res[i];
+      } else {
+        charbuffer[d] = charbuffer[d+1];
+      }
+      if (charbuffer[d] == 0){
+        rgbDigit.clearDigit( d );
+      } else {
+        rgbDigit.setDigit(charbuffer[d], d, 255, 32, 16);
+      }
     }
-    clockDisplay.writeDisplay();
+//    
+
+//
+//    int let = 0;
+//    for (int a = 0; a < 4; a++) {
+//      uint8_t thisChar = charbuffer[a] - 96;
+//      if ( thisChar >= 26 ) { thisChar = 0; }
+//      clockDisplay.writeDigitRaw(let,letters[thisChar]); 
+//      let++;
+//      if (let == 2) { let++; }
+//    }
+//    clockDisplay.writeDisplay();
     delay(200);
     
   }
