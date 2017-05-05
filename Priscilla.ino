@@ -79,10 +79,6 @@ static char* messages[] = {
 // ********* SETUP ************
 
 void setup() {
-  
-  //Configure pins for Adafruit ATWINC1500 Feather
-  WiFi.setPins(8,7,4,2);
-  
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
 //  while (!Serial) {
@@ -97,33 +93,10 @@ void setup() {
   // Setup the display.
   //clockDisplay.begin(DISPLAY_ADDRESS);
   
-  scrollText("everything is awesome");
-  // check for the presence of the shield:
-  if (WiFi.status() == WL_NO_SHIELD) {
-    Serial.println("WiFi shield not present");
-    // don't continue:
-    while (true);
-  }
 
   
-  // attempt to connect to WiFi network:
-  while ( status != WL_CONNECTED) {
-    Serial.print("Attempting to connect to SSID: ");
-    Serial.println(ssid);
-    // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
-    status = WiFi.begin(ssid, pass);
-    
-    // Wait for the connection to solidify
-    while ( status == WL_IDLE_STATUS ) {
-      status = WiFi.status();
-      delay(20);
-    }
-  }
-
-  scrollText("wifi good");
-
-  Serial.println("Connected to wifi");
-  printWiFiStatus();
+  scrollText("everything is awesome");
+  setupWifi();
 
   Serial.println("\nStarting connection to server...");
   Udp.begin(localPort);
@@ -201,8 +174,65 @@ void loop() {
   // function again!
 }
 
+void setupWifi(){
+  //Configure pins for Adafruit ATWINC1500 Feather
+  WiFi.setPins(8,7,4,2);
+  
+  // check for the presence of the shield:
+  if (WiFi.status() == WL_NO_SHIELD) {
+    Serial.println("WiFi shield not present");
+    // don't continue:
+    scrollText_fail("WiFi shield not present");
+    return;
+  }
 
   
+  // attempt to connect to WiFi network:
+  Serial.print("Attempting to connect to SSID: ");
+  Serial.println(ssid);
+  // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
+  status = WiFi.begin(ssid, pass);
+  
+  // Wait for the connection to solidify
+  while ( status == WL_IDLE_STATUS ) {
+    status = WiFi.status();
+    Serial.println(status);
+    delay(20);
+  }
+  switch (status) {
+    case WL_CONNECT_FAILED:
+      scrollText_fail("connect failed");
+      break;
+    case WL_DISCONNECTED:
+      scrollText_fail("disconnected");
+      break;
+    case WL_NO_SSID_AVAIL:
+      scrollText_fail("no ssid");
+      break;
+    case WL_CONNECTED:
+      scrollText("wifi good");
+      break;
+  }
+
+  printWiFiStatus();
+
+}
+
+void printWiFiStatus() {
+  // print the SSID of the network you're attached to:
+  Serial.print("SSID: ");
+  Serial.println(WiFi.SSID());
+
+  // print your WiFi shield's IP address:
+  IPAddress ip = WiFi.localIP();
+  Serial.print("IP Address: ");
+  Serial.println(ip);
+
+  // print the received signal strength:
+  long rssi = WiFi.RSSI();
+  Serial.print("signal strength (RSSI):");
+  Serial.print(rssi);
+  Serial.println(" dBm");
 }
 
 void displayTimeRGB(){
@@ -227,22 +257,6 @@ void displayTimeRGB(){
 }
 
 
-void printWiFiStatus() {
-  // print the SSID of the network you're attached to:
-  Serial.print("SSID: ");
-  Serial.println(WiFi.SSID());
-
-  // print your WiFi shield's IP address:
-  IPAddress ip = WiFi.localIP();
-  Serial.print("IP Address: ");
-  Serial.println(ip);
-
-  // print the received signal strength:
-  long rssi = WiFi.RSSI();
-  Serial.print("signal strength (RSSI):");
-  Serial.print(rssi);
-  Serial.println(" dBm");
-}
 
 void updateTimeFromRTC(){
     DateTime now = rtc.now();
