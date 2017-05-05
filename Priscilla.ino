@@ -79,6 +79,9 @@ static char* messages[] = {
 // ********* SETUP ************
 
 void setup() {
+
+
+
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
 //  while (!Serial) {
@@ -90,26 +93,22 @@ void setup() {
   rgbDigit.begin();
   rgbDigit.clearAll();
   
-  // Setup the display.
-  //clockDisplay.begin(DISPLAY_ADDRESS);
+  // Get the time from the DS1307.
+  updateTimeFromRTC();
   
+  // Set brightness
+  updateBrightness();
 
   
   scrollText("everything is awesome");
   setupWifi();
 
-  Serial.println("\nStarting connection to server...");
-  Udp.begin(localPort);
 
-  
+  if (status == WL_CONNECTED){
   // Get the time from NTP.
   updateRTCTimeFromNTP();
-  
-  // Get the time from the DS1307.
-  updateTimeFromRTC();
+  }
 
-  // Set brightness
-  updateBrightness();
 
   randomSeed(analogRead(0));
 }
@@ -282,6 +281,9 @@ void updateTimeFromRTC(){
 
 
 void updateRTCTimeFromNTP(){
+  Serial.println("\nStarting connection to server...");
+  Udp.begin(localPort);
+  
   unsigned long timeout = 2000;
   int maxRetries = 4;
   int retries = 0;
@@ -299,7 +301,7 @@ void updateRTCTimeFromNTP(){
       retries ++;
       if (retries >= maxRetries ) {
         Serial.print("Didn't get a packet back... skipping sync...");
-        scrollText("failed to update ntp");
+        scrollText_fail("failed to update ntp");
         return;
       }
       timech = millis();
