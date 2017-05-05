@@ -3,9 +3,7 @@
 #include <WiFi101.h>
 #include <WiFiUdp.h>
 #include <Wire.h>
-//#include <Adafruit_GFX.h>
 #include <RTClib.h>
-//#include "Adafruit_LEDBackpack.h"
 #include <RGBDigit.h>
 
 
@@ -204,47 +202,7 @@ void loop() {
 }
 
 
-void displayTimeLCD(){
   
-//  // Show the time on the display by turning it into a numeric
-//  // value, like 3:30 turns into 330, by multiplying the hour by
-//  // 100 and then adding the minutes.
-//  int displayValue = hours*100 + minutes;
-//
-//  // Do 24 hour to 12 hour format conversion when required.
-//  if (!TIME_24_HOUR) {
-//    // Handle when hours are past 12 by subtracting 12 hours (1200 value).
-//    if (hours > 12) {
-//      displayValue -= 1200;
-//    }
-//    // Handle hour 0 (midnight) being shown as 12.
-//    else if (hours == 0) {
-//      displayValue += 1200;
-//    }
-//  }
-//
-//  // Now print the time value to the display.
-//  clockDisplay.print(displayValue, DEC);
-//
-//  // Add zero padding when in 24 hour mode and it's midnight.
-//  // In this case the print function above won't have leading 0's
-//  // which can look confusing.  Go in and explicitly add these zeros.
-//  if (TIME_24_HOUR && hours == 0) {
-//    // Pad hour 0.
-//    clockDisplay.writeDigitNum(1, 0);
-//    // Also pad when the 10's minute is 0 and should be padded.
-//    if (minutes < 10) {
-//      clockDisplay.writeDigitNum(3, 0);
-//    }
-//  }
-//
-//  // Blink the colon by flipping its value every loop iteration
-//  // (which happens every second).
-//  blinkColon = (seconds % 2) == 0;
-//  clockDisplay.drawColon(blinkColon);
-//
-//  // Now push out to the display the new values that were set above.
-//  clockDisplay.writeDisplay();
 }
 
 void displayTimeRGB(){
@@ -437,37 +395,6 @@ void updateBrightness(){
 }
 
 
-
-static const uint8_t letters[] = {
-  B00000000, // [space]
-  B01110111, // a
-  B01111100, // b
-  B00111001, // c
-  B01011110, // d
-  B01111001, // e
-  B01110001, // f
-  B01101111, // g
-  B01110100, // h
-  B00110000, // i
-  B00001110, // j
-  B01110110, // k
-  B00111000, // l
-  B11010100, // m crap
-  B01010100, // n
-  B01011100, // o
-  B01110011, // p
-  B01100111, // q
-  B01010000, // r
-  B01101101, // s
-  B01111000, // t
-  B00011100, // u
-  B00001100, // v crap
-  B01001111, // w crap
-  B01000110, // x crap
-  B01101110, // y
-  B01011011, // z
-};
-
 void randoMessage(){
   int messageIndex = random(0,numMessages-1);
   char* randoMessage = messages[messageIndex];
@@ -504,18 +431,7 @@ void scrollText(char *stringy){
         rgbDigit.setDigit(charbuffer[d], d, 255, 32, 16);
       }
     }
-//    
 
-//
-//    int let = 0;
-//    for (int a = 0; a < 4; a++) {
-//      uint8_t thisChar = charbuffer[a] - 96;
-//      if ( thisChar >= 26 ) { thisChar = 0; }
-//      clockDisplay.writeDigitRaw(let,letters[thisChar]); 
-//      let++;
-//      if (let == 2) { let++; }
-//    }
-//    clockDisplay.writeDisplay();
     delay(200);
     
   }
