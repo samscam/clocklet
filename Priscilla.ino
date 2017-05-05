@@ -60,6 +60,7 @@ byte packetBuffer[ NTP_PACKET_SIZE]; //buffer to hold incoming and outgoing pack
 // A UDP instance to let us send and receive packets over UDP
 WiFiUDP Udp;
 
+uint8_t brightness;
 
 static char* messages[] = {
   "commit",
@@ -422,19 +423,17 @@ unsigned long sendNTPpacket(IPAddress& address)
 void updateBrightness(){
   
   // Brightness adjust
-  uint8_t brightness;
   if ( hours >= 22 || hours <= 5 ) {
-    brightness = 0; 
+    brightness = 10; 
    } else if ( hours >= 21 || hours <= 6 ) {
-    brightness = 2;
+    brightness = 20;
    } else if ( hours == 20 || hours == 7 ) {
-    brightness = 6;
+    brightness = 55;
   } else {
-    brightness = 15;
+    brightness = 128;
   }
   
-//  clockDisplay.setBrightness(brightness);
-
+  rgbDigit.setBrightness(brightness);
 }
 
 
