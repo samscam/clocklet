@@ -403,9 +403,15 @@ void randoMessage(){
   scrollText(randoMessage);
 }
 
-
-
 void scrollText(char *stringy){
+  scrollText(stringy, 129, 240, 12);
+}
+
+void scrollText_fail(char *stringy){
+  scrollText(stringy, 255, 0, 0);
+}
+
+void scrollText(char *stringy, uint8_t red, uint8_t green, uint8_t blue){
   
   //clockDisplay.drawColon(0);
   char charbuffer[DIGIT_COUNT] = { 0 };
@@ -428,7 +434,7 @@ void scrollText(char *stringy){
       if (charbuffer[d] == 0){
         rgbDigit.clearDigit( d );
       } else {
-        rgbDigit.setDigit(charbuffer[d], d, 255, 32, 16);
+        rgbDigit.setDigit(charbuffer[d], d, red, green, blue);
       }
     }
 
