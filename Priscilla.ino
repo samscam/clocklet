@@ -7,7 +7,7 @@
 #include <RGBDigit.h>
 
 
-// ********* CONFIGURATION ************
+// CONFIGURATION  --------------------------------------
 
 // Time zone adjust
 int utcAdjust = 1 * 3600;
@@ -76,17 +76,20 @@ static char* messages[] = {
 
 #define numMessages (sizeof(messages)/sizeof(char *)) //array size  
 
-// ********* SETUP ************
+int randoMinute = random(0,59);
+
+
+
+// SETUP  --------------------------------------
 
 void setup() {
-
-
 
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
 //  while (!Serial) {
 //    ; // wait for serial port to connect. Needed for native USB port only
 //  }
+  randomSeed(analogRead(0));
 
   Serial.println("Clock starting!");
 
@@ -96,24 +99,30 @@ void setup() {
   // Get the time from the DS1307.
   updateTimeFromRTC();
   
+  
   // Set brightness
   updateBrightness();
 
-  
   scrollText("everything is awesome");
+  
+  updateTimeFromRTC();
+  displayTimeRGB();
+  
   setupWifi();
 
-
+  updateTimeFromRTC();
+  displayTimeRGB();
+  
   if (status == WL_CONNECTED){
   // Get the time from NTP.
   updateRTCTimeFromNTP();
   }
+  updateTimeFromRTC();
 
-
-  randomSeed(analogRead(0));
+  
 }
 
-int randoMinute = random(0,59);
+// LOOP  --------------------------------------
 
 void loop() {
   // Loop function runs over and over again to implement the clock logic.
@@ -172,6 +181,8 @@ void loop() {
   // Loop code is finished, it will jump back to the start of the loop
   // function again!
 }
+
+// MARK: NETWORK STUFF --------------------------------------
 
 void setupWifi(){
   //Configure pins for Adafruit ATWINC1500 Feather
@@ -234,28 +245,9 @@ void printWiFiStatus() {
   Serial.println(" dBm");
 }
 
-void displayTimeRGB(){
-  int h = hours;
-  int h1 = h/10;                      // left digit
-  int h2 = h - (h/10)*10;             // right digit
-  rgbDigit.setDigit(h1, 0, 64, 0, 0); // show on digit 0 (=first). Color is rgb(64,0,0).
-  rgbDigit.setDigit(h2, 1, 64, 53, 0);
-  int m = minutes;
-  int m1 = m/10;
-  int m2 = m - (m/10)*10;
-  rgbDigit.setDigit(m1, 2, 0, 64, 15);
-  rgbDigit.setDigit(m2, 3, 0, 20, 64);
-  rgbDigit.showDot(1, 64, 64, 64);    // show dot on digit 1 (=second). Color is rgb(64,0,0).
-
-  blinkColon = (seconds % 2) == 0;
-  if (blinkColon) {
-    rgbDigit.clearDot(1);               // clear dot on digit 3 (=fourth)
-  } else {
-    rgbDigit.showDot(1, 64, 64, 64);
-  }
-}
 
 
+// MARK: TIME SYNC STUFF --------------------------------------
 
 void updateTimeFromRTC(){
     DateTime now = rtc.now();
@@ -394,6 +386,31 @@ unsigned long sendNTPpacket(IPAddress& address)
   //Serial.println("6");
 }
 
+
+// MARK: DISPLAY THINGS --------------------------------------
+
+void displayTimeRGB(){
+  int h = hours;
+  int h1 = h/10;                      // left digit
+  int h2 = h - (h/10)*10;             // right digit
+  rgbDigit.setDigit(h1, 0, 64, 0, 0); // show on digit 0 (=first). Color is rgb(64,0,0).
+  rgbDigit.setDigit(h2, 1, 64, 53, 0);
+  int m = minutes;
+  int m1 = m/10;
+  int m2 = m - (m/10)*10;
+  rgbDigit.setDigit(m1, 2, 0, 64, 15);
+  rgbDigit.setDigit(m2, 3, 0, 20, 64);
+  rgbDigit.showDot(1, 64, 64, 64);    // show dot on digit 1 (=second). Color is rgb(64,0,0).
+
+  blinkColon = (seconds % 2) == 0;
+  if (blinkColon) {
+    rgbDigit.clearDot(1);               // clear dot on digit 3 (=fourth)
+  } else {
+    rgbDigit.showDot(1, 64, 64, 64);
+  }
+}
+
+
 void updateBrightness(){
   
   // Brightness adjust
@@ -414,6 +431,8 @@ void updateBrightness(){
 void randoMessage(){
   int messageIndex = random(0,numMessages-1);
   char* randoMessage = messages[messageIndex];
+
+  // Do it three times
   scrollText(randoMessage);
   scrollText(randoMessage);
   scrollText(randoMessage);
