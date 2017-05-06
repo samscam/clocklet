@@ -82,7 +82,27 @@ static char* messages[] = {
 
 int randoMinute = random(0,59);
 
+// ------------ TYPES
 
+struct Colour {
+  uint8_t red;
+  uint8_t green;
+  uint8_t blue;
+};
+
+// ----------- COLOUR
+const Colour WHITE = {64,64,64};
+const Colour RED = {64, 0, 0};
+const Colour ORANGE = {64, 53, 0};
+const Colour GREEN = {0, 64, 15};
+const Colour BLUE = {0, 20, 64};
+
+// DEFAULT RAINBOW
+const Colour RAINBOW[5] = {
+    RED,ORANGE,GREEN,BLUE,WHITE
+};
+
+Colour currentColours[5];
 
 // SETUP  --------------------------------------
 
@@ -99,6 +119,8 @@ void setup() {
 
   rgbDigit.begin();
   rgbDigit.clearAll();
+
+  memcpy(currentColours,RAINBOW,5*3);
   
   // Get the time from the DS1307.
   updateTimeFromRTC();
@@ -387,24 +409,31 @@ unsigned long sendNTPpacket(IPAddress& address)
 
 // MARK: DISPLAY THINGS --------------------------------------
 
+
 void displayTimeRGB(){
+  displayTimeRGB(currentColours);
+}
+
+void displayTimeRGB(Colour colours[5]){
+  int digit[4];
+  
   int h = hours;
-  int h1 = h/10;                      // left digit
-  int h2 = h - (h/10)*10;             // right digit
-  rgbDigit.setDigit(h1, 0, 64, 0, 0); // show on digit 0 (=first). Color is rgb(64,0,0).
-  rgbDigit.setDigit(h2, 1, 64, 53, 0);
-  int m = minutes;
-  int m1 = m/10;
-  int m2 = m - (m/10)*10;
-  rgbDigit.setDigit(m1, 2, 0, 64, 15);
-  rgbDigit.setDigit(m2, 3, 0, 20, 64);
-  rgbDigit.showDot(1, 64, 64, 64);    // show dot on digit 1 (=second). Color is rgb(64,0,0).
+  digit[0] = h/10;                      // left digit
+  digit[1] = h - (h/10)*10;             // right digit
+    int m = minutes;
+  digit[2] = m/10;
+  digit[3] = m - (m/10)*10;
+
+  for (int i = 0; i<4 ; i++){
+    rgbDigit.setDigit(digit[i], i, colours[i].red, colours[i].green, colours[i].blue); // show on digit 0 (=first). Color is rgb(64,0,0).
+  }
+
 
   blinkColon = (seconds % 2) == 0;
   if (blinkColon) {
     rgbDigit.clearDot(1);               // clear dot on digit 3 (=fourth)
   } else {
-    rgbDigit.showDot(1, 64, 64, 64);
+    rgbDigit.showDot(1, colours[4].red, colours[4].green, colours[4].blue);    // show dot on digit 1 (=second). Color is rgb(64,0,0).
   }
 }
 
@@ -436,14 +465,14 @@ void randoMessage(){
 }
 
 void scrollText(char *stringy){
-  scrollText(stringy, 129, 240, 12);
+  scrollText(stringy, GREEN);
 }
 
 void scrollText_fail(char *stringy){
-  scrollText(stringy, 255, 0, 0);
+  scrollText(stringy, RED);
 }
 
-void scrollText(char *stringy, uint8_t red, uint8_t green, uint8_t blue){
+void scrollText(char *stringy, Colour colour){
   
   //clockDisplay.drawColon(0);
   char charbuffer[DIGIT_COUNT] = { 0 };
@@ -466,7 +495,7 @@ void scrollText(char *stringy, uint8_t red, uint8_t green, uint8_t blue){
       if (charbuffer[d] == 0){
         rgbDigit.clearDigit( d );
       } else {
-        rgbDigit.setDigit(charbuffer[d], d, red, green, blue);
+        rgbDigit.setDigit(charbuffer[d], d, colour.red, colour.green, colour.blue);
       }
     }
 
