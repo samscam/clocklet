@@ -15,19 +15,6 @@ int utcAdjust = 1 * 3600;
 // Set to false to display time in 12 hour format, or true to use 24 hour:
 #define TIME_24_HOUR      true
 
-// I2C address of the display.  Stick with the default address of 0x70
-// unless you've changed the address jumpers on the back of the display.
-//#define DISPLAY_ADDRESS   0x70
-//Adafruit_7segment clockDisplay = Adafruit_7segment();
-#define DIGIT_COUNT 4
-RGBDigit rgbDigit(DIGIT_COUNT, 11);       // uses default pin 12
-
-// Create display and DS1307 objects.  These are global variables that
-// can be accessed from both the setup and loop function below.
-
-RTC_DS1307 rtc = RTC_DS1307();
-
-
 // Keep track of the hours, minutes, seconds displayed by the clock.
 // Start off at 0:00:00 as a signal that the time should be read from
 // the DS1307 to initialize it.
@@ -40,10 +27,27 @@ int seconds = 0;
 bool blinkColon = false;
 
 
+// ----------- Display
+
+#define DIGIT_COUNT 4
+RGBDigit rgbDigit(DIGIT_COUNT, 11);
+uint8_t brightness;
+
+// ----------- RTC
+
+// Create display and DS1307 objects.  These are global variables that
+// can be accessed from both the setup and loop function below.
+
+RTC_DS1307 rtc = RTC_DS1307();
+
+// ----------- WIFI
+
 int status = WL_IDLE_STATUS;
 char ssid[] = "***REMOVED***";  //  your network SSID (name)
 char pass[] = "***REMOVED***";       // your network password
 int keyIndex = 0;            // your network key Index number (needed only for WEP)
+
+// ----------- TIME SERVER
 
 unsigned int localPort = 2390;      // local port to listen for UDP packets
 
@@ -58,7 +62,7 @@ byte packetBuffer[ NTP_PACKET_SIZE]; //buffer to hold incoming and outgoing pack
 // A UDP instance to let us send and receive packets over UDP
 WiFiUDP Udp;
 
-uint8_t brightness;
+// ----------- RANDOM MESSAGES
 
 static char* messages[] = {
   "commit",
@@ -98,7 +102,6 @@ void setup() {
   
   // Get the time from the DS1307.
   updateTimeFromRTC();
-  
   
   // Set brightness
   updateBrightness();
@@ -363,7 +366,7 @@ unsigned long sendNTPpacket(IPAddress& address)
   memset(packetBuffer, 0, NTP_PACKET_SIZE);
   // Initialize values needed to form NTP request
   // (see URL above for details on the packets)
-  //Serial.println("2");
+
   packetBuffer[0] = 0b11100011;   // LI, Version, Mode
   packetBuffer[1] = 0;     // Stratum, or type of clock
   packetBuffer[2] = 6;     // Polling Interval
@@ -374,16 +377,11 @@ unsigned long sendNTPpacket(IPAddress& address)
   packetBuffer[14]  = 49;
   packetBuffer[15]  = 52;
 
-  //Serial.println("3");
-
   // all NTP fields have been given values, now
   // you can send a packet requesting a timestamp:
   Udp.beginPacket(address, 123); //NTP requests are to port 123
-  //Serial.println("4");
   Udp.write(packetBuffer, NTP_PACKET_SIZE);
-  //Serial.println("5");
   Udp.endPacket();
-  //Serial.println("6");
 }
 
 
@@ -426,7 +424,6 @@ void updateBrightness(){
   
   rgbDigit.setBrightness(brightness);
 }
-
 
 void randoMessage(){
   int messageIndex = random(0,numMessages-1);
