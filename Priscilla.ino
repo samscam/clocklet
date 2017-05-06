@@ -5,7 +5,7 @@
 #include <Wire.h>
 #include <RTClib.h>
 #include <RGBDigit.h>
-
+#include <ArduinoJson.h>
 
 // CONFIGURATION  --------------------------------------
 
@@ -91,11 +91,18 @@ struct Colour {
 };
 
 // ----------- COLOUR
-const Colour WHITE = {64,64,64};
+const Colour WHITE = {128,128,128};
 const Colour RED = {64, 0, 0};
 const Colour ORANGE = {64, 53, 0};
-const Colour GREEN = {0, 64, 15};
-const Colour BLUE = {0, 20, 64};
+const Colour YELLOW = {64, 64, 0};
+const Colour GREEN = {0, 128, 15};
+const Colour LIGHT_BLUE = {80, 80, 128};
+const Colour BLUE = {0, 40, 128};
+const Colour DARK_BLUE = {20, 0, 40};
+const Colour GRAY = {64,64,64};
+const Colour DARK_GRAY = {32,32,32};
+const Colour BROWN = {55,55,30};
+const Colour OTHER_BROWN = {40,60,0};
 
 // DEFAULT RAINBOW
 const Colour RAINBOW[5] = {
@@ -103,6 +110,52 @@ const Colour RAINBOW[5] = {
 };
 
 Colour currentColours[5];
+
+// ---------- WEATHER
+
+char server[] = "datapoint.metoffice.gov.uk";
+char resource[] = "/public/data/val/wxfcs/all/json/351207?res=daily&key=***REMOVED***"; // http resource
+const unsigned long HTTP_TIMEOUT = 10000;  // max respone time from server
+const size_t MAX_CONTENT_SIZE = 1024;       // max size of the HTTP response
+WiFiClient client;
+
+// ---------- WEATHER TYPE COLOUR PATTERNS
+
+const Colour weatherTypeColours[][5] = {
+  {DARK_BLUE,DARK_BLUE,DARK_BLUE,DARK_BLUE,WHITE}, // 0 - clear night
+  {YELLOW,YELLOW,YELLOW,YELLOW,WHITE},             // 1 - sunny day
+  {DARK_BLUE,DARK_GRAY,DARK_BLUE,DARK_GRAY,WHITE},           // 2 - Partly cloudy night
+  {YELLOW,GRAY,YELLOW,GRAY,WHITE},                 // 3 - Partly cloudy day
+  {WHITE,WHITE,WHITE,WHITE,WHITE},                 // 4 - unused
+  {WHITE,GRAY,WHITE,GRAY,WHITE},                 // 5 - mist
+  {BROWN,BROWN,BROWN,BROWN,WHITE},                 // 6 - fog
+  {GRAY,BROWN,GRAY,BROWN,WHITE},                 // 7 - cloudy
+  {BROWN,BROWN,BROWN,BROWN,WHITE},                 // 8 - overcast
+  {BLUE,DARK_BLUE,BLUE,DARK_BLUE,WHITE},                 // 9 - light rain shower (night)
+  {RED,ORANGE,GREEN,BLUE,WHITE},        // 10 - light rain shower (day)
+  {LIGHT_BLUE,LIGHT_BLUE,LIGHT_BLUE,LIGHT_BLUE,WHITE},  // 11 - Drizzle
+  {LIGHT_BLUE,LIGHT_BLUE,LIGHT_BLUE,LIGHT_BLUE,WHITE}, // 12 - Light rain
+  {DARK_BLUE,BLUE,DARK_BLUE,BLUE,WHITE}, // 13 - Heavy rain shower (night)
+  {YELLOW,BLUE,YELLOW,BLUE,WHITE},// 14 - Heavy rain shower (day)
+  {BLUE,BLUE,BLUE,BLUE,WHITE},// 15 - Heavy rain
+  {DARK_BLUE,WHITE,DARK_BLUE,WHITE,WHITE},// 16 - Sleet shower (night)
+  {YELLOW,WHITE,YELLOW,WHITE,WHITE},// 17 - Sleet shower (day)
+  {WHITE,WHITE,WHITE,WHITE,WHITE},// 18 - Sleet
+  {DARK_BLUE,WHITE,DARK_BLUE,WHITE,WHITE},// 19 - Hail shower (night)
+  {YELLOW,WHITE,YELLOW,WHITE,WHITE},// 20 - Hail shower (day)
+  {WHITE,WHITE,WHITE,WHITE,WHITE},// 21 - Hail
+  {DARK_BLUE,WHITE,DARK_BLUE,WHITE,WHITE},// 22 - Light snow shower (night)
+  {YELLOW,WHITE,YELLOW,WHITE,WHITE},// 23 - Light snow shower (day)
+  {WHITE,WHITE,WHITE,WHITE,WHITE},// 24 - Light snow
+  {DARK_BLUE,WHITE,DARK_BLUE,WHITE,WHITE},// 25 - Heavy snow shower (night)
+  {WHITE,YELLOW,WHITE,WHITE,WHITE},// 26 - Heavy snow shower (day)
+  {WHITE,WHITE,WHITE,WHITE,WHITE},// 27 - Heavy snow
+  {DARK_BLUE,ORANGE,BLUE,DARK_BLUE,WHITE},// 28 - Thunder shower (night)
+  {BLUE,DARK_GRAY,BLUE,ORANGE,WHITE},// 29 - Thunder shower (day)
+  {DARK_GRAY,BLUE,ORANGE,YELLOW,WHITE},// 30 - Thunder
+};
+
+
 
 // SETUP  --------------------------------------
 
@@ -135,6 +188,8 @@ void setup() {
   
   setupWifi();
 
+  
+
   updateTimeFromRTC();
   displayTimeRGB();
   
@@ -144,10 +199,15 @@ void setup() {
   }
   updateTimeFromRTC();
 
+  int currentWeather = fetchWeather();
+  memcpy(currentColours,weatherTypeColours[currentWeather],5*3);
+  updateTimeFromRTC();
+  displayTimeRGB();
   
 }
 
 // LOOP  --------------------------------------
+int fakeWeather = 0;
 
 void loop() {
   // Loop function runs over and over again to implement the clock logic.
@@ -164,6 +224,11 @@ void loop() {
       
       // Get the time from NTP.
       updateRTCTimeFromNTP();
+
+      if (hours % 3 == 0){
+        int currentWeather = fetchWeather();
+        memcpy(currentColours,weatherTypeColours[currentWeather],5*3);
+      }
     }
     
     if (minutes == randoMinute){
@@ -174,9 +239,10 @@ void loop() {
     updateTimeFromRTC();
   }
 
-  displayTimeRGB();
   
-
+  
+  displayTimeRGB(currentColours);
+  
   // Pause for a second for time to elapse.  This value is in milliseconds
   // so 1000 milliseconds = 1 second.
   delay(1000);
@@ -504,6 +570,99 @@ void scrollText(char *stringy, Colour colour){
   }
   
   
+}
+
+// MARK: WEATHER FETCHING
+
+int fetchWeather(){
+  if (connect(server)) {
+    if (sendRequest(server, resource) && skipResponseHeaders()) {
+      int weatherType = readReponseContent();
+      Serial.print("Weather type: ");
+      Serial.println(weatherType);
+      disconnect();
+      return(weatherType);
+    }
+  }
+  scrollText_fail("Weather fetch failed");
+  return 0;
+}
+
+// Open connection to the HTTP server
+bool connect(const char* hostName) {
+  Serial.print("Connect to ");
+  Serial.println(hostName);
+
+  bool ok = client.connect(hostName, 80);
+
+  Serial.println(ok ? "Connected" : "Connection Failed!");
+  return ok;
+}
+
+// Send the HTTP GET request to the server
+bool sendRequest(const char* host, const char* resource) {
+  Serial.print("Request ");
+  Serial.println(host);
+  Serial.println(resource);
+  // close any connection before send a new request.
+
+  client.print("GET ");
+  client.print(resource);
+  client.println(" HTTP/1.0");
+  client.print("Host: ");
+  client.println(host);
+  client.println("Connection: close");
+  client.println();
+  
+  return true;
+}
+
+
+// Skip HTTP headers so that we are at the beginning of the response's body
+bool skipResponseHeaders() {
+  // HTTP headers end with an empty line
+  char endOfHeaders[] = "\r\n\r\n";
+
+  client.setTimeout(HTTP_TIMEOUT);
+  bool ok = client.find(endOfHeaders);
+
+  if (!ok) {
+    Serial.println("No response or invalid response!");
+  }
+
+  return ok;
+}
+
+int readReponseContent() {
+  // Compute optimal size of the JSON buffer according to what we need to parse.
+  // This is only required if you use StaticJsonBuffer.
+  const size_t BUFFER_SIZE =
+      JSON_OBJECT_SIZE(8)    // the root object has 8 elements
+      + JSON_OBJECT_SIZE(5)  // the "address" object has 5 elements
+      + JSON_OBJECT_SIZE(2)  // the "geo" object has 2 elements
+      + JSON_OBJECT_SIZE(3)  // the "company" object has 3 elements
+      + MAX_CONTENT_SIZE;    // additional space for strings
+
+  // Allocate a temporary memory pool
+  DynamicJsonBuffer jsonBuffer(BUFFER_SIZE);
+
+  JsonObject& root = jsonBuffer.parseObject(client);
+
+  if (!root.success()) {
+    Serial.println("JSON parsing failed!");
+    return false;
+  }
+
+  // Here were copy the strings we're interested in
+  int weatherType = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][0]["W"];
+  
+  return weatherType;
+}
+
+// Close the connection with the HTTP server
+void disconnect() {
+  Serial.println("Disconnect");
+  client.stop();
 }
 
 
