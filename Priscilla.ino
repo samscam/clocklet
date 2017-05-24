@@ -42,7 +42,6 @@ RTC_DS1307 rtc = RTC_DS1307();
 
 // ----------- WIFI
 
-int status = WL_IDLE_STATUS;
 char ssid[] = "***REMOVED***";  //  your network SSID (name)
 char pass[] = "***REMOVED***";       // your network password
 int keyIndex = 0;            // your network key Index number (needed only for WEP)
@@ -69,13 +68,15 @@ static char* messages[] = {
   "best nest",
   "aline is a piglet",
   "all your base are belong to us",
-  "what time is it      adventure time     ",
+  "what time is it",
   "sarah is very nice",
   "do the ham dance",
-  "nuts to brexit",
   "bobbins",
   "sam is really clever",
-  "chris cant do this",
+  "i am not a hoover",
+  "i want all the things",
+  "i like our new house",
+  "i want to be more glitchy",
 };
 
 #define numMessages (sizeof(messages)/sizeof(char *)) //array size  
@@ -91,14 +92,14 @@ struct Colour {
 };
 
 // ----------- COLOUR
-const Colour WHITE = {128,128,128};
-const Colour RED = {64, 0, 0};
-const Colour ORANGE = {64, 53, 0};
-const Colour YELLOW = {64, 64, 0};
+const Colour WHITE = {120,128,128};
+const Colour RED = {128, 0, 0};
+const Colour ORANGE = {128, 96, 0};
+const Colour YELLOW = {96, 96, 0};
 const Colour GREEN = {0, 128, 15};
 const Colour LIGHT_BLUE = {80, 80, 128};
 const Colour BLUE = {0, 40, 128};
-const Colour DARK_BLUE = {20, 0, 40};
+const Colour DARK_BLUE = {20, 0, 50};
 const Colour GRAY = {64,64,64};
 const Colour DARK_GRAY = {32,32,32};
 const Colour BROWN = {55,55,30};
@@ -116,43 +117,79 @@ Colour currentColours[5];
 char server[] = "datapoint.metoffice.gov.uk";
 char resource[] = "/public/data/val/wxfcs/all/json/351207?res=daily&key=***REMOVED***"; // http resource
 const unsigned long HTTP_TIMEOUT = 10000;  // max respone time from server
-const size_t MAX_CONTENT_SIZE = 1024;       // max size of the HTTP response
+const size_t MAX_CONTENT_SIZE = 4096;       // max size of the HTTP response
 WiFiClient client;
 
 // ---------- WEATHER TYPE COLOUR PATTERNS
 
 const Colour weatherTypeColours[][5] = {
-  {DARK_BLUE,DARK_BLUE,DARK_BLUE,DARK_BLUE,WHITE}, // 0 - clear night
+  {DARK_BLUE,DARK_BLUE,DARK_BLUE,DARK_BLUE,DARK_GRAY}, // 0 - clear night
   {YELLOW,YELLOW,YELLOW,YELLOW,WHITE},             // 1 - sunny day
-  {DARK_BLUE,DARK_GRAY,DARK_BLUE,DARK_GRAY,WHITE},           // 2 - Partly cloudy night
+  {DARK_BLUE,DARK_GRAY,DARK_BLUE,DARK_GRAY,DARK_GRAY},           // 2 - Partly cloudy night
   {YELLOW,GRAY,YELLOW,GRAY,WHITE},                 // 3 - Partly cloudy day
   {WHITE,WHITE,WHITE,WHITE,WHITE},                 // 4 - unused
   {WHITE,GRAY,WHITE,GRAY,WHITE},                 // 5 - mist
   {BROWN,BROWN,BROWN,BROWN,WHITE},                 // 6 - fog
   {GRAY,BROWN,GRAY,BROWN,WHITE},                 // 7 - cloudy
   {BROWN,BROWN,BROWN,BROWN,WHITE},                 // 8 - overcast
-  {BLUE,DARK_BLUE,BLUE,DARK_BLUE,WHITE},                 // 9 - light rain shower (night)
+  {BLUE,DARK_BLUE,BLUE,DARK_BLUE,DARK_GRAY},                 // 9 - light rain shower (night)
   {RED,ORANGE,GREEN,BLUE,WHITE},        // 10 - light rain shower (day)
   {LIGHT_BLUE,LIGHT_BLUE,LIGHT_BLUE,LIGHT_BLUE,WHITE},  // 11 - Drizzle
   {LIGHT_BLUE,LIGHT_BLUE,LIGHT_BLUE,LIGHT_BLUE,WHITE}, // 12 - Light rain
-  {DARK_BLUE,BLUE,DARK_BLUE,BLUE,WHITE}, // 13 - Heavy rain shower (night)
+  {DARK_BLUE,BLUE,DARK_BLUE,BLUE,DARK_GRAY}, // 13 - Heavy rain shower (night)
   {YELLOW,BLUE,YELLOW,BLUE,WHITE},// 14 - Heavy rain shower (day)
   {BLUE,BLUE,BLUE,BLUE,WHITE},// 15 - Heavy rain
-  {DARK_BLUE,WHITE,DARK_BLUE,WHITE,WHITE},// 16 - Sleet shower (night)
+  {DARK_BLUE,WHITE,DARK_BLUE,WHITE,DARK_GRAY},// 16 - Sleet shower (night)
   {YELLOW,WHITE,YELLOW,WHITE,WHITE},// 17 - Sleet shower (day)
   {WHITE,WHITE,WHITE,WHITE,WHITE},// 18 - Sleet
-  {DARK_BLUE,WHITE,DARK_BLUE,WHITE,WHITE},// 19 - Hail shower (night)
+  {DARK_BLUE,WHITE,DARK_BLUE,WHITE,DARK_GRAY},// 19 - Hail shower (night)
   {YELLOW,WHITE,YELLOW,WHITE,WHITE},// 20 - Hail shower (day)
   {WHITE,WHITE,WHITE,WHITE,WHITE},// 21 - Hail
-  {DARK_BLUE,WHITE,DARK_BLUE,WHITE,WHITE},// 22 - Light snow shower (night)
+  {DARK_BLUE,WHITE,DARK_BLUE,WHITE,DARK_GRAY},// 22 - Light snow shower (night)
   {YELLOW,WHITE,YELLOW,WHITE,WHITE},// 23 - Light snow shower (day)
   {WHITE,WHITE,WHITE,WHITE,WHITE},// 24 - Light snow
-  {DARK_BLUE,WHITE,DARK_BLUE,WHITE,WHITE},// 25 - Heavy snow shower (night)
+  {DARK_BLUE,WHITE,DARK_BLUE,WHITE,DARK_GRAY},// 25 - Heavy snow shower (night)
   {WHITE,YELLOW,WHITE,WHITE,WHITE},// 26 - Heavy snow shower (day)
   {WHITE,WHITE,WHITE,WHITE,WHITE},// 27 - Heavy snow
-  {DARK_BLUE,ORANGE,BLUE,DARK_BLUE,WHITE},// 28 - Thunder shower (night)
+  {DARK_BLUE,ORANGE,BLUE,DARK_BLUE,DARK_GRAY},// 28 - Thunder shower (night)
   {BLUE,DARK_GRAY,BLUE,ORANGE,WHITE},// 29 - Thunder shower (day)
   {DARK_GRAY,BLUE,ORANGE,YELLOW,WHITE},// 30 - Thunder
+  {RED,ORANGE,GREEN,BLUE,WHITE}, // 31 - rainbow
+};
+
+
+char* weatherTypes[] = {
+  "clear night", // 0 - clear night
+  "sunny day",             // 1 - sunny day
+  "partly cloudy",           // 2 - Partly cloudy night
+  "partly cloudy",                 // 3 - Partly cloudy day
+  "random",                 // 4 - unused
+  "misty",                 // 5 - mist
+  "foggy",                 // 6 - fog
+  "cloudy",                // 7 - cloudy
+  "overcast",                 // 8 - overcast
+  "light showers",                 // 9 - light rain shower (night)
+  "light showers",        // 10 - light rain shower (day)
+  "drizzle",  // 11 - Drizzle
+  "light rain", // 12 - Light rain
+  "heavy showers", // 13 - Heavy rain shower (night)
+  "heavy showers",// 14 - Heavy rain shower (day)
+  "heavy rain",// 15 - Heavy rain
+  "sleet showers",// 16 - Sleet shower (night)
+  "sleet showers",// 17 - Sleet shower (day)
+  "sleet",// 18 - Sleet
+  "hail shower",// 19 - Hail shower (night)
+  "hail shower",// 20 - Hail shower (day)
+  "hail",// 21 - Hail
+  "light snow shower",// 22 - Light snow shower (night)
+  "light snow shower",// 23 - Light snow shower (day)
+  "light snow",// 24 - Light snow
+  "heavy snow shower",// 25 - Heavy snow shower (night)
+  "heavy snow shower",// 26 - Heavy snow shower (day)
+  "heavy snow",// 27 - Heavy snow
+  "thunder shower",// 28 - Thunder shower (night)
+  "thunder shower",// 29 - Thunder shower (day)
+  "thunder",// 30 - Thunder
 };
 
 
@@ -188,17 +225,15 @@ void setup() {
   
   setupWifi();
 
-  
-
   updateTimeFromRTC();
   displayTimeRGB();
   
-  if (status == WL_CONNECTED){
   // Get the time from NTP.
   updateRTCTimeFromNTP();
-  }
+  
   updateTimeFromRTC();
-
+  displayTimeRGB();
+  
   int currentWeather = fetchWeather();
   memcpy(currentColours,weatherTypeColours[currentWeather],5*3);
   updateTimeFromRTC();
@@ -207,7 +242,6 @@ void setup() {
 }
 
 // LOOP  --------------------------------------
-int fakeWeather = 0;
 
 void loop() {
   // Loop function runs over and over again to implement the clock logic.
@@ -224,14 +258,14 @@ void loop() {
       
       // Get the time from NTP.
       updateRTCTimeFromNTP();
+      
 
-      if (hours % 3 == 0){
         int currentWeather = fetchWeather();
         memcpy(currentColours,weatherTypeColours[currentWeather],5*3);
-      }
     }
     
     if (minutes == randoMinute){
+
       randoMessage();
     }
 
@@ -273,24 +307,79 @@ void loop() {
   // function again!
 }
 
+// MARK: UPDATE CYCLE ---------------------------------------
+
+void performUpdates(bool forceAll){
+    // Get the time from NTP.
+    updateRTCTimeFromNTP();
+    
+    // Update weather
+    int currentWeather = fetchWeather();
+    memcpy(currentColours,weatherTypeColours[currentWeather],5*3);
+}
+
 // MARK: NETWORK STUFF --------------------------------------
 
-void setupWifi(){
+bool setupWifi(){
+  
   //Configure pins for Adafruit ATWINC1500 Feather
   WiFi.setPins(8,7,4,2);
   
-  // check for the presence of the shield:
-  if (WiFi.status() == WL_NO_SHIELD) {
-    Serial.println("WiFi shield not present");
-    // don't continue:
-    scrollText_fail("WiFi shield not present");
-    return;
+  return connectWifi();
+  
+}
+
+uint32_t lastConnectAttempt = 0;
+
+bool connectWifi(){
+  int status = WiFi.status();
+  
+  switch (status) {
+    case WL_CONNECTED:
+      //scrollText("wifi good");
+      return true;
+      break;
+    case WL_NO_SHIELD:
+      //scrollText_fail("no wifi shield");
+      return false;
+      break;
+    case WL_CONNECT_FAILED:
+      //scrollText_fail("connect failed");
+      break;
+    case WL_CONNECTION_LOST:
+      break;
+    case WL_DISCONNECTED:
+      //scrollText_fail("disconnected");
+      break;
+    case WL_NO_SSID_AVAIL:
+      //scrollText_fail("network not found");
+      break;
+
+  }
+  
+  int64_t timedif = millis() - lastConnectAttempt;
+  if (  lastConnectAttempt == 0 ) {
+    // millis has rolled over or it's our first shot
+  } else {
+  
+    // Avoid trying if the last attempt was within the last minute
+    if ( timedif < (1000 * 60) ) {
+      //scrollText_fail("not long enough");
+      return false;
+    }
   }
 
+  lastConnectAttempt = millis();
+  
+  // If we have fallen through, try connecting
   
   // attempt to connect to WiFi network:
   Serial.print("Attempting to connect to SSID: ");
   Serial.println(ssid);
+  
+//  scrollText_fail("Attempting to connect to SSID:");
+//  scrollText(ssid);
+  
   // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
   status = WiFi.begin(ssid, pass);
   
@@ -300,7 +389,14 @@ void setupWifi(){
     Serial.println(status);
     delay(20);
   }
+  
+  printWiFiStatus();
+  
   switch (status) {
+    case WL_CONNECTED:
+      scrollText("wifi good");
+      return true;
+      break;
     case WL_CONNECT_FAILED:
       scrollText_fail("connect failed");
       break;
@@ -308,16 +404,14 @@ void setupWifi(){
       scrollText_fail("disconnected");
       break;
     case WL_NO_SSID_AVAIL:
-      scrollText_fail("no ssid");
+      scrollText_fail("network not found");
       break;
-    case WL_CONNECTED:
-      scrollText("wifi good");
-      break;
+
   }
 
-  printWiFiStatus();
-
+  return false;
 }
+
 
 void printWiFiStatus() {
   // print the SSID of the network you're attached to:
@@ -364,6 +458,10 @@ void updateTimeFromRTC(){
 
 
 void updateRTCTimeFromNTP(){
+  if ( !connectWifi() ){
+    return;
+  }
+  
   Serial.println("\nStarting connection to server...");
   Udp.begin(localPort);
   
@@ -508,11 +606,11 @@ void updateBrightness(){
   
   // Brightness adjust
   if ( hours >= 22 || hours <= 5 ) {
-    brightness = 10; 
+    brightness = 5; 
    } else if ( hours >= 21 || hours <= 6 ) {
     brightness = 20;
    } else if ( hours == 20 || hours == 7 ) {
-    brightness = 55;
+    brightness = 70;
   } else {
     brightness = 128;
   }
@@ -575,17 +673,23 @@ void scrollText(char *stringy, Colour colour){
 // MARK: WEATHER FETCHING
 
 int fetchWeather(){
+
+  if ( !connectWifi() ){
+    return 31;
+  }
+  
   if (connect(server)) {
     if (sendRequest(server, resource) && skipResponseHeaders()) {
       int weatherType = readReponseContent();
       Serial.print("Weather type: ");
       Serial.println(weatherType);
+      scrollText(weatherTypes[weatherType]);
       disconnect();
       return(weatherType);
     }
   }
   scrollText_fail("Weather fetch failed");
-  return 0;
+  return 31;
 }
 
 // Open connection to the HTTP server
@@ -634,28 +738,23 @@ bool skipResponseHeaders() {
 }
 
 int readReponseContent() {
-  // Compute optimal size of the JSON buffer according to what we need to parse.
-  // This is only required if you use StaticJsonBuffer.
-  const size_t BUFFER_SIZE =
-      JSON_OBJECT_SIZE(8)    // the root object has 8 elements
-      + JSON_OBJECT_SIZE(5)  // the "address" object has 5 elements
-      + JSON_OBJECT_SIZE(2)  // the "geo" object has 2 elements
-      + JSON_OBJECT_SIZE(3)  // the "company" object has 3 elements
-      + MAX_CONTENT_SIZE;    // additional space for strings
 
   // Allocate a temporary memory pool
-  DynamicJsonBuffer jsonBuffer(BUFFER_SIZE);
+  DynamicJsonBuffer jsonBuffer(MAX_CONTENT_SIZE);
 
   JsonObject& root = jsonBuffer.parseObject(client);
 
   if (!root.success()) {
     Serial.println("JSON parsing failed!");
-    return false;
+    return 100;
   }
-
+  int weatherType;
   // Here were copy the strings we're interested in
-  int weatherType = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][0]["W"];
-  
+  if (hours >= 21) {
+    weatherType = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][1]["W"];
+  } else {
+    weatherType = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][0]["W"];
+  }
   return weatherType;
 }
 
