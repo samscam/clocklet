@@ -190,9 +190,10 @@ char* weatherTypes[] = {
   "thunder shower",// 28 - Thunder shower (night)
   "thunder shower",// 29 - Thunder shower (day)
   "thunder",// 30 - Thunder
+  "rainbows",
 };
 
-
+int currentWeather = 31;
 
 // SETUP  --------------------------------------
 
@@ -233,9 +234,14 @@ void setup() {
   
   updateTimeFromRTC();
   displayTimeRGB();
-  
-  int currentWeather = fetchWeather();
+
+
+  int weather = fetchWeather();
+  if (weather >= 0) {
+    currentWeather = weather;
+  }
   memcpy(currentColours,weatherTypeColours[currentWeather],5*3);
+      
   updateTimeFromRTC();
   displayTimeRGB();
   
@@ -259,9 +265,11 @@ void loop() {
       // Get the time from NTP.
       updateRTCTimeFromNTP();
       
-
-        int currentWeather = fetchWeather();
-        memcpy(currentColours,weatherTypeColours[currentWeather],5*3);
+      int weather = fetchWeather();
+      if (weather >= 0) {
+        currentWeather = weather;
+      }
+      memcpy(currentColours,weatherTypeColours[currentWeather],5*3);
     }
     
     if (minutes == randoMinute){
@@ -675,7 +683,7 @@ void scrollText(char *stringy, Colour colour){
 int fetchWeather(){
 
   if ( !connectWifi() ){
-    return 31;
+    return -1;
   }
   
   if (connect(server)) {
@@ -689,7 +697,7 @@ int fetchWeather(){
     }
   }
   scrollText_fail("Weather fetch failed");
-  return 31;
+  return -1;
 }
 
 // Open connection to the HTTP server
