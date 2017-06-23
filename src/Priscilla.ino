@@ -52,9 +52,11 @@ int keyIndex = 0;            // your network key Index number (needed only for W
 
 unsigned int localPort = 2390;      // local port to listen for UDP packets
 
-IPAddress timeServer(130, 88, 202, 49);//ntp2a.mcc.ac.uk
+// IPAddress timeServer(130, 88, 202, 49);//ntp2a.mcc.ac.uk
 //IPAddress timeServer(129, 6, 15, 28); // time.nist.gov NTP server
 //IPAddress timeServer(194,35,252,7); //chronos.csr.net
+IPAddress timeServer(129, 250, 35, 251); //some other one from the pool
+// char timeServerPool[] = "pool.ntp.org";
 
 const int NTP_PACKET_SIZE = 48; // NTP time stamp is in the first 48 bytes of the message
 
@@ -65,7 +67,7 @@ WiFiUDP Udp;
 
 // ----------- RANDOM MESSAGES
 
-static char* messages[] = {
+char* messages[] = {
   "commit",
   "best nest",
   "aline is a piglet",
@@ -206,9 +208,9 @@ void setup() {
   delay(1000);
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
- while (!Serial) {
-   ; // wait for serial port to connect. Needed for native USB port only
- }
+ // while (!Serial) {
+ //   ; // wait for serial port to connect. Needed for native USB port only
+ // }
   randomSeed(analogRead(0));
 
   Serial.println("Clock starting!");
@@ -263,6 +265,7 @@ void loop() {
 
 
   if (seconds == 0) {
+    
     if (minutes == 0) {
       randoMinute = random(0,59);
       updateBrightness();
