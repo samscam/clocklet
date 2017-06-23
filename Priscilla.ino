@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 
 #include <SPI.h>
 #include <WiFi101.h>
@@ -77,9 +79,12 @@ static char* messages[] = {
   "i want all the things",
   "i like our new house",
   "i want to be more glitchy",
+  "striving to be less shite every nanosecond",
+  "it was just a baby fart",
+  "sam is a sausage. he should wake up."
 };
 
-#define numMessages (sizeof(messages)/sizeof(char *)) //array size  
+#define numMessages (sizeof(messages)/sizeof(char *)) //array size
 
 int randoMinute = random(0,59);
 
@@ -198,7 +203,7 @@ int currentWeather = 31;
 // SETUP  --------------------------------------
 
 void setup() {
-
+  delay(1000);
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
 //  while (!Serial) {
@@ -212,26 +217,26 @@ void setup() {
   rgbDigit.clearAll();
 
   memcpy(currentColours,RAINBOW,5*3);
-  
+
   // Get the time from the DS1307.
   updateTimeFromRTC();
-  
+
   // Set brightness
   updateBrightness();
 
   scrollText("everything is awesome");
-  
+
   updateTimeFromRTC();
   displayTimeRGB();
-  
+
   setupWifi();
 
   updateTimeFromRTC();
   displayTimeRGB();
-  
+
   // Get the time from NTP.
   updateRTCTimeFromNTP();
-  
+
   updateTimeFromRTC();
   displayTimeRGB();
 
@@ -241,37 +246,37 @@ void setup() {
     currentWeather = weather;
   }
   memcpy(currentColours,weatherTypeColours[currentWeather],5*3);
-      
+
   updateTimeFromRTC();
   displayTimeRGB();
-  
+
 }
 
 // LOOP  --------------------------------------
 
 void loop() {
   // Loop function runs over and over again to implement the clock logic.
-  
+
   // Check if it's the top of the hour and get a new time reading
   // from the DS1307.  This helps keep the clock accurate by fixing
   // any drift.
-  
+
 
   if (seconds == 0) {
     if (minutes == 0) {
       randoMinute = random(0,59);
       updateBrightness();
-      
+
       // Get the time from NTP.
       updateRTCTimeFromNTP();
-      
+
       int weather = fetchWeather();
       if (weather >= 0) {
         currentWeather = weather;
       }
       memcpy(currentColours,weatherTypeColours[currentWeather],5*3);
     }
-    
+
     if (minutes == randoMinute){
 
       randoMessage();
@@ -281,10 +286,10 @@ void loop() {
     updateTimeFromRTC();
   }
 
-  
-  
+
+
   displayTimeRGB(currentColours);
-  
+
   // Pause for a second for time to elapse.  This value is in milliseconds
   // so 1000 milliseconds = 1 second.
   delay(1000);
@@ -320,7 +325,7 @@ void loop() {
 void performUpdates(bool forceAll){
     // Get the time from NTP.
     updateRTCTimeFromNTP();
-    
+
     // Update weather
     int currentWeather = fetchWeather();
     memcpy(currentColours,weatherTypeColours[currentWeather],5*3);
@@ -329,19 +334,19 @@ void performUpdates(bool forceAll){
 // MARK: NETWORK STUFF --------------------------------------
 
 bool setupWifi(){
-  
+
   //Configure pins for Adafruit ATWINC1500 Feather
   WiFi.setPins(8,7,4,2);
-  
+
   return connectWifi();
-  
+
 }
 
 uint32_t lastConnectAttempt = 0;
 
 bool connectWifi(){
   int status = WiFi.status();
-  
+
   switch (status) {
     case WL_CONNECTED:
       //scrollText("wifi good");
@@ -364,12 +369,12 @@ bool connectWifi(){
       break;
 
   }
-  
+
   int64_t timedif = millis() - lastConnectAttempt;
   if (  lastConnectAttempt == 0 ) {
     // millis has rolled over or it's our first shot
   } else {
-  
+
     // Avoid trying if the last attempt was within the last minute
     if ( timedif < (1000 * 60) ) {
       //scrollText_fail("not long enough");
@@ -378,28 +383,28 @@ bool connectWifi(){
   }
 
   lastConnectAttempt = millis();
-  
+
   // If we have fallen through, try connecting
-  
+
   // attempt to connect to WiFi network:
   Serial.print("Attempting to connect to SSID: ");
   Serial.println(ssid);
-  
+
 //  scrollText_fail("Attempting to connect to SSID:");
 //  scrollText(ssid);
-  
+
   // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
   status = WiFi.begin(ssid, pass);
-  
+
   // Wait for the connection to solidify
   while ( status == WL_IDLE_STATUS ) {
     status = WiFi.status();
     Serial.println(status);
-    delay(20);
+    delay(1000);
   }
-  
+
   printWiFiStatus();
-  
+
   switch (status) {
     case WL_CONNECTED:
       scrollText("wifi good");
@@ -469,21 +474,21 @@ void updateRTCTimeFromNTP(){
   if ( !connectWifi() ){
     return;
   }
-  
+
   Serial.println("\nStarting connection to server...");
   Udp.begin(localPort);
-  
+
   unsigned long timeout = 2000;
   int maxRetries = 4;
   int retries = 0;
-  
+
   unsigned long startMillis = millis();
   unsigned long timech = millis();
   sendNTPpacket(timeServer); // send an NTP packet to a time server
   // wait to see if a reply is available
 
   int packet = 0;
-  
+
   while( packet == 0 ){
     packet = Udp.parsePacket();
     if (millis() - timech >= timeout) {
@@ -500,7 +505,7 @@ void updateRTCTimeFromNTP(){
 
   Serial.print("Roundtrip Time:");
   Serial.println(millis() - startMillis);
-  
+
   Serial.println("packet received");
   // We've received a packet, read the data from it
   Udp.read(packetBuffer, NTP_PACKET_SIZE); // read the packet into the buffer
@@ -542,9 +547,9 @@ void updateRTCTimeFromNTP(){
   }
   Serial.println(epoch % 60); // print the second
 
-  
+
   rtc.adjust(DateTime(epoch) + utcAdjust);
-  
+
   Serial.print("Time to adjust time:");
   Serial.println(millis() - startMillis);
 
@@ -588,7 +593,7 @@ void displayTimeRGB(){
 
 void displayTimeRGB(Colour colours[5]){
   int digit[4];
-  
+
   int h = hours;
   digit[0] = h/10;                      // left digit
   digit[1] = h - (h/10)*10;             // right digit
@@ -611,10 +616,10 @@ void displayTimeRGB(Colour colours[5]){
 
 
 void updateBrightness(){
-  
+
   // Brightness adjust
   if ( hours >= 22 || hours <= 5 ) {
-    brightness = 5; 
+    brightness = 5;
    } else if ( hours >= 21 || hours <= 6 ) {
     brightness = 20;
    } else if ( hours == 20 || hours == 7 ) {
@@ -622,7 +627,7 @@ void updateBrightness(){
   } else {
     brightness = 128;
   }
-  
+
   rgbDigit.setBrightness(brightness);
 }
 
@@ -645,7 +650,7 @@ void scrollText_fail(char *stringy){
 }
 
 void scrollText(char *stringy, Colour colour){
-  
+
   //clockDisplay.drawColon(0);
   char charbuffer[DIGIT_COUNT] = { 0 };
   int origLen = strlen(stringy);
@@ -653,7 +658,7 @@ void scrollText(char *stringy, Colour colour){
   char res[extendedLen];
   memset(res, 0, extendedLen);
   memcpy(res,stringy,origLen);
-  
+
   Serial.print("SCROLLING: ");
   Serial.println(stringy);
   int i;
@@ -672,10 +677,10 @@ void scrollText(char *stringy, Colour colour){
     }
 
     delay(200);
-    
+
   }
-  
-  
+
+
 }
 
 // MARK: WEATHER FETCHING
@@ -685,7 +690,7 @@ int fetchWeather(){
   if ( !connectWifi() ){
     return -1;
   }
-  
+
   if (connect(server)) {
     if (sendRequest(server, resource) && skipResponseHeaders()) {
       int weatherType = readReponseContent();
@@ -725,7 +730,7 @@ bool sendRequest(const char* host, const char* resource) {
   client.println(host);
   client.println("Connection: close");
   client.println();
-  
+
   return true;
 }
 
@@ -771,5 +776,3 @@ void disconnect() {
   Serial.println("Disconnect");
   client.stop();
 }
-
-
