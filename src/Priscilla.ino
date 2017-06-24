@@ -9,6 +9,7 @@
 #include <RGBDigit.h>
 #include <ArduinoJson.h>
 
+
 // CONFIGURATION  --------------------------------------
 
 // Time zone adjust
@@ -67,7 +68,7 @@ WiFiUDP Udp;
 
 // ----------- RANDOM MESSAGES
 
-char* messages[] = {
+const char* messages[] = {
   "commit",
   "best nest",
   "aline is a piglet",
@@ -121,8 +122,8 @@ Colour currentColours[5];
 
 // ---------- WEATHER
 
-char server[] = "datapoint.metoffice.gov.uk";
-char resource[] = "/public/data/val/wxfcs/all/json/351207?res=daily&key=***REMOVED***"; // http resource
+const char server[] = "datapoint.metoffice.gov.uk";
+const char resource[] = "/public/data/val/wxfcs/all/json/351207?res=daily&key=***REMOVED***"; // http resource
 const unsigned long HTTP_TIMEOUT = 10000;  // max respone time from server
 const size_t MAX_CONTENT_SIZE = 4096;       // max size of the HTTP response
 WiFiClient client;
@@ -165,7 +166,7 @@ const Colour weatherTypeColours[][5] = {
 };
 
 
-char* weatherTypes[] = {
+const char* weatherTypes[] = {
   "clear night", // 0 - clear night
   "sunny day",             // 1 - sunny day
   "partly cloudy",           // 2 - Partly cloudy night
@@ -265,7 +266,7 @@ void loop() {
 
 
   if (seconds == 0) {
-    
+
     if (minutes == 0) {
       randoMinute = random(0,59);
       updateBrightness();
@@ -561,7 +562,7 @@ void updateRTCTimeFromNTP(){
 
 
 // send an NTP request to the time server at the given address
-unsigned long sendNTPpacket(IPAddress& address)
+void sendNTPpacket(IPAddress& address)
 {
   Serial.println("Sending NTP packet");
   // set all bytes in the buffer to 0
@@ -636,7 +637,7 @@ void updateBrightness(){
 
 void randoMessage(){
   int messageIndex = random(0,numMessages-1);
-  char* randoMessage = messages[messageIndex];
+  const char* randoMessage = messages[messageIndex];
 
   // Do it three times
   scrollText(randoMessage);
@@ -644,15 +645,15 @@ void randoMessage(){
   scrollText(randoMessage);
 }
 
-void scrollText(char *stringy){
+void scrollText(const char *stringy){
   scrollText(stringy, GREEN);
 }
 
-void scrollText_fail(char *stringy){
+void scrollText_fail(const char *stringy){
   scrollText(stringy, RED);
 }
 
-void scrollText(char *stringy, Colour colour){
+void scrollText(const char *stringy, Colour colour){
 
   //clockDisplay.drawColon(0);
   char charbuffer[DIGIT_COUNT] = { 0 };
