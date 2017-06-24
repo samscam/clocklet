@@ -1,5 +1,5 @@
 #include <Arduino.h>
-
+#include "Priscilla.h"
 
 #include <SPI.h>
 #include <WiFi101.h>
@@ -91,13 +91,7 @@ const char* messages[] = {
 
 int randoMinute = random(0,59);
 
-// ------------ TYPES
 
-struct Colour {
-  uint8_t red;
-  uint8_t green;
-  uint8_t blue;
-};
 
 // ----------- COLOUR
 const Colour WHITE = {120,128,128};
