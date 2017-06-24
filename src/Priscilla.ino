@@ -37,10 +37,10 @@ uint8_t brightness;
 
 // ----------- RTC
 
-// Create display and DS1307 objects.  These are global variables that
+// Create display and RTC_DS3231 objects.  These are global variables that
 // can be accessed from both the setup and loop function below.
 
-RTC_DS1307 rtc = RTC_DS1307();
+RTC_DS3231 rtc = RTC_DS3231();
 
 // ----------- WIFI
 
