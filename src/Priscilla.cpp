@@ -1,14 +1,4 @@
-#include <Arduino.h>
 #include "Priscilla.h"
-
-#include <SPI.h>
-#include <WiFi101.h>
-#include <WiFiUdp.h>
-#include <Wire.h>
-#include <RTClib.h>
-#include <RGBDigit.h>
-#include <ArduinoJson.h>
-
 
 // CONFIGURATION  --------------------------------------
 
@@ -18,23 +8,6 @@ int utcAdjust = 1 * 3600;
 // Set to false to display time in 12 hour format, or true to use 24 hour:
 #define TIME_24_HOUR      true
 
-// Keep track of the hours, minutes, seconds displayed by the clock.
-// Start off at 0:00:00 as a signal that the time should be read from
-// the DS1307 to initialize it.
-int hours = 0;
-int minutes = 0;
-int seconds = 0;
-
-// Remember if the colon was drawn on the display so it can be blinked
-// on and off every second.
-bool blinkColon = false;
-
-
-// ----------- Display
-
-#define DIGIT_COUNT 4
-RGBDigit rgbDigit(DIGIT_COUNT, 11);
-uint8_t brightness;
 
 // ----------- RTC
 
@@ -42,12 +15,6 @@ uint8_t brightness;
 // can be accessed from both the setup and loop function below.
 
 RTC_DS3231 rtc = RTC_DS3231();
-
-// ----------- WIFI
-
-char ssid[] = "***REMOVED***";  //  your network SSID (name)
-char pass[] = "***REMOVED***";       // your network password
-int keyIndex = 0;            // your network key Index number (needed only for WEP)
 
 // ----------- TIME SERVER
 
@@ -66,136 +33,16 @@ byte packetBuffer[ NTP_PACKET_SIZE]; //buffer to hold incoming and outgoing pack
 // A UDP instance to let us send and receive packets over UDP
 WiFiUDP Udp;
 
-// ----------- RANDOM MESSAGES
-
-const char* messages[] = {
-  "commit",
-  "best nest",
-  "aline is a piglet",
-  "all your base are belong to us",
-  "what time is it",
-  "sarah is very nice",
-  "do the ham dance",
-  "bobbins",
-  "sam is really clever",
-  "i am not a hoover",
-  "i want all the things",
-  "i like our new house",
-  "i want to be more glitchy",
-  "striving to be less shite every nanosecond",
-  "it was just a baby fart",
-  "sam is a sausage. he should wake up."
-};
-
-#define numMessages (sizeof(messages)/sizeof(char *)) //array size
+// A variable for the current weather type
+int currentWeather = 31;
 
 int randoMinute = random(0,59);
 
-
-
-// ----------- COLOUR
-const Colour WHITE = {120,128,128};
-const Colour RED = {128, 0, 0};
-const Colour ORANGE = {128, 96, 0};
-const Colour YELLOW = {96, 96, 0};
-const Colour GREEN = {0, 128, 15};
-const Colour LIGHT_BLUE = {80, 80, 128};
-const Colour BLUE = {0, 40, 128};
-const Colour DARK_BLUE = {20, 0, 50};
-const Colour GRAY = {64,64,64};
-const Colour DARK_GRAY = {32,32,32};
-const Colour BROWN = {55,55,30};
-const Colour OTHER_BROWN = {40,60,0};
-
-// DEFAULT RAINBOW
-const Colour RAINBOW[5] = {
-    RED,ORANGE,GREEN,BLUE,WHITE
-};
+// A variable for the current set of colours
 
 Colour currentColours[5];
 
-// ---------- WEATHER
 
-const char server[] = "datapoint.metoffice.gov.uk";
-const char resource[] = "/public/data/val/wxfcs/all/json/351207?res=daily&key=***REMOVED***"; // http resource
-const unsigned long HTTP_TIMEOUT = 10000;  // max respone time from server
-const size_t MAX_CONTENT_SIZE = 4096;       // max size of the HTTP response
-WiFiClient client;
-
-// ---------- WEATHER TYPE COLOUR PATTERNS
-
-const Colour weatherTypeColours[][5] = {
-  {DARK_BLUE,DARK_BLUE,DARK_BLUE,DARK_BLUE,DARK_GRAY}, // 0 - clear night
-  {YELLOW,YELLOW,YELLOW,YELLOW,WHITE},             // 1 - sunny day
-  {DARK_BLUE,DARK_GRAY,DARK_BLUE,DARK_GRAY,DARK_GRAY},           // 2 - Partly cloudy night
-  {YELLOW,GRAY,YELLOW,GRAY,WHITE},                 // 3 - Partly cloudy day
-  {WHITE,WHITE,WHITE,WHITE,WHITE},                 // 4 - unused
-  {WHITE,GRAY,WHITE,GRAY,WHITE},                 // 5 - mist
-  {BROWN,BROWN,BROWN,BROWN,WHITE},                 // 6 - fog
-  {GRAY,BROWN,GRAY,BROWN,WHITE},                 // 7 - cloudy
-  {BROWN,BROWN,BROWN,BROWN,WHITE},                 // 8 - overcast
-  {BLUE,DARK_BLUE,BLUE,DARK_BLUE,DARK_GRAY},                 // 9 - light rain shower (night)
-  {RED,ORANGE,GREEN,BLUE,WHITE},        // 10 - light rain shower (day)
-  {LIGHT_BLUE,LIGHT_BLUE,LIGHT_BLUE,LIGHT_BLUE,WHITE},  // 11 - Drizzle
-  {LIGHT_BLUE,LIGHT_BLUE,LIGHT_BLUE,LIGHT_BLUE,WHITE}, // 12 - Light rain
-  {DARK_BLUE,BLUE,DARK_BLUE,BLUE,DARK_GRAY}, // 13 - Heavy rain shower (night)
-  {YELLOW,BLUE,YELLOW,BLUE,WHITE},// 14 - Heavy rain shower (day)
-  {BLUE,BLUE,BLUE,BLUE,WHITE},// 15 - Heavy rain
-  {DARK_BLUE,WHITE,DARK_BLUE,WHITE,DARK_GRAY},// 16 - Sleet shower (night)
-  {YELLOW,WHITE,YELLOW,WHITE,WHITE},// 17 - Sleet shower (day)
-  {WHITE,WHITE,WHITE,WHITE,WHITE},// 18 - Sleet
-  {DARK_BLUE,WHITE,DARK_BLUE,WHITE,DARK_GRAY},// 19 - Hail shower (night)
-  {YELLOW,WHITE,YELLOW,WHITE,WHITE},// 20 - Hail shower (day)
-  {WHITE,WHITE,WHITE,WHITE,WHITE},// 21 - Hail
-  {DARK_BLUE,WHITE,DARK_BLUE,WHITE,DARK_GRAY},// 22 - Light snow shower (night)
-  {YELLOW,WHITE,YELLOW,WHITE,WHITE},// 23 - Light snow shower (day)
-  {WHITE,WHITE,WHITE,WHITE,WHITE},// 24 - Light snow
-  {DARK_BLUE,WHITE,DARK_BLUE,WHITE,DARK_GRAY},// 25 - Heavy snow shower (night)
-  {WHITE,YELLOW,WHITE,WHITE,WHITE},// 26 - Heavy snow shower (day)
-  {WHITE,WHITE,WHITE,WHITE,WHITE},// 27 - Heavy snow
-  {DARK_BLUE,ORANGE,BLUE,DARK_BLUE,DARK_GRAY},// 28 - Thunder shower (night)
-  {BLUE,DARK_GRAY,BLUE,ORANGE,WHITE},// 29 - Thunder shower (day)
-  {DARK_GRAY,BLUE,ORANGE,YELLOW,WHITE},// 30 - Thunder
-  {RED,ORANGE,GREEN,BLUE,WHITE}, // 31 - rainbow
-};
-
-
-const char* weatherTypes[] = {
-  "clear night", // 0 - clear night
-  "sunny day",             // 1 - sunny day
-  "partly cloudy",           // 2 - Partly cloudy night
-  "partly cloudy",                 // 3 - Partly cloudy day
-  "random",                 // 4 - unused
-  "misty",                 // 5 - mist
-  "foggy",                 // 6 - fog
-  "cloudy",                // 7 - cloudy
-  "overcast",                 // 8 - overcast
-  "light showers",                 // 9 - light rain shower (night)
-  "light showers",        // 10 - light rain shower (day)
-  "drizzle",  // 11 - Drizzle
-  "light rain", // 12 - Light rain
-  "heavy showers", // 13 - Heavy rain shower (night)
-  "heavy showers",// 14 - Heavy rain shower (day)
-  "heavy rain",// 15 - Heavy rain
-  "sleet showers",// 16 - Sleet shower (night)
-  "sleet showers",// 17 - Sleet shower (day)
-  "sleet",// 18 - Sleet
-  "hail shower",// 19 - Hail shower (night)
-  "hail shower",// 20 - Hail shower (day)
-  "hail",// 21 - Hail
-  "light snow shower",// 22 - Light snow shower (night)
-  "light snow shower",// 23 - Light snow shower (day)
-  "light snow",// 24 - Light snow
-  "heavy snow shower",// 25 - Heavy snow shower (night)
-  "heavy snow shower",// 26 - Heavy snow shower (day)
-  "heavy snow",// 27 - Heavy snow
-  "thunder shower",// 28 - Thunder shower (night)
-  "thunder shower",// 29 - Thunder shower (day)
-  "thunder",// 30 - Thunder
-  "rainbows",
-};
-
-int currentWeather = 31;
 
 // SETUP  --------------------------------------
 
@@ -210,32 +57,21 @@ void setup() {
 
   Serial.println("Clock starting!");
 
-  rgbDigit.begin();
-  rgbDigit.clearAll();
+  initDisplay();
 
   memcpy(currentColours,RAINBOW,5*3);
 
-  // Get the time from the DS1307.
-  updateTimeFromRTC();
-
-  // Set brightness
-  updateBrightness();
-
   scrollText("everything is awesome");
 
-  updateTimeFromRTC();
-  displayTimeRGB();
+  showTime();
 
   setupWifi();
 
-  updateTimeFromRTC();
-  displayTimeRGB();
 
   // Get the time from NTP.
   updateRTCTimeFromNTP();
 
-  updateTimeFromRTC();
-  displayTimeRGB();
+  showTime();
 
 
   int weather = fetchWeather();
@@ -244,26 +80,20 @@ void setup() {
   }
   memcpy(currentColours,weatherTypeColours[currentWeather],5*3);
 
-  updateTimeFromRTC();
-  displayTimeRGB();
+  showTime();
 
 }
 
 // LOOP  --------------------------------------
 
 void loop() {
-  // Loop function runs over and over again to implement the clock logic.
+  DateTime time = rtc.now();
 
-  // Check if it's the top of the hour and get a new time reading
-  // from the DS1307.  This helps keep the clock accurate by fixing
-  // any drift.
+  if (time.second() == 0) {
 
-
-  if (seconds == 0) {
-
-    if (minutes == 0) {
+    if (time.minute() == 0) {
       randoMinute = random(0,59);
-      updateBrightness();
+      updateBrightness(time.hour());
 
       // Get the time from NTP.
       updateRTCTimeFromNTP();
@@ -275,44 +105,18 @@ void loop() {
       memcpy(currentColours,weatherTypeColours[currentWeather],5*3);
     }
 
-    if (minutes == randoMinute){
-
+    if (time.minute() == randoMinute){
       randoMessage();
     }
-
-    // Get the time from the DS1307.
-    updateTimeFromRTC();
   }
 
 
-
-  displayTimeRGB(currentColours);
+  showTime();
 
   // Pause for a second for time to elapse.  This value is in milliseconds
   // so 1000 milliseconds = 1 second.
   delay(1000);
 
-  //   Now increase the seconds by one.
-  seconds += 1;
-  // If the seconds go above 59 then the minutes should increase and
-  // the seconds should wrap back to 0.
-  if (seconds > 59) {
-    seconds = 0;
-    minutes += 1;
-    // Again if the minutes go above 59 then the hour should increase and
-    // the minutes should wrap back to 0.
-    if (minutes > 59) {
-      minutes = 0;
-      hours += 1;
-      // Note that when the minutes are 0 (i.e. it's the top of a new hour)
-      // then the start of the loop will read the actual time from the DS1307
-      // again.  Just to be safe though we'll also increment the hour and wrap
-      // back to 0 if it goes above 23 (i.e. past midnight).
-      if (hours > 23) {
-        hours = 0;
-      }
-    }
-  }
 
   // Loop code is finished, it will jump back to the start of the loop
   // function again!
@@ -329,143 +133,14 @@ void performUpdates(bool forceAll){
     memcpy(currentColours,weatherTypeColours[currentWeather],5*3);
 }
 
-// MARK: NETWORK STUFF --------------------------------------
 
-bool setupWifi(){
-
-  //Configure pins for Adafruit ATWINC1500 Feather
-  WiFi.setPins(8,7,4,2);
-
-  return connectWifi();
-
+void showTime(){
+  DateTime time = rtc.now();
+  displayTime(time, currentColours);
 }
-
-uint32_t lastConnectAttempt = 0;
-
-bool connectWifi(){
-  int status = WiFi.status();
-
-  switch (status) {
-    case WL_CONNECTED:
-      //scrollText("wifi good");
-      return true;
-      break;
-    case WL_NO_SHIELD:
-      //scrollText_fail("no wifi shield");
-      return false;
-      break;
-    case WL_CONNECT_FAILED:
-      //scrollText_fail("connect failed");
-      break;
-    case WL_CONNECTION_LOST:
-      break;
-    case WL_DISCONNECTED:
-      //scrollText_fail("disconnected");
-      break;
-    case WL_NO_SSID_AVAIL:
-      //scrollText_fail("network not found");
-      break;
-
-  }
-
-  int64_t timedif = millis() - lastConnectAttempt;
-  if (  lastConnectAttempt == 0 ) {
-    // millis has rolled over or it's our first shot
-  } else {
-
-    // Avoid trying if the last attempt was within the last minute
-    if ( timedif < (1000 * 60) ) {
-      //scrollText_fail("not long enough");
-      return false;
-    }
-  }
-
-  lastConnectAttempt = millis();
-
-  // If we have fallen through, try connecting
-
-  // attempt to connect to WiFi network:
-  Serial.print("Attempting to connect to SSID: ");
-  Serial.println(ssid);
-
-//  scrollText_fail("Attempting to connect to SSID:");
-//  scrollText(ssid);
-
-  // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
-  status = WiFi.begin(ssid, pass);
-
-  // Wait for the connection to solidify
-  while ( status == WL_IDLE_STATUS ) {
-    status = WiFi.status();
-    Serial.println(status);
-    delay(1000);
-  }
-
-  printWiFiStatus();
-
-  switch (status) {
-    case WL_CONNECTED:
-      scrollText("wifi good");
-      return true;
-      break;
-    case WL_CONNECT_FAILED:
-      scrollText_fail("connect failed");
-      break;
-    case WL_DISCONNECTED:
-      scrollText_fail("disconnected");
-      break;
-    case WL_NO_SSID_AVAIL:
-      scrollText_fail("network not found");
-      break;
-
-  }
-
-  return false;
-}
-
-
-void printWiFiStatus() {
-  // print the SSID of the network you're attached to:
-  Serial.print("SSID: ");
-  Serial.println(WiFi.SSID());
-
-  // print your WiFi shield's IP address:
-  IPAddress ip = WiFi.localIP();
-  Serial.print("IP Address: ");
-  Serial.println(ip);
-
-  // print the received signal strength:
-  long rssi = WiFi.RSSI();
-  Serial.print("signal strength (RSSI):");
-  Serial.print(rssi);
-  Serial.println(" dBm");
-}
-
 
 
 // MARK: TIME SYNC STUFF --------------------------------------
-
-void updateTimeFromRTC(){
-    DateTime now = rtc.now();
-    // Print out the time for debug purposes:
-    Serial.print("Read date & time from DS1307: ");
-    Serial.print(now.year(), DEC);
-    Serial.print('/');
-    Serial.print(now.month(), DEC);
-    Serial.print('/');
-    Serial.print(now.day(), DEC);
-    Serial.print(' ');
-    Serial.print(now.hour(), DEC);
-    Serial.print(':');
-    Serial.print(now.minute(), DEC);
-    Serial.print(':');
-    Serial.print(now.second(), DEC);
-    Serial.println();
-    // Now set the hours and minutes.
-    hours = now.hour();
-    minutes = now.minute();
-    seconds = now.second();
-}
 
 
 void updateRTCTimeFromNTP(){
@@ -579,198 +254,4 @@ void sendNTPpacket(IPAddress& address)
   Udp.beginPacket(address, 123); //NTP requests are to port 123
   Udp.write(packetBuffer, NTP_PACKET_SIZE);
   Udp.endPacket();
-}
-
-
-// MARK: DISPLAY THINGS --------------------------------------
-
-
-void displayTimeRGB(){
-  displayTimeRGB(currentColours);
-}
-
-void displayTimeRGB(Colour colours[5]){
-  int digit[4];
-
-  int h = hours;
-  digit[0] = h/10;                      // left digit
-  digit[1] = h - (h/10)*10;             // right digit
-    int m = minutes;
-  digit[2] = m/10;
-  digit[3] = m - (m/10)*10;
-
-  for (int i = 0; i<4 ; i++){
-    rgbDigit.setDigit(digit[i], i, colours[i].red, colours[i].green, colours[i].blue); // show on digit 0 (=first). Color is rgb(64,0,0).
-  }
-
-
-  blinkColon = (seconds % 2) == 0;
-  if (blinkColon) {
-    rgbDigit.clearDot(1);               // clear dot on digit 3 (=fourth)
-  } else {
-    rgbDigit.showDot(1, colours[4].red, colours[4].green, colours[4].blue);    // show dot on digit 1 (=second). Color is rgb(64,0,0).
-  }
-}
-
-
-void updateBrightness(){
-
-  // Brightness adjust
-  if ( hours >= 22 || hours <= 5 ) {
-    brightness = 5;
-   } else if ( hours >= 21 || hours <= 6 ) {
-    brightness = 20;
-   } else if ( hours == 20 || hours == 7 ) {
-    brightness = 70;
-  } else {
-    brightness = 128;
-  }
-
-  rgbDigit.setBrightness(brightness);
-}
-
-void randoMessage(){
-  int messageIndex = random(0,numMessages-1);
-  const char* randoMessage = messages[messageIndex];
-
-  // Do it three times
-  scrollText(randoMessage);
-  scrollText(randoMessage);
-  scrollText(randoMessage);
-}
-
-void scrollText(const char *stringy){
-  scrollText(stringy, GREEN);
-}
-
-void scrollText_fail(const char *stringy){
-  scrollText(stringy, RED);
-}
-
-void scrollText(const char *stringy, Colour colour){
-
-  //clockDisplay.drawColon(0);
-  char charbuffer[DIGIT_COUNT] = { 0 };
-  int origLen = strlen(stringy);
-  int extendedLen = origLen + DIGIT_COUNT;
-  char res[extendedLen];
-  memset(res, 0, extendedLen);
-  memcpy(res,stringy,origLen);
-
-  Serial.print("SCROLLING: ");
-  Serial.println(stringy);
-  int i;
-  for ( i = 0; i < extendedLen ; i++ ) {
-    for ( int d = 0; d < DIGIT_COUNT ; d++ ) {
-      if (d == 3) {
-        charbuffer[d] = res[i];
-      } else {
-        charbuffer[d] = charbuffer[d+1];
-      }
-      if (charbuffer[d] == 0){
-        rgbDigit.clearDigit( d );
-      } else {
-        rgbDigit.setDigit(charbuffer[d], d, colour.red, colour.green, colour.blue);
-      }
-    }
-
-    delay(200);
-
-  }
-
-
-}
-
-// MARK: WEATHER FETCHING
-
-int fetchWeather(){
-
-  if ( !connectWifi() ){
-    return -1;
-  }
-
-  if (connect(server)) {
-    if (sendRequest(server, resource) && skipResponseHeaders()) {
-      int weatherType = readReponseContent();
-      Serial.print("Weather type: ");
-      Serial.println(weatherType);
-      scrollText(weatherTypes[weatherType]);
-      disconnect();
-      return(weatherType);
-    }
-  }
-  scrollText_fail("Weather fetch failed");
-  return -1;
-}
-
-// Open connection to the HTTP server
-bool connect(const char* hostName) {
-  Serial.print("Connect to ");
-  Serial.println(hostName);
-
-  bool ok = client.connect(hostName, 80);
-
-  Serial.println(ok ? "Connected" : "Connection Failed!");
-  return ok;
-}
-
-// Send the HTTP GET request to the server
-bool sendRequest(const char* host, const char* resource) {
-  Serial.print("Request ");
-  Serial.println(host);
-  Serial.println(resource);
-  // close any connection before send a new request.
-
-  client.print("GET ");
-  client.print(resource);
-  client.println(" HTTP/1.0");
-  client.print("Host: ");
-  client.println(host);
-  client.println("Connection: close");
-  client.println();
-
-  return true;
-}
-
-
-// Skip HTTP headers so that we are at the beginning of the response's body
-bool skipResponseHeaders() {
-  // HTTP headers end with an empty line
-  char endOfHeaders[] = "\r\n\r\n";
-
-  client.setTimeout(HTTP_TIMEOUT);
-  bool ok = client.find(endOfHeaders);
-
-  if (!ok) {
-    Serial.println("No response or invalid response!");
-  }
-
-  return ok;
-}
-
-int readReponseContent() {
-
-  // Allocate a temporary memory pool
-  DynamicJsonBuffer jsonBuffer(MAX_CONTENT_SIZE);
-
-  JsonObject& root = jsonBuffer.parseObject(client);
-
-  if (!root.success()) {
-    Serial.println("JSON parsing failed!");
-    return 100;
-  }
-  int weatherType;
-  // Here were copy the strings we're interested in
-  if (hours >= 21) {
-    weatherType = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][1]["W"];
-  } else {
-    weatherType = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][0]["W"];
-  }
-  return weatherType;
-}
-
-// Close the connection with the HTTP server
-void disconnect() {
-  Serial.println("Disconnect");
-  client.stop();
 }

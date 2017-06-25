@@ -1,40 +1,31 @@
+#ifndef PRISCILLA
+#define PRISCILLA
+
+#include <Arduino.h>
+
+#include <SPI.h>
 #include <WiFi101.h>
+#include <WiFiUdp.h>
+#include <Wire.h>
+#include <RTClib.h>
 
-// ------------ TYPES
 
-struct Colour {
-  uint8_t red;
-  uint8_t green;
-  uint8_t blue;
-};
+#include "weather.h"
+#include "network.h"
+#include "display.h"
+#include "colours.h"
+
 
 // Function declarations
 
 void performUpdates(bool forceAll);
 
-bool setupWifi();
-bool connectWifi();
-bool connectWifi();
-void printWiFiStatus();
-
-void updateTimeFromRTC();
+void showTime();
 void updateRTCTimeFromNTP();
 
 void sendNTPpacket(IPAddress& address);
 
-void displayTimeRGB();
-void displayTimeRGB(Colour colours[5]);
 
-void updateBrightness();
 
-void randoMessage();
-void scrollText(const char *stringy);
-void scrollText_fail(const char *stringy);
-void scrollText(const char *stringy, Colour colour);
 
-int fetchWeather();
-bool connect(const char* hostName);
-bool sendRequest(const char* host, const char* resource);
-bool skipResponseHeaders();
-int readReponseContent();
-void disconnect();
+#endif
