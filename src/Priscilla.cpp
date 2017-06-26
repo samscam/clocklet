@@ -87,13 +87,16 @@ void setup() {
 // LOOP  --------------------------------------
 
 void loop() {
+
+  updateBrightness();
+
   DateTime time = rtc.now();
 
   if (time.second() == 0) {
 
     if (time.minute() == 0) {
       randoMinute = random(0,59);
-      updateBrightness(time.hour());
+
 
       // Get the time from NTP.
       updateRTCTimeFromNTP();

@@ -1,5 +1,9 @@
 #include "display.h"
 
+// LDR pins
+ int lightPin = 0;
+
+
 // ----------- RANDOM MESSAGES
 
 const char* messages[] = {
@@ -115,18 +119,11 @@ void displayTime(const DateTime& time, Colour colours[5]){
 
 uint8_t brightness;
 
-void updateBrightness(int hours){
+void updateBrightness(){
+  uint32_t lightReading = analogRead(lightPin);
 
-  // Brightness adjust
-  if ( hours >= 22 || hours <= 5 ) {
-    brightness = 5;
-   } else if ( hours >= 21 || hours <= 6 ) {
-    brightness = 20;
-   } else if ( hours == 20 || hours == 7 ) {
-    brightness = 70;
-  } else {
-    brightness = 128;
-  }
+  brightness = (lightReading / 6.0) + 3;
+  // Serial.println(brightness);
 
   rgbDigit.setBrightness(brightness);
 }

@@ -17,7 +17,7 @@
 void initDisplay();
 void displayTime(const DateTime& time, Colour colours[5]);
 
-void updateBrightness(int hours);
+void updateBrightness();
 
 void randoMessage();
 void scrollText(const char *stringy);

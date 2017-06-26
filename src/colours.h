@@ -30,5 +30,7 @@ const Colour RAINBOW[5] = {
     RED,ORANGE,GREEN,BLUE,WHITE
 };
 
-
+const Colour ALLWHITE[5] = {
+    WHITE,WHITE,WHITE,WHITE,WHITE
+};
 #endif
