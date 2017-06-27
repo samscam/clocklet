@@ -1,8 +1,9 @@
 #include "display.h"
 
 // LDR pins
- int lightPin = 0;
-
+int lightPin = 0;
+static const float min_brightness = 7;
+static const float max_brightness = 200;
 
 // ----------- RANDOM MESSAGES
 
@@ -120,9 +121,11 @@ void displayTime(const DateTime& time, Colour colours[5]){
 uint8_t brightness;
 
 void updateBrightness(){
-  uint32_t lightReading = analogRead(lightPin);
+  float lightReading = analogRead(lightPin);
 
-  brightness = (lightReading / 6.0) + 3;
+  float bRange = max_brightness - min_brightness;
+
+  brightness = (lightReading * bRange / 1024.0f) + min_brightness;
   // Serial.println(brightness);
 
   rgbDigit.setBrightness(brightness);
