@@ -3,12 +3,13 @@
 // LDR pins
 int lightPin = 0;
 static const float min_brightness = 7;
-static const float max_brightness = 200;
+static const float max_brightness = 150;
 
 // ----------- RANDOM MESSAGES
 
 const char* messages[] = {
   "commit",
+  "jez we can",
   "best nest",
   "aline is a piglet",
   "all your base are belong to us",
@@ -18,12 +19,13 @@ const char* messages[] = {
   "bobbins",
   "sam is really clever",
   "i am not a hoover",
-  "i want all the things",
   "i like our new house",
   "i want to be more glitchy",
-  "striving to be less shite every nanosecond",
-  "it was just a baby fart",
-  "sam is a sausage. he should wake up."
+  "striving to be less shite",
+  "just a baby fart",
+  "sam is a sausage",
+  "this is an art project",
+  "minus excremento nitimur",
 };
 
 #define numMessages (sizeof(messages)/sizeof(char *)) //array size
