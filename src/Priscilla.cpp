@@ -47,7 +47,7 @@ Colour currentColours[5];
 // SETUP  --------------------------------------
 
 void setup() {
-  delay(1000);
+  delay(4000);
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
  while (!Serial) {
