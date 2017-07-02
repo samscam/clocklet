@@ -35,5 +35,9 @@ void scrollText(const char *stringy);
 void scrollText_fail(const char *stringy);
 void scrollText(const char *stringy, Colour colour);
 void setDigit(int number, int digit);
+void setDigit(char character, int digit);
+void setDigitMask(byte mask, int digit);
+
+void setDot(bool state, int digit);
 
 #endif
