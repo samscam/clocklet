@@ -56,6 +56,8 @@ void setup() {
   randomSeed(analogRead(0));
 
   Serial.println("Clock starting!");
+  Wire.begin();
+  rtc.begin();
 
   initDisplay();
 
