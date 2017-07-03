@@ -26,18 +26,24 @@
 
 // Function declarations
 void initDisplay();
-void displayTime(const DateTime& time, Colour colours[5]);
+void displayTime(const DateTime& time, int precip);
+void maskTime(const DateTime& time);
 
 void updateBrightness();
 
 void randoMessage();
 void scrollText(const char *stringy);
 void scrollText_fail(const char *stringy);
-void scrollText(const char *stringy, Colour colour);
+void scrollText(const char *stringy, CRGB colour);
 void setDigit(int number, int digit);
 void setDigit(char character, int digit);
 void setDigitMask(byte mask, int digit);
 
 void setDot(bool state, int digit);
+void fillDigits_rainbow();
+
+void addRain( fract8 chanceOfRain);
+void initRain();
+
 
 #endif

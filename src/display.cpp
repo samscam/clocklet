@@ -1,10 +1,11 @@
 #include "display.h"
+#include <stdarg.h>
 
 FASTLED_USING_NAMESPACE
 
 // LDR pins
 int lightPin = 0;
-static const float min_brightness = 3;
+static const float min_brightness = 5;
 static const float max_brightness = 150;
 
 CRGB leds[NUM_LEDS];
@@ -39,8 +40,8 @@ const char* messages[] = {
 void initDisplay(){
     FastLED.addLeds<LED_TYPE,DATA_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
 
-  // rgbDigit.begin();
-  // rgbDigit.clearAll();
+    initRain();
+    analogReadResolution(12);
 }
 
 void randoMessage(){
@@ -54,17 +55,16 @@ void randoMessage(){
 }
 
 void scrollText(const char *stringy){
-  scrollText(stringy, GREEN);
+  scrollText(stringy, CRGB::Green);
 }
 
 void scrollText_fail(const char *stringy){
-  scrollText(stringy, RED);
+  scrollText(stringy, CRGB::Red);
 }
 
-void scrollText(const char *stringy, Colour colour){
+void scrollText(const char *stringy, CRGB colour){
   Serial.println(stringy);
 
-  //clockDisplay.drawColon(0);
   char charbuffer[DIGIT_COUNT] = { 0 };
   int origLen = strlen(stringy);
   int extendedLen = origLen + DIGIT_COUNT;
@@ -74,7 +74,7 @@ void scrollText(const char *stringy, Colour colour){
 
   int i;
   for ( i = 0; i < extendedLen ; i++ ) {
-    fill_solid(leds,NUM_LEDS,CRGB::Green);
+    fill_solid(leds,NUM_LEDS,colour);
 
     for ( int d = 0; d < DIGIT_COUNT ; d++ ) {
       if (d == 3) {
@@ -103,11 +103,23 @@ uint8_t hue = 0;
 // on and off every second.
 bool blinkColon = false;
 
-void displayTime(const DateTime& time, Colour colours[5]){
-  hue ++;
-  //rainChance ++;
-  fill_rainbow( leds, NUM_LEDS, hue, 4);
+void displayTime(const DateTime& time, int precip){
+  fillDigits_rainbow();
 
+  precip = precip < 10 ? 0 : precip;
+  fract8 rainRate = precip * 255 / 100;
+  addRain(rainRate);
+
+  maskTime(time);
+
+  blinkColon = (time.second() % 2) == 0;
+  setDot(blinkColon,1);
+
+  FastLED.show();
+
+}
+
+void maskTime(const DateTime& time){
   int digit[4];
 
   int h = time.hour();
@@ -121,28 +133,27 @@ void displayTime(const DateTime& time, Colour colours[5]){
   for (int i = 0; i<4 ; i++){
     setDigit(digit[i], i); // show on digit 0 (=first). Color is rgb(64,0,0).
   }
-
-  blinkColon = (time.second() % 2) == 0;
-  setDot(blinkColon,1);
-
-  FastLED.show();
-
-  // if (blinkColon) {
-  //   rgbDigit.clearDot(1);               // clear dot on digit 3 (=fourth)
-  // } else {
-  //   rgbDigit.showDot(1, colours[4].red, colours[4].green, colours[4].blue);    // show dot on digit 1 (=second). Color is rgb(64,0,0).
-  // }
 }
-
 
 uint8_t brightness;
 
+const int readingWindow = 10;
+float readings[readingWindow];
+int readingIndex = 0;
+
 void updateBrightness(){
-  float lightReading = analogRead(lightPin);
+  readings[readingIndex] = analogRead(lightPin);
+  readingIndex++;
+  if (readingIndex == readingWindow) { readingIndex = 0; }
+  float sum = 0;
+  for (int loop = 0 ; loop < readingWindow; loop++) {
+    sum += readings[loop];
+  }
+  float lightReading = sum / readingWindow;
 
   float bRange = max_brightness - min_brightness;
 
-  brightness = (lightReading * bRange / 1024.0f) + min_brightness;
+  brightness = (lightReading * bRange / 4096.0f) + min_brightness;
   // Serial.println(brightness);
   FastLED.setBrightness(brightness);
   // rgbDigit.setBrightness(brightness);
@@ -241,4 +252,81 @@ void setDigitMask(byte mask, int digit){
 
 void setDot(bool state, int digit){
   leds[ 7 + (digit * DIGIT_SEGS)] = state ? CRGB::White : CRGB::Black ;
+}
+
+int skip = 0;
+
+void fillDigits_rainbow(){
+  CHSV cols[4*NUM_DIGITS];
+  if (skip > 30) {
+      hue ++;
+      skip = 0;
+  }
+  skip ++;
+
+  fill_rainbow( cols, 4*NUM_DIGITS, hue, 6);
+
+  int mapping[] = {
+    1,2,2,1,0,0,1,3
+  };
+
+  for (int i = 0; i < NUM_LEDS; i++){
+    leds[i] = cols[ mapping[i%8] + ((i/8)*4) ];
+  }
+
+}
+
+// rainLayer
+
+void p(char *fmt, ... ){
+        char buf[128]; // resulting string limited to 128 chars
+        va_list args;
+        va_start (args, fmt );
+        vsnprintf(buf, 128, fmt, args);
+        va_end (args);
+        Serial.print(buf);
+}
+
+int vsegs[4] = {1,2,4,5};
+int allvsegs[ 4 * NUM_DIGITS ] = {0};
+
+void initRain(){
+  // Init rain
+  int s = 0;
+
+  for (int digit = 0; digit < NUM_DIGITS ; digit++) {
+    for (int vseg = 0 ; vseg < 4 ; vseg++){
+      int digStep = DIGIT_SEGS * digit;
+      int val = vsegs[vseg] + digStep;
+      allvsegs[s] = val;
+      p("digit %d - vseg %d - digStep %d - val %d\n",digit,vseg,digStep,val);
+      s++;
+    }
+  }
+}
+
+
+
+void fadeall() {
+  for(int i = 0; i < NUM_LEDS; i++) {
+    rainLayer[i].nscale8(230);
+  }
+}
+
+void composite(fract8 proportion){
+  nscale8_video(leds, NUM_LEDS, 255 - (proportion / 2));
+  for(int i = 0; i < NUM_LEDS; i++) { leds[i] += rainLayer[i] ; }
+  // nblend(leds, rainLayer, NUM_LEDS,  40);
+}
+
+void addRain( fract8 chanceOfRain)
+{
+  fadeall();
+  if( random8() < chanceOfRain) {
+    int segnum = random16(4 * NUM_DIGITS);
+    Serial.println(allvsegs[segnum]);
+
+    rainLayer[ allvsegs[segnum] ] = CRGB::Blue;
+  }
+  composite(chanceOfRain);
 }
