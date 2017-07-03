@@ -18,7 +18,7 @@
 
 // Function declarations
 
-void performUpdates(bool forceAll);
+void performUpdates();
 
 void showTime();
 void updateRTCTimeFromNTP();

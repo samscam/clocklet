@@ -8,6 +8,8 @@ int utcAdjust = 1 * 3600;
 // Set to false to display time in 12 hour format, or true to use 24 hour:
 #define TIME_24_HOUR      true
 
+#define FPS 30
+
 
 // ----------- RTC
 
@@ -33,11 +35,6 @@ byte packetBuffer[ NTP_PACKET_SIZE]; //buffer to hold incoming and outgoing pack
 // A UDP instance to let us send and receive packets over UDP
 WiFiUDP Udp;
 
-// A variable for the current weather type
-int currentWeather = 31;
-
-int randoMinute = random(0,59);
-
 // A variable for the current set of colours
 
 Colour currentColours[5];
@@ -60,88 +57,66 @@ void setup() {
   rtc.begin();
 
   initDisplay();
-
-  memcpy(currentColours,RAINBOW,5*3);
+  updateBrightness();
 
   scrollText("everything is awesome");
-  updateBrightness();
+
   showTime();
 
   setupWifi();
 
-
-  // Get the time from NTP.
-  updateRTCTimeFromNTP();
-
   showTime();
-
-
-  int weather = fetchWeather();
-  if (weather >= 0) {
-    currentWeather = weather;
-  }
-  memcpy(currentColours,weatherTypeColours[currentWeather],5*3);
-
-  showTime();
-
 }
 
 // LOOP  --------------------------------------
+unsigned long lastUpdateTime = 0;
+unsigned long nextUpdateDelay = 0;
+unsigned long lastRandomMessageTime = millis();
+unsigned long nextMessageDelay = 1000 * 60 * 30;
+
+weather currentWeather;
 
 void loop() {
 
   updateBrightness();
 
-  DateTime time = rtc.now();
+  if (millis() > lastUpdateTime + nextUpdateDelay){
 
-  if (time.second() == 0) {
-
-    if (time.minute() == 0) {
-      randoMinute = random(0,59);
-
-
-      // Get the time from NTP.
-      updateRTCTimeFromNTP();
-
-      int weather = fetchWeather();
-      if (weather >= 0) {
-        currentWeather = weather;
-      }
-      memcpy(currentColours,weatherTypeColours[currentWeather],5*3);
-    }
-
-    if (time.minute() == randoMinute){
-      randoMessage();
-    }
+    performUpdates();
+    lastUpdateTime = millis();
+    nextUpdateDelay = 1000 * 60 * 60; // 60 mins
   }
 
+  if (millis() > lastRandomMessageTime + nextMessageDelay){
+
+    randoMessage();
+    lastRandomMessageTime = millis();
+    nextMessageDelay = 1000 * 60 * random(5,59);// 20 seconds
+  }
 
   showTime();
 
-  // Pause for a second for time to elapse.  This value is in milliseconds
-  // so 1000 milliseconds = 1 second.
-  delay(1000);
+  delay(1000/FPS);
 
-
-  // Loop code is finished, it will jump back to the start of the loop
-  // function again!
 }
 
 // MARK: UPDATE CYCLE ---------------------------------------
 
-void performUpdates(bool forceAll){
+void performUpdates(){
     // Get the time from NTP.
     updateRTCTimeFromNTP();
 
+    showTime();
+
     // Update weather
-    int currentWeather = fetchWeather();
-    memcpy(currentColours,weatherTypeColours[currentWeather],5*3);
+    currentWeather = fetchWeather();
+
 }
 
 
 void showTime(){
   DateTime time = rtc.now();
-  displayTime(time, currentColours);
+  displayTime(time, currentWeather.precip);
 }
 
 
