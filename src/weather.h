@@ -7,16 +7,21 @@
 #include "colours.h"
 #include <ArduinoJson.h>
 
-
+struct weather {
+  int type;
+  int precip;
+  int maxTmp;
+  int minTmp;
+};
 
 // ---------- WEATHER
 
 // function declarations
-int fetchWeather();
+weather fetchWeather();
 bool connect(const char* hostName);
 bool sendRequest(const char* host, const char* resource);
 bool skipResponseHeaders();
-int readReponseContent();
+weather readReponseContent();
 void disconnect();
 
 // constants

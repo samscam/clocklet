@@ -40,25 +40,27 @@ const char* weatherTypes[] = {
 };
 
 // MARK: WEATHER FETCHING
+weather latestWeather = { -1, 0, 0, 0 };
 
-int fetchWeather(){
+weather fetchWeather(){
 
   if ( !connectWifi() ){
-    return -1;
+    return latestWeather;
   }
 
   if (connect(server)) {
     if (sendRequest(server, resource) && skipResponseHeaders()) {
-      int weatherType = readReponseContent();
+      weather response = readReponseContent();
       Serial.print("Weather type: ");
-      Serial.println(weatherType);
-      scrollText(weatherTypes[weatherType]);
+      Serial.println(response.type);
+      scrollText(weatherTypes[response.type]);
       disconnect();
-      return(weatherType);
+      latestWeather = response;
+      return(response);
     }
   }
   scrollText_fail("Weather fetch failed");
-  return -1;
+  return latestWeather;
 }
 
 // Open connection to the HTTP server
@@ -106,7 +108,7 @@ bool skipResponseHeaders() {
   return ok;
 }
 
-int readReponseContent() {
+weather readReponseContent() {
 
   // Allocate a temporary memory pool
   DynamicJsonBuffer jsonBuffer(MAX_CONTENT_SIZE);
@@ -115,16 +117,20 @@ int readReponseContent() {
 
   if (!root.success()) {
     Serial.println("JSON parsing failed!");
-    return 100;
+    return latestWeather;
   }
-  int weatherType;
+  weather result;
   // Here were copy the strings we're interested in
   // if (hours >= 21) {
   //   weatherType = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][1]["W"];
   // } else {
-    weatherType = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][0]["W"];
+  result.type = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][0]["W"];
+  result.precip = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][0]["PPd"];
+  result.maxTmp = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][0]["Dm"];
+  result.minTmp = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][1]["Nm"];
   // }
-  return weatherType;
+
+  return result;
 }
 
 // Close the connection with the HTTP server
