@@ -74,7 +74,7 @@ unsigned long nextUpdateDelay = 0;
 unsigned long lastRandomMessageTime = millis();
 unsigned long nextMessageDelay = 1000 * 60 * 30;
 
-weather currentWeather;
+weather currentWeather = { -1, 0, 1, 1};
 
 void loop() {
 

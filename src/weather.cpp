@@ -40,7 +40,7 @@ const char* weatherTypes[] = {
 };
 
 // MARK: WEATHER FETCHING
-weather latestWeather = { -1, 0, 0, 0 };
+weather latestWeather = { -1, 0, 1, 1 };
 
 weather fetchWeather(){
 
