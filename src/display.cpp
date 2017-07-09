@@ -1,6 +1,7 @@
 #include "display.h"
 #include <stdarg.h>
 
+
 FASTLED_USING_NAMESPACE
 
 // LDR pins
@@ -111,6 +112,10 @@ void displayTime(const DateTime& time, weather weather){
   precip = precip < 10 ? 0 : precip;
   fract8 rainRate = precip * 255 / 100;
   addRain(rainRate);
+
+  if (minTmp<=0){
+    addFrost();
+  }
 
   maskTime(time);
 
@@ -331,4 +336,22 @@ void addRain( fract8 chanceOfRain)
     rainLayer[ allvsegs[segnum] ] = CRGB::Blue;
   }
   composite(chanceOfRain);
+}
+
+
+void addFrost(){
+  CRGB frostLayer[NUM_LEDS];
+  fill_solid(frostLayer, NUM_LEDS, CRGB::Black);
+  // We want the bottom row and the next one up...
+
+  for (int d = 0; d < NUM_DIGITS; d++){
+    // Serial.println((d*8) + 3);
+
+    frostLayer[ (d*8) + 3 ] = CHSV(0,0,200);
+    frostLayer[ (d*8) + 2 ] = CHSV(0,0,90);
+    frostLayer[ (d*8) + 4 ] = CHSV(0,0,90);
+  }
+
+  //nblend(leds, frostLayer, NUM_LEDS,  80);
+  for(int i = 0; i < NUM_LEDS; i++) { leds[i] += frostLayer[i] ; }
 }

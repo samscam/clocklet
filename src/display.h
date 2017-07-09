@@ -44,5 +44,6 @@ void fillDigits_rainbow();
 void addRain( fract8 chanceOfRain);
 void initRain();
 
+void addFrost();
 
 #endif
