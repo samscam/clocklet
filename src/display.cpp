@@ -103,8 +103,10 @@ uint8_t hue = 0;
 // on and off every second.
 bool blinkColon = false;
 
-void displayTime(const DateTime& time, int precip){
+void displayTime(const DateTime& time, weather weather){
   fillDigits_rainbow();
+  int precip = weather.precip;
+  int minTmp = weather.minTmp;
 
   precip = precip < 10 ? 0 : precip;
   fract8 rainRate = precip * 255 / 100;

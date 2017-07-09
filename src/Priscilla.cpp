@@ -116,7 +116,7 @@ void performUpdates(){
 
 void showTime(){
   DateTime time = rtc.now();
-  displayTime(time, currentWeather.precip);
+  displayTime(time, currentWeather);
 }
 
 

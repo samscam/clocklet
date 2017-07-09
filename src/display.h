@@ -4,8 +4,7 @@
 #include <Arduino.h>
 #include <FastLED.h>
 #include <RTClib.h>
-
-#include "colours.h"
+#include "weather.h"
 
 // ----------- Display
 
@@ -26,7 +25,7 @@
 
 // Function declarations
 void initDisplay();
-void displayTime(const DateTime& time, int precip);
+void displayTime(const DateTime& time, weather weather);
 void maskTime(const DateTime& time);
 
 void updateBrightness();
