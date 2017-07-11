@@ -34,11 +34,6 @@ byte packetBuffer[ NTP_PACKET_SIZE]; //buffer to hold incoming and outgoing pack
 // A UDP instance to let us send and receive packets over UDP
 WiFiUDP Udp;
 
-// A variable for the current set of colours
-
-Colour currentColours[5];
-
-
 
 // SETUP  --------------------------------------
 
@@ -102,14 +97,12 @@ void loop() {
 // MARK: UPDATE CYCLE ---------------------------------------
 
 void performUpdates(){
-    // Get the time from NTP.
+
     updateRTCTimeFromNTP();
 
     showTime();
 
-    // Update weather
     currentWeather = fetchWeather();
-
 }
 
 

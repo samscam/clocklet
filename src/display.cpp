@@ -173,7 +173,6 @@ void updateBrightness(){
   brightness = (lightReading * bRange / 4096.0f) + min_brightness;
   // Serial.println(brightness);
   FastLED.setBrightness(brightness);
-  // rgbDigit.setBrightness(brightness);
 }
 
 //   0
@@ -316,7 +315,7 @@ void initRain(){
       int digStep = DIGIT_SEGS * digit;
       int val = vsegs[vseg] + digStep;
       allvsegs[s] = val;
-      p("digit %d - vseg %d - digStep %d - val %d\n",digit,vseg,digStep,val);
+      //p("digit %d - vseg %d - digStep %d - val %d\n",digit,vseg,digStep,val);
       s++;
     }
   }
