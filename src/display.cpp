@@ -1,5 +1,6 @@
+#include "priscilla.h"
 #include "display.h"
-#include <stdarg.h>
+#include "p.h"
 
 
 FASTLED_USING_NAMESPACE
@@ -294,14 +295,6 @@ void fillDigits_rainbow(){
 
 // rainLayer
 
-void p(char *fmt, ... ){
-        char buf[128]; // resulting string limited to 128 chars
-        va_list args;
-        va_start (args, fmt );
-        vsnprintf(buf, 128, fmt, args);
-        va_end (args);
-        Serial.print(buf);
-}
 
 int vsegs[4] = {1,2,4,5};
 int allvsegs[ 4 * NUM_DIGITS ] = {0};
