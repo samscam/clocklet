@@ -108,11 +108,19 @@ bool blinkColon = false;
 
 void displayTime(const DateTime& time, weather weather){
   fillDigits_rainbow();
-  int precip = weather.precip;
+
+  float precip = weather.precip;
   int minTmp = weather.minTmp;
 
-  precip = precip < 10 ? 0 : precip;
-  fract8 rainRate = precip * 255 / 100;
+  // float anal = analogRead(A1);
+  // precip = (anal * float(100)) / float(4096) ;
+
+  precip = precip - 25;
+  precip = precip < 0 ? 0 : precip;
+  fract8 rainRate = precip * 255 / 75;
+
+  //p("Rain %f - %f - %d\n",anal,precip,rainRate);
+
   addRain(rainRate);
 
   if (minTmp<=0){
@@ -317,9 +325,7 @@ void initRain(){
 
 
 void fadeall() {
-  for(int i = 0; i < NUM_LEDS; i++) {
-    rainLayer[i].nscale8(230);
-  }
+
 }
 
 void composite(fract8 proportion){
@@ -330,7 +336,9 @@ void composite(fract8 proportion){
 
 void addRain( fract8 chanceOfRain)
 {
-  fadeall();
+  for(int i = 0; i < NUM_LEDS; i++) {
+    rainLayer[i].nscale8(230);
+  }
   if( random8() < chanceOfRain) {
     int segnum = random16(4 * NUM_DIGITS);
     Serial.println(allvsegs[segnum]);
