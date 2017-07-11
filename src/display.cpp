@@ -91,7 +91,7 @@ void scrollText(const char *stringy, CRGB colour){
     }
 
     FastLED.show();
-    delay(200);
+    FastLED.delay(200);
 
   }
 

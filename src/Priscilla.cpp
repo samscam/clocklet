@@ -96,7 +96,7 @@ void loop() {
 
   showTime();
 
-  delay(1000/FPS);
+  FastLED.delay(1000/FPS);
 
 }
 
