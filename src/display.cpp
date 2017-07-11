@@ -275,7 +275,7 @@ int skip = 0;
 
 void fillDigits_rainbow(){
   CHSV cols[4*NUM_DIGITS];
-  if (skip > 30) {
+  if (skip > FPS) {
       hue ++;
       skip = 0;
   }

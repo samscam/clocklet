@@ -8,7 +8,6 @@ int utcAdjust = 1 * 3600;
 // Set to false to display time in 12 hour format, or true to use 24 hour:
 #define TIME_24_HOUR      true
 
-#define FPS 30
 
 
 // ----------- RTC
