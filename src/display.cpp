@@ -33,6 +33,8 @@ const char* messages[] = {
   "sam is a sausage",
   "this is an art project",
   "minus excremento nitimur",
+  "you are the best wife",
+  "i am the best wife",
 };
 
 #define numMessages (sizeof(messages)/sizeof(char *)) //array size
