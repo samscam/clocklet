@@ -108,7 +108,7 @@ uint8_t hue = 0;
 bool blinkColon = false;
 
 void displayTime(const DateTime& time, weather weather){
-  fillDigits_rainbow();
+  fillDigits_rainbow(false);
 
   float precip = weather.precip;
   int minTmp = weather.minTmp;
@@ -156,7 +156,7 @@ void maskTime(const DateTime& time){
 uint8_t brightness;
 
 const int readingWindow = 10;
-float readings[readingWindow];
+float readings[readingWindow] = {4096.0f};
 int readingIndex = 0;
 
 void updateBrightness(){
@@ -273,23 +273,41 @@ void setDot(bool state, int digit){
 
 int skip = 0;
 
-void fillDigits_rainbow(){
-  CHSV cols[4*NUM_DIGITS];
+void fillDigits_rainbow(bool includePoints){
+
   if (skip > FPS) {
       hue ++;
       skip = 0;
   }
   skip ++;
 
-  fill_rainbow( cols, 4*NUM_DIGITS, hue, 6);
+  if (includePoints){
+    CHSV cols[4*NUM_DIGITS];
+    fill_rainbow( cols, 4*NUM_DIGITS, hue, 6);
 
-  int mapping[] = {
-    1,2,2,1,0,0,1,3
-  };
+    int mapping[] = {
+      1,2,2,1,0,0,1,3
+    };
 
-  for (int i = 0; i < NUM_LEDS; i++){
-    leds[i] = cols[ mapping[i%8] + ((i/8)*4) ];
+    for (int i = 0; i < NUM_LEDS; i++){
+      leds[i] = cols[ mapping[i%8] + ((i/8)*4) ];
+    }
+
+  } else {
+    CHSV cols[3*NUM_DIGITS];
+
+    fill_rainbow( cols, 3*NUM_DIGITS, hue, 8);
+
+    int mapping[] = {
+      1,2,2,1,0,0,1,2
+    };
+
+    for (int i = 0; i < NUM_LEDS; i++){
+      leds[i] = cols[ mapping[i%8] + ((i/8)*3) ];
+    }
   }
+
+
 
 }
 
@@ -321,9 +339,10 @@ void fadeall() {
 }
 
 void composite(fract8 proportion){
-  nscale8_video(leds, NUM_LEDS, 255 - (proportion / 2));
+  nscale8_video(leds, NUM_LEDS, 255 - (proportion * 0.75));
+
   for(int i = 0; i < NUM_LEDS; i++) { leds[i] += rainLayer[i] ; }
-  // nblend(leds, rainLayer, NUM_LEDS,  40);
+  // nblend(leds, rainLayer, NUM_LEDS,  proportion);
 }
 
 void addRain( fract8 chanceOfRain)
