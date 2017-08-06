@@ -43,7 +43,7 @@ void fillDigits_rainbow(bool includePoints);
 
 void addRain( fract8 chanceOfRain);
 void initRain();
-
+void addLightening();
 void addFrost();
 
 #endif

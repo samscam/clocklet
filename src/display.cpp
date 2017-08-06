@@ -36,6 +36,7 @@ const char* messages[] = {
   "minus excremento nitimur",
   "you are the best wife",
   "i am the best wife",
+  "go to work",
 };
 
 #define numMessages (sizeof(messages)/sizeof(char *)) //array size
@@ -127,6 +128,10 @@ void displayTime(const DateTime& time, weather weather){
   if (minTmp<=0){
     addFrost();
   }
+  
+  if (weather.type >= 28 && weather.type <= 30){
+    addLightening();
+  }
 
   maskTime(time);
 
@@ -209,10 +214,10 @@ const byte _charMasks[36] = {
   B10001110, // f
   B11110110, // g
   B00101110, // h
-  B00100000, // i
+  B01100000, // i
   B01110000, // j
   B01101111, // k
-  B01100000, // l
+  B00011100, // l
   B00101011, // m crap
   B00101010, // n
   B00111010, // o
@@ -375,4 +380,15 @@ void addFrost(){
 
   //nblend(leds, frostLayer, NUM_LEDS,  80);
   for(int i = 0; i < NUM_LEDS; i++) { leds[i] += frostLayer[i] ; }
+}
+
+CRGB lighteningLayer[NUM_LEDS];
+void addLightening(){
+  for(int i = 0; i < NUM_LEDS; i++) {
+    lighteningLayer[i].nscale8(150);
+  }
+  if(random8() == 1) {
+    fill_solid(lighteningLayer, NUM_LEDS, CRGB::White);
+  }
+  for(int i = 0; i < NUM_LEDS; i++) { leds[i] += lighteningLayer[i] ; }
 }
