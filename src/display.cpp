@@ -11,7 +11,7 @@ static const float min_brightness = 5;
 static const float max_brightness = 150;
 
 CRGB leds[NUM_LEDS];
-CRGB rainLayer[NUM_LEDS];
+
 
 // ----------- RANDOM MESSAGES
 
@@ -121,14 +121,19 @@ void displayTime(const DateTime& time, weather weather){
   precip = precip < 0 ? 0 : precip;
   fract8 rainRate = precip * 255 / 75;
 
-  //p("Rain %f - %f - %d\n",anal,precip,rainRate);
-
-  addRain(rainRate);
+  if (rainRate > 0) {
+    //p("Rain %f - %f - %d\n",anal,precip,rainRate);
+    if (weather.type >= 22 && weather.type <= 27){
+      addSnow(rainRate);
+    } else {
+      addRain(rainRate);
+    }
+  }
 
   if (minTmp<=0){
     addFrost();
   }
-  
+
   if (weather.type >= 28 && weather.type <= 30){
     addLightening();
   }
@@ -316,12 +321,13 @@ void fillDigits_rainbow(bool includePoints){
 
 }
 
-// rainLayer
+// Rain
 
-
+CRGB rainLayer[NUM_LEDS];
 int vsegs[4] = {1,2,4,5};
 int allvsegs[ 4 * NUM_DIGITS ] = {0};
 
+/// Creates the mapping in `allvsegs` to the vertical segments in `leds`
 void initRain(){
   // Init rain
   int s = 0;
@@ -337,33 +343,37 @@ void initRain(){
   }
 }
 
-
-
-void fadeall() {
-
-}
-
-void composite(fract8 proportion){
-  nscale8_video(leds, NUM_LEDS, 255 - (proportion * 0.75));
-
-  for(int i = 0; i < NUM_LEDS; i++) { leds[i] += rainLayer[i] ; }
-  // nblend(leds, rainLayer, NUM_LEDS,  proportion);
-}
-
 void addRain( fract8 chanceOfRain)
 {
   for(int i = 0; i < NUM_LEDS; i++) {
     rainLayer[i].nscale8(230);
   }
   if( random8() < chanceOfRain) {
-    int segnum = random16(4 * NUM_DIGITS);
-    Serial.println(allvsegs[segnum]);
+    int segnum = random8(4 * NUM_DIGITS);
 
     rainLayer[ allvsegs[segnum] ] = CRGB::Blue;
   }
-  composite(chanceOfRain);
+  nscale8_video(leds, NUM_LEDS, 255 - (chanceOfRain * 0.75));
+
+  for(int i = 0; i < NUM_LEDS; i++) { leds[i] += rainLayer[i] ; }
 }
 
+// Snow
+
+void addSnow( fract8 chanceOfSnow ) {
+  for(int i = 0; i < NUM_LEDS; i++) {
+    rainLayer[i].nscale8(240);
+  }
+  if( random8() < chanceOfSnow) {
+    int segnum = random8(NUM_LEDS);
+    rainLayer[ segnum ] = CRGB::White;
+  }
+  nscale8_video(leds, NUM_LEDS, 255 - chanceOfSnow);
+
+  for(int i = 0; i < NUM_LEDS; i++) { leds[i] += rainLayer[i] ; }
+}
+
+// Frost
 
 void addFrost(){
   CRGB frostLayer[NUM_LEDS];
@@ -381,6 +391,8 @@ void addFrost(){
   //nblend(leds, frostLayer, NUM_LEDS,  80);
   for(int i = 0; i < NUM_LEDS; i++) { leds[i] += frostLayer[i] ; }
 }
+
+// Lightening
 
 CRGB lighteningLayer[NUM_LEDS];
 void addLightening(){
