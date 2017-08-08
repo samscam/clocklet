@@ -54,9 +54,10 @@ void randoMessage(){
   const char* randoMessage = messages[messageIndex];
 
   // Do it three times
-  scrollText(randoMessage);
-  scrollText(randoMessage);
-  scrollText(randoMessage);
+  for (int i=0;i<3;i++){
+    CHSV colour = CHSV(random8(), 255, 255);
+    scrollText(randoMessage,colour);
+  }
 }
 
 void scrollText(const char *stringy){
