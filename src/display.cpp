@@ -120,10 +120,10 @@ void displayTime(const DateTime& time, weather weather){
 
   precip = precip - 25;
   precip = precip < 0 ? 0 : precip;
-  fract8 rainRate = precip * 255 / 75;
+  fract8 rainRate = (precip * 255) / 75.0;
 
   if (rainRate > 0) {
-    //p("Rain %f - %f - %d\n",anal,precip,rainRate);
+    // p("Rain %f - %f - %d\n",anal,precip,rainRate);
     if (weather.type >= 22 && weather.type <= 27){
       addSnow(rainRate);
     } else {
@@ -363,7 +363,7 @@ void addRain( fract8 chanceOfRain)
 
 void addSnow( fract8 chanceOfSnow ) {
   for(int i = 0; i < NUM_LEDS; i++) {
-    rainLayer[i].nscale8(240);
+    rainLayer[i].nscale8_video(252);
   }
   if( random8() < chanceOfSnow) {
     int segnum = random8(NUM_LEDS);
