@@ -2,8 +2,8 @@
 
 // CONFIGURATION  --------------------------------------
 
-// Time zone adjust
-int utcAdjust = 1 * 3600;
+// Time zone adjust (in hours from utc)
+int32_t tzAdjust = 0;
 
 // Set to false to display time in 12 hour format, or true to use 24 hour:
 #define TIME_24_HOUR      true
@@ -55,11 +55,8 @@ void setup() {
 
   scrollText("everything is awesome");
 
-  showTime();
-
   setupWifi();
 
-  showTime();
 }
 
 // LOOP  --------------------------------------
@@ -67,6 +64,8 @@ unsigned long lastUpdateTime = 0;
 unsigned long nextUpdateDelay = 0;
 unsigned long lastRandomMessageTime = millis();
 unsigned long nextMessageDelay = 1000 * 60 * 30;
+unsigned long lastDailyUpdate = 0;
+unsigned int fuzz = random(5,300);
 
 weather currentWeather = { -1, 0, 1, 1};
 
@@ -74,9 +73,16 @@ void loop() {
 
   updateBrightness();
 
+  DateTime time = rtc.now();
+
+  if ( time.unixtime() > lastDailyUpdate + (60 * 60 * 24) + fuzz ) {
+    updatesDaily();
+    lastDailyUpdate = time.unixtime();
+  }
+
   if (millis() > lastUpdateTime + nextUpdateDelay){
 
-    performUpdates();
+    updatesHourly();
     lastUpdateTime = millis();
     nextUpdateDelay = 1000 * 60 * 60; // 60 mins
   }
@@ -85,7 +91,7 @@ void loop() {
 
     randoMessage();
     lastRandomMessageTime = millis();
-    nextMessageDelay = 1000 * 60 * random(5,59);// 20 seconds
+    nextMessageDelay = 1000 * 60 * random(5,59);
   }
 
   showTime();
@@ -96,20 +102,46 @@ void loop() {
 
 // MARK: UPDATE CYCLE ---------------------------------------
 
-void performUpdates(){
-
-    updateRTCTimeFromNTP();
-
-    showTime();
-
+void updatesHourly(){
     currentWeather = fetchWeather();
+}
+
+void updatesDaily(){
+  updateRTCTimeFromNTP();
+  generateDSTTimes(rtc.now().year());
 }
 
 
 void showTime(){
   DateTime time = rtc.now();
+  time = time + TimeSpan(dstAdjust(time) * 3600);
+  time = time + TimeSpan(tzAdjust * 3600);
   displayTime(time, currentWeather);
 }
+
+DateTime dstStart;
+DateTime dstEnd;
+
+void generateDSTTimes(uint16_t year){
+  // last sunday in march at 01:00 utc
+  DateTime eom = DateTime(year, 3, 31);
+  int lastSun = 31 - (eom.dayOfTheWeek() % 7);
+  dstStart = DateTime(year, 3, lastSun , 1);
+
+  // last sunday in october at 01:00 utc
+  DateTime eoo = DateTime(year, 10, 31);
+  lastSun = 31 - eoo.dayOfTheWeek();
+  dstEnd = DateTime(year, 10, lastSun , 1);
+}
+
+uint16_t dstAdjust(DateTime time){
+  if (time.unixtime() >= dstStart.unixtime() && time.unixtime() < dstEnd.unixtime() ) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
 
 
 // MARK: TIME SYNC STUFF --------------------------------------
@@ -123,8 +155,8 @@ void updateRTCTimeFromNTP(){
   Serial.println("\nStarting connection to server...");
   Udp.begin(localPort);
 
-  unsigned long timeout = 2000;
-  int maxRetries = 4;
+  unsigned long timeout = 5000;
+  int maxRetries = 6;
   int retries = 0;
 
   unsigned long startMillis = millis();
@@ -175,25 +207,7 @@ void updateRTCTimeFromNTP(){
   // print Unix time:
   Serial.println(epoch);
 
-
-  // print the hour, minute and second:
-  Serial.print("The UTC time is ");       // UTC is the time at Greenwich Meridian (GMT)
-  Serial.print((epoch  % 86400L) / 3600); // print the hour (86400 equals secs per day)
-  Serial.print(':');
-  if ( ((epoch % 3600) / 60) < 10 ) {
-    // In the first 10 minutes of each hour, we'll want a leading '0'
-    Serial.print('0');
-  }
-  Serial.print((epoch  % 3600) / 60); // print the minute (3600 equals secs per minute)
-  Serial.print(':');
-  if ( (epoch % 60) < 10 ) {
-    // In the first 10 seconds of each minute, we'll want a leading '0'
-    Serial.print('0');
-  }
-  Serial.println(epoch % 60); // print the second
-
-
-  rtc.adjust(DateTime(epoch) + utcAdjust);
+  rtc.adjust(DateTime(epoch));
 
   Serial.print("Time to adjust time:");
   Serial.println(millis() - startMillis);

@@ -22,10 +22,14 @@
 
 // Function declarations
 
-void performUpdates();
+void updatesDaily();
+void updatesHourly();
+uint16_t dstAdjust(DateTime time);
+void generateDSTTimes(uint16_t year);
 
 void showTime();
 void updateRTCTimeFromNTP();
+
 
 void sendNTPpacket(IPAddress& address);
 
