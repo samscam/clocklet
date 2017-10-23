@@ -118,8 +118,14 @@ void displayTime(const DateTime& time, weather weather){
     // p("Rain %f - %f - %d\n",anal,precip,rainRate);
     if (weather.type >= 22 && weather.type <= 27){
       addSnow(rainRate);
+    } else if (weather.type >= 16 && weather.type <= 18){
+      // sleet
+      addRain(rainRate, CRGB::Gray);
+    } else if (weather.type >= 19 && weather.type <= 21){
+      // hail
+      addRain(rainRate, CRGB::White);
     } else {
-      addRain(rainRate);
+      addRain(rainRate, CRGB::Blue);
     }
   }
 
@@ -336,7 +342,7 @@ void initRain(){
   }
 }
 
-void addRain( fract8 chanceOfRain)
+void addRain( fract8 chanceOfRain, CRGB colour)
 {
   for(int i = 0; i < NUM_LEDS; i++) {
     rainLayer[i].nscale8(230);
@@ -344,7 +350,7 @@ void addRain( fract8 chanceOfRain)
   if( random8() < chanceOfRain) {
     int segnum = random8(4 * NUM_DIGITS);
 
-    rainLayer[ allvsegs[segnum] ] = CRGB::Blue;
+    rainLayer[ allvsegs[segnum] ] = colour;
   }
   nscale8_video(leds, NUM_LEDS, 255 - (chanceOfRain * 0.75));
 
