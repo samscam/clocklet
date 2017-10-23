@@ -16,27 +16,19 @@ CRGB leds[NUM_LEDS];
 // ----------- RANDOM MESSAGES
 
 const char* messages[] = {
-  "commit",
-  "jez we can",
-  "best nest",
-  "aline is a piglet",
+  "ball boy",
+  "woop woop time to rub bellies woop woop",
   "all your base are belong to us",
-  "what time is it",
-  "sarah is very nice",
+  "accuracy is guaranteed",
   "do the ham dance",
-  "bobbins",
-  "sam is really clever",
-  "i am not a hoover",
-  "i like our new house",
-  "i want to be more glitchy",
+  "i am a clock   I am not a wife   sorry",
+  "my diodes are itchy",
+  "i cant wait for it to snow",
+  "i am a precognitive clock",
+  "it might rain tomorrow",
+  "i would like to live in some kind of box one of these days",
   "striving to be less shite",
   "just a baby fart",
-  "sam is a sausage",
-  "this is an art project",
-  "minus excremento nitimur",
-  "you are the best wife",
-  "i am the best wife",
-  "go to work",
 };
 
 #define numMessages (sizeof(messages)/sizeof(char *)) //array size
