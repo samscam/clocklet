@@ -156,27 +156,21 @@ void updateRTCTimeFromNTP(){
   Udp.begin(localPort);
 
   unsigned long timeout = 5000;
-  int maxRetries = 6;
-  int retries = 0;
 
   unsigned long startMillis = millis();
   unsigned long timech = millis();
-  sendNTPpacket(timeServer); // send an NTP packet to a time server
+   // send an NTP packet to a time server
   // wait to see if a reply is available
 
   int packet = 0;
 
   while( packet == 0 ){
+    sendNTPpacket(timeServer);
     packet = Udp.parsePacket();
     if (millis() - timech >= timeout) {
-      retries ++;
-      if (retries >= maxRetries ) {
-        Serial.print("Didn't get a packet back... skipping sync...");
-        scrollText_fail("failed to update ntp");
-        return;
-      }
-      timech = millis();
-      sendNTPpacket(timeServer);
+      Serial.print("Didn't get a packet back... skipping sync...");
+      scrollText_fail("failed to update ntp");
+      return;
     }
   }
 
