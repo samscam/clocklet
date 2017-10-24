@@ -135,6 +135,6 @@ weather readReponseContent() {
 
 // Close the connection with the HTTP server
 void disconnect() {
-  Serial.println("Disconnect");
+  Serial.println("Disconnect from weather server");
   client.stop();
 }

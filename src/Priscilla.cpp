@@ -103,10 +103,12 @@ void loop() {
 // MARK: UPDATE CYCLE ---------------------------------------
 
 void updatesHourly(){
-    currentWeather = fetchWeather();
+  Serial.println("Hourly update");
+  currentWeather = fetchWeather();
 }
 
 void updatesDaily(){
+  Serial.println("Daily update");
   updateRTCTimeFromNTP();
   generateDSTTimes(rtc.now().year());
 }
@@ -132,6 +134,9 @@ void generateDSTTimes(uint16_t year){
   DateTime eoo = DateTime(year, 10, 31);
   lastSun = 31 - eoo.dayOfTheWeek();
   dstEnd = DateTime(year, 10, lastSun , 1);
+
+  Serial.println(dstStart.unixtime());
+  Serial.println(dstEnd.unixtime());
 }
 
 uint16_t dstAdjust(DateTime time){
