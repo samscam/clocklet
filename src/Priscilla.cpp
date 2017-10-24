@@ -1,4 +1,5 @@
 #include "Priscilla.h"
+#include "tests.h"
 
 // CONFIGURATION  --------------------------------------
 
@@ -51,7 +52,11 @@ void setup() {
   rtc.begin();
 
   initDisplay();
+
+
   updateBrightness();
+
+  //runDemo();
 
   scrollText("everything is awesome");
 

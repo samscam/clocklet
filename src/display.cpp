@@ -120,7 +120,7 @@ void displayTime(const DateTime& time, weather weather){
       addSnow(rainRate);
     } else if (weather.type >= 16 && weather.type <= 18){
       // sleet
-      addRain(rainRate, CRGB::Gray);
+      addRain(rainRate, CRGB::Brown);
     } else if (weather.type >= 19 && weather.type <= 21){
       // hail
       addRain(rainRate, CRGB::White);
@@ -278,6 +278,12 @@ void setDigitMask(byte mask, int digit){
 
 void setDot(bool state, int digit){
   leds[ 7 + (digit * DIGIT_SEGS)] = state ? CRGB::White : CRGB::Black ;
+}
+
+void setDigits(const char *string){
+  for (int i=0;i<DIGIT_COUNT;i++){
+    setDigit(string[i],i);
+  }
 }
 
 int skip = 0;
