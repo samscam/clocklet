@@ -17,7 +17,7 @@
 
 
 
-#define FPS 60
+
 
 
 // Function declarations

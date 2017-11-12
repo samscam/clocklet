@@ -1,7 +1,7 @@
-#include "priscilla.h"
+#include "Priscilla.h"
 #include "display.h"
 #include "p.h"
-
+#include "settings.h"
 
 FASTLED_USING_NAMESPACE
 

@@ -1,5 +1,6 @@
 #include "Priscilla.h"
 #include "tests.h"
+#include "settings.h"
 
 // CONFIGURATION  --------------------------------------
 
