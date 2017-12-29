@@ -4,8 +4,7 @@
 #include <Arduino.h>
 #include <FastLED.h>
 #include <RTClib.h>
-#include "weather.h"
-
+#include "weather/met-office.h"
 
 // ----------- Display
 
@@ -17,8 +16,6 @@
 #define NUM_DIGITS  4
 #define DIGIT_SEGS  8
 #define NUM_LEDS    DIGIT_SEGS * NUM_DIGITS
-
-
 
 
 #define DIGIT_COUNT 4
