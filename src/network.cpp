@@ -1,5 +1,6 @@
 #include "network.h"
 #include "display.h"
+#include "settings.h"
 
 // MARK: NETWORK STUFF --------------------------------------
 
@@ -56,14 +57,14 @@ bool connectWifi(){
 
   // If we have fallen through, try connecting
 
+  static char ssid[] = NETWORK_SSID;
+  static char pass[] = NETWORK_PASSWORD;
+
+
   // attempt to connect to WiFi network:
   Serial.print("Attempting to connect to SSID: ");
   Serial.println(ssid);
 
-//  scrollText_fail("Attempting to connect to SSID:");
-//  scrollText(ssid);
-
-  // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
   status = WiFi.begin(ssid, pass);
 
   // Wait for the connection to solidify

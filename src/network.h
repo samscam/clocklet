@@ -7,8 +7,6 @@
 
 // ----------- WIFI
 
-const char ssid[] = "***REMOVED***";  //  your network SSID (name)
-const char pass[] = "***REMOVED***";       // your network password
 
 bool setupWifi();
 bool connectWifi();
