@@ -1,0 +1,431 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"ar",
+				"archiveDir"
+			],
+			[
+				"pri",
+				"private_key_path"
+			],
+			[
+				"confi",
+				"config_file"
+			],
+			[
+				"ba",
+				"base_url"
+			],
+			[
+				"app",
+				"app_name"
+			],
+			[
+				"create",
+				"create_appcast"
+			],
+			[
+				"z",
+				"zooplaKeyMap"
+			],
+			[
+				"for",
+				"for\tfor (…) {…}"
+			],
+			[
+				"ri",
+				"rightmoveKeyMap"
+			],
+			[
+				"bac",
+				"background-color"
+			],
+			[
+				"align",
+				"vertical-align"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": ".gcc-flags.json",
+			"settings":
+			{
+				"buffer_size": 3703,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"last_filter": "Deviot: ",
+		"selected_items":
+		[
+			[
+				"Deviot: ",
+				"Deviot: Open Build Config File"
+			],
+			[
+				"git",
+				"git: status"
+			],
+			[
+				"linter",
+				"SublimeLinter: Enable Inline Tooltips"
+			],
+			[
+				"json",
+				"Pretty JSON: Validate"
+			],
+			[
+				"lint",
+				"Preferences: SublimeLinter Settings"
+			],
+			[
+				"linter sett",
+				"Preferences: SublimeLinter Settings"
+			],
+			[
+				"git in",
+				"git: diff current file inline"
+			],
+			[
+				"gitinl",
+				"git: diff current file inline"
+			],
+			[
+				"pack",
+				"Package Control: Install Package"
+			],
+			[
+				"linter settin",
+				"Preferences: SublimeLinter Settings"
+			],
+			[
+				"linte",
+				"SublimeLinter: Report (Open Files)"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"packa",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"htm",
+				"HTMLBeautify"
+			],
+			[
+				"pac",
+				"Package Control: Install Package"
+			],
+			[
+				"pretty",
+				"Pretty JSON: Format (Pretty Print) JSON"
+			],
+			[
+				"js",
+				"Set Syntax: JSON"
+			]
+		],
+		"width": 412.0
+	},
+	"console":
+	{
+		"height": 60.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '2915d1851351e5ee549c20394736b442' + '8bc59f460fa1548d1514676163dafc88'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/sam/Hackery/Arduino/Priscilla",
+		"/Users/sam/Hackery/Arduino/Priscilla/.pioenvs",
+		"/Users/sam/Hackery/Arduino/Priscilla/src",
+		"/Users/sam/Hackery/Arduino/Priscilla/src/weather"
+	],
+	"file_history":
+	[
+		"/Users/sam/Hackery/Arduino/Priscilla/src/weather/darksky.h",
+		"/Users/sam/Hackery/Arduino/Priscilla/Priscilla.sublime-project",
+		"/Users/sam/Hackery/Arduino/Priscilla/.piolibdeps/WiFi101_ID299/src/WiFiClient.h",
+		"/Users/sam/Hackery/Arduino/Priscilla/platformio.ini",
+		"/Users/sam/Hackery/Arduino/Priscilla/src/weather/met-office.cpp",
+		"/Users/sam/Hackery/Arduino/Priscilla/src/Priscilla.h",
+		"/Users/sam/Hackery/Arduino/Priscilla/src/display.h",
+		"/Users/sam/Hackery/Arduino/Priscilla/src/network.cpp",
+		"/Users/sam/Hackery/Arduino/Priscilla/src/colours.h",
+		"/Users/sam/Hackery/Arduino/Priscilla/src/weather/met-office.h",
+		"/Users/sam/Hackery/Arduino/Priscilla/src/weather/darksky.cpp",
+		"/Users/sam/Hackery/Arduino/Priscilla/src/platformio.ini",
+		"/Users/sam/Hackery/Arduino/Priscilla/src/display.cpp",
+		"/Users/sam/Hackery/Arduino/Priscilla/src/network.h",
+		"/Users/sam/Hackery/Arduino/Priscilla/src/settings.h",
+		"/Users/sam/Desktop/another_mkv_recipe.sh",
+		"/Users/sam/Sites/easterbysmith/index.html",
+		"/Users/sam/Desktop/mkv_recipe.sh",
+		"/Users/sam/Desktop/House priorities",
+		"/Users/sam/Hackery/Arduino/libraries/WiFi101/src/Fola snags and observations",
+		"/Users/sam/Hackery/Arduino/libraries/ZG2100BasedWiFiShield/witypes.h",
+		"/Users/sam/Hackery/Arduino/libraries/ZG2100BasedWiFiShield/WiServer.h",
+		"/Users/sam/Hackery/Arduino/libraries/ZG2100BasedWiFiShield/request.cpp",
+		"/Users/sam/Development/Arduino/libraries/RGBDigit/README.md",
+		"/Users/sam/Development/Arduino/libraries/RGBDigit/RGBDigit.h",
+		"/Users/sam/Development/Arduino/libraries/RGBDigit/keywords.txt",
+		"/Users/sam/Development/Arduino/libraries/RGBDigit/examples/RGBDigit_example_display/RGBDigit_example_display.ino",
+		"/Users/sam/Development/Arduino/libraries/RGBDigit/RGBDigit.cpp",
+		"/Users/sam/Development/Arduino/libraries/RGBDigit/examples/RGBDigit_example_text/RGBDigit_example_text.ino",
+		"/Users/sam/Development/WheresWindy/Podfile",
+		"/Users/sam/Development/360-2016/Distro/Package/manifest.plist",
+		"/Users/sam/Development/360-2016/Distro/Package/index.html",
+		"/Users/sam/Development/360-2016/Distribution/2017/index.html",
+		"/Users/sam/Development/WheresWindy/Tests/SampleData/PlaceAutocompleteSample.json",
+		"/Users/sam/Development/WheresWindy/Tests/SampleData/PlaceDetailsSample.json",
+		"/Users/sam/Development/Forks/Moya-Argo/Cartfile.resolved",
+		"/Users/sam/Development/Ill Wind/Cartfile",
+		"/Users/sam/Development/transmote/Distribution/Archives/Transmote_0.3.242/appcast.xml",
+		"/Users/sam/Sites/web.samscam/transmote/appcast.xml",
+		"/Users/sam/Development/SparkleBuilder/Scripts/archive-post-action.sh",
+		"/Users/sam/Development/transmote/.gitignore",
+		"/Users/sam/Desktop/Arrival.2016.DVDScr.XVID.AC3.HQ.Hive-CM8",
+		"/Users/sam/Development/Forks/RxDataSources/Cartfile",
+		"/Users/sam/Downloads/0008-RTUNICv1/uninstall/uninstall.command",
+		"/Users/sam/Downloads/PlanningSummary.cs",
+		"/Volumes/Untitled/MISC/card",
+		"/Users/sam/Development/RxDataSources/Podfile",
+		"/Users/sam/Development/RxDataSources/RxDataSources.podspec",
+		"/Users/sam/Development/RxDataSources/README.md",
+		"/Users/sam/Development/angular/app/hero.service.ts",
+		"/Users/sam/Development/angular/app/heroes.component.ts",
+		"/Users/sam/Development/angular/app/app.component.ts",
+		"/Users/sam/Development/angular/app/dashboard.component.ts",
+		"/Users/sam/Development/angular/app/app.module.ts",
+		"/Users/sam/Development/angular/index.html",
+		"/Users/sam/Development/angular/tsconfig.json",
+		"/Users/sam/Development/angular/app/mock-heroes.js",
+		"/Users/sam/Development/angular/systemjs.config.js",
+		"/Users/sam/Development/angular/app/mock-heroes.ts",
+		"/Users/sam/Development/angular/app/app.component.js.map",
+		"/Users/sam/Development/angular/app/app.component.js",
+		"/Users/sam/.karabiner.d/configuration/wasd.json",
+		"/Users/sam/Development/angular/app/hero.service.js",
+		"/Users/sam/Development/ath/src/marko.json",
+		"/Users/sam/Development/ath/views/index.marko",
+		"/Users/sam/Development/ath/views/widget.marko",
+		"/Users/sam/Development/ath/widget.js",
+		"/Users/sam/Development/ath/src/components/thingy/index.js",
+		"/Users/sam/Development/ath/src/components/thingy/template.marko",
+		"/Users/sam/Development/angular/styles.css",
+		"/Users/sam/Development/angular/app/main.ts",
+		"/Users/sam/Development/angular/package.json",
+		"/Users/sam/Development/angular/typings.json",
+		"/Users/sam/Hackery/Karabiner-Elements/DEVELOPMENT.md",
+		"/Users/sam/.karabiner.d/configuration/karabiner.json",
+		"/Users/sam/Hackery/Opencv/install_opencv.sh",
+		"/Library/LaunchDaemons/org.pqrs.Seil.load.plist",
+		"/Library/LaunchDaemons/org.pqrs.karabiner.karabiner_grabber.plist",
+		"/Users/sam/Library/Application Support/Karabiner/private.xml",
+		"/System/Library/ScriptingDefinitions/CocoaStandard.sdef",
+		"/Users/sam/Development/eVestor/iOSApp/Podfile.lock",
+		"/Users/sam/Hackery/WASD/wasd-inkscape-105-5.14.2015.svg",
+		"/Users/sam/Development/eVestor/iOSApp/Podfile",
+		"/System/Library/Extensions/IOUSBFamily.kext/Contents/Info.plist",
+		"/System/Library/Extensions/IOUSBHostFamily.kext/Contents/Info.plist",
+		"/Users/sam/Sites/easterbysmith/styles.css",
+		"/Users/sam/Sites/dockblocks/styles.css",
+		"/Users/sam/Development/eVestor/iOSApp/Sample JSON/customer.json",
+		"/Users/sam/Development/eVestor/iOSApp/Sample JSON/account.json",
+		"/Users/sam/Development/eVestor/iOSApp/Sample JSON/transactions.json",
+		"/Users/sam/Documents/sample data"
+	],
+	"find":
+	{
+		"height": 39.0
+	},
+	"find_in_files":
+	{
+		"height": 101.0,
+		"where_history":
+		[
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"darksky"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": true,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": ".gcc-flags.json",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 3703,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"git_savvy.repo_path": "/Users/sam/Hackery/Arduino/Priscilla",
+							"syntax": "Packages/JavaScript/JSON.sublime-syntax"
+						},
+						"translation.x": 18247.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 26.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			0.5,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 828.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "Priscilla.sublime-project",
+	"replace":
+	{
+		"height": 48.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 1,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 251.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
