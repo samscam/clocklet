@@ -7,11 +7,22 @@
 void runDemo(){
     // rain
     // fract8 chance = 255;
+    for (int16_t speed = 0; speed < 50; speed += 1){
+      for (int f = 0; f<60; f++){
+        updateBrightness();
+        fillDigits_rainbow(true, speed);
 
+        setDigits("wind");
+        FastLED.show();
+        FastLED.delay(1000/FPS);
+      }
+      Serial.println(speed);
+    }
+/*
     for (int16_t chance = 0; chance < 255; chance = chance + 16){
       for (int f = 0; f<60; f++){
         updateBrightness();
-        fillDigits_rainbow(true);
+        fillDigits_rainbow(true, 0.0);
         addRain(chance,CRGB::Blue);
         setDigits("rain");
         FastLED.show();
@@ -23,7 +34,7 @@ void runDemo(){
     for (int16_t chance = 0; chance < 255; chance = chance + 16){
       for (uint8_t f = 0; f<120; f++){
         updateBrightness();
-        fillDigits_rainbow(true);
+        fillDigits_rainbow(true,0.0);
         addRain(chance,CRGB::White);
         setDigits("hail");
         FastLED.show();
@@ -34,22 +45,12 @@ void runDemo(){
     for (int16_t chance = 0; chance < 255; chance = chance + 16){
       for (uint8_t f = 0; f<120; f++){
         updateBrightness();
-        fillDigits_rainbow(true);
-        addRain(chance,CRGB::Brown);
-        setDigits("slet");
-        FastLED.show();
-        FastLED.delay(1000/FPS);
-      }
-    }
-
-    for (int16_t chance = 0; chance < 255; chance = chance + 16){
-      for (uint8_t f = 0; f<120; f++){
-        updateBrightness();
-        fillDigits_rainbow(true);
+        fillDigits_rainbow(true,0.0);
         addSnow(chance);
         setDigits("snow");
         FastLED.show();
         FastLED.delay(1000/FPS);
       }
     }
+    */
 }

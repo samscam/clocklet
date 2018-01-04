@@ -4,8 +4,7 @@
 #include <Arduino.h>
 #include <FastLED.h>
 #include <RTClib.h>
-#include "weather.h"
-
+#include "weather/weather.h"
 
 // ----------- Display
 
@@ -17,8 +16,6 @@
 #define NUM_DIGITS  4
 #define DIGIT_SEGS  8
 #define NUM_LEDS    DIGIT_SEGS * NUM_DIGITS
-
-
 
 
 #define DIGIT_COUNT 4
@@ -42,7 +39,7 @@ void setDigits(const char *string);
 void setDigitMask(byte mask, int digit);
 
 void setDot(bool state, int digit);
-void fillDigits_rainbow(bool includePoints);
+void fillDigits_rainbow(bool includePoints, float speed);
 
 void addRain( fract8 chanceOfRain, CRGB colour);
 void initRain();

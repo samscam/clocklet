@@ -1,4 +1,3 @@
-#include "Priscilla.h"
 #include "display.h"
 #include "p.h"
 #include "settings.h"
@@ -17,16 +16,17 @@ CRGB leds[NUM_LEDS];
 
 const char* messages[] = {
   "ball boy",
+  "bread for people",
+  "bread for babies",
+  "bread for ducks",
+  "you must obey the clock",
+  "you must obey the egg timer",
+  "you must obey things in this corner",
+  "commit",
   "woop woop time to rub bellies woop woop",
   "all your base are belong to us",
   "accuracy is guaranteed",
   "do the ham dance",
-  "i am a clock   I am not a wife   sorry",
-  "my diodes are itchy",
-  "i cant wait for it to snow",
-  "i am a precognitive clock",
-  "it might rain tomorrow",
-  "i would like to live in some kind of box one of these days",
   "striving to be less shite",
   "just a baby fart",
 };
@@ -95,20 +95,16 @@ void scrollText(const char *stringy, CRGB colour){
 
 // MARK: DISPLAY THINGS --------------------------------------
 
-uint8_t hue = 0;
 
 // Remember if the colon was drawn on the display so it can be blinked
 // on and off every second.
 bool blinkColon = false;
 
 void displayTime(const DateTime& time, weather weather){
-  fillDigits_rainbow(false);
+  fillDigits_rainbow(false, weather.windSpeed);
 
-  float precip = weather.precip;
-  int minTmp = weather.minTmp;
-
-  // float anal = analogRead(A1);
-  // precip = (anal * float(100)) / float(4096) ;
+  float precip = weather.precipChance * 100;
+  float minTmp = weather.minTmp;
 
   precip = precip - 25;
   precip = precip < 0 ? 0 : precip;
@@ -116,16 +112,16 @@ void displayTime(const DateTime& time, weather weather){
 
   if (rainRate > 0) {
     // p("Rain %f - %f - %d\n",anal,precip,rainRate);
-    if (weather.type >= 22 && weather.type <= 27){
-      addSnow(rainRate);
-    } else if (weather.type >= 16 && weather.type <= 18){
-      // sleet
-      addRain(rainRate, CRGB::Brown);
-    } else if (weather.type >= 19 && weather.type <= 21){
-      // hail
-      addRain(rainRate, CRGB::White);
-    } else {
-      addRain(rainRate, CRGB::Blue);
+    switch (weather.precipType) {
+      case Snow:
+        addSnow(rainRate);
+        break;
+      case Rain:
+        addRain(rainRate, CRGB::Blue);
+        break;
+      case Sleet:
+        addRain(rainRate, CRGB::White);
+        break;
     }
   }
 
@@ -133,7 +129,7 @@ void displayTime(const DateTime& time, weather weather){
     addFrost();
   }
 
-  if (weather.type >= 28 && weather.type <= 30){
+  if (weather.thunder){
     addLightening();
   }
 
@@ -286,15 +282,18 @@ void setDigits(const char *string){
   }
 }
 
-int skip = 0;
-
-void fillDigits_rainbow(bool includePoints){
-
-  if (skip > FPS) {
-      hue ++;
-      skip = 0;
+float cycle = 0;
+void fillDigits_rainbow(bool includePoints, float speed){
+  // speed is in m/s
+  // at 1 m/s cycle takes 51 seconds
+  // at 10 m/s cycle takes 5.1 seconds
+  cycle = cycle + ( (speed * 5.0f ) / (float)FPS );
+  if (cycle > 255.0f) {
+    cycle -= 255.0f;
   }
-  skip ++;
+  uint8_t hue = cycle;
+
+  //p("speed %f - cycle %f - hue %d \n",speed,cycle,hue);
 
   if (includePoints){
     CHSV cols[4*NUM_DIGITS];
