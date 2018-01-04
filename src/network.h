@@ -10,7 +10,6 @@
 
 bool setupWifi();
 bool connectWifi();
-bool connectWifi();
 void printWiFiStatus();
 
 

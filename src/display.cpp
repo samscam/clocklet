@@ -1,4 +1,3 @@
-#include "Priscilla.h"
 #include "display.h"
 #include "p.h"
 #include "settings.h"
@@ -105,9 +104,10 @@ bool blinkColon = false;
 void displayTime(const DateTime& time, weather weather){
   fillDigits_rainbow(false);
 
-  float precip = weather.precip;
-  int minTmp = weather.minTmp;
-
+  float precip = weather.precipChance * 100;
+  float minTmp = weather.minTmp;
+  // Serial.print("precip: ");
+  // Serial.println(precip);
   // float anal = analogRead(A1);
   // precip = (anal * float(100)) / float(4096) ;
 
@@ -117,16 +117,19 @@ void displayTime(const DateTime& time, weather weather){
 
   if (rainRate > 0) {
     // p("Rain %f - %f - %d\n",anal,precip,rainRate);
-    if (weather.type >= 22 && weather.type <= 27){
-      addSnow(rainRate);
-    } else if (weather.type >= 16 && weather.type <= 18){
-      // sleet
-      addRain(rainRate, CRGB::Brown);
-    } else if (weather.type >= 19 && weather.type <= 21){
-      // hail
-      addRain(rainRate, CRGB::White);
-    } else {
-      addRain(rainRate, CRGB::Blue);
+    switch (weather.precipType) {
+      case Snow:
+        addSnow(rainRate);
+        break;
+      case Rain:
+        addRain(rainRate, CRGB::Blue);
+        break;
+      case Sleet:
+        addRain(rainRate, CRGB::Brown);
+        break;
+      case Hail:
+        addRain(rainRate, CRGB::White);
+        break;
     }
   }
 
@@ -134,9 +137,9 @@ void displayTime(const DateTime& time, weather weather){
     addFrost();
   }
 
-  if (weather.type >= 28 && weather.type <= 30){
-    addLightening();
-  }
+  // if (weather.type >= 28 && weather.type <= 30){
+  //   addLightening();
+  // }
 
   maskTime(time);
 

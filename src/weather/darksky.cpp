@@ -1,37 +1,33 @@
 #include "darksky.h"
-#include "../network.h"
 #include "../display.h"
 
-
-DarkSky::DarkSky(Client &client){
+DarkSky::DarkSky(WiFiClient &client) {
   this->client = &client;
 };
 
+void DarkSky::fetchWeather(){
 
-dsweather DarkSky::fetchWeather(){
-
-  if ( !connectWifi() ){
-    return latestWeather;
-  }
+  // if ( !client -> connected() ){
+  //   scrollText_fail("nope");
+  //   return;
+  // }
 
   const char darkskyserver[] = DARKSKY_SERVER;
-  const char apiKey[] = DARKSKY_APIKEY;
-
+  // const char apiKey[] = DARKSKY_APIKEY;
   const char resource[] = DARKSKY_PATH;
 
   if (connect(darkskyserver)) {
     if (sendRequest(darkskyserver, resource) && skipResponseHeaders()) {
-      dsweather response = readReponseContent();
-      Serial.print("Weather type: ");
-      Serial.println(response.type);
-    //  scrollText(weatherTypes[response.type]);
+      weather response = readReponseContent();
+      Serial.print("Weather: ");
+      Serial.println(response.summary);
+      scrollText(response.summary);
       disconnect();
       latestWeather = response;
-      return(response);
+      return;
     }
   }
   scrollText_fail("Weather fetch failed");
-  return latestWeather;
 }
 
 // Open connection to the HTTP server
@@ -39,7 +35,7 @@ bool DarkSky::connect(const char* hostName) {
   Serial.print("Connect to ");
   Serial.println(hostName);
 
-  bool ok = client -> connect(hostName, 80);
+  bool ok = client -> connectSSL(hostName, 443);
 
   Serial.println(ok ? "Connected" : "Connection Failed!");
   return ok;
@@ -54,7 +50,7 @@ bool DarkSky::sendRequest(const char* host, const char* resource) {
 
   client -> print("GET ");
   client -> print(resource);
-  client -> println(" HTTP/1.0");
+  client -> println(" HTTP/1.1");
   client -> print("Host: ");
   client -> println(host);
   client -> println("Connection: close");
@@ -79,7 +75,7 @@ bool DarkSky::skipResponseHeaders() {
   return ok;
 }
 
-dsweather DarkSky::readReponseContent() {
+weather DarkSky::readReponseContent() {
 
   // Allocate a temporary memory pool
   DynamicJsonBuffer jsonBuffer(DARKSKY_MAX_CONTENT_SIZE);
@@ -90,15 +86,25 @@ dsweather DarkSky::readReponseContent() {
     Serial.println("JSON parsing failed!");
     return latestWeather;
   }
-  dsweather result;
-  // Here were copy the strings we're interested in
-  // if (hours >= 21) {
-  //   weatherType = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][1]["W"];
-  // } else {
-  result.type = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][0]["W"];
-  result.precip = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][0]["PPd"];
-  result.maxTmp = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][0]["Dm"];
-  result.minTmp = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][1]["Nm"];
+  weather result;
+
+  // result.type = root["daily"]["data"][0]["icon"];
+  result.summary = root["daily"]["data"][0]["summary"];
+  result.precipChance = root["daily"]["data"][0]["precipProbability"];
+
+  const char* precipType = root["daily"]["data"][0]["precipType"];
+  if (strcmp(precipType, "rain") == 0 ) {
+    result.precipType = Rain;
+  } else if (strcmp(precipType, "snow") == 0 ) {
+    result.precipType = Snow;
+  } else if (strcmp(precipType, "hail") == 0 ) {
+    result.precipType = Hail;
+  } else if (strcmp(precipType, "sleet") == 0 ) {
+    result.precipType = Sleet;
+  }
+
+  result.maxTmp = root["daily"]["data"][0]["temperatureHigh"];
+  result.minTmp = root["daily"]["data"][0]["temperatureLow"];
   // }
 
   return result;

@@ -4,40 +4,34 @@
 #include <Arduino.h>
 #include <WiFi101.h>
 #include <ArduinoJson.h>
+#include "weather.h"
 
 #define DARKSKY_APIKEY "***REMOVED***"
 #define DARKSKY_SERVER "api.darksky.net"
-#define DARKSKY_PATH "forecast/***REMOVED***/***REMOVED***?exclude=currently,minutely,daily,alerts,flags"
+#define DARKSKY_PATH "/forecast/***REMOVED***/***REMOVED***?exclude=currently,minutely,hourly,alerts,flags&units=si"
 
 #define DARKSKY_HTTP_TIMEOUT 10000  // max respone time from server
-#define DARKSKY_MAX_CONTENT_SIZE 4096       // max size of the HTTP response
-
-
-struct dsweather {
-  int type;
-  int precip;
-  int maxTmp;
-  int minTmp;
-};
+#define DARKSKY_MAX_CONTENT_SIZE 16384       // max size of the HTTP response
 
 
 class DarkSky{
 
 private:
   bool connect(const char* hostName);
-  dsweather fetchWeather();
+
   void disconnect();
 
-  Client *client;
-  dsweather latestWeather;
+
+  WiFiClient *client;
 
   bool sendRequest(const char* host, const char* resource);
   bool skipResponseHeaders();
-  dsweather readReponseContent();
+  weather readReponseContent();
 
 public:
-  DarkSky(Client &client);
-  dsweather currentWeather();
+  DarkSky(WiFiClient &client);
+  void fetchWeather();
+  weather latestWeather;
 
 };
 

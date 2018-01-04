@@ -57,7 +57,7 @@ void setup() {
 
   updateBrightness();
 
-  //runDemo();
+  // runDemo();
 
   scrollText("everything is awesome");
 
@@ -73,7 +73,8 @@ unsigned long nextMessageDelay = 1000 * 60 * 30;
 unsigned long lastDailyUpdate = 0;
 unsigned int fuzz = random(5,300);
 
-weather currentWeather = { -1, 0, 1, 1};
+WiFiClient client;
+DarkSky *weatherClient = new DarkSky(client);
 
 void loop() {
 
@@ -110,7 +111,7 @@ void loop() {
 
 void updatesHourly(){
   Serial.println("Hourly update");
-  currentWeather = fetchWeather();
+  weatherClient -> fetchWeather();
 }
 
 void updatesDaily(){
@@ -124,7 +125,7 @@ void showTime(){
   DateTime time = rtc.now();
   time = time + TimeSpan(dstAdjust(time) * 3600);
   time = time + TimeSpan(tzAdjust * 3600);
-  displayTime(time, currentWeather);
+  displayTime(time, weatherClient -> latestWeather);
 }
 
 DateTime dstStart;
