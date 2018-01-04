@@ -39,7 +39,7 @@ void setDigits(const char *string);
 void setDigitMask(byte mask, int digit);
 
 void setDot(bool state, int digit);
-void fillDigits_rainbow(bool includePoints);
+void fillDigits_rainbow(bool includePoints, float speed);
 
 void addRain( fract8 chanceOfRain, CRGB colour);
 void initRain();

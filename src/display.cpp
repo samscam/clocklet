@@ -95,21 +95,16 @@ void scrollText(const char *stringy, CRGB colour){
 
 // MARK: DISPLAY THINGS --------------------------------------
 
-uint8_t hue = 0;
 
 // Remember if the colon was drawn on the display so it can be blinked
 // on and off every second.
 bool blinkColon = false;
 
 void displayTime(const DateTime& time, weather weather){
-  fillDigits_rainbow(false);
+  fillDigits_rainbow(false, weather.windSpeed);
 
   float precip = weather.precipChance * 100;
   float minTmp = weather.minTmp;
-  // Serial.print("precip: ");
-  // Serial.println(precip);
-  // float anal = analogRead(A1);
-  // precip = (anal * float(100)) / float(4096) ;
 
   precip = precip - 25;
   precip = precip < 0 ? 0 : precip;
@@ -125,9 +120,6 @@ void displayTime(const DateTime& time, weather weather){
         addRain(rainRate, CRGB::Blue);
         break;
       case Sleet:
-        addRain(rainRate, CRGB::Brown);
-        break;
-      case Hail:
         addRain(rainRate, CRGB::White);
         break;
     }
@@ -137,9 +129,9 @@ void displayTime(const DateTime& time, weather weather){
     addFrost();
   }
 
-  // if (weather.type >= 28 && weather.type <= 30){
-  //   addLightening();
-  // }
+  if (weather.thunder){
+    addLightening();
+  }
 
   maskTime(time);
 
@@ -290,15 +282,18 @@ void setDigits(const char *string){
   }
 }
 
-int skip = 0;
-
-void fillDigits_rainbow(bool includePoints){
-
-  if (skip > FPS) {
-      hue ++;
-      skip = 0;
+float cycle = 0;
+void fillDigits_rainbow(bool includePoints, float speed){
+  // speed is in m/s
+  // at 1 m/s cycle takes 51 seconds
+  // at 10 m/s cycle takes 5.1 seconds
+  cycle = cycle + ( (speed * 5.0f ) / (float)FPS );
+  if (cycle > 255.0f) {
+    cycle -= 255.0f;
   }
-  skip ++;
+  uint8_t hue = cycle;
+
+  //p("speed %f - cycle %f - hue %d \n",speed,cycle,hue);
 
   if (includePoints){
     CHSV cols[4*NUM_DIGITS];

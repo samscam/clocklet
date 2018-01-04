@@ -88,25 +88,28 @@ weather DarkSky::readReponseContent() {
   }
   weather result;
 
-  // result.type = root["daily"]["data"][0]["icon"];
+  result.type = root["daily"]["data"][0]["icon"];
   result.summary = root["daily"]["data"][0]["summary"];
   result.precipChance = root["daily"]["data"][0]["precipProbability"];
+  result.precipIntensity = root["daily"]["data"][0]["precipIntensity"];
 
   const char* precipType = root["daily"]["data"][0]["precipType"];
   if (strcmp(precipType, "rain") == 0 ) {
     result.precipType = Rain;
   } else if (strcmp(precipType, "snow") == 0 ) {
     result.precipType = Snow;
-  } else if (strcmp(precipType, "hail") == 0 ) {
-    result.precipType = Hail;
   } else if (strcmp(precipType, "sleet") == 0 ) {
     result.precipType = Sleet;
   }
 
   result.maxTmp = root["daily"]["data"][0]["temperatureHigh"];
   result.minTmp = root["daily"]["data"][0]["temperatureLow"];
-  // }
 
+  result.windSpeed = root["daily"]["data"][0]["windSpeed"];
+  Serial.print("Wind speed: ");
+  Serial.print(result.windSpeed);
+  
+  result.thunder = false;
   return result;
 }
 
