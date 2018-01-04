@@ -17,16 +17,17 @@ CRGB leds[NUM_LEDS];
 
 const char* messages[] = {
   "ball boy",
+  "bread for people",
+  "bread for babies",
+  "bread for ducks",
+  "you must obey the clock",
+  "you must obey the egg timer",
+  "you must obey things in this corner",
+  "commit",
   "woop woop time to rub bellies woop woop",
   "all your base are belong to us",
   "accuracy is guaranteed",
   "do the ham dance",
-  "i am a clock   I am not a wife   sorry",
-  "my diodes are itchy",
-  "i cant wait for it to snow",
-  "i am a precognitive clock",
-  "it might rain tomorrow",
-  "i would like to live in some kind of box one of these days",
   "striving to be less shite",
   "just a baby fart",
 };
