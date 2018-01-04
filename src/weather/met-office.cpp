@@ -1,6 +1,6 @@
 #include "met-office.h"
-#include "network.h"
-#include "display.h"
+#include "../network.h"
+#include "../display.h"
 
 WiFiClient client;
 
@@ -38,6 +38,13 @@ const char* weatherTypes[] = {
   "thunder",// 30 - Thunder
   "rainbows",
 };
+
+// constants
+
+const char server[] = "datapoint.metoffice.gov.uk";
+const char resource[] = "/public/data/val/wxfcs/all/json/351207?res=daily&key=***REMOVED***"; // http resource
+const unsigned long HTTP_TIMEOUT = 10000;  // max respone time from server
+const size_t MAX_CONTENT_SIZE = 4096;       // max size of the HTTP response
 
 // MARK: WEATHER FETCHING
 weather latestWeather = { -1, 0, 1, 1 };
