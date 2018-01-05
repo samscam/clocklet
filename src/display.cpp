@@ -156,6 +156,11 @@ void maskTime(const DateTime& time){
   for (int i = 0; i<4 ; i++){
     setDigit(digit[i], i);
   }
+
+  // skip leading zeroes
+  if (digit[0] == 0){
+    setDigit(' ',0);
+  }
 }
 
 uint8_t brightness;
