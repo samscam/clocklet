@@ -16,6 +16,7 @@ struct weather {
   float minTmp;
 	bool thunder;
 	float windSpeed;
+	float cloudCover;
 };
 
 

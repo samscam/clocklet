@@ -106,8 +106,8 @@ weather DarkSky::readReponseContent() {
   result.minTmp = root["daily"]["data"][0]["temperatureLow"];
 
   result.windSpeed = root["daily"]["data"][0]["windSpeed"];
-  Serial.print("Wind speed: ");
-  Serial.print(result.windSpeed);
+
+  result.cloudCover = root["daily"]["data"][0]["cloudCover"];
   
   result.thunder = false;
   return result;
