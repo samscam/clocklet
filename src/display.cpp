@@ -154,7 +154,7 @@ void maskTime(const DateTime& time){
   digit[3] = m - (m/10)*10;
 
   for (int i = 0; i<4 ; i++){
-    setDigit(digit[i], i); // show on digit 0 (=first). Color is rgb(64,0,0).
+    setDigit(digit[i], i);
   }
 }
 
@@ -296,6 +296,8 @@ void fillDigits_rainbow(bool includePoints, float speed){
   //p("speed %f - cycle %f - hue %d \n",speed,cycle,hue);
 
   if (includePoints){
+    // when we include the points, we treat each digit as 4 columns of segments
+    // the decimal point is a column in its own right
     CHSV cols[4*NUM_DIGITS];
     fill_rainbow( cols, 4*NUM_DIGITS, hue, 6);
 
@@ -308,6 +310,8 @@ void fillDigits_rainbow(bool includePoints, float speed){
     }
 
   } else {
+    // treat each digit as 3 columns of segments
+    // the decimal point is given the same colour as the right-most vertical segments
     CHSV cols[3*NUM_DIGITS];
 
     fill_rainbow( cols, 3*NUM_DIGITS, hue, 8);
@@ -320,9 +324,6 @@ void fillDigits_rainbow(bool includePoints, float speed){
       leds[i] = cols[ mapping[i%8] + ((i/8)*3) ];
     }
   }
-
-
-
 }
 
 // Rain
