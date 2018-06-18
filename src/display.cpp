@@ -125,7 +125,7 @@ void displayTime(const DateTime& time, weather weather){
     }
   }
 
-  if (minTmp<=0){
+  if (minTmp <= 0.0f){
     addFrost();
   }
 
