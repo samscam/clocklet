@@ -78,7 +78,7 @@ bool connectWifi(){
 
   switch (status) {
     case WL_CONNECTED:
-      scrollText("wifi good");
+      scrollText("wife good");
       return true;
       break;
     case WL_CONNECT_FAILED:
