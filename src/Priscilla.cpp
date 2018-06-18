@@ -111,12 +111,16 @@ void loop() {
 
 void updatesHourly(){
   Serial.println("Hourly update");
-  weatherClient -> fetchWeather();
+  if (connectWifi()) {
+    weatherClient -> fetchWeather();
+  }
 }
 
 void updatesDaily(){
   Serial.println("Daily update");
-  updateRTCTimeFromNTP();
+  if (connectWifi()) {
+    updateRTCTimeFromNTP();
+  }
   generateDSTTimes(rtc.now().year());
 }
 
