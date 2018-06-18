@@ -129,9 +129,9 @@ void displayTime(const DateTime& time, weather weather){
     addFrost();
   }
 
-  if (weather.thunder){
-    addLightening();
-  }
+  // if (weather.thunder){
+  //   addLightening();
+  // }
 
   maskTime(time);
 
