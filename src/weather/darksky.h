@@ -1,10 +1,7 @@
 #ifndef PRISCILLA_DARKSKY
 #define PRISCILLA_DARKSKY
 
-#include <Arduino.h>
-#include <WiFi101.h>
-#include <ArduinoJson.h>
-#include "weather.h"
+#include "weather-client.h"
 
 #define DARKSKY_APIKEY "***REMOVED***"
 #define DARKSKY_SERVER "api.darksky.net"
@@ -14,25 +11,10 @@
 #define DARKSKY_MAX_CONTENT_SIZE 16384       // max size of the HTTP response
 
 
-class DarkSky{
-
-private:
-  bool connect(const char* hostName);
-
-  void disconnect();
-
-
-  WiFiClient *client;
-
-  bool sendRequest(const char* host, const char* resource);
-  bool skipResponseHeaders();
-  weather readReponseContent();
-
+class DarkSky : public WeatherClient {
 public:
   DarkSky(WiFiClient &client);
-  void fetchWeather();
-  weather latestWeather;
-
+  weather readReponseContent();
 };
 
 

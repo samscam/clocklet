@@ -11,7 +11,7 @@
 
 
 #include "weather/weather.h"
-// #include "weather/met-office.h"
+#include "weather/darksky.h"
 #include "network.h"
 #include "display.h"
 #include "colours.h"

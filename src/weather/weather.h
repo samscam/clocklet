@@ -20,7 +20,4 @@ struct weather {
 };
 
 
-
-#include "darksky.h"
-
 #endif
