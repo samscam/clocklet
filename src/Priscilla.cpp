@@ -74,7 +74,7 @@ unsigned long lastDailyUpdate = 0;
 unsigned int fuzz = random(5,300);
 
 WiFiClient client;
-DarkSky *weatherClient = new DarkSky(client);
+MetOffice *weatherClient = new MetOffice(client);
 
 void loop() {
 

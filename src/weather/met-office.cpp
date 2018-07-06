@@ -50,7 +50,7 @@ weather MetOffice::readReponseContent() {
   // Allocate a temporary memory pool
   DynamicJsonBuffer jsonBuffer(METOFFICE_MAX_CONTENT_SIZE);
 
-  JsonObject& root = jsonBuffer.parseObject(client);
+  JsonObject& root = jsonBuffer.parseObject(*client);
 
   if (!root.success()) {
     Serial.println("JSON parsing failed!");
@@ -63,7 +63,8 @@ weather MetOffice::readReponseContent() {
   result.precipChance = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][0]["PPd"];
   result.maxTmp = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][0]["Dm"];
   result.minTmp = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][1]["Nm"];
-
+  result.windSpeed = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][0]["S"];
+  result.windSpeed = result.windSpeed * 0.44704; // convert to m/s
   result.precipType = Rain;
 
   if (rawType >= 16 && rawType <= 21) {
