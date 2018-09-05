@@ -1,5 +1,4 @@
 #include "met-office.h"
-#include "../display.h"
 
 MetOffice::MetOffice(WiFiClient &client) : WeatherClient(client)  {
   this->client = &client;

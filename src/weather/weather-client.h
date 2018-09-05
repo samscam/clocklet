@@ -12,8 +12,12 @@
 class WeatherClient {
 
 public:
-  bool connect(char* host, bool ssl);
 
+  WeatherClient(WiFiClient &client);
+  void fetchWeather();
+  Weather latestWeather;
+
+  bool connect(char* host, bool ssl);
   void disconnect();
 
   char* server;
@@ -24,11 +28,7 @@ public:
 
   bool sendRequest(char* host, char* resource);
   bool skipResponseHeaders();
-  virtual weather readReponseContent();
-
-  WeatherClient(WiFiClient &client);
-  void fetchWeather();
-  weather latestWeather;
+  virtual Weather readReponseContent();
 
 };
 

@@ -1,6 +1,25 @@
-#include "display.h"
-#include "p.h"
-#include "settings.h"
+#include "RGBDigit.h"
+#include "../p.h"
+#include "../settings.h"
+
+RGBDigit::RGBDigit() : Display() {
+  initDisplay()
+}
+
+// PUBLIC METHODS
+
+void RGBDigit::setWeather(Weather weather){
+
+}
+
+void RGBDigit::displayTime(const DateTime& time){
+
+}
+void RGBDigit::scrollText(const char *stringy){
+
+}
+
+// PRIVATE
 
 FASTLED_USING_NAMESPACE
 
@@ -12,25 +31,6 @@ static const float max_brightness = 150;
 CRGB leds[NUM_LEDS];
 
 
-// ----------- RANDOM MESSAGES
-
-const char* messages[] = {
-  "ball boy",
-  "bread for everybody",
-  "too darn hot",
-  "you must obey the clock",
-  "commit",
-  "woop woop time to rub bellies woop woop",
-  "all your base are belong to us",
-  "accuracy is guaranteed",
-  "do the ham dance",
-  "striving to be less shite",
-  "just a baby fart",
-  "i support thunder again",
-};
-
-#define numMessages (sizeof(messages)/sizeof(char *)) //array size
-
 
 void initDisplay(){
     FastLED.addLeds<LED_TYPE,DATA_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
@@ -39,16 +39,7 @@ void initDisplay(){
     analogReadResolution(12);
 }
 
-void randoMessage(){
-  int messageIndex = random(0,numMessages-1);
-  const char* randoMessage = messages[messageIndex];
 
-  // Do it three times
-  for (int i=0;i<3;i++){
-    CHSV colour = CHSV(random8(), 255, 255);
-    scrollText(randoMessage,colour);
-  }
-}
 
 // MARK: SCROLLING TEXT
 
@@ -58,6 +49,11 @@ void scrollText(const char *stringy){
 
 void scrollText_fail(const char *stringy){
   scrollText(stringy, CRGB::Red);
+}
+
+void scrollText_randomColour(const char *stringy){
+  CHSV colour = CHSV(random8(), 255, 255);
+  scrollText(stringy, colour);
 }
 
 void scrollText(const char *stringy, CRGB colour){

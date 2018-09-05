@@ -1,5 +1,4 @@
-#include "darksky.h"
-#include "../display.h"
+#import "darksky.h"
 
 DarkSky::DarkSky(WiFiClient &client) : WeatherClient(client) {
   this->client = &client;

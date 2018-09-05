@@ -1,5 +1,5 @@
-#ifndef PRISCILLA_DISPLAY
-#define PRISCILLA_DISPLAY
+#ifndef PRISCILLA_RGBDIGIT
+#define PRISCILLA_RGBDIGIT
 
 #include <Arduino.h>
 #include <FastLED.h>
@@ -28,7 +28,6 @@ void maskTime(const DateTime& time);
 
 void updateBrightness();
 
-void randoMessage();
 void scrollText(const char *stringy);
 void scrollText_fail(const char *stringy);
 void scrollText(const char *stringy, CRGB colour);

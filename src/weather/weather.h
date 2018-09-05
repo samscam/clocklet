@@ -6,7 +6,7 @@ enum PrecipType {
 	Rain, Snow, Sleet
 };
 
-struct weather {
+struct Weather {
   const char* summary;
   const char* type;
   float precipChance;

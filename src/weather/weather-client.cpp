@@ -10,7 +10,7 @@ void WeatherClient::fetchWeather(){
 
   if (connect(this->server, this->ssl)) {
     if (sendRequest(this->server, this->resource) && skipResponseHeaders()) {
-      weather response = readReponseContent();
+      Weather response = readReponseContent();
       Serial.print("Weather: ");
       Serial.println(response.summary);
       CRGB minColour = colourFromTemperature(response.minTmp);
@@ -72,10 +72,10 @@ bool WeatherClient::skipResponseHeaders() {
   return ok;
 }
 
-weather WeatherClient::readReponseContent() {
+Weather WeatherClient::readReponseContent() {
   Serial.println("This is a stub!");
 
-  weather result;
+  Weather result;
   return result;
 }
 
