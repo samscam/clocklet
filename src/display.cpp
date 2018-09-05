@@ -16,12 +16,9 @@ CRGB leds[NUM_LEDS];
 
 const char* messages[] = {
   "ball boy",
-  "bread for people",
-  "bread for babies",
-  "bread for ducks",
+  "bread for everybody",
+  "too darn hot",
   "you must obey the clock",
-  "you must obey the egg timer",
-  "you must obey things in this corner",
   "commit",
   "woop woop time to rub bellies woop woop",
   "all your base are belong to us",
@@ -29,6 +26,7 @@ const char* messages[] = {
   "do the ham dance",
   "striving to be less shite",
   "just a baby fart",
+  "i support thunder again",
 };
 
 #define numMessages (sizeof(messages)/sizeof(char *)) //array size
