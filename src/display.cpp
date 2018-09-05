@@ -50,6 +50,8 @@ void randoMessage(){
   }
 }
 
+// MARK: SCROLLING TEXT
+
 void scrollText(const char *stringy){
   scrollText(stringy, CRGB::Green);
 }
@@ -58,7 +60,9 @@ void scrollText_fail(const char *stringy){
   scrollText(stringy, CRGB::Red);
 }
 
-
+void scrollText(const char *stringy, CRGB colour){
+  scrollText(stringy, colour, colour);
+}
 
 void scrollText(const char *stringy, CRGB startColour, CRGB endColour) {
   Serial.println(stringy);
@@ -91,11 +95,8 @@ void scrollText(const char *stringy, CRGB startColour, CRGB endColour) {
   }
 }
 
-void scrollText(const char *stringy, CRGB colour){
-  scrollText(stringy, colour, colour);
-}
 
-// MARK: DISPLAY THINGS --------------------------------------
+// MARK: DISPLAY TIME --------------------------------------
 
 
 // Remember if the colon was drawn on the display so it can be blinked
@@ -166,6 +167,8 @@ void maskTime(const DateTime& time){
     setDigit(' ',0);
   }
 }
+
+// MARK: BRIGHTNESS ADJUSTMENTS
 
 uint8_t brightness;
 
@@ -436,7 +439,7 @@ void fillDigits_heat( float speed, float minTemp, float maxTemp){
 void fillDigits_gradient(CRGB startColour, CRGB endColour){
   uint8_t numCols = 3 * NUM_DIGITS;
   CRGB cols[3 * NUM_DIGITS];
-  
+
   fill_gradient_RGB(cols , 0,  startColour, numCols-1, endColour);
 
   int mapping[] = {
