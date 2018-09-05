@@ -13,7 +13,9 @@ void WeatherClient::fetchWeather(){
       weather response = readReponseContent();
       Serial.print("Weather: ");
       Serial.println(response.summary);
-      scrollText(response.summary);
+      CRGB minColour = colourFromTemperature(response.minTmp);
+      CRGB maxColour = colourFromTemperature(response.maxTmp);
+      scrollText(response.summary,minColour,maxColour);
       disconnect();
       latestWeather = response;
       return;

@@ -32,14 +32,21 @@ void randoMessage();
 void scrollText(const char *stringy);
 void scrollText_fail(const char *stringy);
 void scrollText(const char *stringy, CRGB colour);
+void scrollText(const char *stringy, CRGB startColour, CRGB endColour);
+
+
 void setDigit(int number, int digit);
 void setDigit(char character, int digit);
 void setDigits(const char *string);
+void setDigits(int number);
 
 void setDigitMask(byte mask, int digit);
 
 void setDot(bool state, int digit);
 void fillDigits_rainbow(bool includePoints, float speed);
+CRGB colourFromTemperature(float temperature);
+void fillDigits_heat( float speed, float minTemp, float maxTemp); //temps in •c
+void fillDigits_gradient(CRGB startColour, CRGB endColour);
 
 void addRain( fract8 chanceOfRain, CRGB colour);
 void initRain();

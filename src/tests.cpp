@@ -5,19 +5,35 @@
 #define FPS 60
 
 void runDemo(){
+
+    // Temperature Colours
+
+    for (int f = -30; f<60; f++){
+      updateBrightness();
+
+      fillDigits_heat(0, f, f );
+
+      setDigits(f);
+
+      FastLED.show();
+      FastLED.delay(500);
+    }
+
+
+    runDemo();
     // rain
     // fract8 chance = 255;
-    for (int16_t speed = 0; speed < 50; speed += 1){
-      for (int f = 0; f<60; f++){
-        updateBrightness();
-        fillDigits_rainbow(true, speed);
-
-        setDigits("wind");
-        FastLED.show();
-        FastLED.delay(1000/FPS);
-      }
-      Serial.println(speed);
-    }
+    // for (int16_t speed = 0; speed < 50; speed += 1){
+    //   for (int f = 0; f<60; f++){
+    //     updateBrightness();
+    //     fillDigits_rainbow(true, speed);
+    //
+    //     setDigits("wind");
+    //     FastLED.show();
+    //     FastLED.delay(1000/FPS);
+    //   }
+    //   Serial.println(speed);
+    // }
 /*
     for (int16_t chance = 0; chance < 255; chance = chance + 16){
       for (int f = 0; f<60; f++){

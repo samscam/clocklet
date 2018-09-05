@@ -58,7 +58,9 @@ void scrollText_fail(const char *stringy){
   scrollText(stringy, CRGB::Red);
 }
 
-void scrollText(const char *stringy, CRGB colour){
+
+
+void scrollText(const char *stringy, CRGB startColour, CRGB endColour) {
   Serial.println(stringy);
 
   char charbuffer[DIGIT_COUNT] = { 0 };
@@ -70,7 +72,7 @@ void scrollText(const char *stringy, CRGB colour){
 
   int i;
   for ( i = 0; i < extendedLen ; i++ ) {
-    fill_solid(leds,NUM_LEDS,colour);
+    fillDigits_gradient(startColour,endColour);
 
     for ( int d = 0; d < DIGIT_COUNT ; d++ ) {
       if (d == 3) {
@@ -87,8 +89,10 @@ void scrollText(const char *stringy, CRGB colour){
     FastLED.delay(200);
 
   }
+}
 
-
+void scrollText(const char *stringy, CRGB colour){
+  scrollText(stringy, colour, colour);
 }
 
 // MARK: DISPLAY THINGS --------------------------------------
@@ -99,7 +103,10 @@ void scrollText(const char *stringy, CRGB colour){
 bool blinkColon = false;
 
 void displayTime(const DateTime& time, weather weather){
+
   fillDigits_rainbow(false, weather.windSpeed);
+
+  //fillDigits_heat(weather.windSpeed, weather.minTmp , weather.maxTmp);
 
   float precip = weather.precipChance * 100;
   float minTmp = weather.minTmp;
@@ -109,7 +116,6 @@ void displayTime(const DateTime& time, weather weather){
   fract8 rainRate = (precip * 255) / 75.0;
 
   if (rainRate > 0) {
-    // p("Rain %f - %f - %d\n",anal,precip,rainRate);
     switch (weather.precipType) {
       case Snow:
         addSnow(rainRate);
@@ -127,9 +133,9 @@ void displayTime(const DateTime& time, weather weather){
     addFrost();
   }
 
-  // if (weather.thunder){
-  //   addLightening();
-  // }
+  if (weather.thunder){
+    addLightening();
+  }
 
   maskTime(time);
 
@@ -180,7 +186,6 @@ void updateBrightness(){
   float bRange = max_brightness - min_brightness;
 
   brightness = (lightReading * bRange / 4096.0f) + min_brightness;
-  // Serial.println(brightness);
   FastLED.setBrightness(brightness);
 }
 
@@ -239,7 +244,10 @@ const byte _charMasks[36] = {
 
 void setDigit(char character, int digit){
   byte mask;
-  if (character < 48) {
+  if (character == 45){
+    // minus
+    mask = B00000010;
+  } else if (character < 48) {
     mask = B00000000;
     // It's a control char
   } else if (character >= 48 && character <= 57) {
@@ -279,14 +287,40 @@ void setDot(bool state, int digit){
   leds[ 7 + (digit * DIGIT_SEGS)] = state ? CRGB::White : CRGB::Black ;
 }
 
+/// Display a string (up to the length of the display)
 void setDigits(const char *string){
   for (int i=0;i<DIGIT_COUNT;i++){
     setDigit(string[i],i);
   }
 }
 
+/// Display an integer
+void setDigits(int number){
+  bool negative = false;
+
+  if (number < 0) {
+    negative = true;
+    number = number * -1;
+  }
+
+  for (int i=0;i<DIGIT_COUNT-1;i++){
+    int fromRight = DIGIT_COUNT - i - 1;
+    int units = number % 10;
+    setDigit(units,fromRight);
+    number = number / 10;
+  }
+
+  if (negative){
+    setDigit('-',0);
+  } else {
+    setDigit(' ',0);
+  }
+
+}
+
 float cycle = 0;
 void fillDigits_rainbow(bool includePoints, float speed){
+
   // speed is in m/s
   // at 1 m/s cycle takes 51 seconds
   // at 10 m/s cycle takes 5.1 seconds
@@ -329,6 +363,90 @@ void fillDigits_rainbow(bool includePoints, float speed){
   }
 }
 
+
+// CRGBPalette16 tempPalette = CRGBPalette16(0x00FFFF, 0xFFFFFF, 0x00FF00, 0xFFFF00, 0xFF0000, 0xFF00FF}
+
+// Convert the temps in °c to uint8_t
+// -10 = 0
+// 0 = 51
+// 10 = 102
+// 20 = 153
+// 30 = 204
+// 40 = 255
+
+DEFINE_GRADIENT_PALETTE( heatmap_gp ) {
+  0,     0,  255,  255,
+51,   255,  255, 255,
+102,   0,255,  0,
+153, 255,255,0,
+204,   255,0,0,
+255,  255,0,255
+ };
+
+CRGBPalette16  tempPalette = heatmap_gp;
+
+CRGB colourFromTemperature(float temperature){
+  int min = -10;
+  int max = 40;
+
+  if (temperature < min) { temperature = min; }
+  if (temperature > max) { temperature = max; }
+
+  uint8_t scaled = (((temperature - min) * 255) / (max - min));
+  return ColorFromPalette(tempPalette, scaled);
+}
+
+void fillDigits_heat( float speed, float minTemp, float maxTemp){
+
+  CRGB startColour = colourFromTemperature(minTemp);
+  CRGB endColour = colourFromTemperature(maxTemp);
+
+  // construct restricted palette
+  // really should not be doing this every iteration
+  // CRGBPalette16 gpal = CRGBPalette16()
+  // for (int i = 0; i < 16; i++) {
+  //   uint8_t tmp = min + ((max - min) / 16) * i;
+  //   gpal[i] = ColorFromPalette(tempPalette, tmp);
+  // }
+
+  // speed is in m/s
+  // at 1 m/s cycle takes 51 seconds
+  // at 10 m/s cycle takes 5.1 seconds
+  cycle = cycle + ( (speed * 5.0f ) / (float)FPS );
+  if (cycle > 255.0f) {
+    cycle -= 255.0f;
+  }
+  uint8_t hue = cycle;
+
+  uint8_t numCols = 3 * NUM_DIGITS;
+  CRGB cols[3 * NUM_DIGITS];
+  // fill_solid(cols, numCols, endColour);
+  fill_gradient_RGB(cols , 0,  startColour, numCols-1, endColour);
+  // fill_palette(cols, numCols, hue, 6, gpal, 255, LINEARBLEND);
+
+  int mapping[] = {
+    1,2,2,1,0,0,1,2
+  };
+
+  for (int i = 0; i < NUM_LEDS; i++){
+    leds[i] = cols[ mapping[i%8] + ((i/8)*3) ];
+  }
+}
+
+void fillDigits_gradient(CRGB startColour, CRGB endColour){
+  uint8_t numCols = 3 * NUM_DIGITS;
+  CRGB cols[3 * NUM_DIGITS];
+  
+  fill_gradient_RGB(cols , 0,  startColour, numCols-1, endColour);
+
+  int mapping[] = {
+    1,2,2,1,0,0,1,2
+  };
+
+  for (int i = 0; i < NUM_LEDS; i++){
+    leds[i] = cols[ mapping[i%8] + ((i/8)*3) ];
+  }
+}
 // Rain
 
 CRGB rainLayer[NUM_LEDS];

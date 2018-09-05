@@ -61,9 +61,11 @@ weather MetOffice::readReponseContent() {
   result.type = weatherTypes[rawType];
   result.summary = weatherTypes[rawType];
   result.precipChance = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][0]["PPd"];
+  result.precipChance = result.precipChance / 100.0;
   result.maxTmp = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][0]["Dm"];
   result.minTmp = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][1]["Nm"];
   result.windSpeed = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][0]["S"];
+
   result.windSpeed = result.windSpeed * 0.44704; // convert to m/s
   result.precipType = Rain;
 

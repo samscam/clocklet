@@ -165,6 +165,7 @@ uint16_t dstAdjust(DateTime time){
 
 void updateRTCTimeFromNTP(){
   if ( !connectWifi() ){
+    Serial.println("Wifi is actually down now");
     return;
   }
 
