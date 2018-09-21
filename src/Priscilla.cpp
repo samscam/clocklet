@@ -112,6 +112,7 @@ void loop() {
 void updatesHourly(){
   Serial.println("Hourly update");
   if (connectWifi()) {
+    weatherClient -> timeThreshold = (rtc.now().hour() * 60) - 180;
     weatherClient -> fetchWeather();
   }
 }

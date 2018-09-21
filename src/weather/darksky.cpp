@@ -21,7 +21,7 @@ weather DarkSky::readReponseContent() {
   }
   weather result;
 
-  result.type = root["daily"]["data"][0]["icon"];
+  result.type = 0;// root["daily"]["data"][0]["icon"];
   result.summary = root["daily"]["data"][0]["summary"];
   result.precipChance = root["daily"]["data"][0]["precipProbability"];
   result.precipIntensity = root["daily"]["data"][0]["precipIntensity"];

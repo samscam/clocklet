@@ -1,11 +1,11 @@
 #include "met-office.h"
-#include "../display.h"
 
 MetOffice::MetOffice(WiFiClient &client) : WeatherClient(client)  {
   this->client = &client;
   this->server = METOFFICE_SERVER;
   this->resource = METOFFICE_PATH;
   this->ssl = false;
+  this->timeThreshold = 0;
 };
 
 
@@ -56,29 +56,70 @@ weather MetOffice::readReponseContent() {
     Serial.println("JSON parsing failed!");
     return latestWeather;
   }
-  weather result;
-  int rawType = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][0]["W"];
-  result.type = weatherTypes[rawType];
-  result.summary = weatherTypes[rawType];
-  result.precipChance = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][0]["PPd"];
-  result.precipChance = result.precipChance / 100.0;
-  result.maxTmp = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][0]["Dm"];
-  result.minTmp = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][1]["Nm"];
-  result.windSpeed = root["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][0]["S"];
+  weather result = {0};
+  result.minTmp = 100.0; // Max out the minimum temperature
 
-  result.windSpeed = result.windSpeed * 0.44704; // convert to m/s
+  // This for 3hourly time periods
+
+  // We fish out the next n reps from the payload
+  static int repsToMunge = 4; // Should be 12 hour window starting a bit in the past...
+
+  // We may be interested in overlapping days - unwrap them into a big long array
+  JsonArray& periods = root["SiteRep"]["DV"]["Location"]["Period"];
+
+  JsonArray& flatReps = jsonBuffer.createArray();
+  int i=0;
+  bool stop = false;
+  bool firstDay = true;
+
+  for (JsonObject& period : periods) {
+    JsonArray& reps = period["Rep"];
+    for (JsonObject & rep : reps){
+      if (firstDay && rep["$"] >= timeThreshold) {
+        flatReps.add(rep);
+        i++;
+      }
+      if (i == repsToMunge){
+        stop = true;
+        break;
+      }
+
+    }
+    if (stop == true) {
+      break;
+    }
+    firstDay = false;
+  }
+
+  // Then we merge them down picking the worst case weather...
+  for (JsonObject& rep : flatReps){
+    rep.prettyPrintTo(Serial);
+    int type = rep["W"];
+    if (type > result.type) {
+      result.type = type;
+      result.summary = weatherTypes[type];
+    }
+
+    float precipChance = rep["Pp"].as<float>() / 100.0 ; // as a float between 0 and 1
+    result.precipChance =  precipChance > result.precipChance ? precipChance : result.precipChance;
+
+    float temp = rep["T"];
+    result.maxTmp = temp > result.maxTmp ? temp : result.maxTmp;
+    result.minTmp = temp < result.minTmp ? temp : result.minTmp;
+
+    float windSpeed = rep["S"].as<float>() * 0.44704; // in m/s
+    result.windSpeed = windSpeed > result.windSpeed ? windSpeed : result.windSpeed;
+  }
+
   result.precipType = Rain;
-
-  if (rawType >= 16 && rawType <= 21) {
+  if (result.type >= 16 && result.type <= 21) {
     result.precipType = Sleet;
-  } else if (rawType >= 22 && rawType <= 27) {
+  } else if (result.type >= 22 && result.type <= 27) {
     result.precipType = Snow;
   }
 
-  if (rawType >= 28 && rawType <= 30) {
+  if (result.type >= 28 && result.type <= 30) {
     result.thunder = true;
-  } else {
-    result.thunder = false;
   }
 
   return result;
