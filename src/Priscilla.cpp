@@ -48,14 +48,14 @@ void setup() {
  // }
   randomSeed(analogRead(0));
 
+
+
   Serial.println("Clock starting!");
   Wire.begin();
   rtc.begin();
 
   initDisplay();
 
-
-  updateBrightness();
 
   // runDemo();
 
@@ -77,7 +77,6 @@ WiFiClient client;
 MetOffice *weatherClient = new MetOffice(client);
 
 void loop() {
-
   updateBrightness();
 
   DateTime time = rtc.now();
@@ -221,7 +220,7 @@ void updateRTCTimeFromNTP(){
 
   rtc.adjust(DateTime(epoch));
 
-  Serial.print("Time to adjust time:");
+  Serial.print("Time to adjust time (ms):");
   Serial.println(millis() - startMillis);
 
   scrollText("synchronised");
