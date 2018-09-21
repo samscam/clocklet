@@ -8,7 +8,7 @@ enum PrecipType {
 
 struct Weather {
   const char* summary;
-  const char* type;
+  int type; // The raw type identifier which is used internally by metoffice
   float precipChance;
 	float precipIntensity;
   PrecipType precipType;

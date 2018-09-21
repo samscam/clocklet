@@ -25,8 +25,8 @@ FASTLED_USING_NAMESPACE
 
 // LDR pins
 int lightPin = 0;
-static const float min_brightness = 5;
-static const float max_brightness = 150;
+static const float min_brightness = 10;
+static const float max_brightness = 200;
 
 CRGB leds[NUM_LEDS];
 
@@ -37,6 +37,10 @@ void initDisplay(){
 
     initRain();
     analogReadResolution(12);
+
+    for (int i = 0; i<10 ; i++){
+      updateBrightness();
+    }
 }
 
 
@@ -478,7 +482,7 @@ void addRain( fract8 chanceOfRain, CRGB colour)
 
     rainLayer[ allvsegs[segnum] ] = colour;
   }
-  nscale8_video(leds, NUM_LEDS, 255 - (chanceOfRain * 0.75));
+  nscale8_video(leds, NUM_LEDS, 255 - (chanceOfRain * 0.5));
 
   for(int i = 0; i < NUM_LEDS; i++) { leds[i] += rainLayer[i] ; }
 }
