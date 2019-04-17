@@ -4,7 +4,6 @@
 #include <Arduino.h>
 
 #include <SPI.h>
-#include <WiFi101.h>
 #include <WiFiUdp.h>
 #include <Wire.h>
 #include <RTClib.h>
@@ -14,7 +13,9 @@
 //#include "weather/darksky.h"
 #include "weather/met-office.h"
 #include "network.h"
-#include "display.h"
+
+#include "Displays/RGBDigit.h"
+
 #include "colours.h"
 
 
@@ -34,7 +35,7 @@ void updateRTCTimeFromNTP();
 
 
 void sendNTPpacket(IPAddress& address);
-
+void updateBrightness();
 
 
 

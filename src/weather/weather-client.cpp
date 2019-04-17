@@ -1,27 +1,27 @@
 #include "weather-client.h"
-#include "../display.h"
 
 WeatherClient::WeatherClient(WiFiClient &client) {
   this->client = &client;
 };
 
 
-void WeatherClient::fetchWeather(){
+bool WeatherClient::fetchWeather(){
 
   if (connect(this->server, this->ssl)) {
     if (sendRequest(this->server, this->resource) && skipResponseHeaders()) {
       Weather response = readReponseContent();
       Serial.print("Weather: ");
       Serial.println(response.summary);
-      CRGB minColour = colourFromTemperature(response.minTmp);
-      CRGB maxColour = colourFromTemperature(response.maxTmp);
-      scrollText(response.summary,minColour,maxColour);
+      // CRGB minColour = colourFromTemperature(response.minTmp);
+      // CRGB maxColour = colourFromTemperature(response.maxTmp);
+      // scrollText(response.summary,minColour,maxColour);
       disconnect();
       latestWeather = response;
-      return;
+      return true;
     }
   }
-  scrollText_fail("Weather fetch failed");
+  return false;
+  // scrollText_fail("Weather fetch failed");
 }
 
 // Open connection to the HTTP server
@@ -29,8 +29,13 @@ bool WeatherClient::connect(char* host, bool ssl) {
   Serial.print("Connect to ");
   Serial.println(host);
   bool ok;
+
   if (ssl){
+    #if defined(ESP32)
     ok = client -> connectSSL(host, 443);
+    #else
+    ok = client -> connect(host, 443);
+    #endif
   } else {
     ok = client -> connect(host, 80);
   }

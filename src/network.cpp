@@ -1,13 +1,13 @@
 #include "network.h"
-#include "display.h"
 #include "settings.h"
 
 // MARK: NETWORK STUFF --------------------------------------
 
 bool setupWifi(){
-
+#if defined(ARDUINO_ARCH_SAMD)
   //Configure pins for Adafruit ATWINC1500 Feather
   WiFi.setPins(8,7,4,2);
+#endif
 
   return connectWifi();
 
@@ -19,24 +19,22 @@ bool connectWifi(){
   int status = WiFi.status();
 
   switch (status) {
+    // VVV ---- We are good :)
     case WL_CONNECTED:
-      //scrollText("wifi good");
       return true;
       break;
+    // VVV ---- This is never going to work :(
     case WL_NO_SHIELD:
-      //scrollText_fail("no wifi shield");
       return false;
       break;
+    // VVV ---- attempt a (re)connection on fallthrough
     case WL_CONNECT_FAILED:
-      //scrollText_fail("connect failed");
       break;
     case WL_CONNECTION_LOST:
       break;
     case WL_DISCONNECTED:
-      //scrollText_fail("disconnected");
       break;
     case WL_NO_SSID_AVAIL:
-      //scrollText_fail("network not found");
       break;
 
   }
@@ -53,6 +51,11 @@ bool connectWifi(){
     }
   }
 
+  // clear out any existing session - presuming harmless only on the Atwinc
+  #if defined(ARDUINO_ARCH_SAMD)
+  WiFi.end();
+  #endif
+
   lastConnectAttempt = millis();
 
   // If we have fallen through, try connecting
@@ -64,6 +67,8 @@ bool connectWifi(){
   // attempt to connect to WiFi network:
   Serial.print("Attempting to connect to SSID: ");
   Serial.println(ssid);
+
+
 
   status = WiFi.begin(ssid, pass);
 
@@ -78,17 +83,17 @@ bool connectWifi(){
 
   switch (status) {
     case WL_CONNECTED:
-      scrollText("wife good");
+      // scrollText("wife good");
       return true;
       break;
     case WL_CONNECT_FAILED:
-      scrollText_fail("connect failed");
+      // scrollText_fail("connect failed");
       break;
     case WL_DISCONNECTED:
-      scrollText_fail("disconnected");
+      // scrollText_fail("disconnected");
       break;
     case WL_NO_SSID_AVAIL:
-      scrollText_fail("network not found");
+      // scrollText_fail("network not found");
       break;
 
   }

@@ -1,6 +1,6 @@
-#ifndef TESTS
-#define TESTS
-
-void runDemo();
-
-#endif
+// #ifndef TESTS
+// #define TESTS
+//
+// void runDemo();
+//
+// #endif

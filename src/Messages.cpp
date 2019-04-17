@@ -1,4 +1,4 @@
-#import "Messages.h"
+#include "Messages.h"
 
 // ----------- RANDOM MESSAGES
 
@@ -19,12 +19,8 @@ const char* messages[] = {
 
 #define numMessages (sizeof(messages)/sizeof(char *)) //array size
 
-void randoMessage(){
+const char* randoMessage(){
   int messageIndex = random(0,numMessages-1);
   const char* randoMessage = messages[messageIndex];
-
-  // Do it three times
-  for (int i=0;i<3;i++){
-    scrollText(randoMessage);
-  }
+  return randoMessage;
 }

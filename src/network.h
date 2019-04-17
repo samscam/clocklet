@@ -2,8 +2,13 @@
 #define PRISCILLA_NETWORK
 
 #include <Arduino.h>
-#include <WiFi101.h>
 
+#if defined(ESP32)
+#include <WiFi.h>
+#include <WiFiClientSecure.h>
+#else
+#include <WiFi101.h>
+#endif
 
 // ----------- WIFI
 

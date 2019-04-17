@@ -14,7 +14,7 @@
 class DarkSky : public WeatherClient {
 public:
   DarkSky(WiFiClient &client);
-  weather readReponseContent();
+  Weather readReponseContent();
 };
 
 

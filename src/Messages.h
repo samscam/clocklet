@@ -1,2 +1,8 @@
+#ifndef PRISCILLA_MESSAGES
+#define PRISCILLA_MESSAGES
 
-void randoMessage();
+#include <Arduino.h>
+
+const char* randoMessage();
+
+#endif

@@ -2,8 +2,8 @@
 
 MetOffice::MetOffice(WiFiClient &client) : WeatherClient(client)  {
   this->client = &client;
-  this->server = METOFFICE_SERVER;
-  this->resource = METOFFICE_PATH;
+  this->server = (char *)METOFFICE_SERVER;
+  this->resource = (char *)METOFFICE_PATH;
   this->ssl = false;
   this->timeThreshold = 0;
 };
@@ -45,18 +45,19 @@ const char* weatherTypes[] = {
 };
 
 
-weather MetOffice::readReponseContent() {
+Weather MetOffice::readReponseContent() {
 
   // Allocate a temporary memory pool
-  DynamicJsonBuffer jsonBuffer(METOFFICE_MAX_CONTENT_SIZE);
+  DynamicJsonDocument root(METOFFICE_MAX_CONTENT_SIZE);
+  auto error = deserializeJson(root,*client);
 
-  JsonObject& root = jsonBuffer.parseObject(*client);
-
-  if (!root.success()) {
-    Serial.println("JSON parsing failed!");
+  if (error) {
+    Serial.print(F("deserializeJson() failed with code "));
+    Serial.println(error.c_str());
     return latestWeather;
   }
-  weather result = {0};
+
+  Weather result = {0};
   result.minTmp = 100.0; // Max out the minimum temperature
 
   // This for 3hourly time periods
@@ -65,16 +66,16 @@ weather MetOffice::readReponseContent() {
   static int repsToMunge = 4; // Should be 12 hour window starting a bit in the past...
 
   // We may be interested in overlapping days - unwrap them into a big long array
-  JsonArray& periods = root["SiteRep"]["DV"]["Location"]["Period"];
+  JsonArray periods = root["SiteRep"]["DV"]["Location"]["Period"];
 
-  JsonArray& flatReps = jsonBuffer.createArray();
+  JsonArray flatReps = root.createNestedArray();
   int i=0;
   bool stop = false;
   bool firstDay = true;
 
-  for (JsonObject& period : periods) {
-    JsonArray& reps = period["Rep"];
-    for (JsonObject & rep : reps){
+  for (JsonObject period : periods) {
+    JsonArray reps = period["Rep"];
+    for (JsonObject rep : reps){
       if (firstDay && rep["$"] >= timeThreshold) {
         flatReps.add(rep);
         i++;
@@ -92,8 +93,8 @@ weather MetOffice::readReponseContent() {
   }
 
   // Then we merge them down picking the worst case weather...
-  for (JsonObject& rep : flatReps){
-    rep.prettyPrintTo(Serial);
+  for (JsonObject rep : flatReps){
+    serializeJsonPretty(rep,Serial);
     int type = rep["W"];
     if (type > result.type) {
       result.type = type;

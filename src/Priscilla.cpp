@@ -1,6 +1,7 @@
 #include "Priscilla.h"
 #include "tests.h"
 #include "settings.h"
+#include "Messages.h"
 
 // CONFIGURATION  --------------------------------------
 
@@ -8,9 +9,10 @@
 int32_t tzAdjust = 0;
 
 // Set to false to display time in 12 hour format, or true to use 24 hour:
-#define TIME_24_HOUR      true
 
-
+// ----------- Display
+RGBDigit display = RGBDigit();
+//Adafruit7 display = Adafruit7();
 
 // ----------- RTC
 
@@ -19,7 +21,7 @@ int32_t tzAdjust = 0;
 
 RTC_DS3231 rtc = RTC_DS3231();
 
-// ----------- TIME SERVER
+// ----------- TIME SOURCE
 
 unsigned int localPort = 2390;      // local port to listen for UDP packets
 
@@ -36,6 +38,18 @@ byte packetBuffer[ NTP_PACKET_SIZE]; //buffer to hold incoming and outgoing pack
 // A UDP instance to let us send and receive packets over UDP
 WiFiUDP Udp;
 
+// ---------- Networking
+
+#if defined(ESP32)
+WiFiClientSecure client;
+#else
+WiFiClient client;
+#endif
+
+MetOffice *weatherClient = new MetOffice(client);
+
+
+
 
 // SETUP  --------------------------------------
 
@@ -48,18 +62,20 @@ void setup() {
  // }
   randomSeed(analogRead(0));
 
+  analogReadResolution(12);
 
+  for (int i = 0; i<10 ; i++){
+    updateBrightness();
+  }
 
   Serial.println("Clock starting!");
   Wire.begin();
   rtc.begin();
-
-  initDisplay();
-
+  display.setup();
 
   // runDemo();
 
-  scrollText("everything is awesome");
+  display.displayMessage("Everything is awesome");
 
   setupWifi();
 
@@ -73,13 +89,13 @@ unsigned long nextMessageDelay = 1000 * 60 * 30;
 unsigned long lastDailyUpdate = 0;
 unsigned int fuzz = random(5,300);
 
-WiFiClient client;
-MetOffice *weatherClient = new MetOffice(client);
 
 void loop() {
   updateBrightness();
 
   DateTime time = rtc.now();
+  time = time + TimeSpan(dstAdjust(time) * 3600);
+  time = time + TimeSpan(tzAdjust * 3600);
 
   if ( time.unixtime() > lastDailyUpdate + (60 * 60 * 24) + fuzz ) {
     updatesDaily();
@@ -95,14 +111,19 @@ void loop() {
 
   if (millis() > lastRandomMessageTime + nextMessageDelay){
 
-    randoMessage();
+    const char* message = randoMessage();
+    display.displayMessage(message);
+
     lastRandomMessageTime = millis();
     nextMessageDelay = 1000 * 60 * random(5,59);
   }
 
-  showTime();
+  display.setTime(time);
+  display.frameLoop();
 
-  FastLED.delay(1000/FPS);
+  delay(1000/FPS);
+
+  // FastLED.delay(1000/FPS);
 
 }
 
@@ -112,7 +133,10 @@ void updatesHourly(){
   Serial.println("Hourly update");
   if (connectWifi()) {
     weatherClient -> timeThreshold = (rtc.now().hour() * 60) - 180;
-    weatherClient -> fetchWeather();
+    if (weatherClient -> fetchWeather()){
+      display.setWeather(weatherClient->latestWeather);
+    }
+
   }
 }
 
@@ -122,14 +146,6 @@ void updatesDaily(){
     updateRTCTimeFromNTP();
   }
   generateDSTTimes(rtc.now().year());
-}
-
-
-void showTime(){
-  DateTime time = rtc.now();
-  time = time + TimeSpan(dstAdjust(time) * 3600);
-  time = time + TimeSpan(tzAdjust * 3600);
-  displayTime(time, weatherClient -> latestWeather);
 }
 
 DateTime dstStart;
@@ -186,7 +202,7 @@ void updateRTCTimeFromNTP(){
     packet = Udp.parsePacket();
     if (millis() - timech >= timeout) {
       Serial.print("Didn't get a packet back... skipping sync...");
-      scrollText_fail("failed to update ntp");
+      display.displayMessage("failed to update ntp");
       return;
     }
   }
@@ -223,7 +239,7 @@ void updateRTCTimeFromNTP(){
   Serial.print("Time to adjust time (ms):");
   Serial.println(millis() - startMillis);
 
-  scrollText("synchronised");
+  display.displayMessage("synchronised");
 }
 
 
@@ -251,4 +267,28 @@ void sendNTPpacket(IPAddress& address)
   Udp.beginPacket(address, 123); //NTP requests are to port 123
   Udp.write(packetBuffer, NTP_PACKET_SIZE);
   Udp.endPacket();
+}
+
+// brightness sensing
+
+int lightPin = 0;
+const int readingWindow = 10;
+float readings[readingWindow] = {4096.0f};
+int readingIndex = 0;
+
+
+void updateBrightness(){
+  readings[readingIndex] = analogRead(lightPin);
+  readingIndex++;
+  if (readingIndex == readingWindow) { readingIndex = 0; }
+  float sum = 0;
+  for (int loop = 0 ; loop < readingWindow; loop++) {
+    sum += readings[loop];
+  }
+  float lightReading = sum / readingWindow;
+
+  float bRange = max_brightness - min_brightness;
+
+  float brightness = (lightReading * bRange / 4096.0f) + min_brightness;
+  display.setBrightness(brightness);
 }

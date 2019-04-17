@@ -1,24 +1,24 @@
-#import "darksky.h"
+#include "darksky.h"
 
 DarkSky::DarkSky(WiFiClient &client) : WeatherClient(client) {
   this->client = &client;
-  this->server = DARKSKY_SERVER;
-  this->resource = DARKSKY_PATH;
+  this->server = (char *)DARKSKY_SERVER;
+  this->resource = (char *)DARKSKY_PATH;
   this->ssl = true;
 };
 
-weather DarkSky::readReponseContent() {
+Weather DarkSky::readReponseContent() {
 
   // Allocate a temporary memory pool
-  DynamicJsonBuffer jsonBuffer(WEATHER_MAX_CONTENT_SIZE);
+  DynamicJsonDocument root(WEATHER_MAX_CONTENT_SIZE);
+  auto error = deserializeJson(root,*client);
 
-  JsonObject& root = jsonBuffer.parseObject(*client);
-
-  if (!root.success()) {
-    Serial.println("JSON parsing failed!");
+  if (error) {
+    Serial.print(F("deserializeJson() failed with code "));
+    Serial.println(error.c_str());
     return latestWeather;
   }
-  weather result;
+  Weather result;
 
   result.type = 0;// root["daily"]["data"][0]["icon"];
   result.summary = root["daily"]["data"][0]["summary"];

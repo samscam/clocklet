@@ -14,7 +14,7 @@
 class MetOffice : public WeatherClient {
 public:
   MetOffice(WiFiClient &client);
-  weather readReponseContent();
+  Weather readReponseContent();
   int timeThreshold;
 };
 

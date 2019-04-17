@@ -2,7 +2,7 @@
 #define PRISCILLA_WEATHERCLIENT
 
 #include <Arduino.h>
-#include <WiFi101.h>
+#include "network.h"
 #include <ArduinoJson.h>
 #include "weather.h"
 
@@ -14,7 +14,7 @@ class WeatherClient {
 public:
 
   WeatherClient(WiFiClient &client);
-  void fetchWeather();
+  bool fetchWeather();
   Weather latestWeather;
 
   bool connect(char* host, bool ssl);
