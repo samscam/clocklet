@@ -11,6 +11,7 @@
 
 #if defined(ESP32)
 #define DATA_PIN    22
+#include "pgmspace.h"
 #else
 #define DATA_PIN    11
 #endif
@@ -26,18 +27,17 @@
 
 #define DIGIT_COUNT 4
 
-static const float min_brightness = 10;
-static const float max_brightness = 200;
 
-// DEFINE_GRADIENT_PALETTE( heatmap_pal ) {
-// 0,     0,  255,  255,
-// 51,   255,  255, 255,
-// 102,   0,255,  0,
-// 153, 255,255,0,
-// 204,   255,0,0,
-// 255,  255,0,255
-// };
-// CRGBPalette16  tempPalette = heatmap_pal;
+
+DEFINE_GRADIENT_PALETTE( heatmap_pal ) {
+0,     0,  255,  255,
+51,   255,  255, 255,
+102,   0,255,  0,
+153, 255,255,0,
+204,   255,0,0,
+255,  255,0,255
+};
+CRGBPalette16  tempPalette = heatmap_pal;
 
 class RGBDigit: public Display {
 public:

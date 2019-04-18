@@ -32,9 +32,9 @@ bool WeatherClient::connect(char* host, bool ssl) {
 
   if (ssl){
     #if defined(ESP32)
-    ok = client -> connectSSL(host, 443);
-    #else
     ok = client -> connect(host, 443);
+    #else
+    ok = client -> connectSSL(host, 443);
     #endif
   } else {
     ok = client -> connect(host, 80);

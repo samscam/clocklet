@@ -16,8 +16,15 @@ bool setupWifi(){
 uint32_t lastConnectAttempt = 0;
 
 bool connectWifi(){
-  int status = WiFi.status();
+  WiFi.begin("Broccoli","sweetcorn");
+  while (WiFi.status() != WL_CONNECTED) {
+  delay(500);
+  Serial.println("Connecting to WiFi..");
+  }
+  return true;
 
+  int status = WiFi.status();
+  Serial.println(status);
   switch (status) {
     // VVV ---- We are good :)
     case WL_CONNECTED:
