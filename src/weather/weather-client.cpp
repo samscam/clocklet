@@ -20,6 +20,7 @@ bool WeatherClient::fetchWeather(){
       return true;
     }
   }
+  Serial.print("Weather fetch failed");
   return false;
   // scrollText_fail("Weather fetch failed");
 }

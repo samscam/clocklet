@@ -8,8 +8,10 @@
 #include <Wire.h>
 #include <RTClib.h>
 
-
+// Weather type definitions
 #include "weather/weather.h"
+
+
 //#include "weather/darksky.h"
 #include "weather/met-office.h"
 #include "network.h"
@@ -17,10 +19,6 @@
 
 
 #include "colours.h"
-
-
-
-
 
 
 // Function declarations

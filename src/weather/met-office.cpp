@@ -46,10 +46,12 @@ const char* weatherTypes[] = {
 
 
 Weather MetOffice::readReponseContent() {
+  Serial.println("Reading metoffice content");
 
   // Allocate a temporary memory pool
   DynamicJsonDocument root(METOFFICE_MAX_CONTENT_SIZE);
   auto error = deserializeJson(root,*client);
+
 
   if (error) {
     Serial.print(F("deserializeJson() failed with code "));
@@ -67,8 +69,10 @@ Weather MetOffice::readReponseContent() {
 
   // We may be interested in overlapping days - unwrap them into a big long array
   JsonArray periods = root["SiteRep"]["DV"]["Location"]["Period"];
+  Serial.println("metoffice MUNGE");
 
-  JsonArray flatReps = root.createNestedArray();
+  DynamicJsonDocument flatRepsDoc = DynamicJsonDocument(2048);
+  JsonArray flatReps = flatRepsDoc.createNestedArray();
   int i=0;
   bool stop = false;
   bool firstDay = true;
@@ -92,9 +96,11 @@ Weather MetOffice::readReponseContent() {
     firstDay = false;
   }
 
+  Serial.println("metoffice MERGE");
+
   // Then we merge them down picking the worst case weather...
   for (JsonObject rep : flatReps){
-    serializeJsonPretty(rep,Serial);
+    // serializeJsonPretty(rep,Serial);
     int type = rep["W"];
     if (type > result.type) {
       result.type = type;

@@ -111,7 +111,7 @@ void loop() {
   // }
 
   // Minutes precision updates
-  // Possible fail when starting at zero
+  // Will fail when starting at zero :/
   if (time.minute() != lastTime.minute()){
     display.setTime(time);
     lastTime = time;

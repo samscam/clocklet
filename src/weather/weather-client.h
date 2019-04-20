@@ -6,8 +6,8 @@
 #include <ArduinoJson.h>
 #include "weather.h"
 
-#define WEATHER_HTTP_TIMEOUT 10000  // max respone time from server
-#define WEATHER_MAX_CONTENT_SIZE 16384       // max size of the HTTP response
+#define WEATHER_HTTP_TIMEOUT 20  // max respone time from server
+#define WEATHER_MAX_CONTENT_SIZE 10240       // max size of the HTTP response
 
 class WeatherClient {
 
