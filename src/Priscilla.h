@@ -4,7 +4,7 @@
 #include <Arduino.h>
 
 #include <SPI.h>
-#include <WiFiUdp.h>
+
 #include <Wire.h>
 #include <RTClib.h>
 
@@ -31,10 +31,7 @@ uint16_t dstAdjust(DateTime time);
 void generateDSTTimes(uint16_t year);
 
 void showTime();
-void updateRTCTimeFromNTP();
 
-
-void sendNTPpacket(IPAddress& address);
 void updateBrightness();
 
 
