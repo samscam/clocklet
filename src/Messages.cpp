@@ -15,6 +15,8 @@ const char* messages[] = {
   "striving to be less shite",
   "just a baby fart",
   "i support thunder again",
+  "baby clock doo doo doo du doo du doo",
+  "this message deliberately left blank"
 };
 
 #define numMessages (sizeof(messages)/sizeof(char *)) //array size

@@ -3,7 +3,7 @@
 #include "settings.h"
 #include "Messages.h"
 
-#include "Displays/DebugDisplay.h"
+#include "Displays/Epaper.h"
 // CONFIGURATION  --------------------------------------
 
 // Time zone adjust (in hours from utc)
@@ -14,7 +14,8 @@ int32_t tzAdjust = 0;
 // ----------- Display
 // RGBDigit display = RGBDigit();
 //Adafruit7 display = Adafruit7();
-DebugDisplay display = DebugDisplay();
+//DebugDisplay display = DebugDisplay();
+EpaperDisplay display = EpaperDisplay();
 
 // ----------- RTC
 
@@ -42,7 +43,7 @@ MetOffice *weatherClient = new MetOffice(client);
 void setup() {
   delay(4000);
   //Initialize serial and wait for port to open:
-  Serial.begin(9600);
+  Serial.begin(115200);
  while (!Serial) {
    ; // wait for serial port to connect. Needed for native USB port only
  }
@@ -114,6 +115,7 @@ void loop() {
   // Will fail when starting at zero :/
   if (time.minute() != lastTime.minute()){
     display.setTime(time);
+    display.setBatteryVoltage(batteryVoltage());
     lastTime = time;
   }
 
@@ -129,6 +131,7 @@ void loop() {
 
 void updatesHourly(){
   Serial.println("Hourly update");
+
   if (connectWifi()) {
     weatherClient -> timeThreshold = (rtc.now().hour() * 60) - 180;
     if (weatherClient -> fetchWeather()){
@@ -200,3 +203,12 @@ void updateBrightness(){
   float brightness = (lightReading * bRange / 4096.0f) + min_brightness;
   display.setBrightness(brightness);
 }
+
+
+
+#if defined(BATTERY_MONITORING)
+float batteryVoltage(){
+  float reading = analogRead(BATTERY_PIN);
+  return (reading / 4095.0f) * 2.0f * 3.3f * 1.1;
+}
+#endif

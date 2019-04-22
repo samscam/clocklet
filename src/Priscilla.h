@@ -20,6 +20,10 @@
 
 #include "colours.h"
 
+#if defined(ESP32)
+#define BATTERY_MONITORING
+#define BATTERY_PIN A13
+#endif
 
 // Function declarations
 
@@ -32,6 +36,8 @@ void showTime();
 
 void updateBrightness();
 
-
+#if defined(BATTERY_MONITORING)
+float batteryVoltage();
+#endif
 
 #endif
