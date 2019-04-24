@@ -2,7 +2,7 @@
 #include "tests.h"
 #include "settings.h"
 #include "Messages.h"
-
+#include "soc/rtc.h"
 #include "Displays/Epaper.h"
 // CONFIGURATION  --------------------------------------
 
@@ -24,6 +24,23 @@ EpaperDisplay display = EpaperDisplay();
 RTC_ESP32 rtc = RTC_ESP32();
 
 
+#define CALIBRATE_ONE(cali_clk) calibrate_one(cali_clk, #cali_clk)
+
+static uint32_t calibrate_one(rtc_cal_sel_t cal_clk, const char *name)
+{
+
+    const uint32_t cal_count = 1000;
+    const float factor = (1 << 19) * 1000.0f;
+    uint32_t cali_val;
+    printf("%s:\n", name);
+    for (int i = 0; i < 5; ++i)
+    {
+        printf("calibrate (%d): ", i);
+        cali_val = rtc_clk_cal(cal_clk, cal_count);
+        printf("%.3f kHz\n", factor / (float)cali_val);
+    }
+    return cali_val;
+}
 
 // ---------- Networking
 
@@ -41,16 +58,41 @@ MetOffice *weatherClient = new MetOffice(client);
 // SETUP  --------------------------------------
 
 void setup() {
-  delay(4000);
+  delay(2000);
   //Initialize serial and wait for port to open:
   Serial.begin(115200);
  while (!Serial) {
    ; // wait for serial port to connect. Needed for native USB port only
  }
-  randomSeed(analogRead(0));
+delay(2000);
+ Serial.println((String) "Slow clock freq" + rtc_clk_slow_freq_get_hz());
+  //ESP32 Oscillator fudge
+  // rtc_clk_32k_bootstrap(512);
+  // rtc_clk_32k_bootstrap(512);
+  // rtc_clk_32k_enable(true);
+  // delay(500);
+  // uint32_t cal_32k = CALIBRATE_ONE(RTC_CAL_32K_XTAL);
+  rtc_clk_slow_freq_set(RTC_SLOW_FREQ_RTC);//RTC_SLOW_FREQ_32K_XTAL);
+  Serial.println((String) "Slow clock freq" + rtc_clk_slow_freq_get_hz());
+  delay(2000);
+  // if (cal_32k == 0)
+  // {
+  //    printf("32K XTAL OSC has not started up");
+  // }
+  // else
+  // {
+  //    printf("done\n");
+  // }
+  //
+  // if (rtc_clk_32k_enabled())
+  // {
+  //    Serial.println("OSC Enabled");
+  // }
 
   analogReadResolution(12);
-
+  uint16_t seed = analogRead(A0);
+  randomSeed(seed);
+  Serial.println((String)"Seed: " + seed);
   for (int i = 0; i<10 ; i++){
     updateBrightness();
   }
@@ -72,14 +114,14 @@ void setup() {
 unsigned long lastUpdateTime = 0;
 unsigned long nextUpdateDelay = 0;
 unsigned long lastRandomMessageTime = millis();
-unsigned long nextMessageDelay = 1000 * 60 * 30;
+unsigned long nextMessageDelay = 1000 * 60 * 2;
 unsigned long lastDailyUpdate = 0;
 unsigned int fuzz = random(5,300);
 
 DateTime lastTime = 0;
 
 void loop() {
-  updateBrightness();
+  // updateBrightness();
 
   DateTime time = rtc.now();
   time = time + TimeSpan(dstAdjust(time) * 3600);
@@ -117,14 +159,22 @@ void loop() {
     display.setTime(time);
     display.setBatteryVoltage(batteryVoltage());
     lastTime = time;
+
+    display.frameLoop();
+    espSleep(58 - time.second() );
   }
 
-  display.frameLoop();
-
+  // display.frameLoop();
+  //
   delay(1000/FPS);
 
   // FastLED.delay(1000/FPS);
 
+}
+
+void espSleep(int seconds){
+  esp_sleep_enable_timer_wakeup(seconds * 1000 * 1000 ); // 58 seconds sounds nice
+  esp_light_sleep_start();
 }
 
 // MARK: UPDATE CYCLE ---------------------------------------

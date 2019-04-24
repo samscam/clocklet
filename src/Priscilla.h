@@ -39,5 +39,6 @@ void updateBrightness();
 #if defined(BATTERY_MONITORING)
 float batteryVoltage();
 #endif
+void espSleep(int seconds);
 
 #endif
