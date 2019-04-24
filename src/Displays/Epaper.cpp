@@ -41,15 +41,13 @@ void EpaperDisplay::setWeather(Weather weather) {
   weather_string = weather.summary;
   Serial.println((String)"*** WEATHER: " + weather_string);
   needsDisplay = true;
-  // showString(weather.summary);
-  // delay(5000);
+  showString(weather.summary);
 }
 
 // Show a message - but what kind of message?
 void EpaperDisplay::displayMessage(const char *stringy) {
   Serial.println((String)"*** MESSAGE: " + stringy);
   showString(stringy);
-  delay(5000);
 }
 
 // Brightness is a float from 0 (barely visible) to 1 (really bright) - should it be a char?
@@ -102,12 +100,12 @@ void EpaperDisplay::updateDisplay(){
     display.print(weather_string);
 
     // Free heap
-    uint32_t heapSize = ESP.getHeapSize();
-    uint32_t freeHeap = ESP.getFreeHeap();
-    float freeRam = (float)freeHeap/(float)heapSize * 100.0f;
-    display.setCursor(10,18);
-    char buftwi[10];
-    display.print((String) gcvt(freeRam,3,buftwi) + "% Ram free");
+    // uint32_t heapSize = ESP.getHeapSize();
+    // uint32_t freeHeap = ESP.getFreeHeap();
+    // float freeRam = (float)freeHeap/(float)heapSize * 100.0f;
+    // display.setCursor(10,18);
+    // char buftwi[10];
+    // display.print((String) gcvt(freeRam,3,buftwi) + "% Ram free");
 
   }
   while (display.nextPage());
@@ -148,11 +146,17 @@ void EpaperDisplay::showString(const char *string){
       //Serial.println((String)"*** coords: " + x + "," + y + "--" + " tbw " + tbw + " tbh: " + tbh);
       do
       {
+
+
+        display.fillScreen(GxEPD_WHITE);
         display.drawBitmap(x, y, canvas->getBuffer(), tbw, tbh, GxEPD_BLACK, GxEPD_WHITE);
+
       }
       while (display.nextPage());
-
-      scrollpos += 20;
+      // display.writeScreenBuffer(); // use default for white
+        //display.writeImage(canvas->getBuffer(), x, y, tbw, tbh);
+        // display.refresh(true);
+      scrollpos += 30;
   }
 
   delete canvas;
