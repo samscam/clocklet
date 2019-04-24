@@ -3,20 +3,25 @@
 // ----------- RANDOM MESSAGES
 
 const char* messages[] = {
-  "ball boy",
-  "bread for everybody",
-  "too darn hot",
-  "you must obey the clock",
-  "commit",
-  "woop woop time to rub bellies woop woop",
-  "all your base are belong to us",
-  "accuracy is guaranteed",
-  "do the ham dance",
-  "striving to be less shite",
-  "just a baby fart",
-  "i support thunder again",
-  "baby clock doo doo doo du doo du doo",
-  "this message deliberately left blank"
+  "Ball Boy",
+  // "Bread for everybody",
+  // "too darn hot",
+  // "you must obey the clock",
+  "Commit Commit Commit",
+  "WOOP WOOP time to rub bellies WOOP WOOP",
+  "All your base are belong to us",
+  "Accuracy is probably ok",
+  "Do the ham dance",
+  "Striving to be less shite",
+  "Baby fart? It was Mr Nobody",
+  "Black is the new rainbow",
+  "Baby clock doo doo doo du doo du doo",
+  "Sarah: Take your pills",
+  "Sam: Get a job",
+  "Cyclists Dismount",
+  "Probably enough RAM",
+  "I want to live in the jungle",
+  "Intentionally left blank",
 };
 
 #define numMessages (sizeof(messages)/sizeof(char *)) //array size
