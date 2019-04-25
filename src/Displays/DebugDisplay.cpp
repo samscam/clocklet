@@ -1,9 +1,6 @@
 #include "DebugDisplay.h"
 
-
-DebugDisplay::DebugDisplay() : Display() {
-
-}
+DebugDisplay::DebugDisplay() : Display() {}
 
 boolean DebugDisplay::setup() {
   return true;
@@ -32,5 +29,9 @@ void DebugDisplay::displayMessage(const char *stringy) {
 
 // Brightness is a float from 0 (barely visible) to 1 (really bright)
 void DebugDisplay::setBrightness(float brightness) {
+
+}
+
+void DebugDisplay::setBatteryVoltage(float newVoltage){
 
 }

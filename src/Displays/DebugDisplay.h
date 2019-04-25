@@ -24,5 +24,8 @@ public:
 
   // Brightness is a float from 0 (barely visible) to 1 (really bright)
   void setBrightness(float brightness);
+
+  void setBatteryVoltage(float newVoltage);
+
 };
 #endif

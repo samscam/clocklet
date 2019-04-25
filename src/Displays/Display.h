@@ -28,6 +28,8 @@ public:
   // Brightness is a float from 0 (barely visible) to 1 (really bright)
   virtual void setBrightness(float brightness);
 
+  virtual void setBatteryVoltage(float voltage);
+
 };
 
 #endif
