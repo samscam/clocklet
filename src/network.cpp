@@ -1,6 +1,7 @@
 #include "network.h"
 #include "settings.h"
-
+#include <esp_wifi.h>
+#include <esp_wifi_types.h>
 // MARK: NETWORK STUFF --------------------------------------
 
 bool setupWifi(){
@@ -8,6 +9,10 @@ bool setupWifi(){
   //Configure pins for Adafruit ATWINC1500 Feather
   WiFi.setPins(8,7,4,2);
 #endif
+  #if defined(ESP32)
+    wifi_country_t country = {"GB", 1, 13, 127, WIFI_COUNTRY_POLICY_AUTO};
+    esp_wifi_set_country(&country);
+  #endif
 
   return connectWifi();
 

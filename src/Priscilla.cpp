@@ -3,7 +3,8 @@
 #include "settings.h"
 #include "Messages.h"
 #include "soc/rtc.h"
-#include "Displays/Epaper.h"
+
+
 // CONFIGURATION  --------------------------------------
 
 // Time zone adjust (in hours from utc)
@@ -14,14 +15,22 @@ int32_t tzAdjust = 0;
 // ----------- Display
 // RGBDigit display = RGBDigit();
 //Adafruit7 display = Adafruit7();
-//DebugDisplay display = DebugDisplay();
+
+// #include "Displays/DebugDisplay.h"
+// DebugDisplay display = DebugDisplay();
+
+#include "Displays/Epaper.h"
 EpaperDisplay display = EpaperDisplay();
 
 // ----------- RTC
 
 //RTC_DS3231 rtc = RTC_DS3231();
-#include "TimeThings/ESP32Rtc.h"
-RTC_ESP32 rtc = RTC_ESP32();
+
+// #include "TimeThings/ESP32Rtc.h"
+// RTC_ESP32 rtc = RTC_ESP32();
+
+#include "TimeThings/GPSTime.h"
+RTC_GPS rtc = RTC_GPS();
 
 
 #define CALIBRATE_ONE(cali_clk) calibrate_one(cali_clk, #cali_clk)
@@ -64,17 +73,20 @@ void setup() {
  while (!Serial) {
    ; // wait for serial port to connect. Needed for native USB port only
  }
-delay(2000);
- Serial.println((String) "Slow clock freq" + rtc_clk_slow_freq_get_hz());
+
+  rtc.begin();
+
+  delay(2000);
+ // Serial.println((String) "Slow clock freq" + rtc_clk_slow_freq_get_hz());
   //ESP32 Oscillator fudge
   // rtc_clk_32k_bootstrap(512);
   // rtc_clk_32k_bootstrap(512);
   // rtc_clk_32k_enable(true);
   // delay(500);
   // uint32_t cal_32k = CALIBRATE_ONE(RTC_CAL_32K_XTAL);
-  rtc_clk_slow_freq_set(RTC_SLOW_FREQ_RTC);//RTC_SLOW_FREQ_32K_XTAL);
-  Serial.println((String) "Slow clock freq" + rtc_clk_slow_freq_get_hz());
-  delay(2000);
+  // rtc_clk_slow_freq_set(RTC_SLOW_FREQ_RTC);//RTC_SLOW_FREQ_32K_XTAL);
+  // Serial.println((String) "Slow clock freq" + rtc_clk_slow_freq_get_hz());
+  // delay(2000);
   // if (cal_32k == 0)
   // {
   //    printf("32K XTAL OSC has not started up");
@@ -99,15 +111,11 @@ delay(2000);
 
   Serial.println("Clock starting!");
   Wire.begin();
+
   display.setup();
-
-  // runDemo();
-
   display.displayMessage("Everything is awesome");
 
   while (!setupWifi()){}
-
-  rtc.begin();
 }
 
 // LOOP  --------------------------------------
@@ -122,10 +130,24 @@ DateTime lastTime = 0;
 
 void loop() {
   // updateBrightness();
+  rtc.loop();
 
+  // This should always be UTC
   DateTime time = rtc.now();
+
+  // adjust for timezone and DST
   time = time + TimeSpan(dstAdjust(time) * 3600);
   time = time + TimeSpan(tzAdjust * 3600);
+
+  boolean needsDaily = false;
+  boolean needsHourly = false;
+  boolean needsMinutely = false;
+
+  // Check for major variations in the time > 1 minute
+  TimeSpan timeDiff = time - lastTime;
+  if (timeDiff.totalseconds() > 60 || timeDiff.totalseconds() < -60 ) {
+    needsDaily = true;
+  }
 
   //Daily update
   if ( time.unixtime() > lastDailyUpdate + (60 * 60 * 24) + fuzz ) {
@@ -173,8 +195,10 @@ void loop() {
 }
 
 void espSleep(int seconds){
+  rtc.sleep();
   esp_sleep_enable_timer_wakeup(seconds * 1000 * 1000 ); // 58 seconds sounds nice
   esp_light_sleep_start();
+
 }
 
 // MARK: UPDATE CYCLE ---------------------------------------

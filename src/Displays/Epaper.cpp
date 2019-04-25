@@ -41,13 +41,13 @@ void EpaperDisplay::setWeather(Weather weather) {
   weather_string = weather.summary;
   Serial.println((String)"*** WEATHER: " + weather_string);
   needsDisplay = true;
-  showString(weather.summary);
+  // scrollString(weather.summary);
 }
 
 // Show a message - but what kind of message?
 void EpaperDisplay::displayMessage(const char *stringy) {
   Serial.println((String)"*** MESSAGE: " + stringy);
-  showString(stringy);
+  // scrollString(stringy);
 }
 
 // Brightness is a float from 0 (barely visible) to 1 (really bright) - should it be a char?
@@ -114,8 +114,61 @@ void EpaperDisplay::updateDisplay(){
 
 
 
-void EpaperDisplay::showString(const char *string){
+void EpaperDisplay::scrollString(const char *string){
   clear();
+
+  display.setTextWrap(false);
+  display.setFont(&Transport_Heavy40pt7b);
+  int16_t tbx, tby; uint16_t tbw, tbh;
+  display.getTextBounds(string, 0, 0, &tbx, &tby, &tbw, &tbh);
+
+  tbw += 10; // to avoid clipping
+  tbh += 10; // to avoid clipping
+
+  // Let's try scrolling :)
+
+  GFXcanvas1 *canvas = new GFXcanvas1(tbw, tbh);
+  canvas->setTextWrap(false);
+  canvas->setFont(&Transport_Heavy40pt7b);
+  canvas->fillScreen(0);
+  canvas->setTextColor(1);
+  canvas->setCursor(0,tbh-10);
+  canvas->print(string);
+
+  uint16_t scrollpos = 0;
+
+  int16_t x, y;
+  y = 20;
+
+  display.setPartialWindow(0, y, display.width(), tbh);
+  while (scrollpos < display.width() + tbw + 20){
+      x = display.width() - scrollpos;
+
+      //Serial.println((String)"*** coords: " + x + "," + y + "--" + " tbw " + tbw + " tbh: " + tbh);
+      do
+      {
+
+
+        display.fillScreen(GxEPD_WHITE);
+        display.drawBitmap(x, y, canvas->getBuffer(), tbw, tbh, GxEPD_BLACK, GxEPD_WHITE);
+
+      }
+      while (display.nextPage());
+      // display.writeScreenBuffer(); // use default for white
+        //display.writeImage(canvas->getBuffer(), x, y, tbw, tbh);
+        // display.refresh(true);
+      scrollpos += 30;
+  }
+
+  delete canvas;
+  clear();
+  needsDisplay = true;
+  // display.hibernate();
+}
+
+void EpaperDisplay::pageString(const char *string){
+  clear();
+
   display.setTextWrap(false);
   display.setFont(&Transport_Heavy40pt7b);
   int16_t tbx, tby; uint16_t tbw, tbh;

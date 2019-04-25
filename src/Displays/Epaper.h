@@ -37,9 +37,10 @@ public:
 
 private:
   void updateDisplay();
-  void showString(const char *string);
+  void scrollString(const char *string);
+  void pageString(const char *string);
   void clear();
-  
+
   GxEPD2_BW<GxEPD2_290, GxEPD2_290::HEIGHT> display;
 
   char time_string[6];
