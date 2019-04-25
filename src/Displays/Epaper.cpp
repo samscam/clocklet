@@ -1,8 +1,10 @@
 #include "Epaper.h"
 #include "Fonts/Transport_Medium14pt7b.h"
 #include "Fonts/Transport_Heavy40pt7b.h"
+#include "Fonts/Transport_Heavy24pt7b.h"
 #include "Fonts/Transport_Medium10pt7b.h"
 #include <Esp.h>
+#include <stdio.h>
 
 EpaperDisplay::EpaperDisplay() : Display(),
 display(GxEPD2_290(/*CS=5*/ 27, /*DC=*/ 33, /*RST=*/ 15, /*BUSY=*/ 19)),
@@ -41,13 +43,13 @@ void EpaperDisplay::setWeather(Weather weather) {
   weather_string = weather.summary;
   Serial.println((String)"*** WEATHER: " + weather_string);
   needsDisplay = true;
-  // scrollString(weather.summary);
+  pageString(weather.summary);
 }
 
 // Show a message - but what kind of message?
 void EpaperDisplay::displayMessage(const char *stringy) {
   Serial.println((String)"*** MESSAGE: " + stringy);
-  // scrollString(stringy);
+  pageString(stringy);
 }
 
 // Brightness is a float from 0 (barely visible) to 1 (really bright) - should it be a char?
@@ -167,53 +169,46 @@ void EpaperDisplay::scrollString(const char *string){
 }
 
 void EpaperDisplay::pageString(const char *string){
+
   clear();
 
   display.setTextWrap(false);
-  display.setFont(&Transport_Heavy40pt7b);
+  display.setFont(&Transport_Heavy24pt7b);
+  display.setPartialWindow(0, 0, display.width(), display.height());
+
+
+  char stringCopy[127];
+  snprintf(stringCopy, strlen(string)+1, "%s\n", string);
+
+  char * pch;
+  printf ("Splitting string \"%s\" into tokens:\n",stringCopy);
+  pch = strtok (stringCopy," ,.-");
+
   int16_t tbx, tby; uint16_t tbw, tbh;
-  display.getTextBounds(string, 0, 0, &tbx, &tby, &tbw, &tbh);
 
-  tbw += 10; // to avoid clipping
-  tbh += 10; // to avoid clipping
-
-  // Let's try scrolling :)
-
-  GFXcanvas1 *canvas = new GFXcanvas1(tbw, tbh);
-  canvas->setTextWrap(false);
-  canvas->setFont(&Transport_Heavy40pt7b);
-  canvas->fillScreen(0);
-  canvas->setTextColor(1);
-  canvas->setCursor(0,tbh-10);
-  canvas->print(string);
-
-  uint16_t scrollpos = 0;
-
-  int16_t x, y;
-  y = 20;
-
-  display.setPartialWindow(0, y, display.width(), tbh);
-  while (scrollpos < display.width() + tbw + 20){
-      x = display.width() - scrollpos;
-
-      //Serial.println((String)"*** coords: " + x + "," + y + "--" + " tbw " + tbw + " tbh: " + tbh);
-      do
-      {
+  while (pch != NULL)
+  {
+    printf ("%s\n",pch);
 
 
-        display.fillScreen(GxEPD_WHITE);
-        display.drawBitmap(x, y, canvas->getBuffer(), tbw, tbh, GxEPD_BLACK, GxEPD_WHITE);
+    display.getTextBounds(pch, 0, 0, &tbx, &tby, &tbw, &tbh);
 
-      }
-      while (display.nextPage());
-      // display.writeScreenBuffer(); // use default for white
-        //display.writeImage(canvas->getBuffer(), x, y, tbw, tbh);
-        // display.refresh(true);
-      scrollpos += 30;
+    do
+    {
+      display.fillScreen(GxEPD_WHITE);
+      display.setCursor((display.width()-tbw)/2,((display.height()-tbh)/2) + tbh);
+      display.print(pch);
+    }
+    while (display.nextPage());
+
+
+    pch = strtok (NULL, " ,.-");
+
+    delay(1000);
+
   }
 
-  delete canvas;
-  clear();
+
   needsDisplay = true;
   // display.hibernate();
 }
