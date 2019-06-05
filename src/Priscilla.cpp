@@ -5,6 +5,8 @@
 #include "soc/rtc.h"
 
 
+float cutoffVoltage = 3.3f;
+
 // CONFIGURATION  --------------------------------------
 
 // Time zone adjust (in hours from utc)
@@ -179,7 +181,13 @@ void loop() {
   // Will fail when starting at zero :/
   if (time.minute() != lastTime.minute()){
     display.setTime(time);
-    display.setBatteryVoltage(batteryVoltage());
+    float voltage = batteryVoltage();
+    display.setBatteryVoltage(voltage);
+
+    if (voltage < cutoffVoltage){
+      espShutdown();
+    }
+
     lastTime = time;
 
     display.frameLoop();
@@ -199,6 +207,12 @@ void espSleep(int seconds){
   esp_sleep_enable_timer_wakeup(seconds * 1000 * 1000 ); // 58 seconds sounds nice
   esp_light_sleep_start();
 
+}
+
+void espShutdown(){
+  display.displayMessage("LOW-BATTERY");
+  Serial.println("LOW BATTERY shutting down");
+  esp_deep_sleep_start();
 }
 
 // MARK: UPDATE CYCLE ---------------------------------------

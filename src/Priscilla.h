@@ -40,5 +40,6 @@ void updateBrightness();
 float batteryVoltage();
 #endif
 void espSleep(int seconds);
+void espShutdown();
 
 #endif
