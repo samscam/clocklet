@@ -6,6 +6,18 @@
 #include <Esp.h>
 #include <stdio.h>
 
+/*
+PINS for the Huzzah32
+Busy (purple) 19/MISO
+RST (white) 15
+DC (green) 33
+CS (orange) 27
+CLK (yellow) SCK/5
+DIN (blue) 18/MOSI
+Gnd (black) GND
+VCC (red) 3v
+*/
+
 EpaperDisplay::EpaperDisplay() : Display(),
 display(GxEPD2_290(/*CS=5*/ 27, /*DC=*/ 33, /*RST=*/ 15, /*BUSY=*/ 19)),
 time_string{'0', '0', ':', '0', '0', '\0'}
