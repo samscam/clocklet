@@ -2,7 +2,6 @@
 #include "tests.h"
 #include "settings.h"
 #include "Messages.h"
-#include "soc/rtc.h"
 
 
 float cutoffVoltage = 3.3f;
@@ -34,25 +33,6 @@ EpaperDisplay display = EpaperDisplay();
 #include "TimeThings/GPSTime.h"
 RTC_GPS rtc = RTC_GPS();
 
-
-#define CALIBRATE_ONE(cali_clk) calibrate_one(cali_clk, #cali_clk)
-
-static uint32_t calibrate_one(rtc_cal_sel_t cal_clk, const char *name)
-{
-
-    const uint32_t cal_count = 1000;
-    const float factor = (1 << 19) * 1000.0f;
-    uint32_t cali_val;
-    printf("%s:\n", name);
-    for (int i = 0; i < 5; ++i)
-    {
-        printf("calibrate (%d): ", i);
-        cali_val = rtc_clk_cal(cal_clk, cal_count);
-        printf("%.3f kHz\n", factor / (float)cali_val);
-    }
-    return cali_val;
-}
-
 // ---------- Networking
 
 #if defined(ESP32) // Oh dear - it works differently
@@ -79,29 +59,7 @@ void setup() {
   rtc.begin();
 
   delay(2000);
- // Serial.println((String) "Slow clock freq" + rtc_clk_slow_freq_get_hz());
-  //ESP32 Oscillator fudge
-  // rtc_clk_32k_bootstrap(512);
-  // rtc_clk_32k_bootstrap(512);
-  // rtc_clk_32k_enable(true);
-  // delay(500);
-  // uint32_t cal_32k = CALIBRATE_ONE(RTC_CAL_32K_XTAL);
-  // rtc_clk_slow_freq_set(RTC_SLOW_FREQ_RTC);//RTC_SLOW_FREQ_32K_XTAL);
-  // Serial.println((String) "Slow clock freq" + rtc_clk_slow_freq_get_hz());
-  // delay(2000);
-  // if (cal_32k == 0)
-  // {
-  //    printf("32K XTAL OSC has not started up");
-  // }
-  // else
-  // {
-  //    printf("done\n");
-  // }
-  //
-  // if (rtc_clk_32k_enabled())
-  // {
-  //    Serial.println("OSC Enabled");
-  // }
+
 
   analogReadResolution(12);
   uint16_t seed = analogRead(A0);
