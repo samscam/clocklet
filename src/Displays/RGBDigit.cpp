@@ -1,5 +1,5 @@
 #include "RGBDigit.h"
-
+#if defined(RAINBOW)
 
 #include "../p.h"
 #include "../settings.h"
@@ -454,3 +454,4 @@ void RGBDigit::addLightening(){
   }
   for(int i = 0; i < NUM_LEDS; i++) { leds[i] += lighteningLayer[i] ; }
 }
+#endif

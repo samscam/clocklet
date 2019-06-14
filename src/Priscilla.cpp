@@ -55,11 +55,11 @@ static uint32_t calibrate_one(rtc_cal_sel_t cal_clk, const char *name)
 
 // ---------- Networking
 
-// #if defined(ESP32) // Oh dear - it works differently
-// WiFiClientSecure client;
-// #else
+#if defined(ESP32) // Oh dear - it works differently
+WiFiClientSecure client;
+#else
 WiFiClient client;
-// #endif
+#endif
 
 MetOffice *weatherClient = new MetOffice(client);
 
@@ -268,7 +268,7 @@ uint16_t dstAdjust(DateTime time){
 
 // brightness sensing
 
-int lightPin = 0;
+int lightPin = A2;
 const int readingWindow = 10;
 float readings[readingWindow] = {4096.0f};
 int readingIndex = 0;

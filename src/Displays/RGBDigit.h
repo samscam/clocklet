@@ -1,6 +1,7 @@
 #ifndef PRISCILLA_RGBDIGIT
 #define PRISCILLA_RGBDIGIT
 
+#if defined(RAINBOW)
 #include <Arduino.h>
 #include <FastLED.h>
 #include <RTClib.h>
@@ -169,5 +170,5 @@ private:
   };
 };
 
-
+#endif
 #endif
