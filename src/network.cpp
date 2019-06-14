@@ -23,17 +23,17 @@ uint32_t lastConnectAttempt = 0;
 bool connectWifi(){
 
   #if defined(ESP32)
+    if (WiFi.status() == WL_CONNECTED) {
+      return true;
+    }
 
-  if (WiFi.status() == WL_NO_SHIELD){
-    WiFi.begin("Broccoli","sweetcorn");
+    WiFi.begin(NETWORK_SSID,NETWORK_PASSWORD);
     while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
+      delay(500);
       Serial.println("Connecting to WiFi..");
     }
-    // return true;
-  }
-
-  return true;
+    printWiFiStatus();
+    return true;
 
   #else
 
