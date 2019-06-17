@@ -2,14 +2,13 @@
 #include "tests.h"
 #include "settings.h"
 #include "Messages.h"
-
-
-float cutoffVoltage = 3.3f;
+#include "Displays/Display.h"
 
 // CONFIGURATION  --------------------------------------
 
-// Time zone adjust (in hours from utc)
+// Time zone adjust (in MINUTES from utc)
 int32_t tzAdjust = 0;
+int32_t secondaryTimeZone = 330; // Mumbai is +5:30
 
 // Set to false to display time in 12 hour format, or true to use 24 hour:
 
@@ -21,7 +20,7 @@ int32_t tzAdjust = 0;
 // DebugDisplay display = DebugDisplay();
 
 #include "Displays/Epaper.h"
-EpaperDisplay display = EpaperDisplay();
+Display *display = new EpaperDisplay();
 
 // ----------- RTC
 
@@ -35,15 +34,12 @@ RTC_GPS rtc = RTC_GPS();
 
 // ---------- Networking
 
-#if defined(ESP32) // Oh dear - it works differently
-WiFiClientSecure client;
-#else
-WiFiClient client;
-#endif
+// WiFiClientSecure client; // << https on esp32
+WiFiClient client; // <<  plain http, and https on atmelwinc
 
 MetOffice *weatherClient = new MetOffice(client);
 
-
+// WeatherClient *weatherClient = new 
 
 
 // SETUP  --------------------------------------
@@ -72,19 +68,20 @@ void setup() {
   Serial.println("Clock starting!");
   Wire.begin();
 
-  display.setup();
-  display.displayMessage("Everything is awesome");
-
+  display->setup();
+  display->displayMessage("Everything is awesome");
+  runFast(display);
   while (!setupWifi()){}
 }
 
 // LOOP  --------------------------------------
-unsigned long lastUpdateTime = 0;
-unsigned long nextUpdateDelay = 0;
+
+
 unsigned long lastRandomMessageTime = millis();
 unsigned long nextMessageDelay = 1000 * 60 * 2;
+
+unsigned long lastHourlyUpdate = 0;
 unsigned long lastDailyUpdate = 0;
-unsigned int fuzz = random(5,300);
 
 DateTime lastTime = 0;
 
@@ -95,36 +92,34 @@ void loop() {
   // This should always be UTC
   DateTime time = rtc.now();
 
-  // adjust for timezone and DST
-  time = time + TimeSpan(dstAdjust(time) * 3600);
-  time = time + TimeSpan(tzAdjust * 3600);
-
-  boolean needsDaily = false;
-  boolean needsHourly = false;
-  boolean needsMinutely = false;
+  bool needsDaily = false;
 
   // Check for major variations in the time > 1 minute
-  TimeSpan timeDiff = time - lastTime;
-  if (timeDiff.totalseconds() > 60 || timeDiff.totalseconds() < -60 ) {
+  // TimeSpan timeDiff = time - lastTime;
+  // if (timeDiff.totalseconds() > 60 || timeDiff.totalseconds() < -60 ) {
+  //   needsDaily = true;
+  // }
+  if ( time.unixtime() > lastDailyUpdate + (60 * 60 * 24)) {
     needsDaily = true;
   }
 
   //Daily update
-  if ( time.unixtime() > lastDailyUpdate + (60 * 60 * 24) + fuzz ) {
+  if (needsDaily){
     updatesDaily();
+    time = rtc.now();
     lastDailyUpdate = time.unixtime();
   }
 
   // Hourly updates
-  if (millis() > lastUpdateTime + nextUpdateDelay){
+  if ( time.unixtime() > lastHourlyUpdate + (60 * 60)){
     updatesHourly();
-    lastUpdateTime = millis();
-    nextUpdateDelay = 1000 * 60 * 60; // 60 mins
+    time = rtc.now();
+    lastHourlyUpdate = time.unixtime();
   }
 
   if (millis() > lastRandomMessageTime + nextMessageDelay){
     const char* message = randoMessage();
-    display.displayMessage(message);
+    display->displayMessage(message);
     lastRandomMessageTime = millis();
     nextMessageDelay = 1000 * 60 * random(5,59);
   }
@@ -138,9 +133,20 @@ void loop() {
   // Minutes precision updates
   // Will fail when starting at zero :/
   if (time.minute() != lastTime.minute()){
-    display.setTime(time);
+    DateTime displayTime;
+    // adjust for timezone and DST
+    displayTime = time + TimeSpan(dstAdjust(time) * 3600);
+    displayTime = displayTime + TimeSpan(tzAdjust * 60);
+    
+    display->setTime(displayTime);
+
+    // secondary time
+    displayTime = time; //+ TimeSpan(dstAdjust(time) * 3600); -- no dst in india
+    displayTime = displayTime + TimeSpan(secondaryTimeZone * 60);
+    display->setSecondaryTime(displayTime,"Mumbai");
+
     float voltage = batteryVoltage();
-    display.setBatteryVoltage(voltage);
+    display->setBatteryLevel(batteryLevel(voltage));
 
     if (voltage < cutoffVoltage){
       espShutdown();
@@ -148,14 +154,13 @@ void loop() {
 
     lastTime = time;
 
-    display.frameLoop();
+    display->frameLoop();
     espSleep(58 - time.second() );
   }
 
   // display.frameLoop();
-  //
-  delay(1000/FPS);
 
+  // delay(1000/FPS);
   // FastLED.delay(1000/FPS);
 
 }
@@ -168,7 +173,7 @@ void espSleep(int seconds){
 }
 
 void espShutdown(){
-  display.displayMessage("LOW-BATTERY");
+  display->setStatusMessage("LOW BATTERY");
   Serial.println("LOW BATTERY shutting down");
   esp_deep_sleep_start();
 }
@@ -181,7 +186,7 @@ void updatesHourly(){
   if (connectWifi()) {
     weatherClient -> timeThreshold = (rtc.now().hour() * 60) - 180;
     if (weatherClient -> fetchWeather()){
-      display.setWeather(weatherClient->latestWeather);
+      display->setWeather(weatherClient->latestWeather);
     }
 
   }
@@ -247,14 +252,22 @@ void updateBrightness(){
   float bRange = max_brightness - min_brightness;
 
   float brightness = (lightReading * bRange / 4096.0f) + min_brightness;
-  display.setBrightness(brightness);
+  display->setBrightness(brightness);
 }
 
 
 
 #if defined(BATTERY_MONITORING)
+
+float batteryLevel(float voltage){
+  float v = (voltage - cutoffVoltage) / (maxVoltage - cutoffVoltage);
+  v = fmax(0.0f,v); // make sure it doesn't go negative
+  return fmin(1.0f, v); // cap the level at 1
+}
+
 float batteryVoltage(){
   float reading = analogRead(BATTERY_PIN);
   return (reading / 4095.0f) * 2.0f * 3.3f * 1.1;
 }
+
 #endif

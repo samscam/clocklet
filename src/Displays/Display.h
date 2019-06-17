@@ -15,20 +15,33 @@ public:
   // notifies the display to do another frame if it wants to do that kind of thing
   virtual void frameLoop();
 
-  // It's a clock of some sort... you have to implement this
-  // Time is passed by reference - the display should update on the next frame loop
+  // It's a clock of some sort... we have to implement this
+  // Time is passed in here - the display should update on the next frame loop
   virtual void setTime(DateTime time);
-
-  // Implementation is optional
-  virtual void setWeather(Weather weather);
 
   // Show a message - but what kind of message?
   virtual void displayMessage(const char *stringy);
 
-  // Brightness is a float from 0 (barely visible) to 1 (really bright)
-  virtual void setBrightness(float brightness);
+  // OPTIONAL:
 
-  virtual void setBatteryVoltage(float voltage);
+  // Set a secondary time for like india
+  virtual void setSecondaryTime(DateTime time, const char *identifier) {}
+
+  // Set the weather, make it sunny please
+  virtual void setWeather(Weather weather) {}
+
+  // Show a status message (which should be sticky on epd)
+  virtual void setStatusMessage(const char *stringy) {}
+
+  // Brightness is a float based on ambient light levels
+  // from 0 (dark) to 1 (bright)
+  virtual void setBrightness(float brightness) {}
+
+  // Battery level is a float between 0 and 1
+  virtual void setBatteryLevel(float level) {}
+
+  // Shows something if we are connected to mains
+  virtual void setOnMainsPower(bool mains) {}
 
 };
 

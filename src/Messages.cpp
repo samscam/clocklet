@@ -4,9 +4,7 @@
 
 const char* messages[] = {
   "Ball Boy",
-  // "Bread for everybody",
-  // "too darn hot",
-  // "you must obey the clock",
+  "You must obey the clock",
   "Commit Commit Commit",
   "WOOP WOOP time to rub bellies WOOP WOOP",
   "All your base are belong to us",
@@ -17,7 +15,6 @@ const char* messages[] = {
   "Black is the new rainbow",
   "Baby clock doo doo doo du doo du doo",
   "Sarah: Take your pills",
-  "Sam: Get a job",
   "Cyclists Dismount",
   "Probably enough RAM",
   "I want to live in the jungle",

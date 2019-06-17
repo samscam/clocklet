@@ -1,10 +1,12 @@
 #include "Epaper.h"
 #include "Fonts/Transport_Medium14pt7b.h"
 #include "Fonts/Transport_Heavy40pt7b.h"
+#include "Fonts/Transport_Heavy30pt7b.h"
 #include "Fonts/Transport_Heavy24pt7b.h"
 #include "Fonts/Transport_Medium10pt7b.h"
 #include <Esp.h>
 #include <stdio.h>
+#include <math.h>
 
 /*
 PINS for the Huzzah32
@@ -19,26 +21,23 @@ VCC (red) 3v
 */
 
 EpaperDisplay::EpaperDisplay() : Display(),
-display(GxEPD2_290(/*CS=5*/ 27, /*DC=*/ 33, /*RST=*/ 15, /*BUSY=*/ 19)),
-time_string{'0', '0', ':', '0', '0', '\0'}
- {
-
-}
+    display(GxEPD2_290(/*CS=5*/ 27, /*DC=*/ 33, /*RST=*/ 15, /*BUSY=*/ 19)),
+    time_string{'0', '0', ':', '0', '0', '\0'},
+    secondary_time_string{'0', '0', ':', '0', '0', '\0'}{}
 
 boolean EpaperDisplay::setup() {
   display.init(115200);
   display.setRotation(1);
+  display.mirror(false);
   display.setFont(&Transport_Heavy40pt7b);
   display.setTextColor(GxEPD_BLACK);
   return true;
 }
 
 
-
-// It's a clock of some sort... you have to implement this
-// Time is passed by reference - the display should update on the next frame loop
+// - the display should update on the next frame loop
 void EpaperDisplay::setTime(DateTime time) {
-
+  this->time = time;
   // Turn the time into a string
   // time_string = ;
   time_string[0] = time.hour() / 10 + '0';
@@ -49,6 +48,22 @@ void EpaperDisplay::setTime(DateTime time) {
   Serial.println((String)"*** TIME: " + time.hour() + ":" + time.minute() + ":" + time.second());
   needsDisplay = true;
 }
+
+void EpaperDisplay::setSecondaryTime(DateTime time, const char *identifier) {
+
+  // Turn the time into a string
+  // time_string = ;
+  secondary_time_string[0] = time.hour() / 10 + '0';
+  secondary_time_string[1] = time.hour() % 10 + '0';
+  secondary_time_string[3] = time.minute() / 10 + '0';
+  secondary_time_string[4] = time.minute() % 10 + '0';
+
+  secondary_identifier = identifier;
+
+  Serial.println(secondary_time_string);
+  needsDisplay = true;
+}
+
 
 // Implementation is optional
 void EpaperDisplay::setWeather(Weather weather) {
@@ -64,13 +79,8 @@ void EpaperDisplay::displayMessage(const char *stringy) {
   pageString(stringy);
 }
 
-// Brightness is a float from 0 (barely visible) to 1 (really bright) - should it be a char?
-void EpaperDisplay::setBrightness(float brightness) {
-  // Do nothing. It's epaper :)
-}
-
-void EpaperDisplay::setBatteryVoltage(float newVoltage){
-  voltage=newVoltage;
+void EpaperDisplay::setBatteryLevel(float newLevel){
+  batteryLevel=newLevel;
   needsDisplay = true;
 }
 
@@ -85,33 +95,79 @@ void EpaperDisplay::frameLoop() {
 }
 
 void EpaperDisplay::updateDisplay(){
+  // displayAnalogue();
+  displayDigital();
+}
 
-    display.setTextWrap(false);
-    display.setPartialWindow(0, 0, display.width(), display.height());
-    display.setFont(&Transport_Heavy40pt7b);
-  // do this outside of the loop
-  int16_t tbx, tby; uint16_t tbw, tbh;
-  // center update text
-  display.getTextBounds(time_string, 0, 0, &tbx, &tby, &tbw, &tbh);
-  uint16_t x = (display.width() - tbw) / 2;
+void EpaperDisplay::displayDigital(){
+  display.setTextWrap(false);
+  display.setPartialWindow(0, 0, display.width(), display.height());
+
+
+  display.setFont(&Transport_Heavy40pt7b);
+    
+  int16_t itemX, itemY; uint16_t itemW, itemH;
+  
+  uint16_t x;
   uint16_t y;
+
   display.firstPage();
   do
   {
     display.fillScreen(GxEPD_WHITE);
-    y = (display.height() + tbh) / 2; // y is base line!
+    display.setTextColor(GxEPD_BLACK);
+
+    y = 5;
+
+    // Battery level
+    display.setFont(&Transport_Medium10pt7b);
+
+    int level = (int)floor(batteryLevel * 100);
+    String blev = ((String) level + "%");
+    display.getTextBounds(blev, 0, 0, &itemX, &itemY, &itemW, &itemH);
+    x = 10;
+    // x = (display.width() - itemW) / 2;
+    y += itemH;
+    display.setCursor(x,y);
+    display.print(blev);
+ 
+    // y += 5;
+
+    // Weather status
+    display.setFont(&Transport_Medium10pt7b);
+    display.getTextBounds(weather_string, 0, 0, &itemX, &itemY, &itemW, &itemH);
+    x = (display.width() - itemW) / 2;
+    // y += itemH;
+    display.setCursor(x,y);
+    display.print(weather_string);
+
+    y += 10;
+
+    // Main Clock
+    display.setFont(&Transport_Heavy30pt7b);
+    display.getTextBounds(time_string, 0, 0, &itemX, &itemY, &itemW, &itemH);
+    x = (display.width() - itemW) / 2;
+    y += itemH;
     display.setCursor(x,y);
     display.print(time_string);
+    
+    y += 10;
+    // Bottom half black
+    display.fillRect(0,y,display.width(),display.height()-y,GxEPD_BLACK);
 
-    display.setFont(&Transport_Medium10pt7b);
-    display.setCursor(10,display.height()-5);
-    char buf[10];
-    display.print((String) gcvt(voltage,3,buf) + " volts");
 
-    int16_t wbx, wby; uint16_t wbw, wbh;
-    display.getTextBounds(weather_string, 0, 0, &wbx, &wby, &wbw, &wbh);
-    display.setCursor(display.width()-5-wbw,display.height()-5);
-    display.print(weather_string);
+    y += 7;
+    // Secondary clock - inverted
+    display.setFont(&Transport_Medium14pt7b);
+    String secStr = (String) secondary_identifier + (String) " " + (String) secondary_time_string;
+    display.getTextBounds(secStr, 0, 0, &itemX, &itemY, &itemW, &itemH);
+    x = (display.width() - itemW) / 2;
+    y += itemH;
+    display.setCursor(x,y);
+    display.setTextColor(GxEPD_WHITE);
+    display.print(secStr);
+
+    display.setTextColor(GxEPD_BLACK);
 
     // Free heap
     // uint32_t heapSize = ESP.getHeapSize();
@@ -126,7 +182,104 @@ void EpaperDisplay::updateDisplay(){
   display.hibernate();
 }
 
+void EpaperDisplay::displayAnalogue(){
+  display.setPartialWindow(0, 0, display.width(), display.height());
 
+  display.firstPage();
+
+  uint16_t width = display.width();
+  uint16_t xc = width/2;
+  uint16_t height = display.height();
+  uint16_t yc = height/2; 
+  double alphaAngle = atan2((double)yc,(double)xc);
+  double betaAngle = M_PI_2 - alphaAngle;
+  double sigmaAngle = betaAngle;
+
+  do
+  {
+    display.fillScreen(GxEPD_WHITE);
+
+
+    double hourAngle = ((((double)(time.hour() % 12) + (double) time.minute() / 60.0f)) / 12.0f) * M_PI * 2;
+    int quadrant = 0;
+    while (hourAngle > M_PI_2) {
+      switch (quadrant){
+        case 0:
+          display.fillRect(xc,0,xc,yc,GxEPD_BLACK);
+          sigmaAngle = alphaAngle;
+          break;
+        case 1:
+          display.fillRect(xc,yc,xc,yc,GxEPD_BLACK);
+          sigmaAngle = betaAngle;
+          break;
+        case 2:
+          display.fillRect(0,yc,xc,yc,GxEPD_BLACK);
+          sigmaAngle = alphaAngle;
+          break;
+        case 3:
+          // should never actually happen
+          display.fillRect(0,0,xc,yc,GxEPD_BLACK);
+          sigmaAngle = betaAngle;
+          break;
+      }
+      
+      hourAngle -= M_PI_2;
+      quadrant++;
+    }
+    Serial.println((String)"Quadrant " + (String)quadrant + (String)" --ang: " + (String)hourAngle);
+    
+    uint16_t xphi = floor(tan(hourAngle) * (double)yc);
+    uint16_t yphi = floor(tan(hourAngle) * (double)xc);
+    uint16_t yoo = floor(tan(M_PI_2-hourAngle)*(double)xc);
+    uint16_t xoo = floor(tan(M_PI_2-hourAngle)*(double)yc);
+    
+    if (hourAngle <= sigmaAngle){
+      switch (quadrant) {
+        case 0:
+          display.fillTriangle(xc,yc,xc,0,xc+xphi,0,GxEPD_BLACK);
+          break;
+        case 1:
+          display.fillTriangle(xc,yc,width,yc,width,yc+yphi,GxEPD_BLACK);
+          break;
+        case 2:
+          display.fillTriangle(xc,yc,xc,height,xc-xphi,height,GxEPD_BLACK);
+          break;
+        case 3:
+          display.fillTriangle(xc,yc,0,yc,0,yc-yphi,GxEPD_BLACK);
+          break;
+      }
+    } else {
+      switch (quadrant){
+        case 0:
+          display.fillTriangle(xc,yc,xc,0,width,0,GxEPD_BLACK);//first eighth
+          display.fillTriangle(xc,yc,width,0,width,yc-yoo,GxEPD_BLACK);
+          break;
+        case 1:
+          display.fillTriangle(xc,yc,width,yc,width,height,GxEPD_BLACK);
+          display.fillTriangle(xc,yc,width,height,xc+xoo,height,GxEPD_BLACK);
+          break;
+        case 2:
+          display.fillTriangle(xc,yc,xc,height,0,height,GxEPD_BLACK);
+          display.fillTriangle(xc,yc,0,height,0,yc+yoo,GxEPD_BLACK);
+          break;
+        case 3:
+          display.fillTriangle(xc,yc,0,yc,0,0,GxEPD_BLACK);
+          display.fillTriangle(xc,yc,0,0,xc-xoo,0,GxEPD_BLACK);
+          break;
+      }
+    }
+    display.setFont(&Transport_Medium14pt7b);
+    display.setCursor(10,20);
+    display.print(time_string);
+  }
+  
+  while (display.nextPage());
+  // display.hibernate();
+}
+
+// void EpaperDisplay::fillArcBox(uint16_t x, uint16_t y, uint16_t width, uint16_t height, double arc){
+
+// }
 
 void EpaperDisplay::scrollString(const char *string){
   clear();
@@ -177,7 +330,6 @@ void EpaperDisplay::scrollString(const char *string){
   delete canvas;
   clear();
   needsDisplay = true;
-  // display.hibernate();
 }
 
 void EpaperDisplay::pageString(const char *string){
@@ -220,9 +372,7 @@ void EpaperDisplay::pageString(const char *string){
 
   }
 
-
   needsDisplay = true;
-  // display.hibernate();
 }
 
 void EpaperDisplay::clear(){

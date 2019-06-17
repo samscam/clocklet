@@ -17,7 +17,6 @@
 #include "network.h"
 
 
-
 #include "colours.h"
 
 #if defined(ESP32)
@@ -38,8 +37,16 @@ void updateBrightness();
 
 #if defined(BATTERY_MONITORING)
 float batteryVoltage();
+float batteryLevel(float voltage);
+
+static float cutoffVoltage = 3.3f;
+static float maxVoltage = 4.2f;
+
 #endif
+
+#if defined(ESP32)
 void espSleep(int seconds);
 void espShutdown();
+#endif
 
 #endif

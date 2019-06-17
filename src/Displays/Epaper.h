@@ -5,6 +5,7 @@
 
 
 #define ENABLE_GxEPD2_GFX 0
+#define DISABLE_DIAGNOSTIC_OUTPUT
 
 #include <GxEPD2_BW.h>
 #include <Adafruit_GFX.h>
@@ -16,36 +17,40 @@ public:
   // return true if it worked - otherwise false
   boolean setup();
 
-  // notifies the display to do another frame if it wants to do that kind of thing
   void frameLoop();
-
-  // It's a clock of some sort... you have to implement this
-  // Time is passed by reference - the display should update on the next frame loop
+  
   void setTime(DateTime time);
 
-  // Implementation is optional
+  void setSecondaryTime(DateTime time, const char *identifier);
+
   void setWeather(Weather weather);
 
-  // Show a message - but what kind of message?
   void displayMessage(const char *stringy);
 
-  // Brightness is a float from 0 (barely visible) to 1 (really bright)
-  void setBrightness(float brightness);
+  void setBatteryLevel(float level);
 
-  // For fun
-  void setBatteryVoltage(float voltage);
+  bool showSecondaryTime = true;
 
 private:
   void updateDisplay();
   void scrollString(const char *string);
   void pageString(const char *string);
+  void displayAnalogue();
+  void displayDigital();
   void clear();
 
   GxEPD2_BW<GxEPD2_290, GxEPD2_290::HEIGHT> display;
 
   char time_string[6];
+  char secondary_time_string[6];
+  const char* secondary_identifier = "";
+
+  DateTime time;
+
   const char* weather_string = "";
-  float voltage = 0;
+  float batteryLevel = 0;
   bool needsDisplay = false;
+
+  const char* statusMessage = "";
 };
 #endif
