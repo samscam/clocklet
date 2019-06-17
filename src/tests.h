@@ -1,6 +1,7 @@
-// #ifndef TESTS
-// #define TESTS
-//
-// void runDemo();
-//
-// #endif
+#ifndef TESTS
+#define TESTS
+#include "Displays/Display.h"
+
+void runFast(Display *display);
+
+#endif

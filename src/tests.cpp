@@ -1,5 +1,18 @@
-// #include "tests.h"
-// #include "Displays/Display.h"
+#include "tests.h"
+
+#include <RTClib.h>
+
+void runFast(Display *display){
+
+    DateTime time = DateTime(1978,12,28,0,0,0);
+    DateTime endTime = DateTime(1978,12,29,0,0,0);
+    while (time.unixtime() < endTime.unixtime()){
+        display->setTime(time);
+        display->frameLoop();
+        time = time + TimeSpan(60*5);
+    }
+
+}
 // #include <FastLED.h>
 //
 // #define FPS 60
