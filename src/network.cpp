@@ -26,14 +26,21 @@ bool connectWifi(){
     if (WiFi.status() == WL_CONNECTED) {
       return true;
     }
-
-    WiFi.begin(NETWORK_SSID,NETWORK_PASSWORD);
-    while (WiFi.status() != WL_CONNECTED) {
-      delay(500);
-      Serial.println("Connecting to WiFi..");
+    
+    if (WiFi.status() == WL_NO_SHIELD){ // Initial state - needs to connect
+      WiFi.begin(NETWORK_SSID,NETWORK_PASSWORD);
+      while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.println("Connecting to WiFi..");
+      }
+      printWiFiStatus();
+      return true;
     }
-    printWiFiStatus();
+
+    Serial.println("Semi-connected - probably sleeping");
+    // Not actually sure what the state is but it seems to come back ok...
     return true;
+    
 
   #else
 
