@@ -3,13 +3,14 @@
 // ----------- RANDOM MESSAGES
 
 const char* messages[] = {
-  "Ball Boy",
+  // "Ball Boy",
   "You must obey the clock",
   "Commit Commit Commit",
   "WOOP WOOP time to rub bellies WOOP WOOP",
   "All your base are belong to us",
   "Accuracy is probably ok",
   "Do the ham dance",
+  "Just is the enemy of good",
   "Striving to be less shite",
   "Baby fart? It was Mr Nobody",
   "Black is the new rainbow",

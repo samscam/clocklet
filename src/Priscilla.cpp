@@ -70,8 +70,7 @@ void setup() {
 
   display->setup();
   display->displayMessage("Everything is awesome");
-  runFast(display);
-  while (!setupWifi()){}
+  setupWifi();
 }
 
 // LOOP  --------------------------------------
@@ -124,11 +123,6 @@ void loop() {
     nextMessageDelay = 1000 * 60 * random(5,59);
   }
 
-  // Seconds precision updates
-  // if (time.unixtime() > lastTime.unixtime()){
-  //   display.setTime(time);
-  //   lastTime = time;
-  // }
 
   // Minutes precision updates
   // Will fail when starting at zero :/
@@ -153,13 +147,12 @@ void loop() {
     }
 
     lastTime = time;
-
     display->frameLoop();
-    espSleep(58 - time.second() );
+    
+    espSleep(59 - time.second() );
   }
 
-  // display.frameLoop();
-
+  // delay(50);
   // delay(1000/FPS);
   // FastLED.delay(1000/FPS);
 

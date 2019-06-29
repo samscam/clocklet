@@ -95,8 +95,9 @@ void EpaperDisplay::frameLoop() {
 }
 
 void EpaperDisplay::updateDisplay(){
-  // displayAnalogue();
+  // displayOctogram();
   displayDigital();
+  display.hibernate();
 }
 
 void EpaperDisplay::displayDigital(){
@@ -134,40 +135,42 @@ void EpaperDisplay::displayDigital(){
     // y += 5;
 
     // Weather status
-    display.setFont(&Transport_Medium10pt7b);
+    display.setFont(&Transport_Medium14pt7b);
     display.getTextBounds(weather_string, 0, 0, &itemX, &itemY, &itemW, &itemH);
     x = (display.width() - itemW) / 2;
-    // y += itemH;
+
+    y = 5;
+    y += itemH;
     display.setCursor(x,y);
     display.print(weather_string);
 
     y += 10;
 
     // Main Clock
-    display.setFont(&Transport_Heavy30pt7b);
+    display.setFont(&Transport_Heavy40pt7b);
     display.getTextBounds(time_string, 0, 0, &itemX, &itemY, &itemW, &itemH);
     x = (display.width() - itemW) / 2;
     y += itemH;
     display.setCursor(x,y);
     display.print(time_string);
     
-    y += 10;
-    // Bottom half black
-    display.fillRect(0,y,display.width(),display.height()-y,GxEPD_BLACK);
+    // y += 10;
+    // // Bottom half black
+    // display.fillRect(0,y,display.width(),display.height()-y,GxEPD_BLACK);
 
 
-    y += 7;
-    // Secondary clock - inverted
-    display.setFont(&Transport_Medium14pt7b);
-    String secStr = (String) secondary_identifier + (String) " " + (String) secondary_time_string;
-    display.getTextBounds(secStr, 0, 0, &itemX, &itemY, &itemW, &itemH);
-    x = (display.width() - itemW) / 2;
-    y += itemH;
-    display.setCursor(x,y);
-    display.setTextColor(GxEPD_WHITE);
-    display.print(secStr);
+    // y += 7;
+    // // Secondary clock - inverted
+    // display.setFont(&Transport_Medium14pt7b);
+    // String secStr = (String) secondary_identifier + (String) " " + (String) secondary_time_string;
+    // display.getTextBounds(secStr, 0, 0, &itemX, &itemY, &itemW, &itemH);
+    // x = (display.width() - itemW) / 2;
+    // y += itemH;
+    // display.setCursor(x,y);
+    // display.setTextColor(GxEPD_WHITE);
+    // display.print(secStr);
 
-    display.setTextColor(GxEPD_BLACK);
+    // display.setTextColor(GxEPD_BLACK);
 
     // Free heap
     // uint32_t heapSize = ESP.getHeapSize();
@@ -179,107 +182,114 @@ void EpaperDisplay::displayDigital(){
 
   }
   while (display.nextPage());
-  display.hibernate();
+
 }
 
-void EpaperDisplay::displayAnalogue(){
+void EpaperDisplay::displayOctogram(){
   display.setPartialWindow(0, 0, display.width(), display.height());
 
   display.firstPage();
-
-  uint16_t width = display.width();
-  uint16_t xc = width/2;
-  uint16_t height = display.height();
-  uint16_t yc = height/2; 
-  double alphaAngle = atan2((double)yc,(double)xc);
-  double betaAngle = M_PI_2 - alphaAngle;
-  double sigmaAngle = betaAngle;
-
   do
   {
-    display.fillScreen(GxEPD_WHITE);
+    // double secondAngle = ((double) time.second() / 60.0f) * M_PI * 2;
+    // fillArcBox(0,0,display.width(),display.height(),secondAngle);
 
+    double minuteAngle = (((double) time.minute() / 60.0f) + ((double) time.second() / 3600.0f)) * M_PI * 2;
+    fillArcBox(0,0,display.width(),display.height(),minuteAngle);
 
     double hourAngle = ((((double)(time.hour() % 12) + (double) time.minute() / 60.0f)) / 12.0f) * M_PI * 2;
+    fillArcBox(30,30,display.width()-60,display.height()-60,hourAngle);
+
+    // display.setFont(&Transport_Medium14pt7b);
+    // display.setCursor(10,20);
+    // display.print(time_string);
+  }
+  
+  while (display.nextPage());
+}
+
+void EpaperDisplay::fillArcBox(uint16_t x, uint16_t y, uint16_t width, uint16_t height, double arc){
+
+    uint16_t xc = width/2;
+    uint16_t yc = height/2;
+    
+    uint16_t xcentre = xc + x;
+    uint16_t ycentre = yc + y;
+
+    double alphaAngle = atan2((double)yc,(double)xc);
+    double betaAngle = M_PI_2 - alphaAngle;
+    double sigmaAngle = betaAngle;
+
+    display.fillRect(x,y,width,height,GxEPD_WHITE);
+
+    
     int quadrant = 0;
-    while (hourAngle > M_PI_2) {
+    while (arc > M_PI_2) {
       switch (quadrant){
         case 0:
-          display.fillRect(xc,0,xc,yc,GxEPD_BLACK);
+          display.fillRect(xcentre,y,xc,yc,GxEPD_BLACK);
           sigmaAngle = alphaAngle;
           break;
         case 1:
-          display.fillRect(xc,yc,xc,yc,GxEPD_BLACK);
+          display.fillRect(xcentre,ycentre,xc,yc,GxEPD_BLACK);
           sigmaAngle = betaAngle;
           break;
         case 2:
-          display.fillRect(0,yc,xc,yc,GxEPD_BLACK);
+          display.fillRect(x,ycentre,xc,yc,GxEPD_BLACK);
           sigmaAngle = alphaAngle;
           break;
         case 3:
           // should never actually happen
-          display.fillRect(0,0,xc,yc,GxEPD_BLACK);
+          display.fillRect(x,y,xc,yc,GxEPD_BLACK);
           sigmaAngle = betaAngle;
           break;
       }
       
-      hourAngle -= M_PI_2;
+      arc -= M_PI_2;
       quadrant++;
     }
-    Serial.println((String)"Quadrant " + (String)quadrant + (String)" --ang: " + (String)hourAngle);
     
-    uint16_t xphi = floor(tan(hourAngle) * (double)yc);
-    uint16_t yphi = floor(tan(hourAngle) * (double)xc);
-    uint16_t yoo = floor(tan(M_PI_2-hourAngle)*(double)xc);
-    uint16_t xoo = floor(tan(M_PI_2-hourAngle)*(double)yc);
+    uint16_t xphi = floor(tan(arc) * (double)yc);
+    uint16_t yphi = floor(tan(arc) * (double)xc);
+    uint16_t yoo = floor(tan(M_PI_2-arc)*(double)xc);
+    uint16_t xoo = floor(tan(M_PI_2-arc)*(double)yc);
     
-    if (hourAngle <= sigmaAngle){
+    if (arc <= sigmaAngle){
       switch (quadrant) {
         case 0:
-          display.fillTriangle(xc,yc,xc,0,xc+xphi,0,GxEPD_BLACK);
+          display.fillTriangle(xcentre,ycentre,xcentre,y,xcentre+xphi,y,GxEPD_BLACK);
           break;
         case 1:
-          display.fillTriangle(xc,yc,width,yc,width,yc+yphi,GxEPD_BLACK);
+          display.fillTriangle(xcentre,ycentre,width+x,ycentre,width+x,ycentre+yphi,GxEPD_BLACK);
           break;
         case 2:
-          display.fillTriangle(xc,yc,xc,height,xc-xphi,height,GxEPD_BLACK);
+          display.fillTriangle(xcentre,ycentre,xcentre,height+y,xcentre-xphi,height+y,GxEPD_BLACK);
           break;
         case 3:
-          display.fillTriangle(xc,yc,0,yc,0,yc-yphi,GxEPD_BLACK);
+          display.fillTriangle(xcentre,ycentre,x,ycentre,x,ycentre-yphi,GxEPD_BLACK);
           break;
       }
     } else {
       switch (quadrant){
         case 0:
-          display.fillTriangle(xc,yc,xc,0,width,0,GxEPD_BLACK);//first eighth
-          display.fillTriangle(xc,yc,width,0,width,yc-yoo,GxEPD_BLACK);
+          display.fillTriangle(xcentre,ycentre,xcentre,y,x+width,y,GxEPD_BLACK);
+          display.fillTriangle(xcentre,ycentre,x+width,y,x+width,ycentre-yoo,GxEPD_BLACK);
           break;
         case 1:
-          display.fillTriangle(xc,yc,width,yc,width,height,GxEPD_BLACK);
-          display.fillTriangle(xc,yc,width,height,xc+xoo,height,GxEPD_BLACK);
+          display.fillTriangle(xcentre,ycentre,x+width,ycentre,x+width,y+height,GxEPD_BLACK);
+          display.fillTriangle(xcentre,ycentre,x+width,y+height,xcentre+xoo,y+height,GxEPD_BLACK);
           break;
         case 2:
-          display.fillTriangle(xc,yc,xc,height,0,height,GxEPD_BLACK);
-          display.fillTriangle(xc,yc,0,height,0,yc+yoo,GxEPD_BLACK);
+          display.fillTriangle(xcentre,ycentre,xcentre,y+height,x,y+height,GxEPD_BLACK);
+          display.fillTriangle(xcentre,ycentre,x,y+height,x,ycentre+yoo,GxEPD_BLACK);
           break;
         case 3:
-          display.fillTriangle(xc,yc,0,yc,0,0,GxEPD_BLACK);
-          display.fillTriangle(xc,yc,0,0,xc-xoo,0,GxEPD_BLACK);
+          display.fillTriangle(xcentre,ycentre,x,ycentre,x,y,GxEPD_BLACK);
+          display.fillTriangle(xcentre,ycentre,x,y,xcentre-xoo,y,GxEPD_BLACK);
           break;
       }
     }
-    display.setFont(&Transport_Medium14pt7b);
-    display.setCursor(10,20);
-    display.print(time_string);
-  }
-  
-  while (display.nextPage());
-  // display.hibernate();
 }
-
-// void EpaperDisplay::fillArcBox(uint16_t x, uint16_t y, uint16_t width, uint16_t height, double arc){
-
-// }
 
 void EpaperDisplay::scrollString(const char *string){
   clear();

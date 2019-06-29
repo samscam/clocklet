@@ -35,10 +35,10 @@ private:
   void updateDisplay();
   void scrollString(const char *string);
   void pageString(const char *string);
-  void displayAnalogue();
+  void displayOctogram();
   void displayDigital();
   void clear();
-
+  void fillArcBox(uint16_t x, uint16_t y, uint16_t width, uint16_t height, double arc);
   GxEPD2_BW<GxEPD2_290, GxEPD2_290::HEIGHT> display;
 
   char time_string[6];

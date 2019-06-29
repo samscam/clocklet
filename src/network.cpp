@@ -12,6 +12,8 @@ bool setupWifi(){
   #if defined(ESP32)
     wifi_country_t country = {"GB", 1, 13, 127, WIFI_COUNTRY_POLICY_AUTO};
     esp_wifi_set_country(&country);
+    esp_wifi_set_ps(WIFI_PS_MAX_MODEM);
+    btStop();
   #endif
 
   return connectWifi();
@@ -22,28 +24,6 @@ uint32_t lastConnectAttempt = 0;
 
 bool connectWifi(){
 
-  #if defined(ESP32)
-    if (WiFi.status() == WL_CONNECTED) {
-      return true;
-    }
-    
-    if (WiFi.status() == WL_NO_SHIELD){ // Initial state - needs to connect
-      WiFi.begin(NETWORK_SSID,NETWORK_PASSWORD);
-      while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
-        Serial.println("Connecting to WiFi..");
-      }
-      printWiFiStatus();
-      return true;
-    }
-
-    Serial.println("Semi-connected - probably sleeping");
-    // Not actually sure what the state is but it seems to come back ok...
-    return true;
-    
-
-  #else
-
     int status = WiFi.status();
 
     switch (status) {
@@ -51,10 +31,16 @@ bool connectWifi(){
       case WL_CONNECTED:
         return true;
         break;
-      // VVV ---- This is never going to work :(
+      
       case WL_NO_SHIELD:
+#if defined(ESP32)
+        // Initial state - needs to connect
+        break;
+#else
+        // VVV ---- This is never going to work :(
         return false;
         break;
+#endif
       // VVV ---- attempt a (re)connection on fallthrough
       case WL_CONNECT_FAILED:
         break;
@@ -79,8 +65,10 @@ bool connectWifi(){
       }
     }
 
+    #ifndef ESP32
     // clear out any existing session - presuming harmless only on the Atwinc
     WiFi.end();
+    #endif
 
     lastConnectAttempt = millis();
 
@@ -94,16 +82,28 @@ bool connectWifi(){
     Serial.print("Attempting to connect to SSID: ");
     Serial.println(ssid);
 
-
-
     status = WiFi.begin(ssid, pass);
 
+    #ifdef ESP32
+    int64_t wifiTimeout = millis() + 6000;
+    while (millis() < wifiTimeout){
+      if ( status != WL_CONNECTED ) {
+        status = WiFi.status();
+        Serial.println(status);
+        delay(200);
+      } else {
+        wifiTimeout = 0;
+      }
+    }
+    #else
     // Wait for the connection to solidify
     while ( status == WL_IDLE_STATUS ) {
       status = WiFi.status();
       Serial.println(status);
       delay(1000);
     }
+    #endif
+
 
     printWiFiStatus();
 
@@ -126,7 +126,6 @@ bool connectWifi(){
 
     return false;
 
-  #endif
 
 }
 
