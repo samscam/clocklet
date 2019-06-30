@@ -4,6 +4,8 @@
 #include "Messages.h"
 #include "Displays/Display.h"
 
+#include "TimeThings/NTP.h"
+
 // CONFIGURATION  --------------------------------------
 
 // Time zone adjust (in MINUTES from utc)
@@ -13,33 +15,46 @@ int32_t secondaryTimeZone = 330; // Mumbai is +5:30
 // Set to false to display time in 12 hour format, or true to use 24 hour:
 
 // ----------- Display
+
+#if defined(RAINBOWDISPLAY)
+
+#include "Displays/RGBDigit.h"
+Display *display = new RGBDigit();
+
+#elif defined(EPAPER)
+
+#include "Displays/Epaper.h"
+Display *display = new EpaperDisplay();
+
+#endif
+
 // RGBDigit display = RGBDigit();
 //Adafruit7 display = Adafruit7();
 
 // #include "Displays/DebugDisplay.h"
 // DebugDisplay display = DebugDisplay();
 
-#include "Displays/Epaper.h"
-Display *display = new EpaperDisplay();
+
 
 // ----------- RTC
 
-//RTC_DS3231 rtc = RTC_DS3231();
+RTC_DS3231 rtc = RTC_DS3231();
 
 // #include "TimeThings/ESP32Rtc.h"
 // RTC_ESP32 rtc = RTC_ESP32();
 
-#include "TimeThings/GPSTime.h"
-RTC_GPS rtc = RTC_GPS();
+// #include "TimeThings/GPSTime.h"
+// RTC_GPS rtc = RTC_GPS();
 
 // ---------- Networking
 
 // WiFiClientSecure client; // << https on esp32
 WiFiClient client; // <<  plain http, and https on atmelwinc
 
-MetOffice *weatherClient = new MetOffice(client);
 
-// WeatherClient *weatherClient = new 
+// ---------- WEATHER CLIENT
+
+MetOffice *weatherClient = new MetOffice(client);
 
 
 // SETUP  --------------------------------------
@@ -61,14 +76,16 @@ void setup() {
   uint16_t seed = analogRead(A0);
   randomSeed(seed);
   Serial.println((String)"Seed: " + seed);
-  for (int i = 0; i<10 ; i++){
-    updateBrightness();
-  }
+
+  // for (int i = 0; i<10 ; i++){
+  //   updateBrightness();
+  // }
 
   Serial.println("Clock starting!");
   Wire.begin();
 
   display->setup();
+  display->setBrightness(0.2);
   display->displayMessage("Everything is awesome");
   setupWifi();
 }
@@ -86,7 +103,8 @@ DateTime lastTime = 0;
 
 void loop() {
   // updateBrightness();
-  rtc.loop();
+
+  // rtc.loop(); << needed on the GPS rtc to wake it :/
 
   // This should always be UTC
   DateTime time = rtc.now();
@@ -126,7 +144,7 @@ void loop() {
 
   // Minutes precision updates
   // Will fail when starting at zero :/
-  if (time.minute() != lastTime.minute()){
+  // if (time.minute() != lastTime.minute()){
     DateTime displayTime;
     // adjust for timezone and DST
     displayTime = time + TimeSpan(dstAdjust(time) * 3600);
@@ -135,31 +153,38 @@ void loop() {
     display->setTime(displayTime);
 
     // secondary time
-    displayTime = time; //+ TimeSpan(dstAdjust(time) * 3600); -- no dst in india
-    displayTime = displayTime + TimeSpan(secondaryTimeZone * 60);
-    display->setSecondaryTime(displayTime,"Mumbai");
+    // displayTime = time; //+ TimeSpan(dstAdjust(time) * 3600); -- no dst in india
+    // displayTime = displayTime + TimeSpan(secondaryTimeZone * 60);
+    // display->setSecondaryTime(displayTime,"Mumbai");
 
-    float voltage = batteryVoltage();
-    display->setBatteryLevel(batteryLevel(voltage));
+// #if defined(BATTERY_MONITORING)
+//     float voltage = batteryVoltage();
+//     display->setBatteryLevel(batteryLevel(voltage));
 
-    if (voltage < cutoffVoltage){
-      espShutdown();
-    }
+//     if (voltage < cutoffVoltage){
+//       // espShutdown();
+//     }
 
-    lastTime = time;
-    display->frameLoop();
+// #endif
+
+
+    // lastTime = time;
+
+    // display->frameLoop();
     
-    espSleep(59 - time.second() );
-  }
+    // espSleep(59 - time.second() );
+  // }
 
   // delay(50);
   // delay(1000/FPS);
-  // FastLED.delay(1000/FPS);
+  display->frameLoop();
+  FastLED.delay(1000/FPS);
 
 }
 
+#if defined(ESP32)
 void espSleep(int seconds){
-  rtc.sleep();
+  // rtc.sleep();
   esp_sleep_enable_timer_wakeup(seconds * 1000 * 1000 ); // 58 seconds sounds nice
   esp_light_sleep_start();
 
@@ -170,6 +195,7 @@ void espShutdown(){
   Serial.println("LOW BATTERY shutting down");
   esp_deep_sleep_start();
 }
+#endif
 
 // MARK: UPDATE CYCLE ---------------------------------------
 
@@ -187,9 +213,12 @@ void updatesHourly(){
 
 void updatesDaily(){
   Serial.println("Daily update");
-  // if (connectWifi()) {
-  //   updateRTCTimeFromNTP();
-  // }
+  if (connectWifi()) {
+    DateTime ntpTime;
+    if (timeFromNTP(ntpTime)){
+      rtc.adjust(ntpTime);
+    }
+  }
   generateDSTTimes(rtc.now().year());
 }
 

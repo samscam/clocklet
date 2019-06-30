@@ -1,3 +1,5 @@
+#if defined(GPSTIME)
+
 #include "GPSTime.h"
 #include <TinyGPS++.h>
 
@@ -111,3 +113,5 @@ void RTC_GPS::wake(){
   _ss.println("w");
   needsWake = false;
 }
+
+#endif

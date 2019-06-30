@@ -1,3 +1,5 @@
+#if defined(EPAPER)
+
 #include "Epaper.h"
 #include "Fonts/Transport_Medium14pt7b.h"
 #include "Fonts/Transport_Heavy40pt7b.h"
@@ -393,3 +395,5 @@ void EpaperDisplay::clear(){
   }
   while (display.nextPage());
 }
+
+#endif

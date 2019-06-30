@@ -1,3 +1,5 @@
+#if defined(ESP32)
+
 #include "ESP32Rtc.h"
 #include "time.h"
 
@@ -64,3 +66,5 @@ static uint32_t calibrate_one(rtc_cal_sel_t cal_clk, const char *name)
   // {
   //    Serial.println("OSC Enabled");
   // }
+
+#endif

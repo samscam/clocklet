@@ -1,5 +1,6 @@
+#if defined(RAINBOWDISPLAY)
+
 #include "RGBDigit.h"
-#if defined(RAINBOW)
 
 #include "../p.h"
 #include "../settings.h"
@@ -28,7 +29,7 @@ void RGBDigit::frameLoop() {
 }
 
 void RGBDigit::setWeather(Weather weather) {
-
+  _weather = weather;
 }
 
 void RGBDigit::setTime(DateTime time) {
@@ -40,7 +41,8 @@ void RGBDigit::displayMessage(const char *stringy) {
 }
 
 void RGBDigit::setBrightness(float brightness){
-
+  uint8_t scaledBrightness = MIN_BRIGHTNESS + (brightness * (MAX_BRIGHTNESS - MIN_BRIGHTNESS));
+  FastLED.setBrightness(scaledBrightness);
 }
 
 // PRIVATE

@@ -1,3 +1,6 @@
+#ifndef PRISCILLA_ESP32RTC
+#define PRISCILLA_ESP32RTC
+
 #include <RTClib.h>
 
 class RTC_ESP32 {
@@ -6,3 +9,5 @@ public:
     void adjust(const DateTime& dt);
     DateTime now();
 };
+
+#endif

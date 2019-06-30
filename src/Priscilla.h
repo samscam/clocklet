@@ -20,7 +20,7 @@
 #include "colours.h"
 
 #if defined(ESP32)
-#define BATTERY_MONITORING
+// #define BATTERY_MONITORING
 #define BATTERY_PIN A13
 #endif
 
@@ -42,11 +42,13 @@ float batteryLevel(float voltage);
 static float cutoffVoltage = 3.3f;
 static float maxVoltage = 4.2f;
 
-#endif
-
 #if defined(ESP32)
 void espSleep(int seconds);
 void espShutdown();
 #endif
+
+#endif
+
+
 
 #endif

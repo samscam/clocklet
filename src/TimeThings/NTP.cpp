@@ -5,10 +5,10 @@
 
 unsigned int localPort = 2390;      // local port to listen for UDP packets
 
-// IPAddress timeServer(130, 88, 202, 49);//ntp2a.mcc.ac.uk
+IPAddress timeServer(130, 88, 202, 49);//ntp2a.mcc.ac.uk
 //IPAddress timeServer(129, 6, 15, 28); // time.nist.gov NTP server
 //IPAddress timeServer(194,35,252,7); //chronos.csr.net
-IPAddress timeServer(129, 250, 35, 251); //some other one from the pool
+// IPAddress timeServer(129, 250, 35, 251); //some other one from the pool
 // char timeServerPool[] = "pool.ntp.org";
 
 const int NTP_PACKET_SIZE = 48; // NTP time stamp is in the first 48 bytes of the message
@@ -21,10 +21,10 @@ WiFiUDP Udp;
 // MARK: TIME SYNC STUFF --------------------------------------
 
 
-void timeFromNTP(DateTime& time){
+bool timeFromNTP(DateTime &time){
   if ( !connectWifi() ){
     Serial.println("Wifi is actually down now");
-    return;
+    return false;
   }
 
   Serial.println("\nStarting connection to server...");
@@ -45,7 +45,7 @@ void timeFromNTP(DateTime& time){
     if (millis() - timech >= timeout) {
       Serial.print("Didn't get a packet back... skipping sync...");
       // display.displayMessage("failed to update ntp");
-      return;
+      return false;
     }
   }
 
@@ -78,12 +78,11 @@ void timeFromNTP(DateTime& time){
 
   // rtc.adjust(DateTime(epoch));
   time = DateTime(epoch);
-  return;
+  return true;
 
   // Serial.print("Time to adjust time (ms):");
   // Serial.println(millis() - startMillis);
 
-  // display.displayMessage("synchronised");
 }
 
 

@@ -1,7 +1,6 @@
 #ifndef PRISCILLA_RGBDIGIT
 #define PRISCILLA_RGBDIGIT
 
-#if defined(RAINBOW)
 #include <Arduino.h>
 #include <FastLED.h>
 #include <RTClib.h>
@@ -11,7 +10,7 @@
 // ----------- Display
 
 #if defined(ESP32)
-#define DATA_PIN    22
+#define DATA_PIN    13
 #include "pgmspace.h"
 #else
 #define DATA_PIN    11
@@ -28,17 +27,17 @@
 
 #define DIGIT_COUNT 4
 
+#define MAX_BRIGHTNESS 140
+#define MIN_BRIGHTNESS 10
 
-
-DEFINE_GRADIENT_PALETTE( heatmap_pal ) {
-0,     0,  255,  255,
-51,   255,  255, 255,
-102,   0,255,  0,
-153, 255,255,0,
-204,   255,0,0,
-255,  255,0,255
-};
-CRGBPalette16  tempPalette = heatmap_pal;
+// DEFINE_GRADIENT_PALETTE( funny_heatmap_pal ) {
+// 0,     0,  255,  255,
+// 51,   255,  255, 255,
+// 102,   0,255,  0,
+// 153, 255,255,0,
+// 204,   255,0,0,
+// 255,  255,0,255
+// };
 
 class RGBDigit: public Display {
 public:
@@ -170,5 +169,4 @@ private:
   };
 };
 
-#endif
 #endif
