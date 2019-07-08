@@ -33,7 +33,7 @@ void generateDSTTimes(uint16_t year);
 
 void showTime();
 
-void updateBrightness();
+float currentBrightness();
 
 #if defined(BATTERY_MONITORING)
 float batteryVoltage();

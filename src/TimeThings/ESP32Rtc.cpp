@@ -1,4 +1,4 @@
-#if defined(ESP32)
+#if defined(TIME_ESP32)
 
 #include "ESP32Rtc.h"
 #include "time.h"

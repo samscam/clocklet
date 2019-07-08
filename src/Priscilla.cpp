@@ -38,13 +38,23 @@ Display *display = new EpaperDisplay();
 
 // ----------- RTC
 
+
+#if defined(TIME_GPS)
+#include "TimeThings/GPSTime.h"
+RTC_GPS rtc = RTC_GPS();
+
+#elif defined(TIME_DS3231)
 RTC_DS3231 rtc = RTC_DS3231();
 
-// #include "TimeThings/ESP32Rtc.h"
-// RTC_ESP32 rtc = RTC_ESP32();
+#elif defined(TIME_ESP32)
+#include "TimeThings/ESP32Rtc.h"
+RTC_ESP32 rtc = RTC_ESP32();
 
-// #include "TimeThings/GPSTime.h"
-// RTC_GPS rtc = RTC_GPS();
+#endif
+
+
+
+
 
 // ---------- Networking
 
@@ -77,17 +87,21 @@ void setup() {
   randomSeed(seed);
   Serial.println((String)"Seed: " + seed);
 
-  // for (int i = 0; i<10 ; i++){
-  //   updateBrightness();
-  // }
+  // seed the brightness
+  for (int i = 0; i<10 ; i++){
+    currentBrightness();
+    delay(100);
+  }
 
   Serial.println("Clock starting!");
   Wire.begin();
 
   display->setup();
-  display->setBrightness(0.2);
+  display->setBrightness(currentBrightness());
   display->displayMessage("Everything is awesome");
   setupWifi();
+
+
 }
 
 // LOOP  --------------------------------------
@@ -103,9 +117,11 @@ DateTime lastTime = 0;
 
 void loop() {
   // updateBrightness();
+  display->setBrightness(currentBrightness());
 
-  // rtc.loop(); << needed on the GPS rtc to wake it :/
-
+#if defined(TIME_GPS)
+  rtc.loop(); //<< needed on the GPS rtc to wake it :/
+#endif
   // This should always be UTC
   DateTime time = rtc.now();
 
@@ -135,6 +151,7 @@ void loop() {
   }
 
   if (millis() > lastRandomMessageTime + nextMessageDelay){
+    Serial.println("Random message");
     const char* message = randoMessage();
     display->displayMessage(message);
     lastRandomMessageTime = millis();
@@ -144,7 +161,7 @@ void loop() {
 
   // Minutes precision updates
   // Will fail when starting at zero :/
-  // if (time.minute() != lastTime.minute()){
+  if (time.minute() != lastTime.minute()){
     DateTime displayTime;
     // adjust for timezone and DST
     displayTime = time + TimeSpan(dstAdjust(time) * 3600);
@@ -157,45 +174,32 @@ void loop() {
     // displayTime = displayTime + TimeSpan(secondaryTimeZone * 60);
     // display->setSecondaryTime(displayTime,"Mumbai");
 
-// #if defined(BATTERY_MONITORING)
-//     float voltage = batteryVoltage();
-//     display->setBatteryLevel(batteryLevel(voltage));
+#if defined(BATTERY_MONITORING)
+    float voltage = batteryVoltage();
+    display->setBatteryLevel(batteryLevel(voltage));
 
-//     if (voltage < cutoffVoltage){
-//       // espShutdown();
-//     }
+    if (voltage < cutoffVoltage){
+      
+      espShutdown();
+    }
 
-// #endif
+#endif
 
 
-    // lastTime = time;
+    lastTime = time;
 
-    // display->frameLoop();
+    display->frameLoop();
     
-    // espSleep(59 - time.second() );
-  // }
+    espSleep(59 - time.second() );
+  }
 
   // delay(50);
   // delay(1000/FPS);
-  display->frameLoop();
-  FastLED.delay(1000/FPS);
+  // display->frameLoop();
+  // FastLED.delay(1000/FPS);
 
 }
 
-#if defined(ESP32)
-void espSleep(int seconds){
-  // rtc.sleep();
-  esp_sleep_enable_timer_wakeup(seconds * 1000 * 1000 ); // 58 seconds sounds nice
-  esp_light_sleep_start();
-
-}
-
-void espShutdown(){
-  display->setStatusMessage("LOW BATTERY");
-  Serial.println("LOW BATTERY shutting down");
-  esp_deep_sleep_start();
-}
-#endif
 
 // MARK: UPDATE CYCLE ---------------------------------------
 
@@ -213,12 +217,14 @@ void updatesHourly(){
 
 void updatesDaily(){
   Serial.println("Daily update");
+  #if defined(TIMESOURCE_NTP)
   if (connectWifi()) {
     DateTime ntpTime;
     if (timeFromNTP(ntpTime)){
       rtc.adjust(ntpTime);
     }
   }
+  #endif
   generateDSTTimes(rtc.now().year());
 }
 
@@ -249,35 +255,29 @@ uint16_t dstAdjust(DateTime time){
 }
 
 
-
-
-// brightness sensing
+// MARK: BRIGHTNESS SENSING -------------------------
 
 int lightPin = A2;
 const int readingWindow = 10;
-float readings[readingWindow] = {4096.0f};
+uint16_t readings[readingWindow] = {1024};
 int readingIndex = 0;
 
-static const float min_brightness = 10;
-static const float max_brightness = 200;
-
-void updateBrightness(){
+float currentBrightness(){
   readings[readingIndex] = analogRead(lightPin);
   readingIndex++;
   if (readingIndex == readingWindow) { readingIndex = 0; }
-  float sum = 0;
+  uint16_t sum = 0; // The sum can be a 16 bit integer because
+  // 4096 goes into 2^16 - 16 times and we are doing 10 readings
   for (int loop = 0 ; loop < readingWindow; loop++) {
     sum += readings[loop];
   }
-  float lightReading = sum / readingWindow;
 
-  float bRange = max_brightness - min_brightness;
+  uint16_t lightReading = sum / (uint16_t)readingWindow;
+  return lightReading / 4096.0f;
 
-  float brightness = (lightReading * bRange / 4096.0f) + min_brightness;
-  display->setBrightness(brightness);
 }
 
-
+// MARK: POWER MANAGEMENT -------------------------
 
 #if defined(BATTERY_MONITORING)
 
@@ -292,4 +292,23 @@ float batteryVoltage(){
   return (reading / 4095.0f) * 2.0f * 3.3f * 1.1;
 }
 
+#endif
+
+
+#if defined(ESP32)
+void espSleep(int seconds){
+  #if defined(TIME_GPS)
+  rtc.sleep();
+  #endif
+
+  esp_sleep_enable_timer_wakeup(seconds * 1000 * 1000 ); // 58 seconds sounds nice
+  esp_light_sleep_start();
+
+}
+
+void espShutdown(){
+  display->setStatusMessage("LOW BATTERY");
+  Serial.println("LOW BATTERY shutting down");
+  esp_deep_sleep_start();
+}
 #endif

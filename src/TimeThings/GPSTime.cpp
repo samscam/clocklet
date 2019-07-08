@@ -1,4 +1,4 @@
-#if defined(GPSTIME)
+#if defined(TIME_GPS)
 
 #include "GPSTime.h"
 #include <TinyGPS++.h>
