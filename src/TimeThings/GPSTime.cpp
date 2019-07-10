@@ -9,7 +9,7 @@ boolean RTC_GPS::begin(void){
   _ss.begin(9600);
   delay(2000);
   _ss.println(PMTK_SET_NMEA_OUTPUT_RMCGGA);
-  _ss.println(PMTK_SET_NMEA_UPDATE_1HZ);
+  _ss.println(PMTK_SET_NMEA_UPDATE_10HZ);
 
   return true;
 }
