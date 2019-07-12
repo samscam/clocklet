@@ -30,15 +30,6 @@
 #define MAX_BRIGHTNESS 140
 #define MIN_BRIGHTNESS 10
 
-// DEFINE_GRADIENT_PALETTE( funny_heatmap_pal ) {
-// 0,     0,  255,  255,
-// 51,   255,  255, 255,
-// 102,   0,255,  0,
-// 153, 255,255,0,
-// 204,   255,0,0,
-// 255,  255,0,255
-// };
-
 class RGBDigit: public Display {
 public:
   RGBDigit();
@@ -49,10 +40,10 @@ public:
   void frameLoop();
 
   // It's a clock of some sort... you have to implement this
-  // Time is passed by reference - the display should update on the next frame loop
+  // the display should update on the next frame loop
   void setTime(DateTime time);
 
-  // Implementation is optional
+  // Set the weather
   void setWeather(Weather weather);
 
   // Show a message - but what kind of message?
@@ -104,19 +95,6 @@ private:
   int allvsegs[ 4 * NUM_DIGITS ] = {0};
 
   CRGB lighteningLayer[NUM_LEDS];
-
-  // CRGBPalette16 tempPalette = CRGBPalette16(0x00FFFF, 0xFFFFFF, 0x00FF00, 0xFFFF00, 0xFF0000, 0xFF00FF}
-
-  // Convert the temps in °c to uint8_t
-  // -10 = 0
-  // 0 = 51
-  // 10 = 102
-  // 20 = 153
-  // 30 = 204
-  // 40 = 255
-
-
-
 
   float cycle = 0;
 

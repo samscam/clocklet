@@ -7,6 +7,17 @@
 
 FASTLED_USING_NAMESPACE
 
+// This is a gradient palette for the temperature scale
+// I would rather it was in the private scope of the class in the header file
+// But this macro doesn't seem to like doing that...
+DEFINE_GRADIENT_PALETTE (temperatureGPalette) {
+0,     0,  255,  255,
+51,   255,  255, 255,
+102,   0,255,  0,
+153, 255,255,0,
+204,   255,0,0,
+255,  255,0,255
+};
 
 RGBDigit::RGBDigit() : Display() {
 
@@ -30,6 +41,10 @@ void RGBDigit::frameLoop() {
 
 void RGBDigit::setWeather(Weather weather) {
   _weather = weather;
+  CRGB minColour = colourFromTemperature(_weather.minTmp);
+  CRGB maxColour = colourFromTemperature(_weather.maxTmp);
+  scrollText(_weather.summary,minColour,maxColour);
+
 }
 
 void RGBDigit::setTime(DateTime time) {
@@ -46,9 +61,6 @@ void RGBDigit::setBrightness(float brightness){
 }
 
 // PRIVATE
-
-
-
 
 
 // MARK: SCROLLING TEXT
@@ -105,19 +117,22 @@ void RGBDigit::scrollText(const char *stringy, CRGB startColour, CRGB endColour)
 // MARK: DISPLAY TIME --------------------------------------
 
 
-// Remember if the colon was drawn on the display so it can be blinked
-// on and off every second.
-
-
 void RGBDigit::displayTime(const DateTime& time, Weather weather){
 
+  // Fill the digits entirely with rainbows
   fillDigits_rainbow(false, weather.windSpeed);
 
-  //fillDigits_heat(weather.windSpeed, weather.minTmp , weather.maxTmp);
+  // Or heat colours
+  // fillDigits_heat(weather.windSpeed, weather.minTmp , weather.maxTmp);
+
+  // More backgrounds may happen one day
 
   float precip = weather.precipChance * 100;
   float minTmp = weather.minTmp;
 
+  // PRECIPITATION --------
+
+  // We are shaving off anything under a 25% chance of rain and calling that zero
   precip = precip - 25;
   precip = precip < 0 ? 0 : precip;
   fract8 rainRate = (precip * 255) / 75.0;
@@ -173,14 +188,6 @@ void RGBDigit::maskTime(const DateTime& time){
     setDigit(' ',0);
   }
 }
-
-// MARK: BRIGHTNESS ADJUSTMENTS
-
-
-
-
-
-
 
 
 void RGBDigit::setDigit(int number, int digit){
@@ -269,16 +276,26 @@ void RGBDigit::setDigits(int number){
 
 void RGBDigit::fillDigits_rainbow(bool includePoints, float speed){
 
-  // speed is in m/s
-  // at 1 m/s cycle takes 51 seconds
-  // at 10 m/s cycle takes 5.1 seconds
+  /*
+  Wind speed comes in here in m/s
+  we are scaling it in a dumb way but in beaufort terms:
+
+  0 Calm: 0.5 m/s = 2.5 steps/second = 0.041 steps/frame = 102 seconds/iteration
+  1 Light air: 1m/s - 51 secs/iteration
+  2 Light breeze: 2.5m/s - 20 secs/iteration
+  ... you get the idea
+  5 Fresh breeze: 10m/s - 5.1 s/iteration
+  8 Gale: 20m/s - 2.55 s/iteration
+  10 Storm: 25m/s - 2.04 s/iteration
+  12 Hurricane: 32m/s - 1.59 s/iteration
+  
+   */
+
   cycle = cycle + ( (speed * 5.0f ) / (float)FPS );
   if (cycle > 255.0f) {
     cycle -= 255.0f;
   }
   uint8_t hue = cycle;
-
-  //p("speed %f - cycle %f - hue %d \n",speed,cycle,hue);
 
   if (includePoints){
     // when we include the points, we treat each digit as 4 columns of segments
@@ -313,7 +330,6 @@ void RGBDigit::fillDigits_rainbow(bool includePoints, float speed){
 
 
 
-
 CRGB RGBDigit::colourFromTemperature(float temperature){
   int min = -10;
   int max = 40;
@@ -321,26 +337,14 @@ CRGB RGBDigit::colourFromTemperature(float temperature){
   if (temperature < min) { temperature = min; }
   if (temperature > max) { temperature = max; }
 
-  uint8_t scaled = (((temperature - min) * 255) / (max - min));
-  return CRGB::Blue; //ColorFromPalette(tempPalette, scaled);
+  uint8_t scaled = (((temperature - min) * 255) / (double)(max - min));
+  CRGBPalette16 temperaturePalette = temperatureGPalette;
+  return ColorFromPalette(temperaturePalette, scaled);
 }
 
 void RGBDigit::fillDigits_heat( float speed, float minTemp, float maxTemp){
 
-  CRGB startColour = colourFromTemperature(minTemp);
-  CRGB endColour = colourFromTemperature(maxTemp);
 
-  // construct restricted palette
-  // really should not be doing this every iteration
-  // CRGBPalette16 gpal = CRGBPalette16()
-  // for (int i = 0; i < 16; i++) {
-  //   uint8_t tmp = min + ((max - min) / 16) * i;
-  //   gpal[i] = ColorFromPalette(tempPalette, tmp);
-  // }
-
-  // speed is in m/s
-  // at 1 m/s cycle takes 51 seconds
-  // at 10 m/s cycle takes 5.1 seconds
   cycle = cycle + ( (speed * 5.0f ) / (float)FPS );
   if (cycle > 255.0f) {
     cycle -= 255.0f;
@@ -349,7 +353,20 @@ void RGBDigit::fillDigits_heat( float speed, float minTemp, float maxTemp){
   uint8_t numCols = 3 * NUM_DIGITS;
   CRGB cols[3 * NUM_DIGITS];
   // fill_solid(cols, numCols, endColour);
+
+  // Method 1: a gradient from min heat colour to max heat colour
+  CRGB startColour = colourFromTemperature(minTemp);
+  CRGB endColour = colourFromTemperature(maxTemp);
   fill_gradient_RGB(cols , 0,  startColour, numCols-1, endColour);
+
+  // Method 2: create a gradient constructed out of the main temperature
+  // gradient
+  // really should not be doing this every iteration
+  // CRGBPalette16 gpal = CRGBPalette16()
+  // for (int i = 0; i < 16; i++) {
+  //   uint8_t tmp = min + ((max - min) / 16) * i;
+  //   gpal[i] = ColorFromPalette(temperaturePallete, tmp);
+  // }
   // fill_palette(cols, numCols, hue, 6, gpal, 255, LINEARBLEND);
 
   int mapping[] = {
@@ -375,13 +392,12 @@ void RGBDigit::fillDigits_gradient(CRGB startColour, CRGB endColour){
     leds[i] = cols[ mapping[i%8] + ((i/8)*3) ];
   }
 }
-// Rain
 
-
+// Rain (also sleet)
 
 /// Creates the mapping in `allvsegs` to the vertical segments in `leds`
+/// This only needs to be done once on initialisation of the class
 void RGBDigit::initRain(){
-  // Init rain
   int s = 0;
 
   for (int digit = 0; digit < NUM_DIGITS ; digit++) {
@@ -389,7 +405,6 @@ void RGBDigit::initRain(){
       int digStep = DIGIT_SEGS * digit;
       int val = vsegs[vseg] + digStep;
       allvsegs[s] = val;
-      //p("digit %d - vseg %d - digStep %d - val %d\n",digit,vseg,digStep,val);
       s++;
     }
   }
@@ -440,12 +455,10 @@ void RGBDigit::addFrost(){
     frostLayer[ (d*8) + 4 ] = CHSV(0,0,90);
   }
 
-  //nblend(leds, frostLayer, NUM_LEDS,  80);
   for(int i = 0; i < NUM_LEDS; i++) { leds[i] += frostLayer[i] ; }
 }
 
 // Lightening
-
 
 void RGBDigit::addLightening(){
   for(int i = 0; i < NUM_LEDS; i++) {
@@ -456,4 +469,5 @@ void RGBDigit::addLightening(){
   }
   for(int i = 0; i < NUM_LEDS; i++) { leds[i] += lighteningLayer[i] ; }
 }
+
 #endif
