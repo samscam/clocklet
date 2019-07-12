@@ -10,7 +10,7 @@
 // CONFIGURATION  --------------------------------------
 
 // Time zone adjust (in MINUTES from utc)
-int32_t tzAdjust = 0;
+int32_t tzAdjust = 60;
 int32_t secondaryTimeZone = 330; // Mumbai is +5:30
 
 // Set to false to display time in 12 hour format, or true to use 24 hour:
@@ -40,6 +40,7 @@ Display *display = new EpaperDisplay();
 // ----------- RTC
 
 
+
 #if defined(TIME_GPS)
 #include "TimeThings/GPSTime.h"
 RTC_GPS rtc = RTC_GPS();
@@ -60,14 +61,14 @@ RTC_ESP32 rtc = RTC_ESP32();
 
 // ---------- Networking
 
-// WiFiClientSecure client; // << https on esp32
-WiFiClient client; // <<  plain http, and https on atmelwinc
+WiFiClientSecure client; // << https on esp32
+// WiFiClient client; // <<  plain http, and https on atmelwinc
 
 
 // ---------- WEATHER CLIENT
 
-MetOffice *weatherClient = new MetOffice(client);
-
+// MetOffice *weatherClient = new MetOffice(client);
+WeatherClient *weatherClient = new DarkSky(client);
 
 // SETUP  --------------------------------------
 
@@ -163,7 +164,8 @@ void loop() {
 
   // Minutes precision updates
   // Will fail when starting at zero :/
-  if (time.minute() != lastTime.minute()){
+  // if (time.minute() != lastTime.minute()){
+
     DateTime displayTime;
     // adjust for timezone and DST
     displayTime = time + TimeSpan(dstAdjust(time) * 3600);
@@ -190,15 +192,15 @@ void loop() {
 
     lastTime = time;
 
-    display->frameLoop();
+    // display->frameLoop();
     
-    espSleep(59 - time.second() );
-  }
+    // espSleep(59 - time.second() );
+  // }
 
   // delay(50);
   // delay(1000/FPS);
-  // display->frameLoop();
-  // FastLED.delay(1000/FPS);
+  display->frameLoop();
+  FastLED.delay(1000/FPS);
 
 }
 

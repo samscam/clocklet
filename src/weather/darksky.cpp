@@ -5,6 +5,9 @@ DarkSky::DarkSky(WiFiClient &client) : WeatherClient(client) {
   this->server = (char *)DARKSKY_SERVER;
   this->resource = (char *)DARKSKY_PATH;
   this->ssl = true;
+  
+  Serial.print("Setting Default Weather");
+  this->latestWeather = defaultWeather;
 };
 
 Weather DarkSky::readReponseContent() {

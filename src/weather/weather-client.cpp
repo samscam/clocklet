@@ -1,7 +1,10 @@
 #include "weather-client.h"
 
+
 WeatherClient::WeatherClient(WiFiClient &client) {
   this->client = &client;
+  Serial.print("Setting Default Weather");
+  this->latestWeather = defaultWeather;
 };
 
 
@@ -9,12 +12,11 @@ bool WeatherClient::fetchWeather(){
 
   if (connect(this->server, this->ssl)) {
     if (sendRequest(this->server, this->resource) && skipResponseHeaders()) {
+      Serial.println("Got weather response");
       Weather response = readReponseContent();
       Serial.print("Weather: ");
       Serial.println(response.summary);
-      // CRGB minColour = colourFromTemperature(response.minTmp);
-      // CRGB maxColour = colourFromTemperature(response.maxTmp);
-      // scrollText(response.summary,minColour,maxColour);
+
       disconnect();
       latestWeather = response;
       return true;
@@ -34,7 +36,7 @@ bool WeatherClient::connect(char* host, bool ssl) {
   if (ssl){
     #if defined(ESP32)
     ok = client -> connect(host, 443);
-    #else
+    #else // ATWINC
     ok = client -> connectSSL(host, 443);
     #endif
   } else {
