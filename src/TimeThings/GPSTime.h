@@ -1,8 +1,9 @@
 #include <RTClib.h>
 #include <TinyGPS++.h>
+#include "../Location/Location.h"
 
 
-class RTC_GPS {
+class RTC_GPS: public LocationSource {
 public:
     RTC_GPS() : _gps(), _baudRate(9600) {};//, _ss(&Serial2)
 
@@ -14,6 +15,8 @@ public:
 
     void sleep();
     void wake();
+
+    Location location();
 
 private:
   TinyGPSPlus _gps;

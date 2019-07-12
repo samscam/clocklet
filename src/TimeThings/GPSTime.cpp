@@ -114,4 +114,14 @@ void RTC_GPS::wake(){
   needsWake = false;
 }
 
+
+// MARK: Conformance to LocationSource protocol
+
+Location RTC_GPS::location(){
+  Location location = {};
+  location.lat = _gps.location.lat();
+  location.lng = _gps.location.lng();
+  return location;
+}
+
 #endif

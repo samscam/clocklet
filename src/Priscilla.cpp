@@ -3,6 +3,7 @@
 #include "settings.h"
 #include "Messages.h"
 #include "Displays/Display.h"
+#include "Location/LocationSource.h"
 
 #include "TimeThings/NTP.h"
 
@@ -42,6 +43,7 @@ Display *display = new EpaperDisplay();
 #if defined(TIME_GPS)
 #include "TimeThings/GPSTime.h"
 RTC_GPS rtc = RTC_GPS();
+LocationSource locationSource = rtc;
 
 #elif defined(TIME_DS3231)
 RTC_DS3231 rtc = RTC_DS3231();
