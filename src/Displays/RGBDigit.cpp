@@ -119,11 +119,14 @@ void RGBDigit::scrollText(const char *stringy, CRGB startColour, CRGB endColour)
 
 void RGBDigit::displayTime(const DateTime& time, Weather weather){
 
+  // Advance the wind cycle
+  advanceWindCycle(weather.windSpeed);
+
   // Fill the digits entirely with rainbows
-  fillDigits_rainbow(false, weather.windSpeed);
+  // fillDigits_rainbow(false);
 
   // Or heat colours
-  // fillDigits_heat(weather.windSpeed, weather.minTmp , weather.maxTmp);
+  fillDigits_heat(weather.minTmp , weather.maxTmp);
 
   // More backgrounds may happen one day
 
@@ -273,9 +276,9 @@ void RGBDigit::setDigits(int number){
 
 }
 
+// WIND
 
-void RGBDigit::fillDigits_rainbow(bool includePoints, float speed){
-
+void RGBDigit::advanceWindCycle(float speed){
   /*
   Wind speed comes in here in m/s
   we are scaling it in a dumb way but in beaufort terms:
@@ -289,12 +292,17 @@ void RGBDigit::fillDigits_rainbow(bool includePoints, float speed){
   10 Storm: 25m/s - 2.04 s/iteration
   12 Hurricane: 32m/s - 1.59 s/iteration
   
-   */
+  */
 
   cycle = cycle + ( (speed * 5.0f ) / (float)FPS );
   if (cycle > 255.0f) {
     cycle -= 255.0f;
   }
+
+}
+
+void RGBDigit::fillDigits_rainbow(bool includePoints){
+
   uint8_t hue = cycle;
 
   if (includePoints){
@@ -342,32 +350,27 @@ CRGB RGBDigit::colourFromTemperature(float temperature){
   return ColorFromPalette(temperaturePalette, scaled);
 }
 
-void RGBDigit::fillDigits_heat( float speed, float minTemp, float maxTemp){
-
-
-  cycle = cycle + ( (speed * 5.0f ) / (float)FPS );
-  if (cycle > 255.0f) {
-    cycle -= 255.0f;
-  }
+void RGBDigit::fillDigits_heat( float minTemp, float maxTemp){
 
   uint8_t numCols = 3 * NUM_DIGITS;
   CRGB cols[3 * NUM_DIGITS];
-  // fill_solid(cols, numCols, endColour);
 
   // Method 1: a gradient from min heat colour to max heat colour
-  CRGB startColour = colourFromTemperature(minTemp);
-  CRGB endColour = colourFromTemperature(maxTemp);
-  fill_gradient_RGB(cols , 0,  startColour, numCols-1, endColour);
+  // CRGB startColour = colourFromTemperature(minTemp);
+  // CRGB endColour = colourFromTemperature(maxTemp);
+  // fill_gradient_RGB(cols , 0,  startColour, numCols-1, endColour);
 
   // Method 2: create a gradient constructed out of the main temperature
   // gradient
   // really should not be doing this every iteration
-  // CRGBPalette16 gpal = CRGBPalette16()
-  // for (int i = 0; i < 16; i++) {
-  //   uint8_t tmp = min + ((max - min) / 16) * i;
-  //   gpal[i] = ColorFromPalette(temperaturePallete, tmp);
-  // }
-  // fill_palette(cols, numCols, hue, 6, gpal, 255, LINEARBLEND);
+  
+  CRGBPalette16 gpal = CRGBPalette16();
+
+  for (int i = 0; i < 16; i++) {
+    uint8_t tmp = minTemp + ((maxTemp - minTemp) / 16.0f) * i;
+    gpal[i] = colourFromTemperature(tmp);
+  }
+  fill_palette(cols, numCols, cycle, 6, gpal, 255, LINEARBLEND);
 
   int mapping[] = {
     1,2,2,1,0,0,1,2

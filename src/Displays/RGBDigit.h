@@ -73,9 +73,12 @@ private:
   void setDigitMask(byte mask, int digit);
 
   void setDot(bool state, int digit);
-  void fillDigits_rainbow(bool includePoints, float speed);
+  
+  void advanceWindCycle(float speed);
+
+  void fillDigits_rainbow(bool includePoints);
   CRGB colourFromTemperature(float temperature);
-  void fillDigits_heat( float speed, float minTemp, float maxTemp); //temps in •c
+  void fillDigits_heat(float minTemp, float maxTemp); //temps in •c
   void fillDigits_gradient(CRGB startColour, CRGB endColour);
 
   void addRain( fract8 chanceOfRain, CRGB colour);
