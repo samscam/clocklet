@@ -5,7 +5,7 @@ DarkSky::DarkSky(WiFiClient &client) : WeatherClient(client) {
   this->server = (char *)DARKSKY_SERVER;
   this->resource = (char *)DARKSKY_PATH;
   this->ssl = true;
-  
+
   Serial.print("Setting Default Weather");
   this->latestWeather = defaultWeather;
 };
@@ -21,6 +21,8 @@ Weather DarkSky::readReponseContent() {
     Serial.println(error.c_str());
     return latestWeather;
   }
+  Serial.println("Weather deserialised... parsing...");
+
   Weather result;
 
   result.type = 0;// root["daily"]["data"][0]["icon"];
@@ -29,21 +31,26 @@ Weather DarkSky::readReponseContent() {
   result.precipIntensity = root["daily"]["data"][0]["precipIntensity"];
 
   const char* precipType = root["daily"]["data"][0]["precipType"];
-  if (strcmp(precipType, "rain") == 0 ) {
+  if (precipType){ // it doesn't always include it...
+    if (strcmp(precipType, "rain") == 0 ) {
+      result.precipType = Rain;
+    } else if (strcmp(precipType, "snow") == 0 ) {
+      result.precipType = Snow;
+    } else if (strcmp(precipType, "sleet") == 0 ) {
+      result.precipType = Sleet;
+    }
+  } else {
     result.precipType = Rain;
-  } else if (strcmp(precipType, "snow") == 0 ) {
-    result.precipType = Snow;
-  } else if (strcmp(precipType, "sleet") == 0 ) {
-    result.precipType = Sleet;
   }
 
   result.maxTmp = root["daily"]["data"][0]["temperatureHigh"];
-  result.minTmp = root["daily"]["data"][0]["apparentTemperatureLow"];
+  result.minTmp = root["daily"]["data"][0]["temperatureLow"];
 
   result.windSpeed = root["daily"]["data"][0]["windSpeed"];
 
   result.cloudCover = root["daily"]["data"][0]["cloudCover"];
 
   result.thunder = false;
+  Serial.println("Weather parsing done");
   return result;
 }
