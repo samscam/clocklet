@@ -5,7 +5,7 @@
 
 #define DARKSKY_APIKEY "***REMOVED***"
 #define DARKSKY_SERVER "api.darksky.net"
-#define DARKSKY_PATH "/forecast/***REMOVED***/43.5756,3.4908?exclude=currently,minutely,hourly,alerts,flags&units=si"
+#define DARKSKY_PATH "/forecast/***REMOVED***/***REMOVED***?exclude=minutely,hourly,alerts,flags&units=si"
 ***REMOVED***
 // Withington ***REMOVED***
 #define DARKSKY_HTTP_TIMEOUT 20  // max respone time from server

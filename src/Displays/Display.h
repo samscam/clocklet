@@ -24,8 +24,6 @@ public:
   virtual void setTime(DateTime time);
 
   // Show a message
-  // virtual void displayMessage(const char *stringy);
-
   // - but what kind of message?
   virtual void displayMessage(const char *stringy, MessageType messageType = good);
 
@@ -36,6 +34,8 @@ public:
 
   // Set the weather, make it sunny please
   virtual void setWeather(Weather weather) {}
+  
+  virtual void displayTemperatures() {}
 
   // Show a status message (which should be sticky on epd)
   virtual void setStatusMessage(const char *stringy) {}

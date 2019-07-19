@@ -45,12 +45,20 @@ Weather DarkSky::readReponseContent() {
 
   result.maxTmp = root["daily"]["data"][0]["temperatureHigh"];
   result.minTmp = root["daily"]["data"][0]["temperatureLow"];
+  result.currentTmp = root["currently"]["temperature"];
 
   result.windSpeed = root["daily"]["data"][0]["windSpeed"];
 
   result.cloudCover = root["daily"]["data"][0]["cloudCover"];
 
   result.thunder = false;
+  // if (!root["currently"]["nearestStormDistance"].isNull()){
+  //   int nearestStormDistance = root["currently"]["nearestStormDistance"];
+  //   if (nearestStormDistance <= 10){
+  //     result.thunder = true;
+  //   }
+  // }
+  
   Serial.println("Weather parsing done");
   return result;
 }

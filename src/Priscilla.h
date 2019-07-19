@@ -34,6 +34,7 @@ void generateDSTTimes(uint16_t year);
 void showTime();
 
 float currentBrightness();
+long detectTouchPeriod();
 
 #if defined(BATTERY_MONITORING)
 float batteryVoltage();

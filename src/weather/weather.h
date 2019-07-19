@@ -14,6 +14,7 @@ struct Weather {
   PrecipType precipType;
   float maxTmp;
   float minTmp;
+  float currentTmp;
 	bool thunder;
 	float windSpeed;
 	float cloudCover;
@@ -27,6 +28,7 @@ static const Weather defaultWeather = {
   .precipType = Rain,
   .maxTmp = 20.0f,
   .minTmp = 20.0f,
+  .currentTmp = 20.0f,
   .thunder = false,
   .windSpeed = 0.0f,
   .cloudCover = 0.0f

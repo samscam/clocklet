@@ -47,6 +47,15 @@ void RGBDigit::setWeather(Weather weather) {
 
 }
 
+void RGBDigit::displayTemperatures(){
+  const char * message = "Currently";
+  CRGB colour = colourFromTemperature(_weather.currentTmp);
+  scrollText(message, colour);
+  
+  setDigits(_weather.currentTmp,colour);
+  FastLED.delay(4000);
+}
+
 void RGBDigit::setTime(DateTime time) {
   _time = time;
 }
@@ -253,8 +262,8 @@ void RGBDigit::setDigitMask(byte mask, int digit){
   }
 }
 
-void RGBDigit::setDot(bool state, int digit){
-  leds[ 7 + (digit * DIGIT_SEGS)] = state ? CRGB::White : CRGB::Black ;
+void RGBDigit::setDot(bool state, int digit, CRGB colour){
+  leds[ 7 + (digit * DIGIT_SEGS)] = state ? colour : CRGB::Black ;
 }
 
 /// Display a string (up to the length of the display)
@@ -288,6 +297,55 @@ void RGBDigit::setDigits(int number){
 
 }
 
+/// Display a float
+void RGBDigit::setDigits(float number, CRGB colour){
+  fillDigits_gradient(colour,colour);
+
+  // Decomopose the float
+  float integral, fractional;
+  fractional = modff(number, &integral);
+
+  int digit = 0;
+
+  bool negative = (fractional < 0) ;
+  if (negative){
+    setDigit('-',digit);
+    digit++;
+
+    integral = fabsf(integral);
+    fractional = fabsf(fractional);
+  }
+
+  int integralInt = integral;
+  bool doneDot = false;
+  for (;digit<DIGIT_COUNT;digit++){
+    
+    if (integralInt > 0){
+      int first = integralInt;
+      int exp = 0;
+      while (first > 10){
+        first = first / 10;
+        exp ++;
+      }
+      setDigit(first,digit);
+      integralInt -= first * pow(10,exp);
+    } else {
+
+      if (!doneDot){
+        setDot(true,digit-1, colour);
+        doneDot = true;
+      }
+
+      int firstFract = fractional * 10;
+
+      setDigit(firstFract,digit);
+      float dumper;
+      fractional = modff(fractional*10,&dumper);
+
+    }
+  }
+
+}
 // WIND
 
 void RGBDigit::advanceWindCycle(float speed){

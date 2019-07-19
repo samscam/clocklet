@@ -10,10 +10,8 @@
 // CONFIGURATION  --------------------------------------
 
 // Time zone adjust (in MINUTES from utc)
-int32_t tzAdjust = 60;
+int32_t tzAdjust = 0;
 int32_t secondaryTimeZone = 330; // Mumbai is +5:30
-
-// Set to false to display time in 12 hour format, or true to use 24 hour:
 
 // ----------- Display
 
@@ -122,6 +120,11 @@ void loop() {
   // updateBrightness();
   display->setBrightness(currentBrightness());
 
+  // Check for touches...
+  if (detectTouchPeriod() > 500){
+    display->displayTemperatures();//displayMessage("That tickles",rando);
+  }
+
 #if defined(TIME_GPS)
   rtc.loop(); //<< needed on the GPS rtc to wake it :/
 #endif
@@ -131,10 +134,12 @@ void loop() {
   bool needsDaily = false;
 
   // Check for major variations in the time > 1 minute
+  // This often happens after a (delayed) NTP sync or when GPS gets a fix
   // TimeSpan timeDiff = time - lastTime;
   // if (timeDiff.totalseconds() > 60 || timeDiff.totalseconds() < -60 ) {
   //   needsDaily = true;
   // }
+
   if ( time.unixtime() > lastDailyUpdate + (60 * 60 * 24)) {
     needsDaily = true;
   }
@@ -226,9 +231,9 @@ void updatesDaily(){
     DateTime ntpTime;
     if (timeFromNTP(ntpTime)){
       rtc.adjust(ntpTime);
-      display->displayMessage("Synchronised with NTP", good);
+      // display->displayMessage("Synchronised with NTP", good);
     } else {
-      display->displayMessage("No sync", bad);
+      // display->displayMessage("No sync", bad);
     }
   }
   #endif
@@ -239,6 +244,7 @@ DateTime dstStart;
 DateTime dstEnd;
 
 void generateDSTTimes(uint16_t year){
+  // European DST rules:
   // last sunday in march at 01:00 utc
   DateTime eom = DateTime(year, 3, 31);
   int lastSun = 31 - (eom.dayOfTheWeek() % 7);
@@ -251,6 +257,8 @@ void generateDSTTimes(uint16_t year){
 
   Serial.println(dstStart.unixtime());
   Serial.println(dstEnd.unixtime());
+
+  // Making this work anywhere is going to be more complex.
 }
 
 uint16_t dstAdjust(DateTime time){
@@ -281,6 +289,25 @@ float currentBrightness(){
 
   uint16_t lightReading = sum / (uint16_t)readingWindow;
   return lightReading / 4096.0f;
+
+}
+
+// MARK: TOUCH SENSITIVITY ------------------------
+long startTouchMillis = 0;
+
+/// Returns the number of ms which the user has been touching the device
+long detectTouchPeriod(){
+  int touchValue = touchRead(T6);
+
+  if (touchValue < 45){
+    if (!startTouchMillis){
+      startTouchMillis = millis();
+    }
+    return millis() - startTouchMillis;
+  } else {
+    startTouchMillis = 0;
+    return 0;
+  }
 
 }
 

@@ -45,6 +45,8 @@ public:
 
   // Set the weather
   void setWeather(Weather weather);
+  
+  void displayTemperatures();
 
   // Show a message - but what kind of message?
   void displayMessage(const char *stringy, MessageType messageType);
@@ -69,20 +71,22 @@ private:
   void setDigit(char character, int digit);
   void setDigits(const char *string);
   void setDigits(int number);
+  void setDigits(float number, CRGB colour = CRGB::White);
 
   void setDigitMask(byte mask, int digit);
 
-  void setDot(bool state, int digit);
+  void setDot(bool state, int digit, CRGB colour = CRGB::White);
   
   void advanceWindCycle(float speed);
 
   void fillDigits_rainbow(bool includePoints);
-  CRGB colourFromTemperature(float temperature);
   void fillDigits_heat(float minTemp, float maxTemp); //temps in •c
   void fillDigits_gradient(CRGB startColour, CRGB endColour);
 
-  void addRain( fract8 chanceOfRain, CRGB colour);
+  CRGB colourFromTemperature(float temperature);
+
   void initRain();
+  void addRain( fract8 chanceOfRain, CRGB colour);
   void addSnow( fract8 chanceOfSnow );
   void addLightening();
   void addFrost();
@@ -101,6 +105,33 @@ private:
 
   float cycle = 0;
 
+  //   0
+  // 5   1
+  //   6
+  // 4   2
+  //   3   7
+
+  // ASCII offset 32
+  const byte _symbolsLow[16] = {
+    B00000000, // space - 32
+    B01100001, // ! - 33
+    B01000100, // " - 34
+    B01101110, // # - 35 erm
+    B10110110, // $ - 36 like S
+    B10010010, // % - 37 three lines
+    B10111110, // & - 38
+    B00000100, // ' - 39
+    B10011100, // ( - 40
+    B11110000, // ) - 41
+    B11000110, // * - 42
+    B01100010, // + - 43
+    B00001000, // , - 44
+    B00000010, // - - 45
+    B00000001, // . - 46
+    B01001010, // / - 47
+  };
+
+  // ASCII offsets 65 and 97
   const byte _charMasks[36] = {
     B11101110, // a
     B00111110, // b
@@ -130,11 +161,7 @@ private:
     B11011010, // z
   };
 
-  //   0
-  // 5   1
-  //   6
-  // 4   2
-  //   3   7
+
 
   const byte _numberMasks[10] = {
     B11111100,//0
