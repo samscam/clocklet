@@ -51,9 +51,21 @@ void RGBDigit::setTime(DateTime time) {
   _time = time;
 }
 
-void RGBDigit::displayMessage(const char *stringy) {
-  scrollText(stringy);
+void RGBDigit::displayMessage(const char *stringy, MessageType messageType = good) {
+  switch (messageType){
+    case good:
+    scrollText(stringy);
+    break;
+    case bad:
+    scrollText_fail(stringy);
+    break;
+    case rando:
+    scrollText_randomColour(stringy);
+    break;
+  }
+  
 }
+
 
 void RGBDigit::setBrightness(float brightness){
   uint8_t scaledBrightness = MIN_BRIGHTNESS + (brightness * (MAX_BRIGHTNESS - MIN_BRIGHTNESS));

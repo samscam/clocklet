@@ -47,7 +47,7 @@ public:
   void setWeather(Weather weather);
 
   // Show a message - but what kind of message?
-  void displayMessage(const char *stringy);
+  void displayMessage(const char *stringy, MessageType messageType);
 
   // Brightness is a float from 0 (barely visible) to 1 (really bright)
   void setBrightness(float brightness);

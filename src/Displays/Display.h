@@ -5,6 +5,10 @@
 #include <RTClib.h>
 #include "../weather/weather.h"
 
+enum MessageType {
+  good, bad, rando
+};
+
 // General purpose protocol for clock displays
 class Display {
 public:
@@ -19,8 +23,11 @@ public:
   // Time is passed in here - the display should update on the next frame loop
   virtual void setTime(DateTime time);
 
-  // Show a message - but what kind of message?
-  virtual void displayMessage(const char *stringy);
+  // Show a message
+  // virtual void displayMessage(const char *stringy);
+
+  // - but what kind of message?
+  virtual void displayMessage(const char *stringy, MessageType messageType = good);
 
   // OPTIONAL:
 

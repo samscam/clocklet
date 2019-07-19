@@ -156,7 +156,7 @@ void loop() {
   if (millis() > lastRandomMessageTime + nextMessageDelay){
     Serial.println("Random message");
     const char* message = randoMessage();
-    display->displayMessage(message);
+    display->displayMessage(message, rando);
     lastRandomMessageTime = millis();
     nextMessageDelay = 1000 * 60 * random(5,59);
   }
@@ -226,6 +226,9 @@ void updatesDaily(){
     DateTime ntpTime;
     if (timeFromNTP(ntpTime)){
       rtc.adjust(ntpTime);
+      display->displayMessage("Synchronised with NTP", good);
+    } else {
+      display->displayMessage("No sync", bad);
     }
   }
   #endif
