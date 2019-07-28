@@ -23,7 +23,7 @@ void DebugDisplay::setWeather(Weather weather) {
 }
 
 // Show a message - but what kind of message?
-void DebugDisplay::displayMessage(const char *stringy) {
+void DebugDisplay::displayMessage(const char *stringy, MessageType messageType) {
   Serial.println((String)"*** MESSAGE: " + stringy);
 }
 
