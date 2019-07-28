@@ -76,7 +76,7 @@ void EpaperDisplay::setWeather(Weather weather) {
 }
 
 // Show a message - but what kind of message?
-void EpaperDisplay::displayMessage(const char *stringy) {
+void EpaperDisplay::displayMessage(const char *stringy, MessageType messageType){
   Serial.println((String)"*** MESSAGE: " + stringy);
   pageString(stringy);
 }
@@ -134,7 +134,7 @@ void EpaperDisplay::displayDigital(){
     display.setCursor(x,y);
     display.print(blev);
  
-    // y += 5;
+    y += 5;
 
     // Weather status
     display.setFont(&Transport_Medium14pt7b);
@@ -196,10 +196,10 @@ void EpaperDisplay::displayOctogram(){
     // double secondAngle = ((double) time.second() / 60.0f) * M_PI * 2;
     // fillArcBox(0,0,display.width(),display.height(),secondAngle);
 
-    double minuteAngle = (((double) time.minute() / 60.0f) + ((double) time.second() / 3600.0f)) * M_PI * 2;
+    float minuteAngle = (((float) time.minute() / 60.0f) + ((float) time.second() / 3600.0f)) * M_PI * 2;
     fillArcBox(0,0,display.width(),display.height(),minuteAngle);
 
-    double hourAngle = ((((double)(time.hour() % 12) + (double) time.minute() / 60.0f)) / 12.0f) * M_PI * 2;
+    float hourAngle = ((((float)(time.hour() % 12) + (float) time.minute() / 60.0f)) / 12.0f) * M_PI * 2;
     fillArcBox(30,30,display.width()-60,display.height()-60,hourAngle);
 
     // display.setFont(&Transport_Medium14pt7b);
@@ -210,7 +210,7 @@ void EpaperDisplay::displayOctogram(){
   while (display.nextPage());
 }
 
-void EpaperDisplay::fillArcBox(uint16_t x, uint16_t y, uint16_t width, uint16_t height, double arc){
+void EpaperDisplay::fillArcBox(uint16_t x, uint16_t y, uint16_t width, uint16_t height, float arc){
 
     uint16_t xc = width/2;
     uint16_t yc = height/2;
@@ -218,9 +218,9 @@ void EpaperDisplay::fillArcBox(uint16_t x, uint16_t y, uint16_t width, uint16_t 
     uint16_t xcentre = xc + x;
     uint16_t ycentre = yc + y;
 
-    double alphaAngle = atan2((double)yc,(double)xc);
-    double betaAngle = M_PI_2 - alphaAngle;
-    double sigmaAngle = betaAngle;
+    float alphaAngle = atan2((float)yc,(float)xc);
+    float betaAngle = M_PI_2 - alphaAngle;
+    float sigmaAngle = betaAngle;
 
     display.fillRect(x,y,width,height,GxEPD_WHITE);
 
@@ -251,10 +251,10 @@ void EpaperDisplay::fillArcBox(uint16_t x, uint16_t y, uint16_t width, uint16_t 
       quadrant++;
     }
     
-    uint16_t xphi = floor(tan(arc) * (double)yc);
-    uint16_t yphi = floor(tan(arc) * (double)xc);
-    uint16_t yoo = floor(tan(M_PI_2-arc)*(double)xc);
-    uint16_t xoo = floor(tan(M_PI_2-arc)*(double)yc);
+    uint16_t xphi = floor(tan(arc) * (float)yc);
+    uint16_t yphi = floor(tan(arc) * (float)xc);
+    uint16_t yoo = floor(tan(M_PI_2-arc)*(float)xc);
+    uint16_t xoo = floor(tan(M_PI_2-arc)*(float)yc);
     
     if (arc <= sigmaAngle){
       switch (quadrant) {

@@ -25,7 +25,7 @@ public:
 
   void setWeather(Weather weather);
 
-  void displayMessage(const char *stringy);
+  void displayMessage(const char *stringy, MessageType messageType = good);
 
   void setBatteryLevel(float level);
 
@@ -38,7 +38,7 @@ private:
   void displayOctogram();
   void displayDigital();
   void clear();
-  void fillArcBox(uint16_t x, uint16_t y, uint16_t width, uint16_t height, double arc);
+  void fillArcBox(uint16_t x, uint16_t y, uint16_t width, uint16_t height, float arc);
   GxEPD2_BW<GxEPD2_290, GxEPD2_290::HEIGHT> display;
 
   char time_string[6];
