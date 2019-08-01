@@ -415,7 +415,7 @@ CRGB RGBDigit::colourFromTemperature(float temperature){
   if (temperature < min) { temperature = min; }
   if (temperature > max) { temperature = max; }
 
-  uint8_t scaled = (((temperature - min) * 255) / (double)(max - min));
+  uint8_t scaled = (((temperature - min) * 255) / (float)(max - min));
   CRGBPalette16 temperaturePalette = temperatureGPalette;
   return ColorFromPalette(temperaturePalette, scaled);
 }
