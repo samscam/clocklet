@@ -146,33 +146,33 @@ void EpaperDisplay::displayDigital(){
     display.setCursor(x,y);
     display.print(weather_string);
 
-    y += 10;
+    y += 6;
 
     // Main Clock
-    display.setFont(&Transport_Heavy40pt7b);
+    display.setFont(&Transport_Heavy30pt7b);
     display.getTextBounds(time_string, 0, 0, &itemX, &itemY, &itemW, &itemH);
     x = (display.width() - itemW) / 2;
     y += itemH;
     display.setCursor(x,y);
     display.print(time_string);
     
-    // y += 10;
-    // // Bottom half black
-    // display.fillRect(0,y,display.width(),display.height()-y,GxEPD_BLACK);
+    y += 6;
+    // Bottom half black
+    display.fillRect(0,y,display.width(),display.height()-y,GxEPD_BLACK);
 
 
-    // y += 7;
-    // // Secondary clock - inverted
-    // display.setFont(&Transport_Medium14pt7b);
-    // String secStr = (String) secondary_identifier + (String) " " + (String) secondary_time_string;
-    // display.getTextBounds(secStr, 0, 0, &itemX, &itemY, &itemW, &itemH);
-    // x = (display.width() - itemW) / 2;
-    // y += itemH;
-    // display.setCursor(x,y);
-    // display.setTextColor(GxEPD_WHITE);
-    // display.print(secStr);
+    y += 7;
+    // Secondary clock - inverted
+    display.setFont(&Transport_Medium14pt7b);
+    String secStr = (String) secondary_identifier + (String) " " + (String) secondary_time_string;
+    display.getTextBounds(secStr, 0, 0, &itemX, &itemY, &itemW, &itemH);
+    x = (display.width() - itemW) / 2;
+    y += itemH;
+    display.setCursor(x,y);
+    display.setTextColor(GxEPD_WHITE);
+    display.print(secStr);
 
-    // display.setTextColor(GxEPD_BLACK);
+    display.setTextColor(GxEPD_BLACK);
 
     // Free heap
     // uint32_t heapSize = ESP.getHeapSize();
