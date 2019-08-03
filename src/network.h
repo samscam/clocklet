@@ -16,6 +16,8 @@
 bool setupWifi();
 bool connectWifi();
 void printWiFiStatus();
-
+bool reconnect();
+void stopWifi();
+bool waitForWifi(uint32_t milliseconds);
 
 #endif

@@ -22,7 +22,7 @@ WiFiUDP Udp;
 
 
 bool timeFromNTP(DateTime &time){
-  if ( !connectWifi() ){
+  if ( !reconnect() ){
     Serial.println("Wifi is actually down now");
     return false;
   }

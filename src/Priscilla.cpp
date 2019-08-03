@@ -215,19 +215,18 @@ void loop() {
 void updatesHourly(){
   Serial.println("Hourly update");
 
-  if (connectWifi()) {
+  if (reconnect()) {
     weatherClient -> timeThreshold = (rtc.now().hour() * 60) - 180;
     if (weatherClient -> fetchWeather()){
       display->setWeather(weatherClient->latestWeather);
     }
-
   }
 }
 
 void updatesDaily(){
   Serial.println("Daily update");
   #if defined(TIMESOURCE_NTP)
-  if (connectWifi()) {
+  if (reconnect()) {
     DateTime ntpTime;
     if (timeFromNTP(ntpTime)){
       rtc.adjust(ntpTime);
@@ -331,6 +330,7 @@ float batteryVoltage(){
 
 #if defined(ESP32)
 void espSleep(int seconds){
+  stopWifi();
   #if defined(TIME_GPS)
   rtc.sleep();
   #endif

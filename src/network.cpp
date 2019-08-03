@@ -12,7 +12,6 @@ bool setupWifi(){
   #if defined(ESP32)
     wifi_country_t country = {"GB", 1, 13, 127, WIFI_COUNTRY_POLICY_AUTO};
     esp_wifi_set_country(&country);
-    esp_wifi_set_ps(WIFI_PS_MAX_MODEM);
     btStop();
   #endif
 
@@ -84,51 +83,65 @@ bool connectWifi(){
 
     status = WiFi.begin(ssid, pass);
 
-    #ifdef ESP32
-    int64_t wifiTimeout = millis() + 6000;
-    while (millis() < wifiTimeout){
-      if ( status != WL_CONNECTED ) {
-        status = WiFi.status();
-        Serial.println(status);
-        delay(200);
-      } else {
-        wifiTimeout = 0;
-      }
-    }
-    #else
-    // Wait for the connection to solidify
-    while ( status == WL_IDLE_STATUS ) {
-      status = WiFi.status();
-      Serial.println(status);
-      delay(1000);
-    }
-    #endif
+    bool connected = waitForWifi(6000);
 
-
+    bool didSetSleep = WiFi.setSleep(true);
+    if (!didSetSleep){
+      Serial.print("Failed to set wifi sleep mode");
+    }
     printWiFiStatus();
+    return connected;
+}
+
+
+bool reconnect(){
+  // Restart wifi if we are power-saving
+  esp_wifi_start();
+  WiFi.reconnect();
+  return waitForWifi(1000);
+}
+
+bool waitForWifi(uint32_t milliseconds){
+  
+  uint64_t timeout = millis() + milliseconds;
+  while (millis() < timeout){
+    int status = WiFi.status();
 
     switch (status) {
+      case WL_NO_SHIELD:
+        Serial.println("WL_NO_SHIELD");
+        break;
+      case WL_IDLE_STATUS:
+        Serial.println("WL_IDLE_STATUS");
+        break;
+      case WL_NO_SSID_AVAIL:
+        Serial.println("WL_NO_SSID_AVAIL");
+        break;
+      case WL_SCAN_COMPLETED:
+        Serial.println("WL_SCAN_COMPLETED");
+        break;
       case WL_CONNECTED:
-        // scrollText("wife good");
+        Serial.println("WL_CONNECTED");
         return true;
         break;
       case WL_CONNECT_FAILED:
-        // scrollText_fail("connect failed");
+        Serial.println("WL_CONNECT_FAILED");
+        break;
+      case WL_CONNECTION_LOST:
+        Serial.println("WL_CONNECT_FAILED");
         break;
       case WL_DISCONNECTED:
-        // scrollText_fail("disconnected");
+        Serial.println("WL_CONNECT_FAILED");
         break;
-      case WL_NO_SSID_AVAIL:
-        // scrollText_fail("network not found");
-        break;
-
     }
-
-    return false;
-
-
+  }
+  Serial.println("Wifi timeout");
+  return false;
 }
 
+void stopWifi(){
+  esp_wifi_stop();
+}
 
 void printWiFiStatus() {
   // print the SSID of the network you're attached to:
