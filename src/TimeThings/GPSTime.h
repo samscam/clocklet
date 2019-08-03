@@ -1,6 +1,6 @@
 #include <RTClib.h>
 #include <TinyGPS++.h>
-#include "../Location/Location.h"
+#include "../Location/LocationSource.h"
 
 
 class RTC_GPS: public LocationSource {

@@ -5,7 +5,7 @@
 
 
 boolean RTC_ESP32::begin(void){
-  configTime(0*3600,1*3600,"pool.ntp.org");
+  configTime(0*3600,0*3600,"pool.ntp.org");
   return true;
 }
 void RTC_ESP32::adjust(const DateTime& dt){

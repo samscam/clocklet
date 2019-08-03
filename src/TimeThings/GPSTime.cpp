@@ -16,12 +16,13 @@ boolean RTC_GPS::begin(void){
 
 void RTC_GPS::loop(){
   if (needsWake){
+    Serial.println("Woke GPS");
     wake();
   }
-
+  
   while (_ss.available() > 0) {
     if(_gps.encode(_ss.read())){
-      displayInfo();
+      // displayInfo();
     }
   }
 
@@ -101,7 +102,6 @@ void RTC_GPS::adjust(const DateTime& dt){
 DateTime RTC_GPS::now(){
   TinyGPSDate date = _gps.date;
   TinyGPSTime time = _gps.time;
-
   return DateTime(date.year(),date.month(),date.day(),time.hour(),time.minute(),time.second());
 }
 
