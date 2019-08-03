@@ -120,36 +120,24 @@ void EpaperDisplay::displayDigital(){
     display.fillScreen(GxEPD_WHITE);
     display.setTextColor(GxEPD_BLACK);
 
-    y = 5;
+    y = 10;
 
     // Battery level
-    display.setFont(&Transport_Medium10pt7b);
+    // display.setFont(&Transport_Medium10pt7b);
 
-    int level = (int)floor(batteryLevel * 100);
-    String blev = ((String) level + "%");
-    display.getTextBounds(blev, 0, 0, &itemX, &itemY, &itemW, &itemH);
-    x = 10;
-    // x = (display.width() - itemW) / 2;
-    y += itemH;
-    display.setCursor(x,y);
-    display.print(blev);
+    // int level = (int)floor(batteryLevel * 100);
+    // String blev = ((String) level + "%");
+    // display.getTextBounds(blev, 0, 0, &itemX, &itemY, &itemW, &itemH);
+    // x = 10;
+    // // x = (display.width() - itemW) / 2;
+    // y += itemH;
+    // display.setCursor(x,y);
+    // display.print(blev);
  
-    y += 5;
 
-    // Weather status
-    display.setFont(&Transport_Medium14pt7b);
-    display.getTextBounds(weather_string, 0, 0, &itemX, &itemY, &itemW, &itemH);
-    x = (display.width() - itemW) / 2;
-
-    y = 5;
-    y += itemH;
-    display.setCursor(x,y);
-    display.print(weather_string);
-
-    y += 6;
 
     // Main Clock
-    display.setFont(&Transport_Heavy30pt7b);
+    display.setFont(&Transport_Heavy40pt7b);
     display.getTextBounds(time_string, 0, 0, &itemX, &itemY, &itemW, &itemH);
     x = (display.width() - itemW) / 2;
     y += itemH;
@@ -161,16 +149,28 @@ void EpaperDisplay::displayDigital(){
     display.fillRect(0,y,display.width(),display.height()-y,GxEPD_BLACK);
 
 
-    y += 7;
-    // Secondary clock - inverted
+    y += 4;
+
+        // Weather status
     display.setFont(&Transport_Medium14pt7b);
-    String secStr = (String) secondary_identifier + (String) " " + (String) secondary_time_string;
-    display.getTextBounds(secStr, 0, 0, &itemX, &itemY, &itemW, &itemH);
+    display.getTextBounds(weather_string, 0, 0, &itemX, &itemY, &itemW, &itemH);
     x = (display.width() - itemW) / 2;
+
     y += itemH;
     display.setCursor(x,y);
     display.setTextColor(GxEPD_WHITE);
-    display.print(secStr);
+    display.print(weather_string);
+
+
+    // Secondary clock - inverted
+    // display.setFont(&Transport_Medium14pt7b);
+    // String secStr = (String) secondary_identifier + (String) " " + (String) secondary_time_string;
+    // display.getTextBounds(secStr, 0, 0, &itemX, &itemY, &itemW, &itemH);
+    // x = (display.width() - itemW) / 2;
+    // y += itemH;
+    // display.setCursor(x,y);
+    // display.setTextColor(GxEPD_WHITE);
+    // display.print(secStr);
 
     display.setTextColor(GxEPD_BLACK);
 
