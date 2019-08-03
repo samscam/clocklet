@@ -59,14 +59,16 @@ RTC_ESP32 rtc = RTC_ESP32();
 
 // ---------- Networking
 
-WiFiClientSecure client; // << https on esp32
-// WiFiClient client; // <<  plain http, and https on atmelwinc
+// WiFiClientSecure client; // << https on esp32
+WiFiClient client; // <<  plain http, and https on atmelwinc
 
 
 // ---------- WEATHER CLIENT
+#include "weather/met-office.h"
+WeatherClient *weatherClient = new MetOffice(client); // << It's plain HTTP
 
-// MetOffice *weatherClient = new MetOffice(client);
-WeatherClient *weatherClient = new DarkSky(client);
+// #include "weather/darksky.h"
+// WeatherClient *weatherClient = new DarkSky(client);
 
 // SETUP  --------------------------------------
 
