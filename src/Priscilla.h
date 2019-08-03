@@ -13,9 +13,6 @@
 
 #include "network.h"
 
-
-#include "colours.h"
-
 #if defined(ESP32)
 // #define BATTERY_MONITORING
 #define BATTERY_PIN A13
@@ -28,10 +25,12 @@ void updatesHourly();
 uint16_t dstAdjust(DateTime time);
 void generateDSTTimes(uint16_t year);
 
-void showTime();
+void displayTime(DateTime utcTime);
 
 float currentBrightness();
 long detectTouchPeriod();
+
+void sensibleDelay(int milliseconds);
 
 #if defined(BATTERY_MONITORING)
 float batteryVoltage();

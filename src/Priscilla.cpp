@@ -7,6 +7,8 @@
 
 #include "TimeThings/NTP.h"
 
+#include "rom/uart.h"
+
 // CONFIGURATION  --------------------------------------
 
 // Time zone adjust (in MINUTES from utc)
@@ -27,11 +29,11 @@ Display *display = new EpaperDisplay();
 
 #endif
 
-// RGBDigit display = RGBDigit();
+
 //Adafruit7 display = Adafruit7();
 
 // #include "Displays/DebugDisplay.h"
-// DebugDisplay display = DebugDisplay();
+// Display *display = new DebugDisplay();
 
 
 
@@ -52,9 +54,6 @@ RTC_DS3231 rtc = RTC_DS3231();
 RTC_ESP32 rtc = RTC_ESP32();
 
 #endif
-
-
-
 
 
 // ---------- Networking
@@ -80,10 +79,12 @@ void setup() {
    ; // wait for serial port to connect. Needed for native USB port only
  }
 
-  rtc.begin();
-
   delay(2000);
 
+   // will this stop the crashes?
+  // disableCore0WDT();
+  // disableCore1WDT();
+  // disableLoopWDT();
 
   analogReadResolution(12);
   uint16_t seed = analogRead(A0);
@@ -104,6 +105,8 @@ void setup() {
   display->displayMessage("Everything is awesome");
   setupWifi();
 
+  rtc.begin();
+
 
 }
 
@@ -118,18 +121,43 @@ unsigned long lastDailyUpdate = 0;
 
 DateTime lastTime = 0;
 
+enum Precision {
+  minutes, seconds, subseconds
+};
+
+
+#if defined(RAINBOWDISPLAY)
+Precision precision = subseconds;
+#else
+Precision precision = minutes;
+#endif
+
+bool didDisplay = false;
+
 void loop() {
-  // updateBrightness();
+
   display->setBrightness(currentBrightness());
 
   // Check for touches...
   if (detectTouchPeriod() > 500){
-    display->displayTemperatures();//displayMessage("That tickles",rando);
+    display->displayMessage("That tickles",rando);
   }
 
-#if defined(TIME_GPS)
-  rtc.loop(); //<< needed on the GPS rtc to wake it :/
-#endif
+  #if defined(BATTERY_MONITORING)
+      float voltage = batteryVoltage();
+      display->setBatteryLevel(batteryLevel(voltage));
+
+      if (voltage < cutoffVoltage){
+        
+        espShutdown();
+      }
+
+  #endif
+
+  #if defined(TIME_GPS)
+    rtc.loop(); //<< needed on the GPS rtc to wake it :/
+  #endif
+
   // This should always be UTC
   DateTime time = rtc.now();
 
@@ -168,49 +196,85 @@ void loop() {
     nextMessageDelay = 1000 * 60 * random(5,59);
   }
 
-
+  time = rtc.now();
   // Minutes precision updates
   // Will fail when starting at zero :/
-  // if (time.minute() != lastTime.minute()){
+  switch (precision) {
+    case minutes:
+      if (time.minute() != lastTime.minute()){
+        displayTime(time);
+        lastTime = time;
+        didDisplay = true;
+        display->frameLoop();
+      }
+      break;
+    case seconds:
+      if (time.second() != lastTime.second()){
+        displayTime(time);
+        lastTime = time;
+        didDisplay = true;
+        display->frameLoop();
+      }
+      break;
+    case subseconds:
+      displayTime(time);
+      didDisplay = true;
+      display->frameLoop();
+      break;
+  }
 
+
+
+
+  time = rtc.now();
+
+  if (didDisplay){
+    switch (precision) {
+        case minutes:
+        sensibleDelay( (59 - time.second() ) * 1000 );
+        break;
+      case seconds:
+        sensibleDelay(900); // This should really be the time to the next second boundary - latency
+        break;
+      case subseconds:
+        sensibleDelay(1000/FPS);
+        break;
+    }
+    didDisplay = false;
+  // } else {
+  //   delay(10);
+  }
+
+}
+
+void displayTime(DateTime utcTime){
     DateTime displayTime;
     // adjust for timezone and DST
-    displayTime = time + TimeSpan(dstAdjust(time) * 3600);
+    displayTime = utcTime + TimeSpan(dstAdjust(utcTime) * 3600);
     displayTime = displayTime + TimeSpan(tzAdjust * 60);
     
     display->setTime(displayTime);
 
     // secondary time
-    // displayTime = time; //+ TimeSpan(dstAdjust(time) * 3600); -- no dst in india
-    // displayTime = displayTime + TimeSpan(secondaryTimeZone * 60);
-    // display->setSecondaryTime(displayTime,"Mumbai");
-
-#if defined(BATTERY_MONITORING)
-    float voltage = batteryVoltage();
-    display->setBatteryLevel(batteryLevel(voltage));
-
-    if (voltage < cutoffVoltage){
-      
-      espShutdown();
-    }
-
-#endif
-
-
-    lastTime = time;
-
-    // display->frameLoop();
-    
-    // espSleep(59 - time.second() );
-  // }
-
-  // delay(50);
-  // delay(1000/FPS);
-  display->frameLoop();
-  FastLED.delay(1000/FPS);
-
+    displayTime = utcTime; //+ TimeSpan(dstAdjust(time) * 3600); -- no dst in india
+    displayTime = displayTime + TimeSpan(secondaryTimeZone * 60);
+    display->setSecondaryTime(displayTime,"Mumbai");
 }
 
+void sensibleDelay(int milliseconds){
+  
+  #ifdef RAINBOWDISPLAY
+    FastLED.delay(milliseconds);
+  #else
+    Serial.print("Sleeping for: ");
+    Serial.println(milliseconds);
+    #if defined(ESP32)
+      espSleep(milliseconds);
+    #else
+      delay(milliseconds);
+    #endif
+  #endif
+}
 
 // MARK: UPDATE CYCLE ---------------------------------------
 
@@ -331,20 +395,33 @@ float batteryVoltage(){
 
 
 #if defined(ESP32)
-void espSleep(int seconds){
+void espSleep(int milliseconds){
+  
   stopWifi();
+
   #if defined(TIME_GPS)
   rtc.sleep();
   #endif
+  Serial.println("SLEEP");
+  uart_tx_wait_idle(0);
+  uint64_t microseconds = milliseconds * 1000;
 
-  esp_sleep_enable_timer_wakeup(seconds * 1000 * 1000 ); // 58 seconds sounds nice
-  esp_light_sleep_start();
+  esp_err_t err = esp_sleep_enable_timer_wakeup( microseconds );
+  if (err == ESP_ERR_INVALID_ARG){
+    Serial.println("Sleep timer wakeup invalid");
+    return;
+  }
+  err = esp_light_sleep_start();
 
+  if (err == ESP_ERR_INVALID_STATE){
+    Serial.println("Trying to sleep: Invalid state error");
+  }
+  Serial.println("AWAKE");
 }
 
 void espShutdown(){
   display->setStatusMessage("LOW BATTERY");
-  Serial.println("LOW BATTERY shutting down");
-  esp_deep_sleep_start();
+  // Serial.println("LOW BATTERY shutting down");
+  // esp_deep_sleep_start();
 }
 #endif
