@@ -3,9 +3,10 @@
 
 #include "LocationSource.h"
 #include "network.h"
+#include "APIKeys.h"
 
 #define IPGEOLOCATION_ENDPOINT "https://api.ipgeolocation.io/ipgeo"
-#define IPGEOLOCATION_API_KEY "***REMOVED***"
+
 
 class IPGeolocation: public LocationSource {
     public:
