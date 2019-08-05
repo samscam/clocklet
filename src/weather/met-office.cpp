@@ -3,7 +3,9 @@
 MetOffice::MetOffice(WiFiClient &client) : WeatherClient(client)  {
   this->client = &client;
   this->server = (char *)METOFFICE_SERVER;
-  this->resource = (char *)METOFFICE_PATH;
+  char * resource;
+  asprintf(&resource, (char *)METOFFICE_PATH, (char *)METOFFICE_SITE, (char *)METOFFICE_APIKEY);
+  this->resource = resource;
   this->ssl = false;
   this->timeThreshold = 0;
 };
