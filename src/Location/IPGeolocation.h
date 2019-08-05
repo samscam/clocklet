@@ -3,7 +3,7 @@
 
 #include "LocationSource.h"
 #include "network.h"
-#include "APIKeys.h"
+#include "../Secrets/APIKeys.h"
 
 #define IPGEOLOCATION_ENDPOINT "https://api.ipgeolocation.io/ipgeo"
 
