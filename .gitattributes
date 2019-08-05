@@ -1,1 +1,2 @@
+src/Secrets/* filter=git-crypt diff=git-crypt
 src/APIKeys.h filter=git-crypt diff=git-crypt
