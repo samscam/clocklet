@@ -122,18 +122,19 @@ void EpaperDisplay::displayDigital(){
 
     y = 10;
 
-    // Battery level
-    // display.setFont(&Transport_Medium10pt7b);
+    //Battery level
+    display.setFont(&Transport_Medium10pt7b);
 
-    // int level = (int)floor(batteryLevel * 100);
-    // String blev = ((String) level + "%");
-    // display.getTextBounds(blev, 0, 0, &itemX, &itemY, &itemW, &itemH);
-    // x = 10;
-    // // x = (display.width() - itemW) / 2;
-    // y += itemH;
-    // display.setCursor(x,y);
-    // display.print(blev);
+    int level = (int)floor(batteryLevel * 100);
+    String blev = ((String) level + "%");
+    display.getTextBounds(blev, 0, 0, &itemX, &itemY, &itemW, &itemH);
+    x = 10;
+    // x = (display.width() - itemW) / 2;
+    y += itemH;
+    display.setCursor(x,y);
+    display.print(blev);
  
+    y = 10;
 
 
     // Main Clock
