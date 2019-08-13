@@ -5,15 +5,10 @@
 // MARK: NETWORK STUFF --------------------------------------
 
 bool setupWifi(){
-#if defined(ARDUINO_ARCH_SAMD)
-  //Configure pins for Adafruit ATWINC1500 Feather
-  WiFi.setPins(8,7,4,2);
-#endif
-  #if defined(ESP32)
-    wifi_country_t country = {"GB", 1, 13, 127, WIFI_COUNTRY_POLICY_AUTO};
-    esp_wifi_set_country(&country);
-    btStop();
-  #endif
+
+  wifi_country_t country = {"GB", 1, 13, 127, WIFI_COUNTRY_POLICY_AUTO};
+  esp_wifi_set_country(&country);
+  btStop();
 
   return connectWifi();
 
@@ -23,40 +18,16 @@ uint32_t lastConnectAttempt = 0;
 
 bool connectWifi(){
 
-    int status = WiFi.status();
-
-    switch (status) {
-      // VVV ---- We are good :)
-      case WL_CONNECTED:
-        return true;
-        break;
-      
-      case WL_NO_SHIELD:
-#if defined(ESP32)
-        // Initial state - needs to connect
-        break;
-#else
-        // VVV ---- This is never going to work :(
-        return false;
-        break;
-#endif
-      // VVV ---- attempt a (re)connection on fallthrough
-      case WL_CONNECT_FAILED:
-        break;
-      case WL_CONNECTION_LOST:
-        break;
-      case WL_DISCONNECTED:
-        break;
-      case WL_NO_SSID_AVAIL:
-        break;
-
+    wl_status_t status = WiFi.status();
+    if (status == WL_CONNECTED){
+      return true;
     }
+    
 
     int64_t timedif = millis() - lastConnectAttempt;
     if (  lastConnectAttempt == 0 ) {
       // millis has rolled over or it's our first shot
     } else {
-
       // Avoid trying if the last attempt was within the last minute
       if ( timedif < (1000 * 60) ) {
         //scrollText_fail("not long enough");
@@ -64,10 +35,6 @@ bool connectWifi(){
       }
     }
 
-    #ifndef ESP32
-    // clear out any existing session - presuming harmless only on the Atwinc
-    WiFi.end();
-    #endif
 
     lastConnectAttempt = millis();
 
@@ -105,7 +72,7 @@ bool waitForWifi(uint32_t milliseconds){
   
   uint64_t timeout = millis() + milliseconds;
   while (millis() < timeout){
-    int status = WiFi.status();
+    wl_status_t status = WiFi.status();
 
     switch (status) {
       case WL_NO_SHIELD:
