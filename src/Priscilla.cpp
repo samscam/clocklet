@@ -81,11 +81,6 @@ void setup() {
 
   delay(2000);
 
-   // will this stop the crashes?
-  // disableCore0WDT();
-  // disableCore1WDT();
-  // disableLoopWDT();
-
   analogReadResolution(12);
   uint16_t seed = analogRead(A0);
   randomSeed(seed);
