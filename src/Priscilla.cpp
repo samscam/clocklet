@@ -73,15 +73,13 @@ WeatherClient *weatherClient = new MetOffice(client); // << It's plain HTTP
 
 void setup() {
   delay(2000);
-  //Initialize serial and wait for port to open:
+  
   Serial.begin(115200);
- while (!Serial) {
-   ; // wait for serial port to connect. Needed for native USB port only
- }
 
-  delay(2000);
 
   analogReadResolution(12);
+
+  // Randomise the random seed
   uint16_t seed = analogRead(A0);
   randomSeed(seed);
   Serial.println((String)"Seed: " + seed);
