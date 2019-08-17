@@ -71,36 +71,41 @@ bool reconnect(){
 bool waitForWifi(uint32_t milliseconds){
   
   uint64_t timeout = millis() + milliseconds;
+  wl_status_t lastStatus = WL_NO_SHIELD;
   while (millis() < timeout){
     wl_status_t status = WiFi.status();
+    if (status != lastStatus){
+      lastStatus = status;
 
-    switch (status) {
-      case WL_NO_SHIELD:
-        Serial.println("WL_NO_SHIELD");
-        break;
-      case WL_IDLE_STATUS:
-        Serial.println("WL_IDLE_STATUS");
-        break;
-      case WL_NO_SSID_AVAIL:
-        Serial.println("WL_NO_SSID_AVAIL");
-        break;
-      case WL_SCAN_COMPLETED:
-        Serial.println("WL_SCAN_COMPLETED");
-        break;
-      case WL_CONNECTED:
-        Serial.println("WL_CONNECTED");
-        return true;
-        break;
-      case WL_CONNECT_FAILED:
-        Serial.println("WL_CONNECT_FAILED");
-        break;
-      case WL_CONNECTION_LOST:
-        Serial.println("WL_CONNECT_FAILED");
-        break;
-      case WL_DISCONNECTED:
-        Serial.println("WL_CONNECT_FAILED");
-        break;
+      switch (status) {
+        case WL_NO_SHIELD:
+          Serial.println("WL_NO_SHIELD");
+          break;
+        case WL_IDLE_STATUS:
+          Serial.println("WL_IDLE_STATUS");
+          break;
+        case WL_NO_SSID_AVAIL:
+          Serial.println("WL_NO_SSID_AVAIL");
+          break;
+        case WL_SCAN_COMPLETED:
+          Serial.println("WL_SCAN_COMPLETED");
+          break;
+        case WL_CONNECTED:
+          Serial.println("WL_CONNECTED");
+          return true;
+          break;
+        case WL_CONNECT_FAILED:
+          Serial.println("WL_CONNECT_FAILED");
+          break;
+        case WL_CONNECTION_LOST:
+          Serial.println("WL_CONNECT_FAILED");
+          break;
+        case WL_DISCONNECTED:
+          Serial.println("WL_CONNECT_FAILED");
+          break;
+      }
     }
+    vTaskDelay(10);
   }
   Serial.println("Wifi timeout");
   return false;
