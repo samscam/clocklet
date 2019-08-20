@@ -1,14 +1,17 @@
-#ifndef PRISCILLA_PROVISIONING
-#define PRISCILLA_PROVISIONING
+#pragma once
 
+#include <Arduino.h>
 
-class Provisioning {
-    public:
-    Provisioning();
+#define CONFIG_SOFTAP_SSID "O'Clocky"
+#define CONFIG_SOFTAP_PASS "boogaloo"
 
-    bool hasCredentials();
+#ifdef __cplusplus
+extern "C" {
+#endif
 
+bool isAlreadyProvisioned();
+void startProvisioning();
+
+#ifdef __cplusplus
 }
-
-
 #endif

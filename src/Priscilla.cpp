@@ -5,6 +5,8 @@
 #include "Displays/Display.h"
 #include "Location/LocationSource.h"
 
+#include "Provisioning/Provisioning.h"
+
 #include "TimeThings/NTP.h"
 
 #include "rom/uart.h"
@@ -96,7 +98,12 @@ void setup() {
   display->setup();
   display->setBrightness(currentBrightness());
   display->displayMessage("Everything is awesome");
-  setupWifi();
+
+  // if (isAlreadyProvisioned()){
+  //   setupWifi();
+  // } else {
+    startProvisioning();
+  // }
 
   rtc.begin();
 
