@@ -101,7 +101,6 @@ void setup() {
   // display->displayMessage("Everything is awesome");
   
   WiFi.begin();
-  startProvisioning();
     
 
   if (isAlreadyProvisioned()){
@@ -111,6 +110,7 @@ void setup() {
     waitForWifi(6000);
   } else {
     
+    startProvisioning();
     display->displayMessage("Provisioning");
   }
 
@@ -150,6 +150,10 @@ void loop() {
   // Check for touches...
   if (detectTouchPeriod() > 500){
     display->displayMessage("That tickles",rando);
+  }
+  if (detectTouchPeriod() > 15000){
+    startProvisioning();
+    display->displayMessage("Provisioning");
   }
 
   #if defined(BATTERY_MONITORING)
@@ -373,7 +377,7 @@ long startTouchMillis = 0;
 long detectTouchPeriod(){
   int touchValue = touchRead(T6);
 
-  if (touchValue < 45){
+  if (touchValue < 43){
     if (!startTouchMillis){
       startTouchMillis = millis();
     }

@@ -15,21 +15,15 @@
 #include "app_prov.h"
 
 
-static const char *TAG = "Priscilla";
-
 void WiFiEvent(system_event_id_t event, system_event_info_t info){
     system_event_t systemEvent = {event,info};
-    void *ctx;
+    void *ctx = NULL;
+
+    // Invoke the provisioning event handler
     app_prov_event_handler(ctx, &systemEvent);
 
-}
-
-static esp_err_t outer_prov_event_handler(void *ctx, system_event_t *event)
-{
-    /* Invoke Provisioning event handler first */
-    app_prov_event_handler(ctx, event);
-
-    switch(event->event_id) {
+    // Some leftover logging... mostly
+    switch(event) {
     case SYSTEM_EVENT_AP_START:
         ESP_LOGE(TAG, "SoftAP started");
         break;
@@ -41,25 +35,25 @@ static esp_err_t outer_prov_event_handler(void *ctx, system_event_t *event)
         break;
     case SYSTEM_EVENT_STA_GOT_IP:
         ESP_LOGE(TAG, "got ip:%s",
-                 ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
+                 ip4addr_ntoa(&info.got_ip.ip_info.ip));
         break;
     case SYSTEM_EVENT_AP_STACONNECTED:
-        ESP_LOGE(TAG, "station:"MACSTR" join, AID=%d",
-                 MAC2STR(event->event_info.sta_connected.mac),
-                 event->event_info.sta_connected.aid);
+        ESP_LOGE(TAG, "station:" MACSTR " join, AID=%d",
+                 MAC2STR(info.sta_connected.mac),
+                 info.sta_connected.aid);
         break;
     case SYSTEM_EVENT_AP_STADISCONNECTED:
-        ESP_LOGE(TAG, "station:"MACSTR"leave, AID=%d",
-                 MAC2STR(event->event_info.sta_disconnected.mac),
-                 event->event_info.sta_disconnected.aid);
+        ESP_LOGE(TAG, "station:" MACSTR "leave, AID=%d",
+                 MAC2STR(info.sta_disconnected.mac),
+                 info.sta_disconnected.aid);
         break;
     case SYSTEM_EVENT_STA_DISCONNECTED:
         break;
     default:
         break;
     }
-    return ESP_OK;
 }
+
 
 void wifi_init_sta()
 {
@@ -110,31 +104,24 @@ void startProvisioning() {
         return;
     }
 
-    if (!provisioned){
-        /* If not provisioned, start provisioning via soft AP */
-        ESP_LOGE(TAG, "Starting WiFi SoftAP provisioning");
+    ESP_LOGE(TAG, "Starting WiFi SoftAP provisioning");
 
-        const char *ssid = NULL;
+    const char *ssid = NULL;
 
 #ifdef CONFIG_SOFTAP_SSID
-        ssid = CONFIG_SOFTAP_SSID;
+    ssid = CONFIG_SOFTAP_SSID;
 #else
-        uint8_t eth_mac[6];
-        esp_wifi_get_mac(WIFI_IF_STA, eth_mac);
+    uint8_t eth_mac[6];
+    esp_wifi_get_mac(WIFI_IF_STA, eth_mac);
 
-        char ssid_with_mac[33];
-        snprintf(ssid_with_mac, sizeof(ssid_with_mac), "PROV_%02X%02X%02X",
-                 eth_mac[3], eth_mac[4], eth_mac[5]);
+    char ssid_with_mac[33];
+    snprintf(ssid_with_mac, sizeof(ssid_with_mac), "PROV_%02X%02X%02X",
+                eth_mac[3], eth_mac[4], eth_mac[5]);
 
-        ssid = ssid_with_mac;
+    ssid = ssid_with_mac;
 #endif
 
-        app_prov_start_softap_provisioning(ssid, CONFIG_SOFTAP_PASS,
-                                           security, pop);
-    } else {
-        /* Start WiFi station with credentials set during provisioning */
-        ESP_LOGE(TAG, "Starting WiFi station");
-        wifi_init_sta();
-        
-    }
+    app_prov_start_softap_provisioning(ssid, CONFIG_SOFTAP_PASS,
+                                        security, pop);
+
 }
