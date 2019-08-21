@@ -4,6 +4,7 @@
 #include "Messages.h"
 #include "Displays/Display.h"
 #include "Location/LocationSource.h"
+#include <WiFi.h>
 
 #include "Provisioning/Provisioning.h"
 
@@ -97,13 +98,21 @@ void setup() {
 
   display->setup();
   display->setBrightness(currentBrightness());
-  display->displayMessage("Everything is awesome");
+  // display->displayMessage("Everything is awesome");
+  
+  WiFi.begin();
+  startProvisioning();
+    
 
-  // if (isAlreadyProvisioned()){
-  //   setupWifi();
-  // } else {
-    startProvisioning();
-  // }
+  if (isAlreadyProvisioned()){
+    
+    display->displayMessage("got creds");
+    // connectWifi();
+    waitForWifi(6000);
+  } else {
+    
+    display->displayMessage("Provisioning");
+  }
 
   rtc.begin();
 

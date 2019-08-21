@@ -9,6 +9,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <esp_event_loop.h>
 
 #include <protocomm_security.h>
@@ -100,3 +104,7 @@ esp_err_t app_prov_configure_sta(wifi_config_t *wifi_cfg);
  */
 esp_err_t app_prov_start_softap_provisioning(const char *ssid, const char *pass,
                                              int security, const protocomm_security_pop_t *pop);
+
+#ifdef __cplusplus
+}
+#endif

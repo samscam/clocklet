@@ -40,15 +40,7 @@ bool connectWifi(){
 
     // If we have fallen through, try connecting
 
-    static char ssid[] = NETWORK_SSID;
-    static char pass[] = NETWORK_PASSWORD;
-
-
-    // attempt to connect to WiFi network:
-    Serial.print("Attempting to connect to SSID: ");
-    Serial.println(ssid);
-
-    status = WiFi.begin(ssid, pass);
+    status = WiFi.begin();
 
     bool connected = waitForWifi(6000);
 
@@ -65,7 +57,7 @@ bool reconnect(){
   // Restart wifi if we are power-saving
   esp_wifi_start();
   WiFi.reconnect();
-  return waitForWifi(1000);
+  return waitForWifi(2000);
 }
 
 bool waitForWifi(uint32_t milliseconds){
