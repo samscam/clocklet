@@ -52,11 +52,13 @@ bool connectWifi(){
     return connected;
 }
 
-
+bool wifiStopped = false;
 bool reconnect(){
   // Restart wifi if we are power-saving
-  esp_wifi_start();
-  WiFi.reconnect();
+  if (wifiStopped){
+    esp_wifi_start();
+    WiFi.reconnect();
+  }
   return waitForWifi(2000);
 }
 
@@ -104,7 +106,9 @@ bool waitForWifi(uint32_t milliseconds){
 }
 
 void stopWifi(){
+  ESP_LOGI(TAG, "Stopping wifi");
   esp_wifi_stop();
+  wifiStopped = true;
 }
 
 void printWiFiStatus() {
