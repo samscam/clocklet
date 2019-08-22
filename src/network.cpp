@@ -5,15 +5,10 @@
 // MARK: NETWORK STUFF --------------------------------------
 
 bool setupWifi(){
-#if defined(ARDUINO_ARCH_SAMD)
-  //Configure pins for Adafruit ATWINC1500 Feather
-  WiFi.setPins(8,7,4,2);
-#endif
-  #if defined(ESP32)
-    wifi_country_t country = {"GB", 1, 13, 127, WIFI_COUNTRY_POLICY_AUTO};
-    esp_wifi_set_country(&country);
-    btStop();
-  #endif
+
+  wifi_country_t country = {"GB", 1, 13, 127, WIFI_COUNTRY_POLICY_AUTO};
+  esp_wifi_set_country(&country);
+  btStop();
 
   return connectWifi();
 
@@ -23,40 +18,16 @@ uint32_t lastConnectAttempt = 0;
 
 bool connectWifi(){
 
-    int status = WiFi.status();
-
-    switch (status) {
-      // VVV ---- We are good :)
-      case WL_CONNECTED:
-        return true;
-        break;
-      
-      case WL_NO_SHIELD:
-#if defined(ESP32)
-        // Initial state - needs to connect
-        break;
-#else
-        // VVV ---- This is never going to work :(
-        return false;
-        break;
-#endif
-      // VVV ---- attempt a (re)connection on fallthrough
-      case WL_CONNECT_FAILED:
-        break;
-      case WL_CONNECTION_LOST:
-        break;
-      case WL_DISCONNECTED:
-        break;
-      case WL_NO_SSID_AVAIL:
-        break;
-
+    wl_status_t status = WiFi.status();
+    if (status == WL_CONNECTED){
+      return true;
     }
+    
 
     int64_t timedif = millis() - lastConnectAttempt;
     if (  lastConnectAttempt == 0 ) {
       // millis has rolled over or it's our first shot
     } else {
-
       // Avoid trying if the last attempt was within the last minute
       if ( timedif < (1000 * 60) ) {
         //scrollText_fail("not long enough");
@@ -64,24 +35,12 @@ bool connectWifi(){
       }
     }
 
-    #ifndef ESP32
-    // clear out any existing session - presuming harmless only on the Atwinc
-    WiFi.end();
-    #endif
 
     lastConnectAttempt = millis();
 
     // If we have fallen through, try connecting
 
-    static char ssid[] = NETWORK_SSID;
-    static char pass[] = NETWORK_PASSWORD;
-
-
-    // attempt to connect to WiFi network:
-    Serial.print("Attempting to connect to SSID: ");
-    Serial.println(ssid);
-
-    status = WiFi.begin(ssid, pass);
+    status = WiFi.begin();
 
     bool connected = waitForWifi(6000);
 
@@ -98,42 +57,47 @@ bool reconnect(){
   // Restart wifi if we are power-saving
   esp_wifi_start();
   WiFi.reconnect();
-  return waitForWifi(1000);
+  return waitForWifi(2000);
 }
 
 bool waitForWifi(uint32_t milliseconds){
   
   uint64_t timeout = millis() + milliseconds;
+  wl_status_t lastStatus = WL_NO_SHIELD;
   while (millis() < timeout){
-    int status = WiFi.status();
+    wl_status_t status = WiFi.status();
+    if (status != lastStatus){
+      lastStatus = status;
 
-    switch (status) {
-      case WL_NO_SHIELD:
-        Serial.println("WL_NO_SHIELD");
-        break;
-      case WL_IDLE_STATUS:
-        Serial.println("WL_IDLE_STATUS");
-        break;
-      case WL_NO_SSID_AVAIL:
-        Serial.println("WL_NO_SSID_AVAIL");
-        break;
-      case WL_SCAN_COMPLETED:
-        Serial.println("WL_SCAN_COMPLETED");
-        break;
-      case WL_CONNECTED:
-        Serial.println("WL_CONNECTED");
-        return true;
-        break;
-      case WL_CONNECT_FAILED:
-        Serial.println("WL_CONNECT_FAILED");
-        break;
-      case WL_CONNECTION_LOST:
-        Serial.println("WL_CONNECT_FAILED");
-        break;
-      case WL_DISCONNECTED:
-        Serial.println("WL_CONNECT_FAILED");
-        break;
+      switch (status) {
+        case WL_NO_SHIELD:
+          Serial.println("WL_NO_SHIELD");
+          break;
+        case WL_IDLE_STATUS:
+          Serial.println("WL_IDLE_STATUS");
+          break;
+        case WL_NO_SSID_AVAIL:
+          Serial.println("WL_NO_SSID_AVAIL");
+          break;
+        case WL_SCAN_COMPLETED:
+          Serial.println("WL_SCAN_COMPLETED");
+          break;
+        case WL_CONNECTED:
+          Serial.println("WL_CONNECTED");
+          return true;
+          break;
+        case WL_CONNECT_FAILED:
+          Serial.println("WL_CONNECT_FAILED");
+          break;
+        case WL_CONNECTION_LOST:
+          Serial.println("WL_CONNECT_FAILED");
+          break;
+        case WL_DISCONNECTED:
+          Serial.println("WL_CONNECT_FAILED");
+          break;
+      }
     }
+    vTaskDelay(10);
   }
   Serial.println("Wifi timeout");
   return false;

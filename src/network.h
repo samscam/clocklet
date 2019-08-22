@@ -2,20 +2,16 @@
 #define PRISCILLA_NETWORK
 
 #include <Arduino.h>
-
-#if defined(ESP32)
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
-#else
-#include <WiFi101.h>
-#endif
+
 
 // ----------- WIFI
-
 
 bool setupWifi();
 bool connectWifi();
 void printWiFiStatus();
+void printWiFiConnectionStatus();
 bool reconnect();
 void stopWifi();
 bool waitForWifi(uint32_t milliseconds);

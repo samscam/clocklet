@@ -4,6 +4,9 @@
 #include "Messages.h"
 #include "Displays/Display.h"
 #include "Location/LocationSource.h"
+#include <WiFi.h>
+
+#include "Provisioning/Provisioning.h"
 
 #include "TimeThings/NTP.h"
 
@@ -73,20 +76,13 @@ WeatherClient *weatherClient = new MetOffice(client); // << It's plain HTTP
 
 void setup() {
   delay(2000);
-  //Initialize serial and wait for port to open:
+  
   Serial.begin(115200);
- while (!Serial) {
-   ; // wait for serial port to connect. Needed for native USB port only
- }
 
-  delay(2000);
-
-   // will this stop the crashes?
-  // disableCore0WDT();
-  // disableCore1WDT();
-  // disableLoopWDT();
 
   analogReadResolution(12);
+
+  // Randomise the random seed
   uint16_t seed = analogRead(A0);
   randomSeed(seed);
   Serial.println((String)"Seed: " + seed);
@@ -102,8 +98,21 @@ void setup() {
 
   display->setup();
   display->setBrightness(currentBrightness());
-  display->displayMessage("Everything is awesome");
-  setupWifi();
+  // display->displayMessage("Everything is awesome");
+  
+  WiFi.begin();
+    
+
+  if (isAlreadyProvisioned()){
+    
+    display->displayMessage("got creds");
+    // connectWifi();
+    waitForWifi(6000);
+  } else {
+    
+    startProvisioning();
+    display->displayMessage("Provisioning");
+  }
 
   rtc.begin();
 
@@ -141,6 +150,10 @@ void loop() {
   // Check for touches...
   if (detectTouchPeriod() > 500){
     display->displayMessage("That tickles",rando);
+  }
+  if (detectTouchPeriod() > 15000){
+    startProvisioning();
+    display->displayMessage("Provisioning");
   }
 
   #if defined(BATTERY_MONITORING)
@@ -364,7 +377,7 @@ long startTouchMillis = 0;
 long detectTouchPeriod(){
   int touchValue = touchRead(T6);
 
-  if (touchValue < 45){
+  if (touchValue < 43){
     if (!startTouchMillis){
       startTouchMillis = millis();
     }
