@@ -5,6 +5,8 @@
 #include <ArduinoJson.h>
 
 #include "FirmwareUpdates.h"
+#include <semver.h>
+#include "settings.h"
 
 void FirmwareUpdates::checkForUpdates() {
     WiFiClientSecure *client = new WiFiClientSecure;
@@ -47,13 +49,40 @@ void FirmwareUpdates::checkForUpdates() {
 
                 // Fish out verion string
                 const char* tag_name = doc["tag_name"];
-                Serial.printf("[FIRMWARE UPDATES] Latest version is %s\n",tag_name);
-                Serial.printf("[FIRMWARE UPDATES] Local version is %s\n",VERSION);
+                
+                // Strip the v from the start of the tag - if it doesn't have one, bail out
+                int taglen = strlen(tag_name);
+                char latestbuf[taglen];
+                memcpy(latestbuf, &tag_name[1],taglen);
+                Serial.println(latestbuf);
+
+                semver_t latest = {};
+                if (semver_parse(latestbuf, &latest)){
+                    Serial.print("[FIRMWARE UPDATES] Failed to parse latest version");
+                    return;
+                }
+                Serial.println("latest did parse");
+
+                semver_t local = {};
+                if ( semver_parse(VERSION, &local)){
+                    Serial.print("[FIRMWARE UPDATES] Failed to parse local version");
+                    return;
+                }
 
                 // Compare that to the local version
-
-                // if local < latest
-
+                // Bail unless an update is needed
+                int comparison = semver_compare(local,latest);
+                if (comparison < 0){
+                    Serial.println("[FIRMWARE UPDATES] Latest is newer. Firmware update would be triggered");
+                } else if (comparison == 0){
+                    Serial.println("[FIRMWARE UPDATES] Local firmware is up to date");
+                    return;
+                } else {
+                    Serial.println("[FIRMWARE UPDATES] Local firmware is newer than latest - must be developing");
+                    return;
+                }
+                
+                
                 // Fish out the binary url
                 JsonObject assets_0 = doc["assets"][0];
                 const char* downloadURL = assets_0["browser_download_url"];
