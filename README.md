@@ -38,3 +38,4 @@ It's all a work in progress.
 * Adjust the default settings in `settings.h` including API keys
 * Plug the device in to your machine over USB
 * Build and upload (platformio should download the dependencies if it hasn't done so already)
+
