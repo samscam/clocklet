@@ -77,7 +77,7 @@ private:
 
   void setDigitMask(byte mask, int digit);
 
-  void setDot(bool state, int digit, CRGB colour = CRGB::Blue);
+  void setDot(bool state, int digit, CRGB colour = CRGB::White);
   
   void advanceWindCycle(float speed);
 
