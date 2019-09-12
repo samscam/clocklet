@@ -51,6 +51,8 @@ public:
   // Show a message - but what kind of message?
   void displayMessage(const char *stringy, MessageType messageType);
 
+  void setStatusMessage(const char * string);
+  
   // Brightness is a float from 0 (barely visible) to 1 (really bright)
   void setBrightness(float brightness);
 
@@ -75,7 +77,7 @@ private:
 
   void setDigitMask(byte mask, int digit);
 
-  void setDot(bool state, int digit, CRGB colour = CRGB::White);
+  void setDot(bool state, int digit, CRGB colour = CRGB::Blue);
   
   void advanceWindCycle(float speed);
 

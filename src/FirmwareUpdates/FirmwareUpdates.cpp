@@ -8,6 +8,10 @@
 #include <semver.h>
 #include "settings.h"
 
+FirmwareUpdates::FirmwareUpdates() {
+  this->client = new WiFiClientSecure;
+};
+
 /** 
  * Checks for firmware updates
  * If a valid firmware image is found it will apply the update
@@ -15,7 +19,9 @@
  * */
 
 void FirmwareUpdates::checkForUpdates() {
-    WiFiClientSecure *client = new WiFiClientSecure;
+    
+    updateAvailable = false;
+
     if (!client) {
         Serial.println("[FIRMWARE UPDATES] failed to create network client...");
         return;
@@ -93,11 +99,9 @@ void FirmwareUpdates::checkForUpdates() {
 
                 // Fish out the binary url
                 JsonObject assets_0 = doc["assets"][0];
-                const char* downloadURL = assets_0["browser_download_url"];
+                strcpy(downloadURL,assets_0["browser_download_url"]);
                 Serial.printf("[FIRMWARE UPDATES] Download URL is %s\n",downloadURL);
-
-                 // Perform the update
-                processOTAUpdate(downloadURL);
+                updateAvailable = true;
                 
             }
             } else {
@@ -111,131 +115,134 @@ void FirmwareUpdates::checkForUpdates() {
 
     }
 
-    delete client;
 }
 
-void FirmwareUpdates::processOTAUpdate(const char* url)
+void FirmwareUpdates::startUpdate(){
+    if (updateAvailable && downloadURL){
+        processOTAUpdate(downloadURL);
+    }
+}
+
+void FirmwareUpdates::processOTAUpdate(const char * url)
 {
-    WiFiClientSecure client;
+    Serial.printf("[FIRMWARE UPDATES] About to download from %s\n",url);
     if (!client) {
         Serial.println("[FIRMWARE UPDATES] failed to create network client...");
         return;
     }
+    {
+        HTTPClient https;
 
-    HTTPClient https;
+        if (https.begin(*client, url)) {  // HTTPS
+            Serial.println("[FIRMWARE UPDATES] Starting firmware load");
 
-    String firmwareUrlString = String(url);
-    if (!firmwareUrlString.endsWith(".bin")) {
-        Serial.println("Unsupported binary format. OTA update cannot be performed!");
-        return;
-    }
+            const char * headerKeys[] = {"Location","Content-Length","Content-Type"};
+            https.collectHeaders(headerKeys,3);
 
-    if (https.begin(client, url)) {  // HTTPS
-        Serial.println("[FIRMWARE UPDATES] Starting firmware load");
-        // start connection and send HTTP header
-        int httpCode = https.GET();
+            // start connection and send HTTP header
+            int httpCode = https.GET();
 
-        // httpCode will be negative on error
-        if (httpCode <= 0) {
-            Serial.println("[FIRMWARE UPDATES] Error from httpclient");
-            return;
-        }
-
-        // HTTP header has been sent and Server response header has been handled
-        Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
-
-        // https.collectHeaders(["Location"],1); << is it needed?
-
-        // Handle redirects
-        if (httpCode >= 300 && httpCode < 400 ){
-            if (https.hasHeader("Location")) {
-                String redirectLocation = https.header("Location");
-                Serial.println("[FIRMWARE UPDATES] Redirect: " + redirectLocation);
-                processOTAUpdate(redirectLocation.c_str()); // should we limit redirects? we should not recreate another wificlient?
+            // httpCode will be negative on error
+            if (httpCode <= 0) {
+                Serial.println("[FIRMWARE UPDATES] Error from httpclient");
                 return;
+            }
+
+            // HTTP header has been sent and Server response header has been handled
+            Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
+
+
+            // Handle redirects
+            if (httpCode >= 300 && httpCode < 400 ){
+                if (https.hasHeader("Location")) {
+                    String redirectLocation = https.header("Location");
+                    https.end();
+                    Serial.println("[FIRMWARE UPDATES] Redirect: " + redirectLocation);
+                    processOTAUpdate(redirectLocation.c_str()); // should we limit redirects? we should not recreate another wificlient?
+                    return;
+                } else {
+                    Serial.println("[FIRMWARE UPDATES] 3xx status code but no redirect location");
+                    return;
+                }
+            }
+
+            // Handle other non-200 status codes
+            if (httpCode != 200){
+                Serial.println("[FIRMWARE UPDATES] Bailing out due to non-200 status code");
+                return;
+            }
+            
+            volatile int contentLength = 0;
+
+            if (https.hasHeader("Content-Length")){
+                contentLength = atoi(https.header("Content-Length").c_str());
+                Serial.printf("[FIRMWARE UPDATES] Content length is %i",contentLength);
             } else {
-                Serial.println("[FIRMWARE UPDATES] 3xx status code but no redirect location");
+                Serial.println("[FIRMWARE UPDATES] No content length found");
                 return;
             }
-        }
 
-        // Handle other non-200 status codes
-        if (httpCode != 200){
-            Serial.println("[FIRMWARE UPDATES] Bailing out due to non-200 status code");
-            return;
-        }
-        
-        volatile int contentLength = 0;
-
-        if (https.hasHeader("Content-Length")){
-            contentLength = atoi(https.header("Content-Length").c_str());
-            Serial.printf("[FIRMWARE UPDATES] Content length is %i",contentLength);
-        } else {
-            Serial.println("[FIRMWARE UPDATES] No content length found");
-            return;
-        }
-
-        volatile bool isValidContentType = false;
-        if (https.hasHeader("Content-Type")){
-            String contentType = https.header("Content-Type");
-            if ( contentType == "application/octet-stream"){
-                isValidContentType = true;
-            }
-            Serial.println("[FIRMWARE UPDATES] Content type is " + contentType);
-        } else {
-            Serial.println("[FIRMWARE UPDATES] No content type found");
-            return;
-        }
-
-        // WE ARE GETTING SOMEWHERE
-
-        // check whether we have everything for OTA update
-        if (contentLength && isValidContentType)
-        {
-            if (Update.begin(contentLength))
-            {
-            Serial.println("Starting Over-The-Air update. This may take some time to complete ...");
-            size_t written = Update.writeStream(client);
-
-            if (written == contentLength)
-            {
-                Serial.println("Written : " + String(written) + " successfully");
-            }
-            else
-            {
-                Serial.println("Written only : " + String(written) + "/" + String(contentLength) + ". Retry?");
-                // Retry??
+            volatile bool isValidContentType = false;
+            if (https.hasHeader("Content-Type")){
+                String contentType = https.header("Content-Type");
+                if ( contentType == "application/octet-stream"){
+                    isValidContentType = true;
+                }
+                Serial.println("[FIRMWARE UPDATES] Content type is " + contentType);
+            } else {
+                Serial.println("[FIRMWARE UPDATES] No content type found");
+                return;
             }
 
-            if (Update.end())
+            // WE ARE GETTING SOMEWHERE
+
+            // check whether we have everything for OTA update
+            if (contentLength && isValidContentType)
             {
-                if (Update.isFinished())
+                if (Update.begin(contentLength))
                 {
-                Serial.println("OTA update has successfully completed. Rebooting ...");
-                ESP.restart();
+                Serial.println("Starting Over-The-Air update. This may take some time to complete ...");
+                size_t written = Update.writeStream(*client);
+
+                if (written == contentLength)
+                {
+                    Serial.println("Written : " + String(written) + " successfully");
                 }
                 else
                 {
-                Serial.println("Something went wrong! OTA update hasn't been finished properly.");
+                    Serial.println("Written only : " + String(written) + "/" + String(contentLength) + ". Retry?");
+                    // Retry??
+                }
+
+                if (Update.end())
+                {
+                    if (Update.isFinished())
+                    {
+                    Serial.println("OTA update has successfully completed. Rebooting ...");
+                    ESP.restart();
+                    }
+                    else
+                    {
+                    Serial.println("Something went wrong! OTA update hasn't been finished properly.");
+                    }
+                }
+                else
+                {
+                    Serial.println("An error Occurred. Error #: " + String(Update.getError()));
+                }
+                }
+                else
+                {
+                Serial.println("There isn't enough space to start OTA update");
+                client->flush();
                 }
             }
             else
             {
-                Serial.println("An error Occurred. Error #: " + String(Update.getError()));
-            }
-            }
-            else
-            {
-            Serial.println("There isn't enough space to start OTA update");
-            client.flush();
+                Serial.println("There was no valid content in the response from the OTA server!");
+                client->flush();
             }
         }
-        else
-        {
-            Serial.println("There was no valid content in the response from the OTA server!");
-            client.flush();
-        }
-
             
     }
 

@@ -320,8 +320,14 @@ void updatesDaily(){
   generateDSTTimes(rtc.now().year());
 
   // Firmware
+  display->displayMessage("Checking for updates", rando);
   FirmwareUpdates *firmwareUpdates = new FirmwareUpdates;
   firmwareUpdates->checkForUpdates();
+
+  if (firmwareUpdates->updateAvailable){
+    display->setStatusMessage("wait");
+    firmwareUpdates->startUpdate();
+  }
   delete firmwareUpdates;
 
 }
