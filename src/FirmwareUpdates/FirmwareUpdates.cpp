@@ -69,21 +69,20 @@ void FirmwareUpdates::checkForUpdates() {
                 int taglen = strlen(tag_name);
                 char latestbuf[taglen];
                 memcpy(latestbuf, &tag_name[1],taglen);
-                Serial.println(latestbuf);
 
                 semver_t latest = {};
                 if (semver_parse(latestbuf, &latest)){
                     Serial.print("[FIRMWARE UPDATES] Failed to parse latest version");
                     return;
                 }
-                Serial.printf("[FIRMWARE UPDATES] Latest firmware is %s", latestbuf);
+                Serial.printf("[FIRMWARE UPDATES] Latest firmware is %s\n", latestbuf);
 
                 semver_t local = {};
                 if ( semver_parse(VERSION, &local)){
                     Serial.print("[FIRMWARE UPDATES] Failed to parse local version");
                     return;
                 }
-                Serial.printf("[FIRMWARE UPDATES] Local firmware is %s", VERSION);
+                Serial.printf("[FIRMWARE UPDATES] Local firmware is %s\n", VERSION);
 
                 // Compare that to the local version
                 // Bail unless an update is needed
