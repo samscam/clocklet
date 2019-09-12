@@ -3,6 +3,5 @@
 
 #define FPS               60
 #define TIME_24_HOUR      true
-#define VERSION "0.0.1"
 
 #endif
