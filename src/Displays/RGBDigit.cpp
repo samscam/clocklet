@@ -72,9 +72,13 @@ void RGBDigit::displayMessage(const char *stringy, MessageType messageType = goo
     scrollText_randomColour(stringy);
     break;
   }
-  
 }
 
+void RGBDigit::setStatusMessage(const char * string){
+  fillDigits_rainbow(true);
+  setDigits(string);
+  FastLED.show();
+}
 
 void RGBDigit::setBrightness(float brightness){
   uint8_t scaledBrightness = MIN_BRIGHTNESS + (brightness * (MAX_BRIGHTNESS - MIN_BRIGHTNESS));

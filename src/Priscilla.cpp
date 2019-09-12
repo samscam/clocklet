@@ -7,6 +7,8 @@
 #include <WiFi.h>
 
 #include "Provisioning/Provisioning.h"
+#include "FirmwareUpdates/FirmwareUpdates.h"
+
 
 #include "TimeThings/NTP.h"
 
@@ -316,6 +318,18 @@ void updatesDaily(){
   }
   #endif
   generateDSTTimes(rtc.now().year());
+
+  // Firmware
+  display->displayMessage("Checking for updates", rando);
+  FirmwareUpdates *firmwareUpdates = new FirmwareUpdates;
+  firmwareUpdates->checkForUpdates();
+
+  if (firmwareUpdates->updateAvailable){
+    display->setStatusMessage("wait");
+    firmwareUpdates->startUpdate();
+  }
+  delete firmwareUpdates;
+
 }
 
 DateTime dstStart;
