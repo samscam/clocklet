@@ -76,13 +76,14 @@ void FirmwareUpdates::checkForUpdates() {
                     Serial.print("[FIRMWARE UPDATES] Failed to parse latest version");
                     return;
                 }
-                Serial.println("latest did parse");
+                Serial.printf("[FIRMWARE UPDATES] Latest firmware is %s", latestbuf);
 
                 semver_t local = {};
                 if ( semver_parse(VERSION, &local)){
                     Serial.print("[FIRMWARE UPDATES] Failed to parse local version");
                     return;
                 }
+                Serial.printf("[FIRMWARE UPDATES] Local firmware is %s", VERSION);
 
                 // Compare that to the local version
                 // Bail unless an update is needed
@@ -105,12 +106,12 @@ void FirmwareUpdates::checkForUpdates() {
                 
             }
             } else {
-            Serial.printf("[HTTPS] GET... failed, error: %s\n", https.errorToString(httpCode).c_str());
+            Serial.printf("[FIRMWARE UPDATES][HTTPS] GET... failed, error: %s\n", https.errorToString(httpCode).c_str());
             }
     
             https.end();
         } else {
-            Serial.printf("[HTTPS] Unable to connect\n");
+            Serial.printf("[FIRMWARE UPDATES][HTTPS] Unable to connect\n");
         }
 
     }
@@ -149,7 +150,7 @@ void FirmwareUpdates::processOTAUpdate(const char * url)
             }
 
             // HTTP header has been sent and Server response header has been handled
-            Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
+            Serial.printf("[FIRMWARE UPDATES][HTTPS] GET... code: %d\n", httpCode);
 
 
             // Handle redirects
@@ -201,16 +202,16 @@ void FirmwareUpdates::processOTAUpdate(const char * url)
             {
                 if (Update.begin(contentLength))
                 {
-                Serial.println("Starting Over-The-Air update. This may take some time to complete ...");
+                Serial.println("[FIRMWARE UPDATES] Starting Over-The-Air update. This may take some time to complete ...");
                 size_t written = Update.writeStream(*client);
 
                 if (written == contentLength)
                 {
-                    Serial.println("Written : " + String(written) + " successfully");
+                    Serial.println("[FIRMWARE UPDATES] Written : " + String(written) + " successfully");
                 }
                 else
                 {
-                    Serial.println("Written only : " + String(written) + "/" + String(contentLength) + ". Retry?");
+                    Serial.println("[FIRMWARE UPDATES] Written only : " + String(written) + "/" + String(contentLength) + ". Retry?");
                     // Retry??
                 }
 
@@ -218,28 +219,28 @@ void FirmwareUpdates::processOTAUpdate(const char * url)
                 {
                     if (Update.isFinished())
                     {
-                    Serial.println("OTA update has successfully completed. Rebooting ...");
+                    Serial.println("[FIRMWARE UPDATES] OTA update has successfully completed. Rebooting ...");
                     ESP.restart();
                     }
                     else
                     {
-                    Serial.println("Something went wrong! OTA update hasn't been finished properly.");
+                    Serial.println("[FIRMWARE UPDATES] Something went wrong! OTA update hasn't been finished properly.");
                     }
                 }
                 else
                 {
-                    Serial.println("An error Occurred. Error #: " + String(Update.getError()));
+                    Serial.println("[FIRMWARE UPDATES] An error Occurred. Error #: " + String(Update.getError()));
                 }
                 }
                 else
                 {
-                Serial.println("There isn't enough space to start OTA update");
+                Serial.println("[FIRMWARE UPDATES] There isn't enough space to start OTA update");
                 client->flush();
                 }
             }
             else
             {
-                Serial.println("There was no valid content in the response from the OTA server!");
+                Serial.println("[FIRMWARE UPDATES] There was no valid content in the response from the OTA server!");
                 client->flush();
             }
         }
