@@ -32,6 +32,7 @@ It's all a work in progress.
 
 ## Building, configuration, uploading firmware
 
+* Clone the repo including submodules
 * Install platformio and your editor of choice.
 * Open up the project
 * Pick the *correct environment* for the device you want to build for (by setting it in the first line of `platformio.ini` or by invoking tasks for the specific environment in the editor/cli)
