@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <WiFi.h>
 
-#define CONFIG_SOFTAP_SSID "O'Clocky"
+#define CONFIG_SOFTAP_SSID "Clocklet"
 #define CONFIG_SOFTAP_PASS "boogaloo"
 
 // #ifdef __cplusplus

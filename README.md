@@ -4,7 +4,7 @@
 
 This project is the firmware for clocks made by @samscam including:
 
-### Clocky
+### Clocklet
 * Display: RGBDigit (neopixel) 7 segment display
 * Timekeeping: DS3231 RTC
 * Synchronisation: NTP
