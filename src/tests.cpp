@@ -1,18 +1,42 @@
 #include "tests.h"
 
 #include <RTClib.h>
+#include <FastLED.h>
 
-void runFast(Display *display){
+void displayTests(RGBDigit *display){
 
+    display->setStatusMessage("TEMP");
+    FastLED.delay(1000);
+    showTemperatureRange(display);
+
+    display->setStatusMessage("FAST");
+    FastLED.delay(1000);
+    runFast(display);
+
+}
+
+
+void runFast(RGBDigit *display){
+    
     DateTime time = DateTime(1978,12,28,0,0,0);
     DateTime endTime = DateTime(1978,12,29,0,0,0);
     while (time.unixtime() < endTime.unixtime()){
         display->setTime(time);
         display->frameLoop();
-        time = time + TimeSpan(60*5);
+        time = time + TimeSpan(60);
     }
 
 }
+
+void showTemperatureRange(RGBDigit *display){
+    // for (int f = -10; f<41; f++){
+    //     CRGB colour = display->colourFromTemperature((float)f);
+    //     display->setDigits(f,colour);
+    //     FastLED.show();
+    //     FastLED.delay(500);
+    // }
+}
+
 // #include <FastLED.h>
 //
 // #define FPS 60
@@ -21,16 +45,7 @@ void runFast(Display *display){
 //
 //     // Temperature Colours
 //
-//     for (int f = -30; f<60; f++){
-//       updateBrightness();
-//
-//       fillDigits_heat(0, f, f );
-//
-//       setDigits(f);
-//
-//       FastLED.show();
-//       FastLED.delay(500);
-//     }
+
 //
 //
 //     runDemo();
