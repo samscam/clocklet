@@ -84,7 +84,7 @@ void setup() {
 
   analogReadResolution(12);
 
-  // Randomise the random seed
+  // Randomise the random seed - Not sure if this is random enough
   uint16_t seed = analogRead(A0);
   randomSeed(seed);
   Serial.println((String)"Seed: " + seed);
@@ -100,24 +100,22 @@ void setup() {
 
   display->setup();
   display->setBrightness(currentBrightness());
-  // display->displayMessage("Everything is awesome");
-  
+
+  // Uncomment to run various display tests:
+  // displayTests(display);
+
   WiFi.begin();
-    
 
   if (isAlreadyProvisioned()){
-    
-    display->displayMessage("got creds");
-    // connectWifi();
     waitForWifi(6000);
   } else {
-    
     startProvisioning();
-    display->displayMessage("Provisioning");
+    display->displayMessage("Provisioning", good);
   }
 
   rtc.begin();
 
+  display->displayMessage("Everything is awesome", good);
 
 }
 
@@ -155,7 +153,7 @@ void loop() {
   }
   if (detectTouchPeriod() > 15000){
     startProvisioning();
-    display->displayMessage("Provisioning");
+    display->displayMessage("Provisioning",good);
   }
 
   #if defined(BATTERY_MONITORING)
@@ -206,6 +204,8 @@ void loop() {
   if (millis() > lastRandomMessageTime + nextMessageDelay){
     Serial.println("Random message");
     const char* message = randoMessage();
+    display->displayMessage(message, rando);
+    display->displayMessage(message, rando);
     display->displayMessage(message, rando);
     lastRandomMessageTime = millis();
     nextMessageDelay = 1000 * 60 * random(5,59);
@@ -320,11 +320,12 @@ void updatesDaily(){
   generateDSTTimes(rtc.now().year());
 
   // Firmware
-  display->displayMessage("Checking for updates", rando);
+  
   FirmwareUpdates *firmwareUpdates = new FirmwareUpdates;
   firmwareUpdates->checkForUpdates();
 
   if (firmwareUpdates->updateAvailable){
+    display->displayMessage("Updating Firmware", rando);
     display->setStatusMessage("wait");
     firmwareUpdates->startUpdate();
   }
