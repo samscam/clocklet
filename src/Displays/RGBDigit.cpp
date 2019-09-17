@@ -11,12 +11,15 @@ FASTLED_USING_NAMESPACE
 // I would rather it was in the private scope of the class in the header file
 // But this macro doesn't seem to like doing that...
 DEFINE_GRADIENT_PALETTE (temperatureGPalette) {
-0,     0,  255,  255,
-51,   255,  255, 255,
-102,   0,255,  0,
-153, 255,255,0,
-204,   255,0,0,
-255,  255,0,255
+0,   127, 127, 255, // -10
+51,  255, 255, 255, // 0
+76,  0,   255, 255, // 5
+102, 0,   255, 0,   // 10
+127, 255, 255, 0,   // 15
+153, 255, 128,   0,   // 20
+177, 255, 0,   0,   // 25
+204, 255, 0,   255,   // 30
+255, 120, 0,   255  // 40
 };
 
 RGBDigit::RGBDigit() : Display() {
@@ -278,7 +281,8 @@ void RGBDigit::setDigits(const char *string){
 }
 
 /// Display an integer
-void RGBDigit::setDigits(int number){
+void RGBDigit::setDigits(int number, CRGB colour){
+  fillDigits_gradient(colour,colour);
   bool negative = false;
 
   if (number < 0) {

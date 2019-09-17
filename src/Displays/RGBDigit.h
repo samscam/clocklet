@@ -50,11 +50,12 @@ public:
 
   // Show a message - but what kind of message?
   void displayMessage(const char *stringy, MessageType messageType);
-
+  
   void setStatusMessage(const char * string);
   
   // Brightness is a float from 0 (barely visible) to 1 (really bright)
   void setBrightness(float brightness);
+  
 
 private:
 
@@ -71,9 +72,11 @@ private:
 
   void setDigit(int number, int digit);
   void setDigit(char character, int digit);
+
   void setDigits(const char *string);
-  void setDigits(int number);
+  void setDigits(int number, CRGB colour = CRGB::White);
   void setDigits(float number, CRGB colour = CRGB::White);
+
 
   void setDigitMask(byte mask, int digit);
 
