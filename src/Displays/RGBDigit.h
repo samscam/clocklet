@@ -85,10 +85,11 @@ private:
   void advanceWindCycle(float speed);
 
   void fillDigits_rainbow(bool includePoints);
-  void fillDigits_heat(float minTemp, float maxTemp); //temps in •c
+  void fillDigits_heat(); //temps in •c
   void fillDigits_gradient(CRGB startColour, CRGB endColour);
 
   CRGB colourFromTemperature(float temperature);
+  void regenerateHeatPalette(float minTemp, float maxTemp);
 
   void initRain();
   void addRain( fract8 chanceOfRain, CRGB colour);
@@ -107,6 +108,7 @@ private:
   int allvsegs[ 4 * NUM_DIGITS ] = {0};
 
   CRGB lighteningLayer[NUM_LEDS];
+  CRGBPalette16 scaledHeatPalette;
 
   float cycle = 0;
 

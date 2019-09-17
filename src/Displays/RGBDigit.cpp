@@ -34,6 +34,7 @@ boolean RGBDigit::setup() {
   FastLED.addLeds<LED_TYPE,DATA_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
 
   initRain();
+  regenerateHeatPalette(0.0,0.0);
 
   return true;
 }
@@ -44,6 +45,9 @@ void RGBDigit::frameLoop() {
 
 void RGBDigit::setWeather(Weather weather) {
   _weather = weather;
+  
+  regenerateHeatPalette(_weather.minTmp,_weather.maxTmp);
+
   CRGB minColour = colourFromTemperature(_weather.minTmp);
   CRGB maxColour = colourFromTemperature(_weather.maxTmp);
   scrollText(_weather.summary,minColour,maxColour);
@@ -154,7 +158,7 @@ void RGBDigit::displayTime(const DateTime& time, Weather weather){
   // fillDigits_rainbow(false);
 
   // Or heat colours
-  fillDigits_heat(weather.minTmp , weather.maxTmp);
+  fillDigits_heat();
 
   // More backgrounds may happen one day
 
@@ -306,10 +310,11 @@ void RGBDigit::setDigits(int number, CRGB colour){
 }
 
 /// Display a float
+/// This really doesn't work properly.
 void RGBDigit::setDigits(float number, CRGB colour){
   fillDigits_gradient(colour,colour);
 
-  // Decomopose the float
+  // Decompose the float
   float integral, fractional;
   fractional = modff(number, &integral);
 
@@ -428,27 +433,13 @@ CRGB RGBDigit::colourFromTemperature(float temperature){
   return ColorFromPalette(temperaturePalette, scaled);
 }
 
-void RGBDigit::fillDigits_heat( float minTemp, float maxTemp){
+void RGBDigit::fillDigits_heat(){
 
   uint8_t numCols = 3 * NUM_DIGITS;
   CRGB cols[3 * NUM_DIGITS];
 
-  // Method 1: a gradient from min heat colour to max heat colour
-  // CRGB startColour = colourFromTemperature(minTemp);
-  // CRGB endColour = colourFromTemperature(maxTemp);
-  // fill_gradient_RGB(cols , 0,  startColour, numCols-1, endColour);
 
-  // Method 2: create a gradient constructed out of the main temperature
-  // gradient
-  // really should not be doing this every iteration
-  
-  CRGBPalette16 gpal = CRGBPalette16();
-
-  for (int i = 0; i < 16; i++) {
-    uint8_t tmp = minTemp + ((maxTemp - minTemp) / 16.0f) * i;
-    gpal[i] = colourFromTemperature(tmp);
-  }
-  fill_palette(cols, numCols, cycle, 6, gpal, 255, LINEARBLEND);
+  fill_palette(cols, numCols, cycle, 6, scaledHeatPalette, 255, LINEARBLEND);
 
   int mapping[] = {
     1,2,2,1,0,0,1,2
@@ -456,6 +447,14 @@ void RGBDigit::fillDigits_heat( float minTemp, float maxTemp){
 
   for (int i = 0; i < NUM_LEDS; i++){
     leds[i] = cols[ mapping[i%8] + ((i/8)*3) ];
+  }
+}
+
+void RGBDigit::regenerateHeatPalette(float minTemp, float maxTemp){
+  scaledHeatPalette = CRGBPalette16();
+  for (int i = 0; i < 16; i++) {
+    uint8_t tmp = minTemp + ((maxTemp - minTemp) / 16.0f) * i;
+    scaledHeatPalette[i] = colourFromTemperature(tmp);
   }
 }
 
