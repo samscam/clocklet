@@ -17,7 +17,7 @@
 #endif
 
 //#define CLK_PIN   4
-#define LED_TYPE    WS2811
+#define LED_TYPE    WS2812B
 #define COLOR_ORDER GRB
 
 #define NUM_DIGITS  4
