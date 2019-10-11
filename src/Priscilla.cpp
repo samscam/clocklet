@@ -100,6 +100,7 @@ void setup() {
 
   display->setup();
   display->setBrightness(currentBrightness());
+  display->setStatusMessage("ello");
 
   // Uncomment to run various display tests:
   // displayTests(display);
@@ -115,7 +116,7 @@ void setup() {
 
   rtc.begin();
 
-  display->displayMessage("Everything is awesome", good);
+  display->displayMessage("Everything is awesome", rando);
 
 }
 
