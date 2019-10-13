@@ -7,13 +7,8 @@
   // preferences.putString("owner","people");
   // preferences.putUInt("serial",1);
   // preferences.putUInt("hwrev",2); // hardware rev
-  // preferences.putUInt("swmigrev",VERSION) // last fw version used - update after migrations!
-  // preferences.putUInt("casecolour",0);
-  // enum CaseColour {
-  //   black = 0,
-  //   wood = 1,
-  //   rainbow = 2
-  // }
+  // preferences.putString("swmigrev",VERSION) // last fw version used - update after migrations!
+  // preferences.putString("casecolour",0);
 
   // Location
   // preferences.putDouble("lat",0);
