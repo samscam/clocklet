@@ -47,11 +47,6 @@ void RGBDigit::setWeather(Weather weather) {
   _weather = weather;
   
   regenerateHeatPalette(_weather.minTmp,_weather.maxTmp);
-
-  CRGB minColour = colourFromTemperature(_weather.minTmp);
-  CRGB maxColour = colourFromTemperature(_weather.maxTmp);
-  scrollText(_weather.summary,minColour,maxColour);
-
 }
 
 void RGBDigit::displayTemperatures(){
