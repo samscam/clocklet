@@ -13,6 +13,8 @@ bool reconnect(){
   // Restart wifi if we are power-saving
   if (wifiStopped){
     esp_wifi_start();
+  }
+  if (!WiFi.isConnected()){
     WiFi.reconnect();
   }
 
