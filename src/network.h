@@ -1,19 +1,14 @@
-#ifndef PRISCILLA_NETWORK
-#define PRISCILLA_NETWORK
+#pragma once
 
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
 
 
-// ----------- WIFI
+// ----------- Network helpers
 
-bool setupWifi();
-bool connectWifi();
 void printWiFiStatus();
-void printWiFiConnectionStatus();
+
 bool reconnect();
 void stopWifi();
 bool waitForWifi(uint32_t milliseconds);
-
-#endif

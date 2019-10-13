@@ -4,61 +4,18 @@
 #include <esp_wifi_types.h>
 // MARK: NETWORK STUFF --------------------------------------
 
-bool setupWifi(){
 
-  wifi_country_t country = {"GB", 1, 13, 127, WIFI_COUNTRY_POLICY_AUTO};
-  esp_wifi_set_country(&country);
-  btStop();
-
-  return connectWifi();
-
-}
 
 uint32_t lastConnectAttempt = 0;
-
-bool connectWifi(){
-
-    wl_status_t status = WiFi.status();
-    if (status == WL_CONNECTED){
-      return true;
-    }
-    
-
-    int64_t timedif = millis() - lastConnectAttempt;
-    if (  lastConnectAttempt == 0 ) {
-      // millis has rolled over or it's our first shot
-    } else {
-      // Avoid trying if the last attempt was within the last minute
-      if ( timedif < (1000 * 60) ) {
-        //scrollText_fail("not long enough");
-        return false;
-      }
-    }
-
-
-    lastConnectAttempt = millis();
-
-    // If we have fallen through, try connecting
-
-    status = WiFi.begin();
-
-    bool connected = waitForWifi(6000);
-
-    bool didSetSleep = WiFi.setSleep(true);
-    if (!didSetSleep){
-      Serial.print("Failed to set wifi sleep mode");
-    }
-    printWiFiStatus();
-    return connected;
-}
-
 bool wifiStopped = false;
+
 bool reconnect(){
   // Restart wifi if we are power-saving
   if (wifiStopped){
     esp_wifi_start();
     WiFi.reconnect();
   }
+
   return waitForWifi(2000);
 }
 
@@ -86,6 +43,7 @@ bool waitForWifi(uint32_t milliseconds){
           break;
         case WL_CONNECTED:
           Serial.println("WL_CONNECTED");
+          printWiFiStatus();
           return true;
           break;
         case WL_CONNECT_FAILED:
