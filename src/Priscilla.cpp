@@ -4,6 +4,7 @@
 #include "Messages.h"
 #include "Displays/Display.h"
 #include "Location/LocationSource.h"
+#include "Location/LocationManager.h"
 #include <WiFi.h>
 
 #include "Provisioning/Provisioning.h"
@@ -45,12 +46,9 @@ Display *display = new EpaperDisplay();
 
 // ----------- RTC
 
-
-
 #if defined(TIME_GPS)
 #include "TimeThings/GPSTime.h"
 RTC_GPS rtc = RTC_GPS();
-LocationSource locationSource = rtc;
 
 #elif defined(TIME_DS3231)
 RTC_DS3231 rtc = RTC_DS3231();
@@ -61,19 +59,25 @@ RTC_ESP32 rtc = RTC_ESP32();
 
 #endif
 
+#if defined(LOCATION_GPS)
+LocationSource locationSource = rtc;
+#else
+LocationManager *locationManager;
+#endif
+
 
 // ---------- Networking
 
-// WiFiClientSecure client; // << https on esp32
-WiFiClient client; // <<  plain http, and https on atmelwinc
+WiFiClientSecure secureClient; // << https on esp32
+// WiFiClient client; // <<  plain http, and https on atmelwinc
 
 
 // ---------- WEATHER CLIENT
-#include "weather/met-office.h"
-WeatherClient *weatherClient = new MetOffice(client); // << It's plain HTTP
+// #include "weather/met-office.h"
+// WeatherClient *weatherClient = new MetOffice(client); // << It's plain HTTP
 
-// #include "weather/darksky.h"
-// WeatherClient *weatherClient = new DarkSky(client);
+#include "weather/darksky.h"
+WeatherClient *weatherClient = new DarkSky(secureClient);
 
 // SETUP  --------------------------------------
 
@@ -316,6 +320,7 @@ void updatesHourly(){
   Serial.println("Hourly update");
 
   if (reconnect()) {
+    weatherClient -> setLocation(locationManager -> getLocation());
     weatherClient -> timeThreshold = (rtc.now().hour() * 60) - 180;
     if (weatherClient -> fetchWeather()){
       display->setWeather(weatherClient->latestWeather);

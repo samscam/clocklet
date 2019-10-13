@@ -43,6 +43,8 @@ bool WeatherClient::connect(char* host, bool ssl) {
     ok = client -> connect(host, 80);
   }
   Serial.println(ok ? "Connected" : "Connection Failed!");
+
+
   return ok;
 }
 
@@ -59,6 +61,7 @@ bool WeatherClient::sendRequest(char* host, char* resource) {
   client -> print("Host: ");
   client -> println(host);
   client -> println("Connection: close");
+  client -> println("User-Agent: Clocklet");
   client -> println();
 
   return true;

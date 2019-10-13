@@ -15,6 +15,9 @@ class DarkSky : public WeatherClient {
 public:
   DarkSky(WiFiClient &client);
   Weather readReponseContent();
+
+  void setLocation(Location location);
+  Location currentLocation;
 };
 
 

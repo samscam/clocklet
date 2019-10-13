@@ -3,9 +3,9 @@
 DarkSky::DarkSky(WiFiClient &client) : WeatherClient(client) {
   this->client = &client;
   this->server = (char *)DARKSKY_SERVER;
-  this->resource = (char *)DARKSKY_PATH;
+  // this->resource = (char *)DARKSKY_PATH;
   this->ssl = true;
-
+  
   Serial.print("Setting Default Weather");
   this->latestWeather = defaultWeather;
 };
@@ -13,7 +13,7 @@ DarkSky::DarkSky(WiFiClient &client) : WeatherClient(client) {
 Weather DarkSky::readReponseContent() {
 
   // Allocate a temporary memory pool
-  DynamicJsonDocument root(WEATHER_MAX_CONTENT_SIZE);
+  DynamicJsonDocument root(30720);
   auto error = deserializeJson(root,*client);
 
   if (error) {
@@ -61,4 +61,15 @@ Weather DarkSky::readReponseContent() {
   
   Serial.println("Weather parsing done");
   return result;
+}
+
+void DarkSky::setLocation(Location location){
+  this->currentLocation = location;
+  int len = strlen(DARKSKY_PATH) + strlen(DARKSKY_APIKEY) + 15;
+  char buffer[len];
+  len = sprintf(buffer,DARKSKY_PATH,DARKSKY_APIKEY,location.lat,location.lng);
+
+  this->resource = (char*)malloc( (strlen(buffer)+1) * sizeof(char));
+  strcpy(this->resource,buffer);
+  Serial.printf("Weather fetch path %s\n",this->resource);
 }
