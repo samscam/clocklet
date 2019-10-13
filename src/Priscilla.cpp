@@ -8,6 +8,7 @@
 
 #include "Provisioning/Provisioning.h"
 #include "FirmwareUpdates/FirmwareUpdates.h"
+#include <Preferences.h>
 
 
 #include "TimeThings/NTP.h"
@@ -81,6 +82,13 @@ void setup() {
   
   Serial.begin(115200);
 
+  // Read things from preferences...
+  Preferences preferences = Preferences();
+  preferences.begin("clocklet", false);
+
+  String owner = preferences.getString("owner");
+  
+  preferences.end();
 
   analogReadResolution(12);
 
@@ -100,23 +108,33 @@ void setup() {
 
   display->setup();
   display->setBrightness(currentBrightness());
-  display->setStatusMessage("ello");
+  
 
+  display->setStatusMessage("part");
+  delay(1000);
+  display->setStatusMessage("time");
+  delay(1000);
+  String greeting = String("Hello "+owner);
+  display->displayMessage(greeting.c_str(), rando);
   // Uncomment to run various display tests:
   // displayTests(display);
-
+  
   WiFi.begin();
 
+  locationManager = new LocationManager();
+
   if (isAlreadyProvisioned()){
-    waitForWifi(6000);
+    if (waitForWifi(6000)){
+      display->displayMessage("Everything is awesome", good);
+    } else {
+      display->displayMessage("Network is pants", bad);
+    }
   } else {
     startProvisioning();
     display->displayMessage("Provisioning", good);
   }
 
   rtc.begin();
-
-  display->displayMessage("Everything is awesome", rando);
 
 }
 
