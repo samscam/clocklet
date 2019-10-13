@@ -10,7 +10,7 @@ struct Location {
 
 class LocationSource
 {
-    virtual Location location();
+    virtual Location getLocation();
 };
 
 

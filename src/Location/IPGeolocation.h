@@ -1,5 +1,4 @@
-#ifndef PRICILLA_IPGEOLOCATION
-#define PRICILLA_IPGEOLOCATION
+#pragma once
 
 #include "LocationSource.h"
 #include "network.h"
@@ -16,6 +15,3 @@ class IPGeolocation: public LocationSource {
     WiFiClient *client;
 };
 
-
-
-#endif
