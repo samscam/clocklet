@@ -8,60 +8,74 @@
 
 import SwiftUI
 import Network
+import CombineBluetooth
+
+extension  ConnectionState{
+    var iconSystemName: String {
+        switch self {
+            case .connected: return "bolt.fill"
+            case .connecting: return "bolt"
+            case .disconnected: return "bolt.slash.fill"
+        }
+    }
+    
+}
+extension ConnectionState: CustomStringConvertible {
+
+    public var description: String {
+        switch self {
+            case .connected: return "Connected"
+            case .connecting: return "Connecting"
+            case .disconnected: return "Disconnected"
+        }
+    }
+}
 
 struct ClockDetailsView: View {
     
-    @ObservedObject var clockConnection: ClockConnection
+    @ObservedObject var clock: Clock
     
-    var clock: Clock {
-        return clockConnection.clock
-    }
+
     
 //    var networkService: NetworkService? {
 //        return clockConnection.networkService
 //    }
     
     var showCurrentNetwork: Bool {
-        return self.clockConnection.networkService?.currentNetwork != nil
+        return clock.networkService.currentNetwork != nil
     }
     
     var body: some View {
         ScrollView{
-           VStack(alignment: .leading){
+            VStack(){
                 Image(clock.caseColour.imageName).resizable().aspectRatio(contentMode: .fit)
-            
-                ConfigItemView(iconSystemName: clockConnection.state.iconSystemName,
-                               title: clockConnection.state.description) {
+
+                ConfigItemView(iconSystemName: clock.state.iconSystemName,
+                               title: clock.state.description) {
                     EmptyView()
                 }.transition(.opacity)
+
             
-            clockConnection.networkService.map{ networkService in
-                NavigationLink(destination:NetworkDetailView(networkService:networkService)){
-                                networkService.currentNetwork.flatMap{
+                NavigationLink(destination:NetworkDetailView(networkService:clock.networkService)){
+                    clock.networkService.currentNetwork.flatMap{
                          CurrentNetworkView(currentNetwork: $0)
                     }
                 }
-            }
-            
-//                clockConnection.networkService.flatMap{$0.currentNetwork}.map{
-//                    NavigationLink(destination: AvailableNetworksView(networkService)) {
-//                         CurrentNetworkView(currentNetwork: $0).transition(.opacity)
-//                    }
-//                }
-//
+                
+
 
                 LocationServiceView()
-            
+
             }
             .padding()
-           .animation(.default)
+            .animation(.default)
             .onAppear {
-                self.clockConnection.connect()
+                self.clock.connect()
             }.onDisappear {
 //                self.clockConnection.disconnect()
             }
-        
-        }.navigationBarTitle(Text(clockConnection.clock.name), displayMode:.large)
+
+        }.navigationBarTitle(Text(clock.name), displayMode:.large)
     }
 }
 
@@ -69,18 +83,20 @@ struct ClockDetailsView: View {
 
 struct ClockDetailsView_Previews: PreviewProvider {
     static var previews: some View {
-        let clock = Clock(id: UUID(), serial: 5, name: "Clocklet #291", caseColour: .wood)
         
-        
-        let currentNetwork = CurrentNetwork(status: 4, connected: true, ssid: "Broccoli", channel: 5, ip: IPv4Address("129.12.41.5"), rssi: -2)
-        let networkService = NetworkService()
-        networkService.currentNetwork = currentNetwork
-        networkService.availableNetworks = [
-        AvailableNetwork(ssid: "Broccoli", enctype: .open, rssi: -20, channel: 4, bssid:"SOMETHING"),
-        AvailableNetwork(ssid: "My Wifi is Nice", enctype: .open, rssi: -20, channel: 4, bssid:"mywifi")
-        ]
-        let connection = ClockConnection(clock: clock, networkService: networkService)
-        return ClockDetailsView(clockConnection: connection)
+        ClockDetailsView(clock: Clock(uuid: UUID(), name: "Some Clock"))
+//        let clock = ClockModel(id: UUID(), serial: 5, name: "Clocklet #291", caseColour: .wood)
+//
+//
+//        let currentNetwork = CurrentNetwork(status: 4, connected: true, ssid: "Broccoli", channel: 5, ip: IPv4Address("129.12.41.5"), rssi: -2)
+//        let networkService = NetworkService()
+//        networkService.currentNetwork = currentNetwork
+//        networkService.availableNetworks = [
+//        AvailableNetwork(ssid: "Broccoli", enctype: .open, rssi: -20, channel: 4, bssid:"SOMETHING"),
+//        AvailableNetwork(ssid: "My Wifi is Nice", enctype: .open, rssi: -20, channel: 4, bssid:"mywifi")
+//        ]
+//        let connection = ClockConnection(clock: clock, networkService: networkService)
+//        return ClockDetailsView(clockConnection: connection)
     }
 }
 

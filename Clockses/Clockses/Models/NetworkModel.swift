@@ -9,8 +9,9 @@
 import Foundation
 import Network
 import CoreBluetooth
+import CombineBluetooth
 
-struct AvailableNetwork: Decodable, Characteristic, Identifiable {
+struct AvailableNetwork: Codable, Identifiable, JSONCharacteristic {
     static let uuid = CBUUID(string: "AF2B36C7-0E65-457F-A8AB-B996B656CF32")
     var id: String { return bssid }
     let ssid: String
@@ -21,7 +22,7 @@ struct AvailableNetwork: Decodable, Characteristic, Identifiable {
 }
 
 
-struct CurrentNetwork: Decodable, Characteristic {
+struct CurrentNetwork: Codable, JSONCharacteristic {
     static let uuid = CBUUID(string: "BEB5483E-36E1-4688-B7F5-EA07361B26A8")
     let status: Int
     let connected: Bool
@@ -31,8 +32,7 @@ struct CurrentNetwork: Decodable, Characteristic {
     let rssi: Int
 }
 
-struct JoinNetwork: Codable, Characteristic {
-    static let uuid = CBUUID(string: "B2313F3F-0FE4-4EC2-B0B4-D978496CD2D9")
+struct JoinNetwork: Codable, JSONCharacteristic {
     let ssid: String
     let psk: String?
     let enctype: AuthMode
@@ -54,6 +54,13 @@ extension IPv4Address: Decodable {
         } else {
             throw(IpCodingError.invalidAddress)
         }
+    }
+}
+
+extension IPv4Address: Encodable {
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(self.debugDescription)
     }
 }
 

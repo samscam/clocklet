@@ -2,19 +2,27 @@
 //  Clock.swift
 //  Clockses
 //
-//  Created by Sam Easterby-Smith on 24/09/2019.
+//  Created by Sam Easterby-Smith on 21/10/2019.
 //  Copyright © 2019 Spotlight Kid Ltd. All rights reserved.
 //
 
 import Foundation
-import SwiftUI
+import CombineBluetooth
 
-struct Clock: Identifiable {
-    let id: UUID
-    var serial: UInt32
-    var name: String
-    var caseColour: CaseColour
+class Clock: Peripheral, Identifiable, Advertiser {
+    
+    var id: UUID {
+        return uuid
+    }
+    
+    var caseColour: CaseColour = .black
+    var serial: UInt32 = 4242
+    
+    @Service var networkService: NetworkService = NetworkService()
+    
+    static var advertised: [ServiceProtocol.Type] = [NetworkService.self]
 }
+
 
 enum CaseColour: String, Codable {
     case bare

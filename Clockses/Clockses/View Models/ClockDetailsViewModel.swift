@@ -10,24 +10,23 @@ import Foundation
 import Combine
 
 class ClockDetailsViewModel: ObservableObject {
-    @Published var clock: Clock
-    @Published var currentNetwork: CurrentNetwork?
-    @Published var availableNetworks: [AvailableNetwork]?
+//    @Published var clockModel: ClockModel?
+//    @Published var currentNetwork: CurrentNetwork?
+//    @Published var availableNetworks: [AvailableNetwork]?
     
-    var connection: ClockConnection?
+    @Published var clock: Clock?
     
     private var cancellables = [AnyCancellable]()
     
-    init(clockConnection: ClockConnection){
-        self.connection = clockConnection
-        self.clock = clockConnection.clock
-        let c = clockConnection.objectWillChange.sink(receiveValue: { (_) in
+    init(clock: Clock){
+        self.clock = clock
+        let c = clock.objectWillChange.sink(receiveValue: { (_) in
             self.objectWillChange.send()
         })
         cancellables.append(c)
     }
     
     func connect(){
-        connection?.connect()
+        clock?.connect()
     }
 }

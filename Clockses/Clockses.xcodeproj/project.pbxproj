@@ -3,12 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		222271A5232B887100508ADA /* ClockSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222271A4232B887100508ADA /* ClockSummaryView.swift */; };
-		22350E83233D359E00452BDF /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22350E82233D359E00452BDF /* Network.swift */; };
+		22350E83233D359E00452BDF /* NetworkModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22350E82233D359E00452BDF /* NetworkModel.swift */; };
 		224C538F234F6CDD00A68928 /* ClockListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224C538E234F6CDD00A68928 /* ClockListView.swift */; };
 		224C5391234FAE7300A68928 /* ClockDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224C5390234FAE7300A68928 /* ClockDetailsView.swift */; };
 		22551952235870240056B9CD /* LocationServiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22551951235870240056B9CD /* LocationServiceView.swift */; };
@@ -27,7 +27,8 @@
 		228DF2662350704D00480588 /* ClockDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228DF2652350704D00480588 /* ClockDetailsViewModel.swift */; };
 		228DF2682350732C00480588 /* ClockConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228DF2672350732C00480588 /* ClockConnection.swift */; };
 		22A0AE042351492F00D04338 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A0AE032351492F00D04338 /* NetworkService.swift */; };
-		22E2D98A233A945500B4FCFD /* Clock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E2D989233A945500B4FCFD /* Clock.swift */; };
+		22BE0A3E235DDFD700EB8780 /* CombineBluetooth in Frameworks */ = {isa = PBXBuildFile; productRef = 22BE0A3D235DDFD700EB8780 /* CombineBluetooth */; };
+		22BE0A40235DE4EA00EB8780 /* Clock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BE0A3F235DE4EA00EB8780 /* Clock.swift */; };
 		22E2D9BA233A971000B4FCFD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E2D9B9233A970F00B4FCFD /* SceneDelegate.swift */; };
 /* End PBXBuildFile section */
 
@@ -43,7 +44,7 @@
 
 /* Begin PBXFileReference section */
 		222271A4232B887100508ADA /* ClockSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockSummaryView.swift; sourceTree = "<group>"; };
-		22350E82233D359E00452BDF /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
+		22350E82233D359E00452BDF /* NetworkModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkModel.swift; sourceTree = "<group>"; };
 		224C538E234F6CDD00A68928 /* ClockListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockListView.swift; sourceTree = "<group>"; };
 		224C5390234FAE7300A68928 /* ClockDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockDetailsView.swift; sourceTree = "<group>"; };
 		22551951235870240056B9CD /* LocationServiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationServiceView.swift; sourceTree = "<group>"; };
@@ -66,7 +67,7 @@
 		228DF2652350704D00480588 /* ClockDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockDetailsViewModel.swift; sourceTree = "<group>"; };
 		228DF2672350732C00480588 /* ClockConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockConnection.swift; sourceTree = "<group>"; };
 		22A0AE032351492F00D04338 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
-		22E2D989233A945500B4FCFD /* Clock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clock.swift; sourceTree = "<group>"; };
+		22BE0A3F235DE4EA00EB8780 /* Clock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clock.swift; sourceTree = "<group>"; };
 		22E2D9B9233A970F00B4FCFD /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -76,6 +77,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				22836ED722862AAC0020B46F /* CoreBluetooth.framework in Frameworks */,
+				22BE0A3E235DDFD700EB8780 /* CombineBluetooth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -177,8 +179,9 @@
 		228DF2692351091F00480588 /* Bluetooth */ = {
 			isa = PBXGroup;
 			children = (
-				22836ED322862A020020B46F /* Bluechatter.swift */,
+				22BE0A3F235DE4EA00EB8780 /* Clock.swift */,
 				22A0AE032351492F00D04338 /* NetworkService.swift */,
+				22836ED322862A020020B46F /* Bluechatter.swift */,
 				228DF2672350732C00480588 /* ClockConnection.swift */,
 			);
 			path = Bluetooth;
@@ -187,8 +190,7 @@
 		22E2D988233A944500B4FCFD /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				22E2D989233A945500B4FCFD /* Clock.swift */,
-				22350E82233D359E00452BDF /* Network.swift */,
+				22350E82233D359E00452BDF /* NetworkModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -210,6 +212,7 @@
 			);
 			name = Clockses;
 			packageProductDependencies = (
+				22BE0A3D235DDFD700EB8780 /* CombineBluetooth */,
 			);
 			productName = Clockses;
 			productReference = 22836EB0228629750020B46F /* Clockses.app */;
@@ -299,15 +302,15 @@
 				22551952235870240056B9CD /* LocationServiceView.swift in Sources */,
 				228DF25F234FB41E00480588 /* CurrentNetworkView.swift in Sources */,
 				22836ED422862A020020B46F /* Bluechatter.swift in Sources */,
+				22BE0A40235DE4EA00EB8780 /* Clock.swift in Sources */,
 				222271A5232B887100508ADA /* ClockSummaryView.swift in Sources */,
-				22350E83233D359E00452BDF /* Network.swift in Sources */,
+				22350E83233D359E00452BDF /* NetworkModel.swift in Sources */,
 				228DF2662350704D00480588 /* ClockDetailsViewModel.swift in Sources */,
 				2255195623587DB70056B9CD /* AvailableNetworksView.swift in Sources */,
 				2255195823588AF50056B9CD /* NetworkDetailView.swift in Sources */,
 				22836EB4228629750020B46F /* AppDelegate.swift in Sources */,
 				228DF261234FDF6400480588 /* ClockListViewModel.swift in Sources */,
 				22585259235694A0005C9696 /* ConfigItemView.swift in Sources */,
-				22E2D98A233A945500B4FCFD /* Clock.swift in Sources */,
 				228DF2682350732C00480588 /* ClockConnection.swift in Sources */,
 				224C538F234F6CDD00A68928 /* ClockListView.swift in Sources */,
 				224C5391234FAE7300A68928 /* ClockDetailsView.swift in Sources */,
@@ -397,7 +400,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -452,7 +455,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -573,6 +576,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		22BE0A3D235DDFD700EB8780 /* CombineBluetooth */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CombineBluetooth;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 22836EA8228629750020B46F /* Project object */;
 }

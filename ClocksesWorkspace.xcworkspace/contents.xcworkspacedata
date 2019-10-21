@@ -2,6 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:../../CombineBluetooth">
+   </FileRef>
+   <FileRef
       location = "container:Clockses/Clockses.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:../../CombineBluetooth/CombineBluetooth.playground">
    </FileRef>
 </Workspace>

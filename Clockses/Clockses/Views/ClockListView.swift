@@ -18,11 +18,11 @@ struct ClockListView: View {
     var body: some View {
         NavigationView{
             VStack{
-                List(viewModel.clockConnections) { clockConnection in
+                List(viewModel.clocks) { clock in
 
                     NavigationLink(destination:
-                    ClockDetailsView(clockConnection: clockConnection)){
-                        ClockSummaryView(clock: clockConnection.clock)
+                    ClockDetailsView(clock: clock)){
+                        ClockSummaryView(clock: clock)
                     }
                 }
                 
@@ -30,8 +30,11 @@ struct ClockListView: View {
                     Text("Scanning").background(Color.green)
                 }
             }.navigationBarTitle(Text("Clocklets"))
-        }.onAppear {
-            self.viewModel.startScanning()
+            .onAppear {
+                self.viewModel.startScanning()
+            }.onDisappear(){
+                self.viewModel.stopScanning()
+            }
         }
     }
 

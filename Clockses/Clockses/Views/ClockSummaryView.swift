@@ -25,7 +25,7 @@ struct ClockSummaryView: View {
 
 struct ClockSummaryView_Previews: PreviewProvider {
     static var previews: some View {
-        ClockSummaryView(clock: Clock(id: UUID(), serial: 200, name: "Thing", caseColour: .black))
+        ClockSummaryView(clock: Clock(uuid: UUID(), name: "Some nice clock"))
     }
 }
 

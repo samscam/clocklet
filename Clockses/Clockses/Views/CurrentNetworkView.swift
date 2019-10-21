@@ -91,10 +91,10 @@ struct CurrentNetworkView_Previews: PreviewProvider {
         let networkService = NetworkService()
         networkService.currentNetwork = CurrentNetwork(status: 3, connected: true, ssid: "fish", channel: 5, ip: IPv4Address("192.167.234.12"), rssi: -20)
         
-        networkService.availableNetworks = [
-            AvailableNetwork(ssid: "Best Wifi", enctype: .wep, rssi: -30, channel: 5, bssid:"MAC"),
-            AvailableNetwork(ssid: "My WiFi is better than your WiFi", enctype: .wpa2psk, rssi: -10, channel: 1, bssid:"MOOK")
-        ]
+//        networkService.availableNetworks = [
+//            AvailableNetwork(ssid: "Best Wifi", enctype: .wep, rssi: -30, channel: 5, bssid:"MAC"),
+//            AvailableNetwork(ssid: "My WiFi is better than your WiFi", enctype: .wpa2psk, rssi: -10, channel: 1, bssid:"MOOK")
+//        ]
         return networkService
     }
     

@@ -8,26 +8,34 @@
 
 import Foundation
 import Combine
+import CombineBluetooth
 
 // BEST LINK https://medium.com/ios-os-x-development/learn-master-%EF%B8%8F-the-basics-of-combine-in-5-minutes-639421268219
 
 
 class ClockListViewModel: ObservableObject {
-    @Published var isScanning = false
-    @Published var clockConnections: [ClockConnection] = []
+    @Published var isScanning = true
+    @Published var clockConnections: [Connection] = []
+    
+    var clocks: [Clock] { return clockConnections.compactMap{$0.peripheral as? Clock} }
     
     var _cancellableScanning: Cancellable?
-    var _cancellableConnections: Cancellable?
+    var _cancellableClocks: Cancellable?
     
-    let blue = Bluechatter.shared
+    let central = Central()
     
     init(){
-        _cancellableScanning = blue.isScanningSubject.assign(to: \.isScanning, on: self)
-        _cancellableConnections = blue.clockConnections.map({$0.map({ $0.value })}).assign(to: \.clockConnections, on: self)
-        
+        _cancellableScanning = central.$isScanning.assign(to: \.isScanning, on: self)
+    }
+    
+    deinit{
+        print("ClockListViewmodel deinit")
     }
     
     func startScanning(){
-        // don't actually do anything...
+        _cancellableClocks = central.discoverConnections(for: Clock.self).assign(to: \.clockConnections, on: self)
+    }
+    func stopScanning(){
+        _cancellableClocks = nil
     }
 }
