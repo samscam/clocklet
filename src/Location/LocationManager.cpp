@@ -32,7 +32,9 @@ Location LocationManager::getLocation(){
 }
 
 bool LocationManager::setLocation(Location newLocation){
-    
+    if (!isValidLocation(newLocation)){
+        return false;
+    }
     currentLocation = newLocation;
 
     Preferences preferences = Preferences();

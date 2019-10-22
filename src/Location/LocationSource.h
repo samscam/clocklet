@@ -1,6 +1,4 @@
-#ifndef PRISCILLA_LOCATIONSOURCE
-#define PRISCILLA_LOCATIONSOURCE
-
+#pragma once
 
 struct Location {
     double lat;
@@ -8,13 +6,7 @@ struct Location {
 
 };
 
-class LocationSource
-{
+class LocationSource {
+    public:
     virtual Location getLocation();
 };
-
-
-
-
-
-#endif

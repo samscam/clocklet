@@ -15,6 +15,8 @@ bool provisioningActive();
 void startProvisioning();
 void wifi_init_sta();
 
+void doBackgroundThings(void * parameter);
+
 // #ifdef __cplusplus
 // }
 // #endif

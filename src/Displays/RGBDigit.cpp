@@ -2,7 +2,6 @@
 
 #include "RGBDigit.h"
 
-#include "../p.h"
 #include "../settings.h"
 
 FASTLED_USING_NAMESPACE

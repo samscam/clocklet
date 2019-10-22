@@ -27,6 +27,7 @@ const char* messages[] = {
   "moose",
   "rainbow detection is now active active",
   "so excited about house",
+  "Say it in your COOL voice!"
 };
 
 #define numMessages (sizeof(messages)/sizeof(char *)) //array size

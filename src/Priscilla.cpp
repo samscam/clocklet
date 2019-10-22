@@ -12,7 +12,7 @@
 #include <Preferences.h>
 #include "Weather/Rainbows.h"
 
-
+#include "Loggery.h"
 #include "TimeThings/NTP.h"
 
 #include "rom/uart.h"
@@ -42,8 +42,6 @@ Display *display = new EpaperDisplay();
 
 // #include "Displays/DebugDisplay.h"
 // Display *display = new DebugDisplay();
-
-
 
 // ----------- RTC
 
@@ -91,7 +89,7 @@ void setup() {
   delay(2000);
   
   Serial.begin(115200);
-
+  LOGMEM;
   // Say hello on Serial port
   Serial.println("");
   Serial.println("   ------------    ");
@@ -129,6 +127,7 @@ void setup() {
   preferences.end();
 
   Serial.println("");
+  LOGMEM;
 
   analogReadResolution(12);
 
@@ -148,7 +147,8 @@ void setup() {
 
   display->setup();
   display->setBrightness(currentBrightness());
-  
+
+  LOGMEM;
 
   display->setStatusMessage("part");
   delay(1000);
@@ -160,8 +160,11 @@ void setup() {
   // Uncomment to run various display tests:
   // displayTests(display);
   
+  LOGMEM;
+
   WiFi.begin();
 
+  LOGMEM;
 
   if (isAlreadyProvisioned()){
     if (waitForWifi(6000)){
@@ -170,10 +173,12 @@ void setup() {
       display->displayMessage("Network is pants", bad);
     }
   } else {
-    startProvisioning();
-    display->displayMessage("Provisioning", good);
+    
+    display->displayMessage("I need your wifi", bad);
   }
 
+  // startProvisioning(); // cos this is actually the bluetooth stack now
+  LOGMEM;
   locationManager = new LocationManager();
   if (!locationManager->hasSavedLocation()){
     display->displayMessage("Where am I", bad);
@@ -361,6 +366,7 @@ void sensibleDelay(int milliseconds){
 // MARK: UPDATE CYCLE ---------------------------------------
 
 void updatesHourly(){
+  LOGMEM;
   Serial.println("Hourly update");
   if (locationManager -> hasSavedLocation()){
     if (reconnect()) {
@@ -369,6 +375,7 @@ void updatesHourly(){
       weatherClient -> fetchWeather();
       display->setWeather(weatherClient->horizonWeather);
       rainbows.setWeather(weatherClient->rainbowWeather);
+      LOGMEM;
     }
 
   } else {
@@ -378,6 +385,7 @@ void updatesHourly(){
 
 void updatesDaily(){
   Serial.println("Daily update");
+  LOGMEM;
   #if defined(TIMESOURCE_NTP)
   if (reconnect()) {
     DateTime ntpTime;
@@ -392,7 +400,8 @@ void updatesDaily(){
   generateDSTTimes(rtc.now().year());
 
   // Firmware
-  
+  Serial.println("Firmware update");
+  LOGMEM;
   FirmwareUpdates *firmwareUpdates = new FirmwareUpdates;
   Preferences preferences = Preferences();
   preferences.begin("clocklet", true);
@@ -411,7 +420,8 @@ void updatesDaily(){
   preferences.end();
 
   delete firmwareUpdates;
-
+  Serial.println("Firmware update done");
+  LOGMEM;
 }
 
 DateTime dstStart;
