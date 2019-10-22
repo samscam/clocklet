@@ -46,6 +46,9 @@ bool LocationManager::setLocation(Location newLocation){
 }
 
 bool isValidLocation(Location location){
+    if (isnan(location.lat) || isnan(location.lng)){
+        return false;
+    }
     if (location.lat == 0 && location.lng == 0){
         return false;
     }

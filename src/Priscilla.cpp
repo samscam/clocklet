@@ -125,7 +125,6 @@ void setup() {
   
   WiFi.begin();
 
-  locationManager = new LocationManager();
 
   if (isAlreadyProvisioned()){
     if (waitForWifi(6000)){
@@ -136,6 +135,11 @@ void setup() {
   } else {
     startProvisioning();
     display->displayMessage("Provisioning", good);
+  }
+
+  locationManager = new LocationManager();
+  if (!locationManager->hasSavedLocation()){
+    display->displayMessage("Where am I", bad);
   }
 
   rtc.begin();
@@ -318,13 +322,16 @@ void sensibleDelay(int milliseconds){
 
 void updatesHourly(){
   Serial.println("Hourly update");
-
-  if (reconnect()) {
-    weatherClient -> setLocation(locationManager -> getLocation());
-    weatherClient -> timeThreshold = (rtc.now().hour() * 60) - 180;
-    if (weatherClient -> fetchWeather()){
-      display->setWeather(weatherClient->latestWeather);
+  if (locationManager -> hasSavedLocation()){
+    if (reconnect()) {
+      weatherClient -> setLocation(locationManager -> getLocation());
+      weatherClient -> timeThreshold = (rtc.now().hour() * 60) - 180;
+      if (weatherClient -> fetchWeather()){
+        display->setWeather(weatherClient->latestWeather);
+      }
     }
+  } else {
+    display->displayMessage("Where am I", bad);
   }
 }
 

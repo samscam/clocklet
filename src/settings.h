@@ -8,7 +8,7 @@
   // preferences.putUInt("serial",1);
   // preferences.putUInt("hwrev",2); // hardware rev
   // preferences.putString("swmigrev",VERSION) // last fw version used - update after migrations!
-  // preferences.putString("casecolour",0);
+  // preferences.putString("casecolour","black");
 
   // Location
   // preferences.putDouble("lat",0);
