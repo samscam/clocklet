@@ -9,24 +9,30 @@
 import Foundation
 import CoreBluetooth
 import CombineBluetooth
+import Combine
 
 class NetworkService: ServiceProtocol, ObservableObject {
+    let objectWillChange = ObservableObjectPublisher()
+    
+    func willChange() {
+        self.objectWillChange.send()
+    }
+    
     static let uuid = CBUUID(string: "68D924A1-C1B2-497B-AC16-FD1D98EDB41F")
     
-//    @Characteristic(CBUUID(string: "AF2B36C7-0E65-457F-A8AB-B996B656CF32")) var availableNetworks: [AvailableNetwork] = []
+    @Characteristic(CBUUID(string: "AF2B36C7-0E65-457F-A8AB-B996B656CF32")) var availableNetworks: [AvailableNetwork] = []
     
     @Characteristic(CBUUID(string: "BEB5483E-36E1-4688-B7F5-EA07361B26A8")) var currentNetwork: CurrentNetwork? = nil
     
     @Characteristic(CBUUID(string: "B2313F3F-0FE4-4EC2-B0B4-D978496CD2D9")) var joinNetwork: JoinNetwork? = nil
     
-        func joinNetwork(_ network: AvailableNetwork, psk: String? = nil) throws {
-
-        }
-    
-    func update(){
+    func joinNetwork(_ network: AvailableNetwork, psk: String? = nil) throws {
 
     }
+    
 }
+
+
 
 
 //        func joinNetwork(_ network: AvailableNetwork, psk: String? = nil) throws {

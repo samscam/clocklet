@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		222271A5232B887100508ADA /* ClockSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222271A4232B887100508ADA /* ClockSummaryView.swift */; };
-		22350E83233D359E00452BDF /* NetworkModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22350E82233D359E00452BDF /* NetworkModel.swift */; };
+		22350E83233D359E00452BDF /* NetworkCharacteristics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22350E82233D359E00452BDF /* NetworkCharacteristics.swift */; };
 		224C538F234F6CDD00A68928 /* ClockListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224C538E234F6CDD00A68928 /* ClockListView.swift */; };
 		224C5391234FAE7300A68928 /* ClockDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224C5390234FAE7300A68928 /* ClockDetailsView.swift */; };
 		22551952235870240056B9CD /* LocationServiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22551951235870240056B9CD /* LocationServiceView.swift */; };
@@ -26,9 +26,9 @@
 		228DF261234FDF6400480588 /* ClockListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228DF260234FDF6400480588 /* ClockListViewModel.swift */; };
 		228DF2662350704D00480588 /* ClockDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228DF2652350704D00480588 /* ClockDetailsViewModel.swift */; };
 		228DF2682350732C00480588 /* ClockConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228DF2672350732C00480588 /* ClockConnection.swift */; };
+		229F3C68235EF82200EEA785 /* Clock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BE0A3F235DE4EA00EB8780 /* Clock.swift */; };
 		22A0AE042351492F00D04338 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A0AE032351492F00D04338 /* NetworkService.swift */; };
 		22BE0A3E235DDFD700EB8780 /* CombineBluetooth in Frameworks */ = {isa = PBXBuildFile; productRef = 22BE0A3D235DDFD700EB8780 /* CombineBluetooth */; };
-		22BE0A40235DE4EA00EB8780 /* Clock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BE0A3F235DE4EA00EB8780 /* Clock.swift */; };
 		22E2D9BA233A971000B4FCFD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E2D9B9233A970F00B4FCFD /* SceneDelegate.swift */; };
 /* End PBXBuildFile section */
 
@@ -44,7 +44,7 @@
 
 /* Begin PBXFileReference section */
 		222271A4232B887100508ADA /* ClockSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockSummaryView.swift; sourceTree = "<group>"; };
-		22350E82233D359E00452BDF /* NetworkModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkModel.swift; sourceTree = "<group>"; };
+		22350E82233D359E00452BDF /* NetworkCharacteristics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkCharacteristics.swift; sourceTree = "<group>"; };
 		224C538E234F6CDD00A68928 /* ClockListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockListView.swift; sourceTree = "<group>"; };
 		224C5390234FAE7300A68928 /* ClockDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockDetailsView.swift; sourceTree = "<group>"; };
 		22551951235870240056B9CD /* LocationServiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationServiceView.swift; sourceTree = "<group>"; };
@@ -113,7 +113,7 @@
 		22836EB2228629750020B46F /* Clockses */ = {
 			isa = PBXGroup;
 			children = (
-				22E2D988233A944500B4FCFD /* Models */,
+				22E2D988233A944500B4FCFD /* Bluetooth Models */,
 				228DF2622350701800480588 /* Business */,
 				228DF2692351091F00480588 /* Bluetooth */,
 				228DF2642350703700480588 /* View Models */,
@@ -179,20 +179,20 @@
 		228DF2692351091F00480588 /* Bluetooth */ = {
 			isa = PBXGroup;
 			children = (
-				22BE0A3F235DE4EA00EB8780 /* Clock.swift */,
-				22A0AE032351492F00D04338 /* NetworkService.swift */,
 				22836ED322862A020020B46F /* Bluechatter.swift */,
 				228DF2672350732C00480588 /* ClockConnection.swift */,
 			);
 			path = Bluetooth;
 			sourceTree = "<group>";
 		};
-		22E2D988233A944500B4FCFD /* Models */ = {
+		22E2D988233A944500B4FCFD /* Bluetooth Models */ = {
 			isa = PBXGroup;
 			children = (
-				22350E82233D359E00452BDF /* NetworkModel.swift */,
+				22BE0A3F235DE4EA00EB8780 /* Clock.swift */,
+				22A0AE032351492F00D04338 /* NetworkService.swift */,
+				22350E82233D359E00452BDF /* NetworkCharacteristics.swift */,
 			);
-			path = Models;
+			path = "Bluetooth Models";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -302,9 +302,9 @@
 				22551952235870240056B9CD /* LocationServiceView.swift in Sources */,
 				228DF25F234FB41E00480588 /* CurrentNetworkView.swift in Sources */,
 				22836ED422862A020020B46F /* Bluechatter.swift in Sources */,
-				22BE0A40235DE4EA00EB8780 /* Clock.swift in Sources */,
+				229F3C68235EF82200EEA785 /* Clock.swift in Sources */,
 				222271A5232B887100508ADA /* ClockSummaryView.swift in Sources */,
-				22350E83233D359E00452BDF /* NetworkModel.swift in Sources */,
+				22350E83233D359E00452BDF /* NetworkCharacteristics.swift in Sources */,
 				228DF2662350704D00480588 /* ClockDetailsViewModel.swift in Sources */,
 				2255195623587DB70056B9CD /* AvailableNetworksView.swift in Sources */,
 				2255195823588AF50056B9CD /* NetworkDetailView.swift in Sources */,
