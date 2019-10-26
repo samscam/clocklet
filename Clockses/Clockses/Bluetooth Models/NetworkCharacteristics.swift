@@ -12,7 +12,6 @@ import CoreBluetooth
 import CombineBluetooth
 
 struct AvailableNetwork: Codable, Identifiable, JSONCharacteristic {
-    static let uuid = CBUUID(string: "AF2B36C7-0E65-457F-A8AB-B996B656CF32")
     var id: String { return bssid }
     let ssid: String
     let enctype: AuthMode
@@ -23,7 +22,6 @@ struct AvailableNetwork: Codable, Identifiable, JSONCharacteristic {
 
 
 struct CurrentNetwork: Codable, JSONCharacteristic {
-    static let uuid = CBUUID(string: "BEB5483E-36E1-4688-B7F5-EA07361B26A8")
     let status: Int
     let connected: Bool
     let ssid: String

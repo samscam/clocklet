@@ -10,22 +10,21 @@ import SwiftUI
 
 struct NetworkDetailView: View {
     
-    var networkService: NetworkService
+    @ObservedObject var networkService: NetworkService
     
     var body: some View {
-//        ScrollView{
-//            VStack{
-//                networkService.currentNetwork.flatMap{
-//                     CurrentNetworkView(currentNetwork: $0)
-//                }
-//
-//                networkService.availableNetworks.flatMap{
-//                    AvailableNetworksView($0, networkService: networkService)
-//                }
-//
-//            }.padding()
-//        }.navigationBarTitle(Text("Network Settings"), displayMode:.large)
-        Text("Temp")
+        ScrollView{
+            VStack{
+                networkService.currentNetwork.flatMap{
+                    CurrentNetworkView(currentNetwork: $0)
+                }
+                networkService.availableNetworks.flatMap{
+                AvailableNetworksView($0, networkService: networkService)
+                }
+
+            }.padding()
+        }.navigationBarTitle(Text("Network Settings"), displayMode:.large)
+        
     }
 }
 

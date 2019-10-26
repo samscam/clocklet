@@ -7,11 +7,14 @@
 //
 
 import SwiftUI
+import Combine
 
 struct LocationServiceView: View {
+    @ObservedObject var locationService: LocationService
+    
     var body: some View {
         ConfigItemView(iconSystemName: "location", title: "Withington, Manchester, UK") {
-             Text("Hello World!")
+            Text("\(self.locationService.currentLocation?.description ?? "no location")")
             
         }
        
@@ -19,7 +22,9 @@ struct LocationServiceView: View {
 }
 
 struct LocationServiceView_Previews: PreviewProvider {
+    static let locationService = LocationService()
+    
     static var previews: some View {
-        LocationServiceView()
+        LocationServiceView(locationService: locationService)
     }
 }

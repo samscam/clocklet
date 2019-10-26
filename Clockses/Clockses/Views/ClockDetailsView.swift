@@ -64,7 +64,7 @@ struct ClockDetailsView: View {
                 
 
 
-                LocationServiceView()
+                LocationServiceView(locationService: clock.locationService)
 
             }
             .padding()

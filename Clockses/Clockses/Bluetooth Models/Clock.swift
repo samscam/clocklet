@@ -19,6 +19,7 @@ class Clock: Peripheral, Identifiable, Advertiser {
     var serial: UInt32 = 4242
     
     @Service var networkService: NetworkService = NetworkService()
+    @Service var locationService: LocationService = LocationService()
     
     static var advertised: [ServiceProtocol.Type] = [NetworkService.self]
 }

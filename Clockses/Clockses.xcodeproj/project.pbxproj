@@ -27,6 +27,7 @@
 		228DF2662350704D00480588 /* ClockDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228DF2652350704D00480588 /* ClockDetailsViewModel.swift */; };
 		228DF2682350732C00480588 /* ClockConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228DF2672350732C00480588 /* ClockConnection.swift */; };
 		229F3C68235EF82200EEA785 /* Clock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BE0A3F235DE4EA00EB8780 /* Clock.swift */; };
+		229F3C6A235F427100EEA785 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F3C69235F427100EEA785 /* LocationService.swift */; };
 		22A0AE042351492F00D04338 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A0AE032351492F00D04338 /* NetworkService.swift */; };
 		22BE0A3E235DDFD700EB8780 /* CombineBluetooth in Frameworks */ = {isa = PBXBuildFile; productRef = 22BE0A3D235DDFD700EB8780 /* CombineBluetooth */; };
 		22E2D9BA233A971000B4FCFD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E2D9B9233A970F00B4FCFD /* SceneDelegate.swift */; };
@@ -66,6 +67,7 @@
 		228DF260234FDF6400480588 /* ClockListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockListViewModel.swift; sourceTree = "<group>"; };
 		228DF2652350704D00480588 /* ClockDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockDetailsViewModel.swift; sourceTree = "<group>"; };
 		228DF2672350732C00480588 /* ClockConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockConnection.swift; sourceTree = "<group>"; };
+		229F3C69235F427100EEA785 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		22A0AE032351492F00D04338 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		22BE0A3F235DE4EA00EB8780 /* Clock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clock.swift; sourceTree = "<group>"; };
 		22E2D9B9233A970F00B4FCFD /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -157,12 +159,12 @@
 				224C538E234F6CDD00A68928 /* ClockListView.swift */,
 				222271A4232B887100508ADA /* ClockSummaryView.swift */,
 				224C5390234FAE7300A68928 /* ClockDetailsView.swift */,
-				228DF25E234FB41E00480588 /* CurrentNetworkView.swift */,
-				2255195523587DB70056B9CD /* AvailableNetworksView.swift */,
 				22551951235870240056B9CD /* LocationServiceView.swift */,
+				228DF25E234FB41E00480588 /* CurrentNetworkView.swift */,
+				2255195723588AF50056B9CD /* NetworkDetailView.swift */,
+				2255195523587DB70056B9CD /* AvailableNetworksView.swift */,
 				22551953235870F10056B9CD /* OtherSettingsView.swift */,
 				22585258235694A0005C9696 /* ConfigItemView.swift */,
-				2255195723588AF50056B9CD /* NetworkDetailView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -191,6 +193,7 @@
 				22BE0A3F235DE4EA00EB8780 /* Clock.swift */,
 				22A0AE032351492F00D04338 /* NetworkService.swift */,
 				22350E82233D359E00452BDF /* NetworkCharacteristics.swift */,
+				229F3C69235F427100EEA785 /* LocationService.swift */,
 			);
 			path = "Bluetooth Models";
 			sourceTree = "<group>";
@@ -304,6 +307,7 @@
 				22836ED422862A020020B46F /* Bluechatter.swift in Sources */,
 				229F3C68235EF82200EEA785 /* Clock.swift in Sources */,
 				222271A5232B887100508ADA /* ClockSummaryView.swift in Sources */,
+				229F3C6A235F427100EEA785 /* LocationService.swift in Sources */,
 				22350E83233D359E00452BDF /* NetworkCharacteristics.swift in Sources */,
 				228DF2662350704D00480588 /* ClockDetailsViewModel.swift in Sources */,
 				2255195623587DB70056B9CD /* AvailableNetworksView.swift in Sources */,
