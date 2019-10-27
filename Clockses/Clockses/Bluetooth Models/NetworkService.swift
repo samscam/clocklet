@@ -11,12 +11,8 @@ import CoreBluetooth
 import CombineBluetooth
 import Combine
 
-class NetworkService: ServiceProtocol, ObservableObject {
+class NetworkService: ServiceProtocol {
     let objectWillChange = ObservableObjectPublisher()
-    
-    func willChange() {
-        self.objectWillChange.send()
-    }
     
     static let uuid = CBUUID(string: "68D924A1-C1B2-497B-AC16-FD1D98EDB41F")
     

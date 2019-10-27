@@ -21,7 +21,7 @@ struct ClockListView: View {
                 List(viewModel.clocks) { clock in
 
                     NavigationLink(destination:
-                    ClockDetailsView(clock: clock)){
+                    ClockDetailsView(viewModel: ClockDetailsViewModel(clock: clock))){
                         ClockSummaryView(clock: clock)
                     }
                 }

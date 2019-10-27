@@ -33,49 +33,41 @@ extension ConnectionState: CustomStringConvertible {
 
 struct ClockDetailsView: View {
     
-    @ObservedObject var clock: Clock
-    
-
-    
-//    var networkService: NetworkService? {
-//        return clockConnection.networkService
-//    }
+    @ObservedObject var viewModel: ClockDetailsViewModel
     
     var showCurrentNetwork: Bool {
-        return clock.networkService.currentNetwork != nil
+        return viewModel.clock.networkService.currentNetwork != nil
     }
     
     var body: some View {
         ScrollView{
             VStack(){
-                Image(clock.caseColour.imageName).resizable().aspectRatio(contentMode: .fit)
+                Image(viewModel.clock.caseColour.imageName).resizable().aspectRatio(contentMode: .fit)
 
-                ConfigItemView(iconSystemName: clock.state.iconSystemName,
-                               title: clock.state.description) {
+                ConfigItemView(iconSystemName: viewModel.clock.state.iconSystemName,
+                               title: viewModel.clock.state.description) {
                     EmptyView()
                 }.transition(.opacity)
 
             
-                NavigationLink(destination:NetworkDetailView(networkService:clock.networkService)){
-                    clock.networkService.currentNetwork.flatMap{
+                NavigationLink(destination:NetworkDetailView(networkService:viewModel.clock.networkService)){
+                    viewModel.clock.networkService.currentNetwork.flatMap{
                          CurrentNetworkView(currentNetwork: $0)
                     }
                 }
                 
-
-
-                LocationServiceView(locationService: clock.locationService)
+            viewModel.locationServiceViewModel.map{LocationServiceView($0)}
 
             }
             .padding()
             .animation(.default)
             .onAppear {
-                self.clock.connect()
+                self.viewModel.clock.connect()
             }.onDisappear {
-//                self.clockConnection.disconnect()
+//                self.viewModel.clock.disconnect()
             }
 
-        }.navigationBarTitle(Text(clock.name), displayMode:.large)
+        }.navigationBarTitle(Text(viewModel.clock.name), displayMode:.large)
     }
 }
 
@@ -83,8 +75,8 @@ struct ClockDetailsView: View {
 
 struct ClockDetailsView_Previews: PreviewProvider {
     static var previews: some View {
-        
-        ClockDetailsView(clock: Clock(uuid: UUID(), name: "Some Clock"))
+        Text("FAIL CITY")
+//        ClockDetailsView(clock: Clock(uuid: UUID(), name: "Some Clock"))
 //        let clock = ClockModel(id: UUID(), serial: 5, name: "Clocklet #291", caseColour: .wood)
 //
 //

@@ -12,13 +12,8 @@ import CombineBluetooth
 import Combine
 import CoreLocation
 
-class LocationService: ServiceProtocol, ObservableObject{
-    let objectWillChange = ObservableObjectPublisher()
-    
-    func willChange() {
-        self.objectWillChange.send()
-    }
-    
+class LocationService: ServiceProtocol {
+
     static let uuid = CBUUID(string: "87888F3E-C1BF-4832-9823-F19C73328D30")
     
     @Characteristic(CBUUID(string:"C8C7FF91-531A-4306-A68A-435374CB12A9")) var currentLocation: CurrentLocation? = nil
@@ -26,8 +21,9 @@ class LocationService: ServiceProtocol, ObservableObject{
 }
 
 struct CurrentLocation: Codable, JSONCharacteristic, CustomStringConvertible{
-    let lng: Double
     let lat: Double
+    let lng: Double
+
     
     var description: String{
         return "\(String(lat)),\(String(lng))"
@@ -36,16 +32,40 @@ struct CurrentLocation: Codable, JSONCharacteristic, CustomStringConvertible{
     var location: CLLocation {
         return CLLocation(latitude: lat, longitude: lng)
     }
+    
 }
 
-struct LocationViewGeocoding {
-    let geocoder = CLGeocoder()
-    init(){
 
-    }
-    func publishedPlace(location: CLLocation) -> AnyPublisher<CLPlacemark,Never>{
-        geocoder.reverseGeocodeLocation(location) { (placemarks, error) in
-            
-        }
+enum GeocoderExtensionError: Error{
+    case noResults
+}
+
+class GeocoderProxy {
+    
+    func futureReversePublisher(_ location: CLLocation) -> AnyPublisher<String, Error> {
+        return Future { promise in
+            CLGeocoder().reverseGeocodeLocation(location) { (placemarks, error) in
+                if let error = error {
+                    promise(.failure(error))
+                    return
+                }
+                if let firstPlace = placemarks?.first {
+                    var outputArr: [String] = []
+                    if let name = firstPlace.name {
+                        outputArr.append(name)
+                    }
+                    if let locality = firstPlace.locality {
+                        outputArr.append(locality)
+                    }
+                    if let country = firstPlace.administrativeArea {
+                        outputArr.append(country)
+                    }
+                    let resolved = outputArr.joined(separator: ", ") + "."
+                    promise(.success(resolved))
+                    return
+                }
+                promise(.failure(GeocoderExtensionError.noResults))
+            }
+        }.eraseToAnyPublisher()
     }
 }

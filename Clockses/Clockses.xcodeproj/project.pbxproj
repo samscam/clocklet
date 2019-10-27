@@ -118,8 +118,10 @@
 				22E2D988233A944500B4FCFD /* Bluetooth Models */,
 				228DF2622350701800480588 /* Business */,
 				228DF2692351091F00480588 /* Bluetooth */,
-				228DF2642350703700480588 /* View Models */,
-				228DF2632350702F00480588 /* Views */,
+				228DF2642350703700480588 /* Clock List */,
+				229076B323646DD700074A35 /* Clock Details */,
+				229076B423646E6100074A35 /* Network Details */,
+				228DF2632350702F00480588 /* Shared Views */,
 				22836EBA2286297C0020B46F /* Assets.xcassets */,
 				22836EBC2286297C0020B46F /* LaunchScreen.storyboard */,
 				22836EBF2286297C0020B46F /* Info.plist */,
@@ -153,29 +155,23 @@
 			path = Business;
 			sourceTree = "<group>";
 		};
-		228DF2632350702F00480588 /* Views */ = {
+		228DF2632350702F00480588 /* Shared Views */ = {
 			isa = PBXGroup;
 			children = (
-				224C538E234F6CDD00A68928 /* ClockListView.swift */,
-				222271A4232B887100508ADA /* ClockSummaryView.swift */,
-				224C5390234FAE7300A68928 /* ClockDetailsView.swift */,
-				22551951235870240056B9CD /* LocationServiceView.swift */,
-				228DF25E234FB41E00480588 /* CurrentNetworkView.swift */,
-				2255195723588AF50056B9CD /* NetworkDetailView.swift */,
-				2255195523587DB70056B9CD /* AvailableNetworksView.swift */,
 				22551953235870F10056B9CD /* OtherSettingsView.swift */,
 				22585258235694A0005C9696 /* ConfigItemView.swift */,
 			);
-			path = Views;
+			path = "Shared Views";
 			sourceTree = "<group>";
 		};
-		228DF2642350703700480588 /* View Models */ = {
+		228DF2642350703700480588 /* Clock List */ = {
 			isa = PBXGroup;
 			children = (
 				228DF260234FDF6400480588 /* ClockListViewModel.swift */,
-				228DF2652350704D00480588 /* ClockDetailsViewModel.swift */,
+				224C538E234F6CDD00A68928 /* ClockListView.swift */,
+				222271A4232B887100508ADA /* ClockSummaryView.swift */,
 			);
-			path = "View Models";
+			path = "Clock List";
 			sourceTree = "<group>";
 		};
 		228DF2692351091F00480588 /* Bluetooth */ = {
@@ -185,6 +181,26 @@
 				228DF2672350732C00480588 /* ClockConnection.swift */,
 			);
 			path = Bluetooth;
+			sourceTree = "<group>";
+		};
+		229076B323646DD700074A35 /* Clock Details */ = {
+			isa = PBXGroup;
+			children = (
+				228DF2652350704D00480588 /* ClockDetailsViewModel.swift */,
+				224C5390234FAE7300A68928 /* ClockDetailsView.swift */,
+				22551951235870240056B9CD /* LocationServiceView.swift */,
+				228DF25E234FB41E00480588 /* CurrentNetworkView.swift */,
+			);
+			path = "Clock Details";
+			sourceTree = "<group>";
+		};
+		229076B423646E6100074A35 /* Network Details */ = {
+			isa = PBXGroup;
+			children = (
+				2255195723588AF50056B9CD /* NetworkDetailView.swift */,
+				2255195523587DB70056B9CD /* AvailableNetworksView.swift */,
+			);
+			path = "Network Details";
 			sourceTree = "<group>";
 		};
 		22E2D988233A944500B4FCFD /* Bluetooth Models */ = {

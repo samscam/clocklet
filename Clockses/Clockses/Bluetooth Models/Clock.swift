@@ -21,7 +21,7 @@ class Clock: Peripheral, Identifiable, Advertiser {
     @Service var networkService: NetworkService = NetworkService()
     @Service var locationService: LocationService = LocationService()
     
-    static var advertised: [ServiceProtocol.Type] = [NetworkService.self]
+    static var advertised: [InnerServiceProtocol.Type] = [NetworkService.self]
 }
 
 

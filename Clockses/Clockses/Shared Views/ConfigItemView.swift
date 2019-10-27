@@ -28,7 +28,7 @@ struct ConfigItemView<Content>: View where Content: View {
             
             VStack(alignment: .leading) {
 
-                Text(title).font(.title).bold().lineLimit(2)
+                Text(title).font(.title).bold().lineLimit(4)
 //                    .background(Color.green)
                 
                 content()
