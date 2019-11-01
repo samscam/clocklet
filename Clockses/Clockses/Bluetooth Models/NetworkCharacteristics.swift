@@ -22,7 +22,7 @@ struct AvailableNetwork: Codable, Identifiable, JSONCharacteristic {
 
 
 struct CurrentNetwork: Codable, JSONCharacteristic {
-    let status: Int
+    let status: WifiStatus
     let connected: Bool
     let ssid: String
     let channel: Int
@@ -36,7 +36,20 @@ struct JoinNetwork: Codable, JSONCharacteristic {
     let enctype: AuthMode
 }
 
-
+enum WifiStatus: Int, Codable, CaseIterable, Identifiable {
+    var id: Int {
+        return self.rawValue
+    }
+    
+    case idle = 0
+    case noSSID
+    case scanCompleted
+    case connected
+    case connectionFailed
+    case connectionLost
+    case disconnected
+    case noShield = 255
+}
 
 extension IPv4Address: Decodable {
     

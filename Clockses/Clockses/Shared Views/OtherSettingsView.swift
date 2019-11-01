@@ -10,7 +10,7 @@ import SwiftUI
 
 struct OtherSettingsView: View {
     var body: some View {
-        ConfigItemView(iconSystemName: "dial", title: "Settings") {
+        ConfigItemView(icon: Image(systemName:"dial"), title: "Settings") {
              Text("Hello World!")
             
         }

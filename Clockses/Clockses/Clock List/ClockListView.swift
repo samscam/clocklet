@@ -18,18 +18,18 @@ struct ClockListView: View {
     var body: some View {
         NavigationView{
             VStack{
-                List(viewModel.clocks) { clock in
+                List(viewModel.clockItems) { clockItem in
 
                     NavigationLink(destination:
-                    ClockDetailsView(viewModel: ClockDetailsViewModel(clock: clock))){
-                        ClockSummaryView(clock: clock)
-                    }
+                    ClockDetailsView(viewModel: clockItem.detailsViewModel)){
+                        ClockSummaryView(viewModel: clockItem)
+                    }.listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 40))
                 }
                 
                 if viewModel.isScanning {
                     Text("Scanning").background(Color.green)
                 }
-            }.navigationBarTitle(Text("Clocklets"))
+            }.navigationBarTitle(Text("Clocks"))
             .onAppear {
                 self.viewModel.startScanning()
             }.onDisappear(){
@@ -42,6 +42,12 @@ struct ClockListView: View {
 
 struct ClockListView_Previews: PreviewProvider {
     static var previews: some View {
-        ClockListView()
+        let listView = ClockListView()
+        listView.viewModel.clockItems = [
+            ClockSummaryViewModel(clock: Clock("Clock One", .black)),
+            ClockSummaryViewModel(clock: Clock("Clock Two", .wood)),
+            ClockSummaryViewModel(clock: Clock("Clock Three", .bare))
+        ]
+        return listView
     }
 }

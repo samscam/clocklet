@@ -15,8 +15,18 @@ class Clock: Peripheral, Identifiable, Advertiser {
         return uuid
     }
     
-    var caseColour: CaseColour = .black
+    var caseColor: CaseColor = .black
     var serial: UInt32 = 4242
+    
+    init(_ name: String, _ color: CaseColor = .black){
+        super.init(uuid: UUID(), name: name)
+        self.caseColor = color
+    }
+    
+    required init(uuid: UUID, name: String, connection: Connection) {
+        super.init(uuid:uuid, name: name, connection: connection)
+    }
+    
     
     @Service var networkService: NetworkService = NetworkService()
     @Service var locationService: LocationService = LocationService()
@@ -25,7 +35,7 @@ class Clock: Peripheral, Identifiable, Advertiser {
 }
 
 
-enum CaseColour: String, Codable {
+enum CaseColor: String, Codable {
     case bare
     case black
     case wood

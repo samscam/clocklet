@@ -20,6 +20,11 @@ class LocationService: ServiceProtocol {
     
 }
 
+enum LocationStatus: String, DataConvertible {
+    case notSet
+    case set
+}
+
 struct CurrentLocation: Codable, JSONCharacteristic, CustomStringConvertible{
     let lat: Double
     let lng: Double
@@ -51,15 +56,15 @@ class GeocoderProxy {
                 }
                 if let firstPlace = placemarks?.first {
                     var outputArr: [String] = []
-                    if let name = firstPlace.name {
-                        outputArr.append(name)
-                    }
-                    if let locality = firstPlace.locality {
+//                    if let name = firstPlace.name {
+//                        outputArr.append(name)
+//                    }
+                    if let locality = firstPlace.subLocality {
                         outputArr.append(locality)
                     }
-                    if let country = firstPlace.administrativeArea {
-                        outputArr.append(country)
-                    }
+//                    if let country = firstPlace.administrativeArea {
+//                        outputArr.append(country)
+//                    }
                     let resolved = outputArr.joined(separator: ", ") + "."
                     promise(.success(resolved))
                     return

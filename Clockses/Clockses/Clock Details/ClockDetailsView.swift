@@ -10,85 +10,92 @@ import SwiftUI
 import Network
 import CombineBluetooth
 
-extension  ConnectionState{
-    var iconSystemName: String {
-        switch self {
-            case .connected: return "bolt.fill"
-            case .connecting: return "bolt"
-            case .disconnected: return "bolt.slash.fill"
-        }
-    }
-    
-}
-extension ConnectionState: CustomStringConvertible {
-
-    public var description: String {
-        switch self {
-            case .connected: return "Connected"
-            case .connecting: return "Connecting"
-            case .disconnected: return "Disconnected"
-        }
-    }
-}
 
 struct ClockDetailsView: View {
     
     @ObservedObject var viewModel: ClockDetailsViewModel
     
-    var showCurrentNetwork: Bool {
-        return viewModel.clock.networkService.currentNetwork != nil
-    }
     
     var body: some View {
         ScrollView{
             VStack(){
-                Image(viewModel.clock.caseColour.imageName).resizable().aspectRatio(contentMode: .fit)
-
-                ConfigItemView(iconSystemName: viewModel.clock.state.iconSystemName,
-                               title: viewModel.clock.state.description) {
-                    EmptyView()
-                }.transition(.opacity)
-
-            
-                NavigationLink(destination:NetworkDetailView(networkService:viewModel.clock.networkService)){
-                    viewModel.clock.networkService.currentNetwork.flatMap{
-                         CurrentNetworkView(currentNetwork: $0)
-                    }
+                viewModel.image.resizable().aspectRatio(contentMode: .fit).frame(width: nil, height: 200, alignment: .center)
+                
+                ConfigItemView(icon: viewModel.connectionIcon ,
+                               iconColor: viewModel.connectionColor,
+                               title: viewModel.connectionMessage) {
+                                self.viewModel.connectionErrorMessage.map{ Text($0) }
                 }
                 
-            viewModel.locationServiceViewModel.map{LocationServiceView($0)}
-
+                viewModel.networkDetails.map{
+                    NavigationLink(destination:NetworkDetailView(viewModel: $0)){
+                        viewModel.networkSummary.flatMap{
+                            NetworkSummaryView(viewModel: $0)
+                        }
+                    }.accentColor(nil)
+                }
+                
+                viewModel.locationSummaryViewModel.map{
+                    LocationSummaryView($0)
+                }
+                
             }
             .padding()
             .animation(.default)
             .onAppear {
-                self.viewModel.clock.connect()
+                self.viewModel.connect()
             }.onDisappear {
-//                self.viewModel.clock.disconnect()
+                //                self.viewModel.clock.disconnect()
             }
-
-        }.navigationBarTitle(Text(viewModel.clock.name), displayMode:.large)
+            
+        }.navigationBarTitle(Text(viewModel.title), displayMode:.large)
     }
 }
 
-
+extension ContentSizeCategory{
+    static func allCases() -> [ContentSizeCategory]{
+        return self.allCases
+    }
+}
 
 struct ClockDetailsView_Previews: PreviewProvider {
+    
+    static let viewModel: ClockDetailsViewModel = {
+        var clock = Clock("Foop",.bare)
+        
+        clock.caseColor = .wood
+        clock.networkService.currentNetwork = CurrentNetwork(status: .connected, connected: true, ssid: "Fishnet", channel: 1, ip: nil, rssi: -20)
+        clock.locationService.currentLocation = CurrentLocation(lat: 53.431808, lng: -2.218080)
+        var viewModel = ClockDetailsViewModel(clock: clock)
+        viewModel.connectionErrorMessage = "This all went wrong today"
+        return viewModel
+    }()
+    
     static var previews: some View {
-        Text("FAIL CITY")
-//        ClockDetailsView(clock: Clock(uuid: UUID(), name: "Some Clock"))
-//        let clock = ClockModel(id: UUID(), serial: 5, name: "Clocklet #291", caseColour: .wood)
-//
-//
-//        let currentNetwork = CurrentNetwork(status: 4, connected: true, ssid: "Broccoli", channel: 5, ip: IPv4Address("129.12.41.5"), rssi: -2)
-//        let networkService = NetworkService()
-//        networkService.currentNetwork = currentNetwork
-//        networkService.availableNetworks = [
-//        AvailableNetwork(ssid: "Broccoli", enctype: .open, rssi: -20, channel: 4, bssid:"SOMETHING"),
-//        AvailableNetwork(ssid: "My Wifi is Nice", enctype: .open, rssi: -20, channel: 4, bssid:"mywifi")
-//        ]
-//        let connection = ClockConnection(clock: clock, networkService: networkService)
-//        return ClockDetailsView(clockConnection: connection)
+        Group{
+            ForEach(ContentSizeCategory.allCases, id: \.hashValue) { item  in
+                
+                NavigationView{
+                    ClockDetailsView(viewModel: viewModel)
+                }
+                .environment(\.sizeCategory,item).previewDevice("iPhone SE")
+                
+            }
+        }
     }
+    //        ClockDetailsView(clock: )
+    //        let clock = ClockModel(id: UUID(), serial: 5, name: "Clocklet #291", caseColor: .wood)
+    //
+    //
+    //        let currentNetwork = CurrentNetwork(status: 4, connected: true, ssid: "Broccoli", channel: 5, ip: IPv4Address("129.12.41.5"), rssi: -2)
+    //        let networkService = NetworkService()
+    //        networkService.currentNetwork = currentNetwork
+    //        networkService.availableNetworks = [
+    //        AvailableNetwork(ssid: "Broccoli", enctype: .open, rssi: -20, channel: 4, bssid:"SOMETHING"),
+    //        AvailableNetwork(ssid: "My Wifi is Nice", enctype: .open, rssi: -20, channel: 4, bssid:"mywifi")
+    //        ]
+    //        let connection = ClockConnection(clock: clock, networkService: networkService)
+    //        return ClockDetailsView(clockConnection: connection)
+    
 }
 

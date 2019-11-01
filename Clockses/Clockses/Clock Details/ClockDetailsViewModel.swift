@@ -8,29 +8,90 @@
 
 import Foundation
 import Combine
+import SwiftUI
+import CombineBluetooth
 
 class ClockDetailsViewModel: ObservableObject {
-
-    @Published var clock: Clock
-    @Published var locationServiceViewModel: LocationServiceViewModel?
     
-    private var cancellables = [AnyCancellable]()
+    // Top level
+    @Published var title: String = ""
+    @Published var image: Image = Image(systemName:"questionmark.circle")
+    
+    // Connection
+    @Published var connectionIcon: Image = Image(systemName:ConnectionState.disconnected(error: nil).iconSystemName)
+    @Published var connectionMessage: String = ""
+    @Published var connectionErrorMessage: String? = nil
+    @Published var connectionColor: Color = .black
+
+    @Published var networkSummary: NetworkSummaryViewModel?
+    @Published var networkDetails: NetworkDetailsViewModel?
+    @Published  var locationSummaryViewModel: LocationSummaryViewModel?
+    
+    private var clock: Clock
+    
+    private var bag = [AnyCancellable]()
     
     init(clock: Clock){
         self.clock = clock
         
-        let c = clock.objectWillChange.sink(receiveValue: { _ in
-            self.objectWillChange.send()
-        })
-        cancellables.append(c)
+        self.image = Image(clock.caseColor.imageName)
         
-        let c2 = clock.$locationService.publisher.compactMap{ $0 }.map{ LocationServiceViewModel($0)}.assign(to: \.locationServiceViewModel, on: self)
-        cancellables.append(c2)
+        clock.$name.assign(to: \.title, on: self).store(in: &bag)
         
+        clock.$state.sink(receiveValue: { connectionState in
+            
+            self.connectionIcon = Image(systemName:connectionState.iconSystemName)
+            self.connectionErrorMessage = nil
+            switch connectionState {
+            case .connected:
+                self.connectionMessage = "Connected"
+                self.connectionColor = .blue
+            case .connecting:
+                self.connectionMessage = "Connecting..."
+                self.connectionColor = .orange
+            case .disconnected(let error):
+                self.connectionColor = .red
+                if let error = error {
+                    self.connectionErrorMessage = error.localizedDescription
+                }
+                
+                self.connectionMessage = "Disconnected"
+                
+            }
+        }).store(in: &bag)
+        
+        clock.$networkService.publisher.map(NetworkSummaryViewModel.init).assign(to: \.networkSummary, on: self).store(in: &bag)
+        clock.$networkService.publisher.map(NetworkDetailsViewModel.init).assign(to: \.networkDetails, on: self).store(in: &bag)
+        
+        clock.$locationService.publisher.map(LocationSummaryViewModel.init).assign(to: \.locationSummaryViewModel, on: self).store(in: &bag)
+        
+//        cancellables.append(c2)
+//
         
     }
     
     func connect(){
         clock.connect()
+    }
+}
+
+extension ConnectionState{
+    var iconSystemName: String {
+        switch self {
+            case .connected: return "bolt.fill"
+            case .connecting: return "bolt"
+            case .disconnected: return "bolt.slash.fill"
+        }
+    }
+    
+}
+extension ConnectionState: CustomStringConvertible {
+
+    public var description: String {
+        switch self {
+            case .connected: return "Connected"
+            case .connecting: return "Connecting"
+            case .disconnected: return "Disconnected"
+        }
     }
 }

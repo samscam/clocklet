@@ -22,7 +22,7 @@ struct AvailableNetworksView: View {
     @State var selectedNetwork: AvailableNetwork? = nil
     
     var body: some View {
-        ConfigItemView(iconSystemName: "antenna.radiowaves.left.and.right", title: "Available networks") {
+        ConfigItemView(icon: Image(systemName:"antenna.radiowaves.left.and.right"), title: "Available networks") {
             VStack{
                 ForEach(self.availableNetworks){ network in
                     
