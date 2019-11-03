@@ -17,11 +17,14 @@ public class Connection: NSObject{
     
     private weak var central: Central? = nil
     
+    public var advertisementData: AdvertisementData
+    
     public init(cbPeripheral: CBPeripheral, advertisementData: [String: Any], rssi: Int, central: Central, knownPeripheralTypes: [Advertiser.Type]){
         
         self.cbPeripheral = cbPeripheral
         self.rssi = rssi
         self.central = central
+        self.advertisementData = AdvertisementData(advertisementData)
         
         super.init()
         
@@ -32,10 +35,7 @@ public class Connection: NSObject{
         
         // Discover a suitable peripheral class...
         // Hoping this happens on first shot through...
-        if let advertisedServices = advertisementData[CBAdvertisementDataServiceUUIDsKey],
-            let advertisedCBuuids = advertisedServices as? [CBUUID] {
-            
-            let advertiseduuids = Set(advertisedCBuuids)
+        if let advertiseduuids = self.advertisementData.serviceUUIDs {
             
             print("Advertised uuids for \(name): \(advertiseduuids)")
             
@@ -53,6 +53,7 @@ public class Connection: NSObject{
     
     func update(advertisementData: [String : Any], rssi: Int){
         self.rssi = rssi
+        self.advertisementData = AdvertisementData(advertisementData)
     }
     
     func connect(){
@@ -82,6 +83,7 @@ public class Connection: NSObject{
 
 
 extension Connection: CBPeripheralDelegate{
+    
     public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         
         // ERRORS???
@@ -91,20 +93,19 @@ extension Connection: CBPeripheralDelegate{
         }
         
         let cbPeripheral = peripheral // We shall never speak of this again
-        
+
         // Have we got services?
         guard let cbServices = cbPeripheral.services else { return }
         
         // Map the CBServices onto our Services
-        self.peripheral?.serviceWrappers.forEach { (serviceWrapper) in
-
-            if let thisCBService = cbServices.first(where: { $0.uuid == serviceWrapper.uuid }) {
-                var serviceWrapper = serviceWrapper
-                serviceWrapper.cbService = thisCBService
-                cbPeripheral.discoverCharacteristics(nil, for: thisCBService)
-
+        cbServices
+            .forEach{
+                if var wrapper = self.peripheral?.serviceWrapper(for: $0) {
+                    wrapper.cbService = $0
+                    cbPeripheral.discoverCharacteristics(nil, for: $0)
+                }
             }
-        }
+
     }
     
     public func peripheralDidUpdateName(_ peripheral: CBPeripheral) {
@@ -118,7 +119,15 @@ extension Connection: CBPeripheralDelegate{
     
     public func peripheral(_ peripheral: CBPeripheral, didModifyServices invalidatedServices: [CBService]) {
         
+        // Remove the services we know to be invalid
+        invalidatedServices
+            .compactMap{ self.peripheral?.serviceWrapper(for: $0) }
+            .forEach{
+                $0.didInvalidate()
+            }
         
+        // Re-discover anything new
+        peripheral.discoverServices(nil)
         
     }
     

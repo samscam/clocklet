@@ -43,8 +43,10 @@ struct ClockDetailsView: View {
             .padding()
             .animation(.default)
             .onAppear {
+                self.viewModel.onAppear()
                 self.viewModel.connect()
             }.onDisappear {
+                self.viewModel.onDisappear()
                 //                self.viewModel.clock.disconnect()
             }
             

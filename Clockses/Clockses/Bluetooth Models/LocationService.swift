@@ -17,7 +17,7 @@ class LocationService: ServiceProtocol {
     static let uuid = CBUUID(string: "87888F3E-C1BF-4832-9823-F19C73328D30")
     
     @Characteristic(CBUUID(string:"C8C7FF91-531A-4306-A68A-435374CB12A9")) var currentLocation: CurrentLocation? = nil
-    
+    required init(){}
 }
 
 enum LocationStatus: String, DataConvertible {
@@ -65,7 +65,7 @@ class GeocoderProxy {
 //                    if let country = firstPlace.administrativeArea {
 //                        outputArr.append(country)
 //                    }
-                    let resolved = outputArr.joined(separator: ", ") + "."
+                    let resolved = outputArr.joined(separator: ", ")
                     promise(.success(resolved))
                     return
                 }

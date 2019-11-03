@@ -10,6 +10,7 @@ import Foundation
 import Combine
 import SwiftUI
 import CombineBluetooth
+import CoreLocation
 
 class ClockDetailsViewModel: ObservableObject {
     
@@ -25,7 +26,7 @@ class ClockDetailsViewModel: ObservableObject {
 
     @Published var networkSummary: NetworkSummaryViewModel?
     @Published var networkDetails: NetworkDetailsViewModel?
-    @Published  var locationSummaryViewModel: LocationSummaryViewModel?
+    @Published var locationSummaryViewModel: LocationSummaryViewModel?
     
     private var clock: Clock
     
@@ -34,6 +35,14 @@ class ClockDetailsViewModel: ObservableObject {
     init(clock: Clock){
         self.clock = clock
         
+
+    }
+    
+    func connect(){
+        clock.connect()
+    }
+    
+    func onAppear(){
         self.image = Image(clock.caseColor.imageName)
         
         clock.$name.assign(to: \.title, on: self).store(in: &bag)
@@ -60,19 +69,35 @@ class ClockDetailsViewModel: ObservableObject {
             }
         }).store(in: &bag)
         
-        clock.$networkService.publisher.map(NetworkSummaryViewModel.init).assign(to: \.networkSummary, on: self).store(in: &bag)
-        clock.$networkService.publisher.map(NetworkDetailsViewModel.init).assign(to: \.networkDetails, on: self).store(in: &bag)
+        clock.$networkService
+            .publisher
+            .compactMap{$0}
+            .map(NetworkSummaryViewModel.init)
+            .assign(to: \.networkSummary, on: self)
+            .store(in: &bag)
         
-        clock.$locationService.publisher.map(LocationSummaryViewModel.init).assign(to: \.locationSummaryViewModel, on: self).store(in: &bag)
+        clock.$networkService
+            .publisher
+            .compactMap{$0}
+            .map(NetworkDetailsViewModel.init)
+            .assign(to: \.networkDetails, on: self)
+            .store(in: &bag)
         
-//        cancellables.append(c2)
-//
-        
+
+                
+        clock.$locationService
+            .publisher
+            .compactMap{$0}
+            .map(LocationSummaryViewModel.init)
+            .assign(to: \.locationSummaryViewModel, on: self)
+            .store(in: &bag)
+                
+                
     }
-    
-    func connect(){
-        clock.connect()
+    func onDisappear(){
+        bag = []
     }
+
 }
 
 extension ConnectionState{

@@ -8,11 +8,13 @@ public protocol ServiceWrapper: HasUUID {
     var cbService: CBService? { get set }
     func didUpdateValue(for: CBCharacteristic)
     func didDiscoverCharacteristics()
+    func didInvalidate()
 }
 
 public protocol InnerServiceProtocol: class, HasUUID {
     static var uuid: CBUUID { get }
     var objectWillChange: ObservableObjectPublisher { get }
+    init()
 }
 
 public protocol ServiceProtocol: InnerServiceProtocol, ObservableObject {
@@ -28,20 +30,28 @@ extension ServiceProtocol where Self: ObservableObject{
 
 @propertyWrapper
 public class Service<Value:ServiceProtocol>: ServiceWrapper {
-    
+  
     public var wrappedValue: Value {
         didSet {
             self.publisher.send(wrappedValue)
         }
     }
     
+//    private var _value: Value?
+//
+//    public var wrappedValue: Value? {
+//        get{
+//            return _value
+//        }
+//    }
+    
     public let uuid: CBUUID
     public var publisher: CurrentValueSubject<Value,Never>
     public var cbService: CBService?
     
     public init(wrappedValue value: Value){
-        
         self.wrappedValue = value
+//        self._value = value
         self.uuid = value.uuid
         self.publisher = CurrentValueSubject<Value,Never>(value)
     }
@@ -71,9 +81,19 @@ public class Service<Value:ServiceProtocol>: ServiceWrapper {
         self.characteristicWrapper(for: cbCharacteristic)?.valueWasUpdated()
     }
     
+    public func didInvalidate(){
+//        self._value = nil
+        self.cbService = nil
+//        self.publisher.send(nil)
+    }
+    
     var characteristicWrappers: [CharacteristicWrapper]{
-        let m = Mirror(reflecting: wrappedValue)
-        return m.children.compactMap { $0.value as? CharacteristicWrapper}
+//        if let value = wrappedValue {
+            let m = Mirror(reflecting: wrappedValue)
+            return m.children.compactMap { $0.value as? CharacteristicWrapper}
+//        } else {
+//            return []
+//        }
     }
     
     //

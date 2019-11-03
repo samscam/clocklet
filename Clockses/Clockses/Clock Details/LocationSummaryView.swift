@@ -15,8 +15,10 @@ class LocationSummaryViewModel: ObservableObject{
     @Published var title: String = "Resolving..."
     @Published var coordinates: String? = nil
     @Published var coord2d: CLLocationCoordinate2D? = nil
-
+    
     private var locationService: LocationService?
+    
+    private var locationProxy = LocationProxy()
     
     var bag: [AnyCancellable] = []
     
@@ -26,11 +28,11 @@ class LocationSummaryViewModel: ObservableObject{
         guard let locationService = locationService else {
             return
         }
-            
+        
         locationService.$currentLocation.publisher.compactMap{
             $0??.description
         }.assign(to: \.coordinates, on: self)
-        .store(in: &bag)
+            .store(in: &bag)
         
         locationService
             .$currentLocation
@@ -49,10 +51,19 @@ class LocationSummaryViewModel: ObservableObject{
             .compactMap{$0??.location.coordinate}
             .assign(to: \.coord2d, on: self)
             .store(in: &bag)
-       
         
+        locationProxy.publisher.sink(receiveCompletion: { (completion) in
+            
+        }) { (location) in
+            locationService.currentLocation = CurrentLocation(lat: location.coordinate.latitude, lng: location.coordinate.longitude)
+        }.store(in: &bag)
     }
-
+    
+    
+    func setCurrentLocation(){
+        locationProxy.enable()
+    }
+    
 }
 
 struct LocationSummaryView: View {
@@ -64,17 +75,35 @@ struct LocationSummaryView: View {
     
     var body: some View {
         ConfigItemView(icon: Image(systemName:"location"), title: viewModel.title) {
-            VStack(alignment:.leading){
-                
-                self.viewModel.coord2d.map{
-                    MapView(coordinate: $0)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .frame(height: 150)
+                VStack(alignment:.leading){
+                    
+                    self.viewModel.coord2d.map{
+                        MapView(coordinate: $0)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .frame(height: 150)
+                    }
+                    
+                    Button(action: {
+                        self.viewModel.setCurrentLocation()
+                    }) {
+                        HStack{
+                            Spacer()
+                            Text("Set to current location")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding()
+                            Spacer()
+                        }
+                        
+                        
+                        
+                    }
+                    .background(Color.gray)
+                    .clipShape(RoundedRectangle(cornerRadius:10))
+                    
                 }
-                self.viewModel.coordinates.map{Text($0).font(.caption)}
             }
-        }
-       
+        
     }
 }
 

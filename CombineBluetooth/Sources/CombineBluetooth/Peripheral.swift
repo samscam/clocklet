@@ -28,6 +28,10 @@ open class Peripheral: PeripheralProtocol, ObservableObject {
     @Published public var state: ConnectionState = .disconnected(error: nil)
     @Published public var name: String
     
+    public var advertisementData: AdvertisementData? {
+        return self.connection?.advertisementData
+    }
+    
     weak var connection: Connection?
     
     public let uuid: UUID
@@ -52,10 +56,7 @@ open class Peripheral: PeripheralProtocol, ObservableObject {
     public func disconnect(){
         connection?.disconnect()
     }
-    
-//    func didDiscover(cbService: CBService){
-//        self.objectWillChange.send()
-//    }
+
 
 }
 

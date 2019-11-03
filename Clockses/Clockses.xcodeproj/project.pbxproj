@@ -17,6 +17,7 @@
 		2255195623587DB70056B9CD /* AvailableNetworksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2255195523587DB70056B9CD /* AvailableNetworksView.swift */; };
 		2255195823588AF50056B9CD /* NetworkDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2255195723588AF50056B9CD /* NetworkDetailView.swift */; };
 		22585259235694A0005C9696 /* ConfigItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22585258235694A0005C9696 /* ConfigItemView.swift */; };
+		22604281236E40F800710F37 /* LocationProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22604280236E40F800710F37 /* LocationProxy.swift */; };
 		227CC3062367925D00D7770D /* PropertiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227CC3052367925D00D7770D /* PropertiesView.swift */; };
 		22836EB4228629750020B46F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22836EB3228629750020B46F /* AppDelegate.swift */; };
 		22836EBB2286297C0020B46F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 22836EBA2286297C0020B46F /* Assets.xcassets */; };
@@ -55,6 +56,7 @@
 		2255195523587DB70056B9CD /* AvailableNetworksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailableNetworksView.swift; sourceTree = "<group>"; };
 		2255195723588AF50056B9CD /* NetworkDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkDetailView.swift; sourceTree = "<group>"; };
 		22585258235694A0005C9696 /* ConfigItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigItemView.swift; sourceTree = "<group>"; };
+		22604280236E40F800710F37 /* LocationProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProxy.swift; sourceTree = "<group>"; };
 		227CC3052367925D00D7770D /* PropertiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertiesView.swift; sourceTree = "<group>"; };
 		22836EB0228629750020B46F /* Clockses.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clockses.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22836EB3228629750020B46F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -180,6 +182,7 @@
 			isa = PBXGroup;
 			children = (
 				228DF2652350704D00480588 /* ClockDetailsViewModel.swift */,
+				22604280236E40F800710F37 /* LocationProxy.swift */,
 				224C5390234FAE7300A68928 /* ClockDetailsView.swift */,
 				22551951235870240056B9CD /* LocationSummaryView.swift */,
 				220DDB10236B9E3900429503 /* MapView.swift */,
@@ -329,6 +332,7 @@
 				22585259235694A0005C9696 /* ConfigItemView.swift in Sources */,
 				224C538F234F6CDD00A68928 /* ClockListView.swift in Sources */,
 				224C5391234FAE7300A68928 /* ClockDetailsView.swift in Sources */,
+				22604281236E40F800710F37 /* LocationProxy.swift in Sources */,
 				220DDB11236B9E3900429503 /* MapView.swift in Sources */,
 				22A0AE042351492F00D04338 /* NetworkService.swift in Sources */,
 				22E2D9BA233A971000B4FCFD /* SceneDelegate.swift in Sources */,

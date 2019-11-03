@@ -9,13 +9,32 @@
 import Foundation
 import CombineBluetooth
 
+
+
 class Clock: Peripheral, Identifiable, Advertiser {
     
     var id: UUID {
         return uuid
     }
     
-    var caseColor: CaseColor = .black
+    
+    private var _caseColor: CaseColor = .black
+    var caseColor: CaseColor {
+        get{
+        guard let mfrResidual = advertisementData?.manufacturerData?.residual,
+            let mfrString = String(data:mfrResidual, encoding: .utf8),
+            let lastComponent = mfrString.split(separator: ",").last
+        else {
+                return _caseColor
+        }
+        
+        return CaseColor(rawValue: String(lastComponent)) ?? _caseColor
+        }
+        set {
+            _caseColor = newValue
+        }
+    }
+    
     var serial: UInt32 = 4242
     
     init(_ name: String, _ color: CaseColor = .black){
