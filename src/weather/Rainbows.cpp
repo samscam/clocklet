@@ -15,11 +15,11 @@ bool Rainbows::rainbowProbability(DateTime currentTime){
     if (currentTime > _fortyTwoRise && currentTime < _fortyTwoSet){
         return false;
     }
-    if (_weather.cloudCover < 0.9 && _weather.cloudCover > 0.1 && _weather.precipChance >= .5 ){
+    if (_weather.cloudCover < 0.9 && _weather.cloudCover > 0.1 && _weather.precipChance >= 0.2 ){
         return true;
     }
     return false;
-    
+
 }
 
 void Rainbows::setLocation(Location location){
