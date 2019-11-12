@@ -28,7 +28,7 @@ int32_t secondaryTimeZone = 330; // Mumbai is +5:30
 #if defined(RAINBOWDISPLAY)
 
 #include "Displays/RGBDigit.h"
-Display *display = new RGBDigit();
+RGBDigit *display = new RGBDigit();
 
 #elif defined(EPAPER)
 
@@ -127,7 +127,7 @@ void setup() {
   String greeting = String("Hello "+owner);
   display->displayMessage(greeting.c_str(), rando);
   // Uncomment to run various display tests:
-  // displayTests(display);
+  displayTests(display);
   
   WiFi.begin();
 

@@ -22,9 +22,8 @@ bool WeatherClient::fetchWeather(){
       return true;
     }
   }
-  Serial.print("Weather fetch failed");
+  Serial.println("Weather fetch failed");
   return false;
-  // scrollText_fail("Weather fetch failed");
 }
 
 // Open connection to the HTTP server
