@@ -11,6 +11,7 @@
 #include "esp_log.h"
 
 const char* TAG = "Firmware Updates";
+ * Ensure that the network is connected before running this
 
 #define MAX_REDIRECT_DEPTH 5
 

@@ -19,6 +19,8 @@
 
 // CONFIGURATION  --------------------------------------
 
+
+
 // Time zone adjust (in MINUTES from utc)
 int32_t tzAdjust = 0;
 int32_t secondaryTimeZone = 330; // Mumbai is +5:30
@@ -132,6 +134,7 @@ void setup() {
   analogReadResolution(12);
 
   // Randomise the random seed - Not sure if this is random enough
+  // We don't actually need to do this if the wireless subsystems are active
   uint16_t seed = analogRead(A0);
   randomSeed(seed);
   Serial.println((String)"Seed: " + seed);
@@ -150,6 +153,7 @@ void setup() {
 
   LOGMEM;
 
+  // DISPLAY A GREETING
   display->setStatusMessage("part");
   delay(1000);
   display->setStatusMessage("time");
@@ -165,19 +169,21 @@ void setup() {
   WiFi.begin();
 
   LOGMEM;
+  // Checks for provisioning
+  bool isProvisioned = isAlreadyProvisioned();
 
-  if (isAlreadyProvisioned()){
+  if (isProvisioned){
     if (waitForWifi(6000)){
       display->displayMessage("Everything is awesome", good);
     } else {
       display->displayMessage("Network is pants", bad);
     }
   } else {
-    
     display->displayMessage("I need your wifi", bad);
+    startProvisioning();
   }
-
-  // startProvisioning(); // cos this is actually the bluetooth stack now
+  // startProvisioning();
+  
   LOGMEM;
   locationManager = new LocationManager();
   if (!locationManager->hasSavedLocation()){
@@ -214,6 +220,7 @@ Precision precision = minutes;
 
 bool didDisplay = false;
 
+
 void loop() {
 
   display->setBrightness(currentBrightness());
@@ -222,9 +229,15 @@ void loop() {
   if (detectTouchPeriod() > 500){
     display->displayMessage("That tickles",rando);
   }
-  if (detectTouchPeriod() > 15000){
+  if (detectTouchPeriod() > 5000){
     startProvisioning();
-    display->displayMessage("Provisioning",good);
+    display->displayMessage("Bluetooth is on",good);
+  }
+  if (detectTouchPeriod() > 10000){
+    display->displayMessage("Keep holding for restart",bad);
+  }
+  if (detectTouchPeriod() > 15000){
+    ESP.restart();
   }
 
   #if defined(BATTERY_MONITORING)
@@ -366,6 +379,11 @@ void sensibleDelay(int milliseconds){
 // MARK: UPDATE CYCLE ---------------------------------------
 
 void updatesHourly(){
+  
+  if (isProvisioningActive()){
+    return;
+  }
+
   LOGMEM;
   Serial.println("Hourly update");
   if (locationManager -> hasSavedLocation()){
@@ -384,6 +402,7 @@ void updatesHourly(){
 }
 
 void updatesDaily(){
+
   Serial.println("Daily update");
   LOGMEM;
   #if defined(TIMESOURCE_NTP)
@@ -398,6 +417,10 @@ void updatesDaily(){
   }
   #endif
   generateDSTTimes(rtc.now().year());
+
+  if (isProvisioningActive()){
+    return;
+  }
 
   // Firmware
   Serial.println("Firmware update");

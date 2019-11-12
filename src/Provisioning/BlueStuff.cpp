@@ -147,6 +147,9 @@ void BlueStuff::startBlueStuff(){
     asprintf(&deviceName,"%s #%d",shortName,serial);
     LOGMEM;
     BLEDevice::init(deviceName);
+    LOGMEM;
+    esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT);
+    LOGMEM;
     BLEDevice::setEncryptionLevel(ESP_BLE_SEC_ENCRYPT);
     LOGMEM;
     pServer = BLEDevice::createServer();

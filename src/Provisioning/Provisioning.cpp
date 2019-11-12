@@ -21,6 +21,8 @@ BlueStuff *blueStuff;
 TaskHandle_t blueStuffTask;
 
 
+bool provisioningIsActive = false;
+
 void wifi_init_sta()
 {
     /* Start wifi in station mode with credentials set during provisioning */
@@ -87,6 +89,13 @@ void doBackgroundThings(void * parameter) {
 
 
 void startProvisioning() {
+
+    if (provisioningIsActive){
+        return;
+    }
+
+    provisioningIsActive = true;
+
     BaseType_t core = 0;
 
     ESP_LOGE(TAG, "Starting provisioning");
@@ -106,8 +115,16 @@ void startProvisioning() {
 }
 
 void stopProvisioning(){
-    
+    if (!provisioningIsActive){
+        return;
+    }
+
+    provisioningIsActive = false;
     blueStuff->stopBlueStuff();
     delete(blueStuff);
+    vTaskDelete(blueStuffTask);
+}
 
+bool isProvisioningActive() {
+    return provisioningIsActive;
 }
