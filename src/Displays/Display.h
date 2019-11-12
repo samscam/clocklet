@@ -50,6 +50,8 @@ public:
   // Shows something if we are connected to mains
   virtual void setOnMainsPower(bool mains) {}
 
+  virtual void setRainbows(bool rainbows) {}
+
 };
 
 #endif

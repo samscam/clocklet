@@ -32,7 +32,7 @@ RGBDigit::RGBDigit() : Display() {
 
 boolean RGBDigit::setup() {
   FastLED.addLeds<LED_TYPE,DATA_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
-
+  
   initRain();
   regenerateHeatPalette(0.0,0.0);
 
@@ -87,6 +87,9 @@ void RGBDigit::setBrightness(float brightness){
   FastLED.setBrightness(scaledBrightness);
 }
 
+void RGBDigit::setRainbows(bool newState){
+
+}
 // PRIVATE
 
 
@@ -149,11 +152,15 @@ void RGBDigit::displayTime(const DateTime& time, Weather weather){
   // Advance the wind cycle
   advanceWindCycle(weather.windSpeed);
 
-  // Fill the digits entirely with rainbows
-  // fillDigits_rainbow(false);
+  if (rainbows){
+    // Fill the digits entirely with rainbows
+    fillDigits_rainbow(false);
+  } else {
+    // Or heat colours
+    fillDigits_heat();
+  }
 
-  // Or heat colours
-  fillDigits_heat();
+
 
   // More backgrounds may happen one day
 

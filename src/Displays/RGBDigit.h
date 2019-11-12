@@ -56,6 +56,7 @@ public:
   // Brightness is a float from 0 (barely visible) to 1 (really bright)
   void setBrightness(float brightness);
   
+  void setRainbows(bool rainbows);
 
 private:
 
@@ -102,6 +103,8 @@ private:
   CRGB leds[NUM_LEDS];
   DateTime _time;
   Weather _weather;
+
+  bool rainbows = false;
 
   CRGB rainLayer[NUM_LEDS];
   int vsegs[4] = {1,2,4,5};

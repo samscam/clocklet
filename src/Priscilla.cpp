@@ -10,6 +10,7 @@
 #include "Provisioning/Provisioning.h"
 #include "FirmwareUpdates/FirmwareUpdates.h"
 #include <Preferences.h>
+#include "Weather/Rainbows.h"
 
 
 #include "TimeThings/NTP.h"
@@ -79,6 +80,11 @@ WiFiClientSecure secureClient; // << https on esp32
 #include "weather/darksky.h"
 WeatherClient *weatherClient = new DarkSky(secureClient);
 
+
+// RAINBOWS
+
+Rainbows rainbows;
+
 // SETUP  --------------------------------------
 
 void setup() {
@@ -140,6 +146,8 @@ void setup() {
   locationManager = new LocationManager();
   if (!locationManager->hasSavedLocation()){
     display->displayMessage("Where am I", bad);
+  } else {
+    rainbows.setLocation(locationManager->getLocation());
   }
 
   rtc.begin();
@@ -259,6 +267,7 @@ void loop() {
       }
       break;
     case subseconds:
+      display->setRainbows(rainbows.rainbowProbability(time));
       displayTime(time);
       didDisplay = true;
       display->frameLoop();
@@ -328,8 +337,10 @@ void updatesHourly(){
       weatherClient -> timeThreshold = (rtc.now().hour() * 60) - 180;
       if (weatherClient -> fetchWeather()){
         display->setWeather(weatherClient->latestWeather);
+        rainbows.setWeather(weatherClient->latestWeather);
       }
     }
+
   } else {
     display->displayMessage("Where am I", bad);
   }
@@ -392,7 +403,6 @@ uint16_t dstAdjust(DateTime time){
     return 0;
   }
 }
-
 
 // MARK: BRIGHTNESS SENSING -------------------------
 

@@ -1,5 +1,6 @@
 #include "darksky.h"
 
+
 DarkSky::DarkSky(WiFiClient &client) : WeatherClient(client) {
   this->client = &client;
   this->server = (char *)DARKSKY_SERVER;
