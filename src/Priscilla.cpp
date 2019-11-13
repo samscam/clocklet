@@ -78,15 +78,15 @@ WiFiClientSecure secureClient; // << https on esp32
 // WeatherClient *weatherClient = new MetOffice(client); // << It's plain HTTP
 
 #include "weather/darksky.h"
-WeatherClient *weatherClient = new DarkSky(secureClient);
+DarkSky *weatherClient = new DarkSky(secureClient);
 
 
 // RAINBOWS
 
 Rainbows rainbows;
 
-// SETUP  --------------------------------------
 
+// SETUP  --------------------------------------
 void setup() {
   delay(2000);
   
@@ -126,8 +126,9 @@ void setup() {
   delay(1000);
   String greeting = String("Hello "+owner);
   display->displayMessage(greeting.c_str(), rando);
+
   // Uncomment to run various display tests:
-  displayTests(display);
+  // displayTests(display);
   
   WiFi.begin();
 
@@ -334,11 +335,10 @@ void updatesHourly(){
   if (locationManager -> hasSavedLocation()){
     if (reconnect()) {
       weatherClient -> setLocation(locationManager -> getLocation());
-      weatherClient -> timeThreshold = (rtc.now().hour() * 60) - 180;
-      if (weatherClient -> fetchWeather()){
-        display->setWeather(weatherClient->latestWeather);
-        rainbows.setWeather(weatherClient->latestWeather);
-      }
+      weatherClient -> setTimeHorizon(12);
+      weatherClient -> fetchWeather();
+      display->setWeather(weatherClient->horizonWeather);
+      rainbows.setWeather(weatherClient->rainbowWeather);
     }
 
   } else {

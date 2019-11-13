@@ -32,16 +32,6 @@ void Rainbows::setWeather(Weather weather){
 
 // Private
 DateTime Rainbows::_rsTimeToDateTime(DateTime base, double rsTime){
-    // if the rsTime is 0.0 we return NOON on the given day
-    if (rsTime == 0.0) {
-            return DateTime(base.year(),
-                    base.month(),
-                    base.day(),
-                    12,
-                    0,
-                    0);
-    }
-
     uint8_t hour = floor(rsTime);
     uint8_t min = floor((rsTime - hour) * 60);
     uint8_t sec = floor((((rsTime - hour) * 60) - min) * 60);
@@ -51,7 +41,6 @@ DateTime Rainbows::_rsTimeToDateTime(DateTime base, double rsTime){
                     hour,
                     min,
                     sec);
-
 }
 
 /// Calculates the rise and set times for the day
@@ -84,7 +73,7 @@ void Rainbows::_calculateSunTimes(DateTime currentTimeUTC, Location currentLocat
     Serial.printf("Sunset: %d:%d:%d\n",_sunset.hour(),_sunset.minute(),_sunset.second());
     
     
-    // When do we hit 42 degrees
+    // When do we hit 42 degrees?
     rsAlt = 42.0 / R2D;
     SolTrack_RiseSet(time, location, &rsPosition, &riseSet, rsAlt, useDegrees, useNorthEqualsZero);
 

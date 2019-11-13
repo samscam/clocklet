@@ -4,7 +4,8 @@
 WeatherClient::WeatherClient(WiFiClient &client) {
   this->client = &client;
   Serial.print("Setting Default Weather");
-  this->latestWeather = defaultWeather;
+  this->horizonWeather = defaultWeather;
+  this->rainbowWeather = defaultWeather;
 };
 
 
@@ -13,12 +14,12 @@ bool WeatherClient::fetchWeather(){
   if (connect(this->server, this->ssl)) {
     if (sendRequest(this->server, this->resource) && skipResponseHeaders()) {
       Serial.println("Got weather response");
-      Weather response = readReponseContent();
-      Serial.print("Weather: ");
-      Serial.println(response.summary);
-
+      if (readReponseContent()){
+        Serial.print("Weather: ");
+        Serial.println(horizonWeather.summary);
+      }
+      
       disconnect();
-      latestWeather = response;
       return true;
     }
   }
@@ -82,12 +83,6 @@ bool WeatherClient::skipResponseHeaders() {
   return ok;
 }
 
-Weather WeatherClient::readReponseContent() {
-  Serial.println("This is a stub!");
-
-  Weather result;
-  return result;
-}
 
 // Close the connection with the HTTP server
 void WeatherClient::disconnect() {
