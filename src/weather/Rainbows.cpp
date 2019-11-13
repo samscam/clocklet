@@ -15,7 +15,7 @@ bool Rainbows::rainbowProbability(DateTime currentTime){
     if (currentTime > _fortyTwoRise && currentTime < _fortyTwoSet){
         return false;
     }
-    if (_weather.cloudCover < 0.9 && _weather.cloudCover > 0.1 && _weather.precipChance >= 0.2 ){
+    if (_weather.cloudCover < 0.8 && _weather.cloudCover > 0.2 && _weather.precipChance >= 0.2 ){
         return true;
     }
     return false;
