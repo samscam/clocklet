@@ -13,6 +13,7 @@ FASTLED_USING_NAMESPACE
 DEFINE_GRADIENT_PALETTE (temperatureGPalette) {
 0,   127, 127, 255, // -10
 51,  255, 255, 255, // 0
+61,  127, 255, 255, // 2
 76,  0,   255, 255, // 5
 102, 0,   255, 0,   // 10
 127, 255, 255, 0,   // 15
@@ -21,6 +22,8 @@ DEFINE_GRADIENT_PALETTE (temperatureGPalette) {
 204, 255, 0,   255,   // 30
 255, 120, 0,   255  // 40
 };
+
+
 
 RGBDigit::RGBDigit() : Display() {
 
@@ -32,7 +35,7 @@ RGBDigit::RGBDigit() : Display() {
 
 boolean RGBDigit::setup() {
   FastLED.addLeds<LED_TYPE,DATA_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
-
+  temperaturePalette = temperatureGPalette;
   initRain();
   regenerateHeatPalette(0.0,0.0);
 
@@ -87,6 +90,9 @@ void RGBDigit::setBrightness(float brightness){
   FastLED.setBrightness(scaledBrightness);
 }
 
+void RGBDigit::setRainbows(bool newState){
+  rainbows = newState;
+}
 // PRIVATE
 
 
@@ -149,13 +155,14 @@ void RGBDigit::displayTime(const DateTime& time, Weather weather){
   // Advance the wind cycle
   advanceWindCycle(weather.windSpeed);
 
-  // Fill the digits entirely with rainbows
-  // fillDigits_rainbow(false);
+  if (rainbows){
+    // Fill the digits entirely with rainbows
+    fillDigits_rainbow(false);
+  } else {
+    // Or heat colours
+    fillDigits_heat();
+  }
 
-  // Or heat colours
-  fillDigits_heat();
-
-  // More backgrounds may happen one day
 
   float precip = weather.precipChance * 100;
   float minTmp = weather.minTmp;
@@ -417,15 +424,18 @@ void RGBDigit::fillDigits_rainbow(bool includePoints){
 
 
 CRGB RGBDigit::colourFromTemperature(float temperature){
-  int min = -10;
-  int max = 40;
+  float min = -10.0;
+  float max = 40.0;
 
   if (temperature < min) { temperature = min; }
   if (temperature > max) { temperature = max; }
 
-  uint8_t scaled = (((temperature - min) * 255) / (float)(max - min));
-  CRGBPalette16 temperaturePalette = temperatureGPalette;
-  return ColorFromPalette(temperaturePalette, scaled);
+  uint8_t scaled = (int)roundf(((temperature - min) / (max - min)) * 255.0);
+
+  CRGB col = ColorFromPalette(temperaturePalette, scaled);
+
+  Serial.printf("Temp: %g Scaled: %d RGB: %d %d %d\n", temperature, scaled, col.r, col.g, col.b);
+  return col;
 }
 
 void RGBDigit::fillDigits_heat(){
@@ -446,10 +456,14 @@ void RGBDigit::fillDigits_heat(){
 }
 
 void RGBDigit::regenerateHeatPalette(float minTemp, float maxTemp){
+  Serial.printf("Min temp: %g Max temp %g\n--Looping:",minTemp,maxTemp);
   scaledHeatPalette = CRGBPalette16();
+  float tempChunk = (maxTemp - minTemp) / 16.0f;
   for (int i = 0; i < 16; i++) {
-    uint8_t tmp = minTemp + ((maxTemp - minTemp) / 16.0f) * i;
-    scaledHeatPalette[i] = colourFromTemperature(tmp);
+    float temp = minTemp + (tempChunk * i);
+    
+    scaledHeatPalette[i] = colourFromTemperature(temp);
+    CRGB col = scaledHeatPalette[i];
   }
 }
 
@@ -495,7 +509,7 @@ void RGBDigit::addRain( fract8 chanceOfRain, CRGB colour)
 
     rainLayer[ allvsegs[segnum] ] = colour;
   }
-  nscale8_video(leds, NUM_LEDS, 255 - (chanceOfRain * 0.5));
+  nscale8_video(leds, NUM_LEDS, 255 - (chanceOfRain * 0.7));
 
   for(int i = 0; i < NUM_LEDS; i++) { leds[i] += rainLayer[i] ; }
 }

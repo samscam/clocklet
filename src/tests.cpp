@@ -29,12 +29,12 @@ void runFast(RGBDigit *display){
 }
 
 void showTemperatureRange(RGBDigit *display){
-    // for (int f = -10; f<41; f++){
-    //     CRGB colour = display->colourFromTemperature((float)f);
-    //     display->setDigits(f,colour);
-    //     FastLED.show();
-    //     FastLED.delay(500);
-    // }
+    for (int f = -10; f<41; f++){
+        CRGB colour = display->colourFromTemperature((float)f);
+        display->setDigits(f,colour);
+        FastLED.show();
+        FastLED.delay(500);
+    }
 }
 
 // #include <FastLED.h>

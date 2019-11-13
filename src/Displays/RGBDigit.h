@@ -55,7 +55,11 @@ public:
   
   // Brightness is a float from 0 (barely visible) to 1 (really bright)
   void setBrightness(float brightness);
-  
+
+  void setRainbows(bool rainbows);
+
+  CRGB colourFromTemperature(float temperature);
+  void setDigits(int number, CRGB colour = CRGB::White);
 
 private:
 
@@ -74,7 +78,7 @@ private:
   void setDigit(char character, int digit);
 
   void setDigits(const char *string);
-  void setDigits(int number, CRGB colour = CRGB::White);
+
   void setDigits(float number, CRGB colour = CRGB::White);
 
 
@@ -88,7 +92,7 @@ private:
   void fillDigits_heat(); //temps in •c
   void fillDigits_gradient(CRGB startColour, CRGB endColour);
 
-  CRGB colourFromTemperature(float temperature);
+
   void regenerateHeatPalette(float minTemp, float maxTemp);
 
   void initRain();
@@ -103,13 +107,15 @@ private:
   DateTime _time;
   Weather _weather;
 
+  bool rainbows = false;
+
   CRGB rainLayer[NUM_LEDS];
   int vsegs[4] = {1,2,4,5};
   int allvsegs[ 4 * NUM_DIGITS ] = {0};
 
   CRGB lighteningLayer[NUM_LEDS];
   CRGBPalette16 scaledHeatPalette;
-
+  CRGBPalette256 temperaturePalette;
   float cycle = 0;
 
   //   0

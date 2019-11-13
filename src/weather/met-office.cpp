@@ -47,7 +47,7 @@ const char* weatherTypes[] = {
 };
 
 
-Weather MetOffice::readReponseContent() {
+bool MetOffice::readReponseContent() {
   Serial.println("Reading metoffice content");
 
   // Allocate a temporary memory pool
@@ -58,7 +58,7 @@ Weather MetOffice::readReponseContent() {
   if (error) {
     Serial.print(F("deserializeJson() failed with code "));
     Serial.println(error.c_str());
-    return latestWeather;
+    return false;
   }
 
   Weather result = {0};
@@ -130,6 +130,6 @@ Weather MetOffice::readReponseContent() {
   if (result.type >= 28 && result.type <= 30) {
     result.thunder = true;
   }
-
-  return result;
+  horizonWeather = result;
+  return true;
 }

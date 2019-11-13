@@ -10,6 +10,7 @@
 #include "Provisioning/Provisioning.h"
 #include "FirmwareUpdates/FirmwareUpdates.h"
 #include <Preferences.h>
+#include "Weather/Rainbows.h"
 
 
 #include "TimeThings/NTP.h"
@@ -27,7 +28,7 @@ int32_t secondaryTimeZone = 330; // Mumbai is +5:30
 #if defined(RAINBOWDISPLAY)
 
 #include "Displays/RGBDigit.h"
-Display *display = new RGBDigit();
+RGBDigit *display = new RGBDigit();
 
 #elif defined(EPAPER)
 
@@ -77,10 +78,15 @@ WiFiClientSecure secureClient; // << https on esp32
 // WeatherClient *weatherClient = new MetOffice(client); // << It's plain HTTP
 
 #include "weather/darksky.h"
-WeatherClient *weatherClient = new DarkSky(secureClient);
+DarkSky *weatherClient = new DarkSky(secureClient);
+
+
+// RAINBOWS
+
+Rainbows rainbows;
+
 
 // SETUP  --------------------------------------
-
 void setup() {
   delay(2000);
   
@@ -120,6 +126,7 @@ void setup() {
   delay(1000);
   String greeting = String("Hello "+owner);
   display->displayMessage(greeting.c_str(), rando);
+
   // Uncomment to run various display tests:
   // displayTests(display);
   
@@ -140,6 +147,8 @@ void setup() {
   locationManager = new LocationManager();
   if (!locationManager->hasSavedLocation()){
     display->displayMessage("Where am I", bad);
+  } else {
+    rainbows.setLocation(locationManager->getLocation());
   }
 
   rtc.begin();
@@ -259,6 +268,7 @@ void loop() {
       }
       break;
     case subseconds:
+      display->setRainbows(rainbows.rainbowProbability(time));
       displayTime(time);
       didDisplay = true;
       display->frameLoop();
@@ -325,11 +335,12 @@ void updatesHourly(){
   if (locationManager -> hasSavedLocation()){
     if (reconnect()) {
       weatherClient -> setLocation(locationManager -> getLocation());
-      weatherClient -> timeThreshold = (rtc.now().hour() * 60) - 180;
-      if (weatherClient -> fetchWeather()){
-        display->setWeather(weatherClient->latestWeather);
-      }
+      weatherClient -> setTimeHorizon(12);
+      weatherClient -> fetchWeather();
+      display->setWeather(weatherClient->horizonWeather);
+      rainbows.setWeather(weatherClient->rainbowWeather);
     }
+
   } else {
     display->displayMessage("Where am I", bad);
   }
@@ -392,7 +403,6 @@ uint16_t dstAdjust(DateTime time){
     return 0;
   }
 }
-
 
 // MARK: BRIGHTNESS SENSING -------------------------
 
