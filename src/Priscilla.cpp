@@ -96,8 +96,17 @@ void setup() {
   Preferences preferences = Preferences();
   preferences.begin("clocklet", false);
 
+  // Quickie migration thing - will improve this!!
+  uint32_t serial = preferences.getUInt("serial");
+  String swmigrev = preferences.getString("swmigrev","0.0.3");
+
+  if (swmigrev == "0.0.3"){
+    preferences.putString("swmigrev",VERSION);
+    Serial.println("MIGRATED!");
+  }
+
   String owner = preferences.getString("owner");
-  
+
   preferences.end();
 
   analogReadResolution(12);
