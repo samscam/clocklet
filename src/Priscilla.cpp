@@ -115,7 +115,7 @@ void setup() {
   Serial.printf("Hardware revision: %d\n",hwrev);
 
   // Quickie migration thing - will improve this!!
-  String swmigrev = preferences.getString("swmigrev","0.0.3");
+  String swmigrev = preferences.getString("swmigrev","0.0.0");
 
   if (swmigrev != VERSION){
     Serial.printf("Previously running: %s\n",swmigrev.c_str());
@@ -394,13 +394,22 @@ void updatesDaily(){
   // Firmware
   
   FirmwareUpdates *firmwareUpdates = new FirmwareUpdates;
-  firmwareUpdates->checkForUpdates();
-
-  if (firmwareUpdates->updateAvailable){
-    display->displayMessage("Updating Firmware", rando);
-    display->setStatusMessage("wait");
-    firmwareUpdates->startUpdate();
+  Preferences preferences = Preferences();
+  preferences.begin("clocklet", true);
+  bool staging = preferences.getBool("staging",false);
+  if (firmwareUpdates->checkForUpdates(staging)){
+    if (firmwareUpdates->updateAvailable){
+      display->displayMessage("Updating Firmware", rando);
+      display->setStatusMessage("wait");
+      if (!firmwareUpdates->startUpdate()){
+        display->displayMessage("Update failed... sorry",bad);
+      }
+    }
+  } else {
+    ESP_LOGI("CORE","Update check failed");
   }
+  preferences.end();
+
   delete firmwareUpdates;
 
 }

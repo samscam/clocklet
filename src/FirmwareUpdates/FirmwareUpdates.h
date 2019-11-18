@@ -19,7 +19,7 @@ class FirmwareUpdates {
      * and the (private) `downloadURL` variable
      */
 
-    bool checkForUpdates();
+    bool checkForUpdates(bool useStaging = false);
 
     /**
      * Starts the update process

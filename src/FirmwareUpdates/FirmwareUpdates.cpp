@@ -93,7 +93,7 @@ bool FirmwareUpdates::_getWithRedirects(HTTPClient ** httpsptr, WiFiClientSecure
 
 }
 
-bool FirmwareUpdates::checkForUpdates() {
+bool FirmwareUpdates::checkForUpdates(bool useStaging) {
     
     ESP_LOGI(TAG, "Checking for firmware updates");
 
@@ -104,15 +104,24 @@ bool FirmwareUpdates::checkForUpdates() {
     HTTPClient* https = nullptr;
     WiFiClientSecure* client = nullptr;
     ESP_LOGV(TAG, "About to GET! %p ... %p",https,client);
-    if (!_getWithRedirects(&https, &client, "https://api.github.com/repos/samscam/priscilla/releases/latest")){
+
+    const char* url;
+    size_t capacity;
+
+    if (useStaging){
+        url = "https://api.github.com/repos/samscam/priscilla/releases";
+        capacity = 5*JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(5) + 5*JSON_OBJECT_SIZE(13) + 15*JSON_OBJECT_SIZE(18) + 30720; // 30k overhead
+    } else {
+        url = "https://api.github.com/repos/samscam/priscilla/releases/latest";
+        capacity = JSON_ARRAY_SIZE(1) + JSON_OBJECT_SIZE(13) + 3*JSON_OBJECT_SIZE(18) + 10240; // 10k overhead
+    }
+
+    if (!_getWithRedirects(&https, &client, url)){
         return false;
     }
 
-    // JSON parsing capacity with 10k overhead - should be more than plenty
-    const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_OBJECT_SIZE(13) + 3*JSON_OBJECT_SIZE(18) + 10240;
-    DynamicJsonDocument doc(capacity);
-
     // Parse JSON object
+    DynamicJsonDocument doc(capacity);
     DeserializationError error = deserializeJson(doc, *client);
 
     ESP_LOGV(TAG, "TRASHING");
@@ -125,8 +134,17 @@ bool FirmwareUpdates::checkForUpdates() {
     }
     ESP_LOGV(TAG, "FISHING");
 
+    JsonObject rel;
+
+    if (useStaging){
+        // take the first staging release
+        rel = doc[0];
+    } else {
+        rel = doc.as<JsonObject>();
+    }
+
     // Fish out verion string
-    const char* tag_name = doc["tag_name"];
+    const char* tag_name = rel["tag_name"];
     
     // Strip the v from the start of the tag - if it doesn't have one, bail out
     int taglen = strlen(tag_name);
@@ -161,11 +179,11 @@ bool FirmwareUpdates::checkForUpdates() {
     }
 
     // Fish out the binary url
-    if (doc["assets"][0].isNull()){
+    if (rel["assets"][0].isNull()){
         ESP_LOGE(TAG, "Assets section not found in payload");
         return false;
     }
-    JsonObject assets_0 = doc["assets"][0];
+    JsonObject assets_0 = rel["assets"][0];
 
     if (assets_0["browser_download_url"].isNull()){
         ESP_LOGE(TAG, "Download URL not found in payload");
