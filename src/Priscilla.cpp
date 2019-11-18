@@ -122,8 +122,6 @@ void setup() {
     preferences.putString("swmigrev",VERSION);
     Serial.println("MIGRATED!");
   }
-  
-  preferences.putString("owner","Staging");
 
   String owner = preferences.getString("owner");
   Serial.printf("Owner: %s\n",owner.c_str());

@@ -433,8 +433,6 @@ CRGB RGBDigit::colourFromTemperature(float temperature){
   uint8_t scaled = (int)roundf(((temperature - min) / (max - min)) * 255.0);
 
   CRGB col = ColorFromPalette(temperaturePalette, scaled);
-
-  Serial.printf("Temp: %g Scaled: %d RGB: %d %d %d\n", temperature, scaled, col.r, col.g, col.b);
   return col;
 }
 
@@ -456,14 +454,11 @@ void RGBDigit::fillDigits_heat(){
 }
 
 void RGBDigit::regenerateHeatPalette(float minTemp, float maxTemp){
-  Serial.printf("Min temp: %g Max temp %g\n--Looping:",minTemp,maxTemp);
   scaledHeatPalette = CRGBPalette16();
   float tempChunk = (maxTemp - minTemp) / 16.0f;
   for (int i = 0; i < 16; i++) {
     float temp = minTemp + (tempChunk * i);
-    
     scaledHeatPalette[i] = colourFromTemperature(temp);
-    CRGB col = scaledHeatPalette[i];
   }
 }
 
