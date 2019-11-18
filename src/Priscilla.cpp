@@ -92,22 +92,45 @@ void setup() {
   
   Serial.begin(115200);
 
+  // Say hello on Serial port
+  Serial.println("");
+  Serial.println("   ------------    ");
+  Serial.println("  /            \\   ");
+  Serial.println("  --------------   ");
+  Serial.println(" |              |   ");
+  Serial.println(" | ! CLOCKLET ! |   ");
+  Serial.println(" |              |   ");
+  Serial.println("  --------------   \n");
+
+  Serial.printf("Firmware Version: %s\n",VERSION);
+
   // Read things from preferences...
   Preferences preferences = Preferences();
   preferences.begin("clocklet", false);
 
-  // Quickie migration thing - will improve this!!
   uint32_t serial = preferences.getUInt("serial");
+  Serial.printf("Serial number: %d\n",serial);
+
+  uint32_t hwrev = preferences.getUInt("hwrev");
+  Serial.printf("Hardware revision: %d\n",hwrev);
+
+  // Quickie migration thing - will improve this!!
   String swmigrev = preferences.getString("swmigrev","0.0.3");
 
-  if (swmigrev == "0.0.3"){
+  if (swmigrev != VERSION){
+    Serial.printf("Previously running: %s\n",swmigrev.c_str());
     preferences.putString("swmigrev",VERSION);
     Serial.println("MIGRATED!");
   }
+  
+  preferences.putString("owner","Staging");
 
   String owner = preferences.getString("owner");
+  Serial.printf("Owner: %s\n",owner.c_str());
 
   preferences.end();
+
+  Serial.println("");
 
   analogReadResolution(12);
 
