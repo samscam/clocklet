@@ -11,7 +11,6 @@
 #include "esp_log.h"
 
 const char* TAG = "Firmware Updates";
- * Ensure that the network is connected before running this
 
 #define MAX_REDIRECT_DEPTH 5
 
@@ -98,9 +97,7 @@ bool FirmwareUpdates::checkForUpdates(bool useStaging) {
     
     ESP_LOGI(TAG, "Checking for firmware updates");
 
-                // JSON parsing capacity with 1k overhead - should be more than plenty
     updateAvailable = false;
-                StaticJsonDocument<capacity> doc;
 
     // Fetch latest release data from github
     // GET /repos/:owner/:repo/releases/latest
