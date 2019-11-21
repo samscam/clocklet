@@ -177,9 +177,11 @@ void setup() {
       display->displayMessage("Everything is awesome", good);
     } else {
       display->displayMessage("Network is pants", bad);
+      display->setDeviceState(noNetwork);
     }
   } else {
     display->displayMessage("I need your wifi", bad);
+    display->setDeviceState(bluetooth);
     startProvisioning();
   }
   // startProvisioning();
@@ -188,6 +190,7 @@ void setup() {
   locationManager = new LocationManager();
   if (!locationManager->hasSavedLocation()){
     display->displayMessage("Where am I", bad);
+    display->setDeviceState(noLocation);
   } else {
     rainbows.setLocation(locationManager->getLocation());
   }
@@ -231,6 +234,7 @@ void loop() {
   }
   if (detectTouchPeriod() > 5000){
     startProvisioning();
+    display->setDeviceState(bluetooth);
     display->displayMessage("Bluetooth is on",good);
   }
   if (detectTouchPeriod() > 10000){

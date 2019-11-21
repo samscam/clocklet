@@ -30,6 +30,15 @@
 #define MAX_BRIGHTNESS 140
 #define MIN_BRIGHTNESS 10
 
+enum DeviceState {
+  ok,
+  weatherFail,
+  syncFail,
+  noLocation,
+  noNetwork,
+  bluetooth
+};
+
 class RGBDigit: public Display {
 public:
   RGBDigit();
@@ -60,6 +69,8 @@ public:
 
   CRGB colourFromTemperature(float temperature);
   void setDigits(int number, CRGB colour = CRGB::White);
+
+  void setDeviceState(DeviceState state);
 
 private:
 
@@ -106,6 +117,7 @@ private:
   CRGB leds[NUM_LEDS];
   DateTime _time;
   Weather _weather;
+  DeviceState _deviceState = ok;
 
   bool rainbows = false;
 
