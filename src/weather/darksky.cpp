@@ -1,5 +1,6 @@
 #include "darksky.h"
 
+#define TAG "DARKSKY"
 
 DarkSky::DarkSky(WiFiClient &client) : WeatherClient(client) {
   this->client = &client;
@@ -23,21 +24,21 @@ bool DarkSky::readReponseContent() {
   auto error = deserializeJson(root,*client);
 
   if (error) {
-    Serial.print(F("deserializeJson() failed with code "));
-    Serial.println(error.c_str());
+    ESP_LOGE(TAG,"deserializeJson() failed with code %s",error);
     return false;
   }
-  Serial.println("Weather deserialised... parsing...");
+
+  ESP_LOGD(TAG,"Weather deserialised... parsing...");
 
   rainbowWeather = _parseWeatherBlock(root["hourly"]["data"][0]);
 
   horizonWeather = defaultWeather;
   for (int i=0 ; i < _timeHorizon ; i++){
-    horizonWeather += _parseWeatherBlock(root["hourly"]["data"][i]);
-    Serial.printf("Max: %g Min: %g Current: %g\n",horizonWeather.maxTmp,horizonWeather.minTmp,horizonWeather.currentTmp);
+    Weather block = _parseWeatherBlock(root["hourly"]["data"][i]);
+    horizonWeather += block;
   }
 
-  Serial.println("Weather parsing done");
+  ESP_LOGD(TAG,"Weather parsing done");
   return true;
 }
 
@@ -49,8 +50,8 @@ void DarkSky::setLocation(Location location){
 
   this->resource = (char*)malloc( (strlen(buffer)+1) * sizeof(char));
   strcpy(this->resource,buffer);
-  Serial.printf("Weather fetch path %s\n",this->resource);
-
+  ESP_LOGD(TAG,"Weather fetch path %s",this->resource);
+  
 }
 
 Weather DarkSky::_parseWeatherBlock(JsonObject block){
