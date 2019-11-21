@@ -31,8 +31,8 @@ struct Weather {
     minTmp = min(minTmp, rhs.minTmp);
     currentTmp = max(currentTmp, rhs.currentTmp);
     
-    maxTmp = max(currentTmp, maxTmp);
-    minTmp = min(currentTmp, minTmp);
+    maxTmp = max(rhs.currentTmp, maxTmp);
+    minTmp = min(rhs.currentTmp, minTmp);
     
 
     thunder = max(thunder, rhs.thunder);
