@@ -162,7 +162,7 @@ void setup() {
   display->displayMessage(greeting.c_str(), rando);
 
   // Uncomment to run various display tests:
-  // displayTests(display);
+  // displayTests(display); 
   
   LOGMEM;
 
@@ -426,29 +426,33 @@ void updatesDaily(){
     return;
   }
 
-  // Firmware
-  Serial.println("Firmware update");
-  LOGMEM;
-  FirmwareUpdates *firmwareUpdates = new FirmwareUpdates;
-  Preferences preferences = Preferences();
-  preferences.begin("clocklet", true);
-  bool staging = preferences.getBool("staging",false);
-  if (firmwareUpdates->checkForUpdates(staging)){
-    if (firmwareUpdates->updateAvailable){
-      display->displayMessage("Updating Firmware", rando);
-      display->setStatusMessage("wait");
-      if (!firmwareUpdates->startUpdate()){
-        display->displayMessage("Update failed... sorry",bad);
-      }
-    }
-  } else {
-    ESP_LOGI("CORE","Update check failed");
-  }
-  preferences.end();
+  // Firmware updates
 
-  delete firmwareUpdates;
-  Serial.println("Firmware update done");
+  
   LOGMEM;
+
+  if (reconnect()) {
+    FirmwareUpdates *firmwareUpdates = new FirmwareUpdates;
+    Preferences preferences = Preferences();
+    preferences.begin("clocklet", true);
+    bool staging = preferences.getBool("staging",false);
+    if (firmwareUpdates->checkForUpdates(staging)){
+      if (firmwareUpdates->updateAvailable){
+        display->displayMessage("Updating Firmware", rando);
+        display->setStatusMessage("wait");
+        if (!firmwareUpdates->startUpdate()){
+          display->displayMessage("Update failed... sorry",bad);
+        }
+      }
+    } else {
+      ESP_LOGI("CORE","Update check failed");
+    }
+    preferences.end();
+
+    delete firmwareUpdates;
+    Serial.println("Firmware update done");
+    LOGMEM;
+  }
 }
 
 DateTime dstStart;
