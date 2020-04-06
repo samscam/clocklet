@@ -19,15 +19,16 @@ const char* messages[] = {
   "Striving to be less shite",
   "Baby fart? It was Mr Nobody",
   "rainbow is the new green",
-  "Baby clock doo doo doo du doo du doo",
   "Cyclists Dismount",
-  "Probably enough RAM",
   "bin fairies are real",
   "big eyed beans from venus",
   "moose",
   "rainbow detection is now active active",
-  "so excited about house",
-  "Say it in your COOL voice!"
+  "I am socially distant",
+  "babies are nice",
+  "Say it in your COOL voice",
+  "Make it so",
+  "everything is going to be fine"
 };
 
 #define numMessages (sizeof(messages)/sizeof(char *)) //array size
