@@ -69,6 +69,7 @@ class JoinNetworkCallback: public BLECharacteristicCallbacks {
         delay(100);
         WiFi.begin(ssid,psk);
 
+
 	}
 
 };
@@ -299,7 +300,7 @@ void wifiEventCb(WiFiEvent_t event)
 
 void BlueStuff::wifiEvent(WiFiEvent_t event){
     
-    // Serial.printf("[WiFi-event] event: %d\n", event);
+    Serial.printf("[WiFi-event] event: %d\n", event);
 
 
     switch (event) {
@@ -416,7 +417,7 @@ void BlueStuff::_startWifiScan(){
 
         WiFi.getNetworkInfo(netInfo.index,netInfo.ssid,netInfo.enctype,netInfo.rssi,netInfo.bssid,netInfo.channel);
         // networks.push_back(netInfo);
-        // Serial.printf("Found %s (ch %d rssi %d)\n",netInfo.ssid,netInfo.channel,netInfo.rssi);
+        Serial.printf("Found %s (ch %d rssi %d)\n",netInfo.ssid,netInfo.channel,netInfo.rssi);
 
         _encodeNetInfo(doc,netInfo);
     }
@@ -426,7 +427,7 @@ void BlueStuff::_startWifiScan(){
     uint len = outputStr.length()+1;
     char availableJson[len];
     outputStr.toCharArray(availableJson,len);
-    // Serial.println(availableJson);
+    Serial.println(availableJson);
     ch_availableNetworks->setValue(availableJson);
     ch_availableNetworks->notify(true);
     LOGMEM;
