@@ -23,11 +23,11 @@ WiFiUDP Udp;
 
 bool timeFromNTP(DateTime &time){
   if ( !reconnect() ){
-    Serial.println("Wifi is actually down now");
+    Serial.println("NTP: Wifi is actually down now");
     return false;
   }
 
-  Serial.println("\nStarting connection to server...");
+  Serial.println("\nNTP: Starting connection to server...");
   Udp.begin(localPort);
 
   unsigned long timeout = 5000;
@@ -49,7 +49,7 @@ bool timeFromNTP(DateTime &time){
     }
   }
 
-  Serial.print("Roundtrip Time:");
+  Serial.print("NTP: Roundtrip Time:");
   Serial.println(millis() - startMillis);
 
   Serial.println("packet received");
@@ -89,7 +89,6 @@ bool timeFromNTP(DateTime &time){
 // send an NTP request to the time server at the given address
 void sendNTPpacket(IPAddress& address)
 {
-  Serial.println("Sending NTP packet");
   // set all bytes in the buffer to 0
   memset(packetBuffer, 0, NTP_PACKET_SIZE);
   // Initialize values needed to form NTP request
