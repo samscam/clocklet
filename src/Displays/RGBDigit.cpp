@@ -33,7 +33,7 @@ RGBDigit::RGBDigit() : Display() {
 
 
 boolean RGBDigit::setup() {
-  FastLED.addLeds<LED_TYPE,DATA_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+  FastLED.addLeds<LED_TYPE,DATA_PIN,CLOCK_PIN>(leds, NUM_LEDS);//.setCorrection(TypicalLEDStrip);
   temperaturePalette = temperatureGPalette;
   initRain();
   regenerateHeatPalette(0.0,0.0);

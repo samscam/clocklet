@@ -486,7 +486,7 @@ uint16_t dstAdjust(DateTime time){
 
 // MARK: BRIGHTNESS SENSING -------------------------
 
-int lightPin = A2;
+int lightPin = 36;
 const int readingWindow = 10;
 uint16_t readings[readingWindow] = {1024};
 int readingIndex = 0;
@@ -511,17 +511,17 @@ long startTouchMillis = 0;
 
 /// Returns the number of ms which the user has been touching the device
 long detectTouchPeriod(){
-  int touchValue = touchRead(T6);
+  int touchValue = touchRead(27);
 
-  if (touchValue < 43){
-    if (!startTouchMillis){
-      startTouchMillis = millis();
-    }
-    return millis() - startTouchMillis;
-  } else {
-    startTouchMillis = 0;
-    return 0;
-  }
+  // if (touchValue < 43){ // touch threshold is a mess
+  //   if (!startTouchMillis){
+  //     startTouchMillis = millis();
+  //   }
+  //   return millis() - startTouchMillis;
+  // } else {
+  //   startTouchMillis = 0;
+  //   return 0;
+  // }
 
 }
 
