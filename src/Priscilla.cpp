@@ -12,12 +12,14 @@
 #include <Preferences.h>
 #include "Weather/Rainbows.h"
 
-
+#include "Loggery.h"
 #include "TimeThings/NTP.h"
 
 #include "rom/uart.h"
 
 // CONFIGURATION  --------------------------------------
+
+
 
 // Time zone adjust (in MINUTES from utc)
 int32_t tzAdjust = 0;
@@ -42,8 +44,6 @@ Display *display = new EpaperDisplay();
 
 // #include "Displays/DebugDisplay.h"
 // Display *display = new DebugDisplay();
-
-
 
 // ----------- RTC
 
@@ -91,7 +91,7 @@ void setup() {
   delay(2000);
   
   Serial.begin(115200);
-
+  LOGMEM;
   // Say hello on Serial port
   Serial.println("");
   Serial.println("   ------------    ");
@@ -129,10 +129,12 @@ void setup() {
   preferences.end();
 
   Serial.println("");
+  LOGMEM;
 
   analogReadResolution(12);
 
   // Randomise the random seed - Not sure if this is random enough
+  // We don't actually need to do this if the wireless subsystems are active
   uint16_t seed = analogRead(A0);
   randomSeed(seed);
   Serial.println((String)"Seed: " + seed);
@@ -148,8 +150,10 @@ void setup() {
 
   display->setup();
   display->setBrightness(currentBrightness());
-  
 
+  LOGMEM;
+
+  // DISPLAY A GREETING
   display->setStatusMessage("part");
   delay(1000);
   display->setStatusMessage("time");
@@ -158,25 +162,35 @@ void setup() {
   display->displayMessage(greeting.c_str(), rando);
 
   // Uncomment to run various display tests:
-  // displayTests(display);
+  // displayTests(display); 
   
+  LOGMEM;
+
   WiFi.begin();
 
+  LOGMEM;
+  // Checks for provisioning
+  bool isProvisioned = isAlreadyProvisioned();
 
-  if (isAlreadyProvisioned()){
+  if (isProvisioned){
     if (waitForWifi(6000)){
       display->displayMessage("Everything is awesome", good);
     } else {
       display->displayMessage("Network is pants", bad);
+      display->setDeviceState(noNetwork);
     }
   } else {
+    display->displayMessage("I need your wifi", bad);
+    display->setDeviceState(bluetooth);
     startProvisioning();
-    display->displayMessage("Provisioning", good);
   }
-
+  // startProvisioning();
+  
+  LOGMEM;
   locationManager = new LocationManager();
   if (!locationManager->hasSavedLocation()){
     display->displayMessage("Where am I", bad);
+    display->setDeviceState(noLocation);
   } else {
     rainbows.setLocation(locationManager->getLocation());
   }
@@ -209,6 +223,7 @@ Precision precision = minutes;
 
 bool didDisplay = false;
 
+
 void loop() {
 
   display->setBrightness(currentBrightness());
@@ -217,9 +232,16 @@ void loop() {
   if (detectTouchPeriod() > 500){
     display->displayMessage("That tickles",rando);
   }
-  if (detectTouchPeriod() > 15000){
+  if (detectTouchPeriod() > 5000){
     startProvisioning();
-    display->displayMessage("Provisioning",good);
+    display->setDeviceState(bluetooth);
+    display->displayMessage("Bluetooth is on",good);
+  }
+  if (detectTouchPeriod() > 10000){
+    display->displayMessage("Keep holding for restart",bad);
+  }
+  if (detectTouchPeriod() > 15000){
+    ESP.restart();
   }
 
   #if defined(BATTERY_MONITORING)
@@ -361,6 +383,12 @@ void sensibleDelay(int milliseconds){
 // MARK: UPDATE CYCLE ---------------------------------------
 
 void updatesHourly(){
+  
+  if (isProvisioningActive()){
+    return;
+  }
+
+  LOGMEM;
   Serial.println("Hourly update");
   if (locationManager -> hasSavedLocation()){
     if (reconnect()) {
@@ -369,6 +397,7 @@ void updatesHourly(){
       weatherClient -> fetchWeather();
       display->setWeather(weatherClient->horizonWeather);
       rainbows.setWeather(weatherClient->rainbowWeather);
+      LOGMEM;
     }
 
   } else {
@@ -377,7 +406,9 @@ void updatesHourly(){
 }
 
 void updatesDaily(){
+
   Serial.println("Daily update");
+  LOGMEM;
   #if defined(TIMESOURCE_NTP)
   if (reconnect()) {
     DateTime ntpTime;
@@ -391,27 +422,37 @@ void updatesDaily(){
   #endif
   generateDSTTimes(rtc.now().year());
 
-  // Firmware
-  
-  FirmwareUpdates *firmwareUpdates = new FirmwareUpdates;
-  Preferences preferences = Preferences();
-  preferences.begin("clocklet", true);
-  bool staging = preferences.getBool("staging",false);
-  if (firmwareUpdates->checkForUpdates(staging)){
-    if (firmwareUpdates->updateAvailable){
-      display->displayMessage("Updating Firmware", rando);
-      display->setStatusMessage("wait");
-      if (!firmwareUpdates->startUpdate()){
-        display->displayMessage("Update failed... sorry",bad);
-      }
-    }
-  } else {
-    ESP_LOGI("CORE","Update check failed");
+  if (isProvisioningActive()){
+    return;
   }
-  preferences.end();
 
-  delete firmwareUpdates;
+  // Firmware updates
 
+  
+  LOGMEM;
+
+  if (reconnect()) {
+    FirmwareUpdates *firmwareUpdates = new FirmwareUpdates;
+    Preferences preferences = Preferences();
+    preferences.begin("clocklet", true);
+    bool staging = preferences.getBool("staging",false);
+    if (firmwareUpdates->checkForUpdates(staging)){
+      if (firmwareUpdates->updateAvailable){
+        display->displayMessage("Updating Firmware", rando);
+        display->setStatusMessage("wait");
+        if (!firmwareUpdates->startUpdate()){
+          display->displayMessage("Update failed... sorry",bad);
+        }
+      }
+    } else {
+      ESP_LOGI("CORE","Update check failed");
+    }
+    preferences.end();
+
+    delete firmwareUpdates;
+    Serial.println("Firmware update done");
+    LOGMEM;
+  }
 }
 
 DateTime dstStart;

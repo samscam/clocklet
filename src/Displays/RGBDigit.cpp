@@ -2,7 +2,6 @@
 
 #include "RGBDigit.h"
 
-#include "../p.h"
 #include "../settings.h"
 
 FASTLED_USING_NAMESPACE
@@ -93,6 +92,11 @@ void RGBDigit::setBrightness(float brightness){
 void RGBDigit::setRainbows(bool newState){
   rainbows = newState;
 }
+
+void RGBDigit::setDeviceState(DeviceState newState){
+  _deviceState = newState;
+}
+
 // PRIVATE
 
 
@@ -199,7 +203,30 @@ void RGBDigit::displayTime(const DateTime& time, Weather weather){
   maskTime(time);
 
   _blinkColon = (time.second() % 2) == 0;
-  setDot(_blinkColon,1);
+
+  CRGB dotColour;
+  switch(_deviceState){
+    case ok:
+      dotColour = CRGB::White;
+      break;
+    case weatherFail:
+      dotColour = CRGB::LightYellow;
+      break;
+    case syncFail:
+      dotColour = CRGB::Violet;
+      break;
+    case noLocation:
+      dotColour = CRGB::LimeGreen;
+      break;
+    case noNetwork:
+      dotColour = CRGB::Red;
+      break;
+    case bluetooth:
+      dotColour = CRGB::Blue;
+      break;
+  }
+
+  setDot(_blinkColon,1,dotColour);
 
   FastLED.show();
 

@@ -32,17 +32,24 @@ Location LocationManager::getLocation(){
 }
 
 bool LocationManager::setLocation(Location newLocation){
-    
+    if (!isValidLocation(newLocation)){
+        return false;
+    }
     currentLocation = newLocation;
 
     Preferences preferences = Preferences();
-    preferences.begin("clocklet", false);
+    if (preferences.begin("clocklet", false)) {
+        Serial.printf("[LocationManager] Setting location to %g, %g\n",newLocation.lat, newLocation.lng);
+        preferences.putDouble("lat",newLocation.lat);
+        preferences.putDouble("lng",newLocation.lng);
 
-    preferences.putDouble("lat",newLocation.lat);
-    preferences.putDouble("lng",newLocation.lng);
+        preferences.end();
+        return true;
+    } else {
+        Serial.println("[LocationManager] Couldn't start preferences for some reason");
+        return false;
+    }
 
-    preferences.end();
-    return true;
 }
 
 bool isValidLocation(Location location){
