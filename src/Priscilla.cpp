@@ -1,5 +1,5 @@
 #include "Priscilla.h"
-#include "tests.h"
+#include "Tests/Tests.h"
 #include "settings.h"
 #include "Messages.h"
 #include "Displays/Display.h"

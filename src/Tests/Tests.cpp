@@ -1,9 +1,9 @@
-#include "tests.h"
+#include "Tests.h"
 
 #include <RTClib.h>
 #include <FastLED.h>
 
-void displayTests(RGBDigit *display){
+void displayTests(Matrix *display){
 
     display->setStatusMessage("TEMP");
     FastLED.delay(1000);
@@ -16,7 +16,7 @@ void displayTests(RGBDigit *display){
 }
 
 
-void runFast(RGBDigit *display){
+void runFast(Matrix *display){
     
     DateTime time = DateTime(1978,12,28,0,0,0);
     DateTime endTime = DateTime(1978,12,29,0,0,0);
@@ -28,7 +28,7 @@ void runFast(RGBDigit *display){
 
 }
 
-void showTemperatureRange(RGBDigit *display){
+void showTemperatureRange(Matrix *display){
     for (int f = -10; f<41; f++){
         CRGB colour = display->colourFromTemperature((float)f);
         display->setDigits(f,colour);
