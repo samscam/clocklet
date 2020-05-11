@@ -15,6 +15,7 @@
 #define DATA_PIN    18
 #define CLOCK_PIN   19
 #define LED_TYPE    SK9822
+#define COLOR_ORDER BGR
 
 #define COLUMNS  17
 #define ROWS 5
