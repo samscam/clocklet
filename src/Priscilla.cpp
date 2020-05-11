@@ -27,17 +27,22 @@ int32_t secondaryTimeZone = 330; // Mumbai is +5:30
 
 // ----------- Display
 
-#if defined(RAINBOWDISPLAY)
+// #if defined(RAINBOWDISPLAY)
 
-#include "Displays/RGBDigit.h"
-RGBDigit *display = new RGBDigit();
+// #include "Displays/RGBDigit.h"
+// RGBDigit *display = new RGBDigit();
 
-#elif defined(EPAPER)
+// #elif defined(MATRIX)
 
-#include "Displays/Epaper.h"
-Display *display = new EpaperDisplay();
+#include "Displays/Matrix.h"
+Matrix *display = new Matrix();
 
-#endif
+// #elif defined(EPAPER)
+
+// #include "Displays/Epaper.h"
+// Display *display = new EpaperDisplay();
+
+// #endif
 
 
 //Adafruit7 display = Adafruit7();
@@ -162,7 +167,7 @@ void setup() {
   display->displayMessage(greeting.c_str(), rando);
 
   // Uncomment to run various display tests:
-  // displayTests(display); 
+  displayTests(display);  
   
   LOGMEM;
 
@@ -214,12 +219,12 @@ enum Precision {
   minutes, seconds, subseconds
 };
 
-
-#if defined(RAINBOWDISPLAY)
 Precision precision = subseconds;
-#else
-Precision precision = minutes;
-#endif
+// #if defined(RAINBOWDISPLAY)
+// Precision precision = subseconds;
+// #else
+// Precision precision = minutes;
+// #endif
 
 bool didDisplay = false;
 
@@ -366,18 +371,17 @@ void displayTime(DateTime utcTime){
 }
 
 void sensibleDelay(int milliseconds){
-  
-  #ifdef RAINBOWDISPLAY
+  // #ifdef RAINBOWDISPLAY
     FastLED.delay(milliseconds);
-  #else
-    Serial.print("Sleeping for: ");
-    Serial.println(milliseconds);
-    #if defined(ESP32)
-      espSleep(milliseconds);
-    #else
-      delay(milliseconds);
-    #endif
-  #endif
+  // #else
+  //   Serial.print("Sleeping for: ");
+  //   Serial.println(milliseconds);
+  //   #if defined(ESP32)
+  //     espSleep(milliseconds);
+  //   #else
+  //     delay(milliseconds);
+  //   #endif
+  // #endif
 }
 
 // MARK: UPDATE CYCLE ---------------------------------------
@@ -569,7 +573,7 @@ void espSleep(int milliseconds){
 }
 
 void espShutdown(){
-  display->setStatusMessage("LOW BATTERY");
+  // display->setStatusMessage("LOW BATTERY");
   // Serial.println("LOW BATTERY shutting down");
   // esp_deep_sleep_start();
 }
