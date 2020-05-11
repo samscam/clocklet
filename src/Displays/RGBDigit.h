@@ -10,14 +10,13 @@
 // ----------- Display
 
 #if defined(ESP32)
-#define DATA_PIN    18
+#define DATA_PIN    13
 #include "pgmspace.h"
 #else
 #define DATA_PIN    11
 #endif
 
-#define CLOCK_PIN   19
-#define LED_TYPE    SK9822
+#define LED_TYPE    WS2812B
 #define COLOR_ORDER GRB
 
 #define NUM_DIGITS  4
