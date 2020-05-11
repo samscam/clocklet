@@ -233,7 +233,7 @@ void Matrix::displayTime(const DateTime& time, Weather weather){
   CRGB dotColour;
   switch(_deviceState){
     case ok:
-      dotColour = CRGB::White;
+      dotColour = CRGB::Black;
       break;
     case weatherFail:
       dotColour = CRGB::LightYellow;
@@ -252,7 +252,7 @@ void Matrix::displayTime(const DateTime& time, Weather weather){
       break;
   }
 
-  setDot(_blinkColon,1,dotColour);
+  setDot(_blinkColon,dotColour);
 
   FastLED.show();
 
@@ -316,6 +316,11 @@ void Matrix::setDigitMask(uint16_t mask, int digit){
   int bit = 0;
 
   int xpos = digit*4;
+
+  if (digit >= 2){
+    xpos += 2;
+  }
+
   int x = 0;
   int y = 0;
 
@@ -334,14 +339,27 @@ void Matrix::setDigitMask(uint16_t mask, int digit){
 
   }
 
-  //black column
+  //black column after the digit
   for (int n=0;n<5;n++){
     leds[ XYsafe(xpos+3,n) ] = CRGB::Black;
   }
+
 }
 
-void Matrix::setDot(bool state, int digit, CRGB colour){
-  // leds[ 7 + (digit * DIGIT_SEGS)] = state ? colour : CRGB::Black ;
+void Matrix::setDot(bool state, CRGB colour){
+  leds[ XYsafe(8,0) ] = CRGB::Black ;
+  leds[ XYsafe(8,2) ] = CRGB::Black ;
+  leds[ XYsafe(8,4) ] = CRGB::Black ;
+
+  if (!state){
+    leds[ XYsafe(8,1) ] =  colour ;
+    leds[ XYsafe(8,3) ] =  colour ;
+  }
+  
+    //black column after the dots
+  for (int n=0;n<5;n++){
+    leds[ XYsafe(9,n) ] = CRGB::Black;
+  }
 }
 
 /// Display a string (up to the length of the display)

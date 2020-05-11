@@ -68,7 +68,7 @@ public:
   void setDeviceState(DeviceState state);
 
   void graphicsTest();
-  
+
 private:
 
   void displayTime(const DateTime& time, Weather weather);
@@ -92,7 +92,7 @@ private:
 
   void setDigitMask(uint16_t mask, int digit);
 
-  void setDot(bool state, int digit, CRGB colour = CRGB::White);
+  void setDot(bool state, CRGB colour = CRGB::Black);
   
   void advanceWindCycle(float speed);
 
