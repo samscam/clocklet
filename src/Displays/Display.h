@@ -52,6 +52,9 @@ public:
 
   virtual void setRainbows(bool rainbows) {}
 
+  // Runs graphics tests
+  virtual void graphicsTest() {}
+
 };
 
 #endif

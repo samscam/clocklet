@@ -95,6 +95,34 @@ void Matrix::setDeviceState(DeviceState newState){
   _deviceState = newState;
 }
 
+void Matrix::graphicsTest(){
+  // Red
+  fill_solid(leds, NUM_LEDS, CRGB::Red);
+  FastLED.show();
+  delay(500);
+
+  // Green
+  fill_solid(leds, NUM_LEDS, CRGB::Green);
+  FastLED.show();
+  delay(500);
+
+  // Blue
+  fill_solid(leds, NUM_LEDS, CRGB::Blue);
+  FastLED.show();
+  delay(500);
+
+  // Rainbow
+  fill_rainbow(leds,NUM_LEDS,0);
+  FastLED.show();
+  delay(500);
+
+  // for (int f = -10; f<41; f++){
+  //     CRGB colour = colourFromTemperature((float)f);
+  //     setDigits(f,colour);
+  //     frameLoop();
+  // }
+}
+
 // PRIVATE
 
 

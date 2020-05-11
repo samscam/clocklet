@@ -67,6 +67,8 @@ public:
 
   void setDeviceState(DeviceState state);
 
+  void graphicsTest();
+  
 private:
 
   void displayTime(const DateTime& time, Weather weather);
