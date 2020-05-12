@@ -409,7 +409,10 @@ void RGBDigit::advanceWindCycle(float speed){
   if (cycle > 255.0f) {
     cycle -= 255.0f;
   }
-
+  // Catch accidental infinity
+  if (cycle > 255.0 || cycle < -255.0) {
+    cycle = 0;
+  }
 }
 
 void RGBDigit::fillDigits_rainbow(bool includePoints){

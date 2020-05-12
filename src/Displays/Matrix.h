@@ -97,7 +97,7 @@ private:
   
   void advanceWindCycle(float speed);
 
-  void fillDigits_rainbow(bool includePoints);
+  void fillDigits_rainbow();
   void fillDigits_heat(); //temps in •c
   void fillDigits_gradient(CRGB startColour, CRGB endColour);
 
@@ -131,7 +131,7 @@ private:
 
   CRGBPalette16 scaledHeatPalette;
   CRGBPalette256 temperaturePalette;
-  uint8_t cycle = 0;
+  float cycle = 0; // this is a float because 255 is not high enough resolution
 
 };
 

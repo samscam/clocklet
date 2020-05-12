@@ -77,7 +77,7 @@ void Matrix::displayMessage(const char *stringy, MessageType messageType = good)
 }
 
 void Matrix::setStatusMessage(const char * string){
-  fillDigits_rainbow(true);
+  fillDigits_rainbow();
   displayString(string);
   FastLED.show();
 }
@@ -98,16 +98,19 @@ void Matrix::setDeviceState(DeviceState newState){
 void Matrix::graphicsTest(){
   // Red
   fill_solid(leds, NUM_LEDS, CRGB::Red);
+  displayString("Red");
   FastLED.show();
   delay(500);
 
   // Green
   fill_solid(leds, NUM_LEDS, CRGB::Green);
+  displayString("Green");
   FastLED.show();
   delay(500);
 
   // Blue
   fill_solid(leds, NUM_LEDS, CRGB::Blue);
+  displayString("Blue");
   FastLED.show();
   delay(500);
 
@@ -177,7 +180,7 @@ void Matrix::scrollText(const char *stringy, CRGB startColour, CRGB endColour) {
 }
 
 int Matrix::drawChar(bool imageBuffer[255][5], char character, int xpos, int ypos, const byte* font){
-  Serial.printf("Rendering: %c\n",character);
+
   int width = 0;
   bool charfound = false;
   int elementCount = 138;// sizeof(font) / sizeof(font[0]);
@@ -193,22 +196,20 @@ int Matrix::drawChar(bool imageBuffer[255][5], char character, int xpos, int ypo
     i += 3;
     if (ascii == character) {
       charfound = true;
-      Serial.printf("Found glyph: %d\n",ascii);
-      Serial.printf("Width: %d Height: %d Bits:%d Bytes:%d\n",width,height,glyphBits,glyphBytes);
       int glyphx = 0;
       int glyphy = 0;
-
+      int processedBits = 0;
       // render it into the buffer
       for (int b = 0; b < glyphBytes; b++ ){
         byte workingByte = font[i+b];
         int bit = 0;
 
-        while (bit < 8){
+        while (bit < 8 && processedBits<glyphBits){
           byte crunched = workingByte << bit;
           crunched = crunched >> 7;
-          Serial.print(crunched);
           imageBuffer[ glyphx+xpos][ glyphy+ypos ] = crunched;
           bit++;
+          processedBits++;
           glyphx++;
           if (glyphx==width){
             glyphx=0;
@@ -217,7 +218,6 @@ int Matrix::drawChar(bool imageBuffer[255][5], char character, int xpos, int ypo
         }
 
       }
-      Serial.println("");
     }
     i += glyphBytes;
   }
@@ -234,7 +234,7 @@ void Matrix::displayTime(const DateTime& time, Weather weather){
 
   if (rainbows){
     // Fill the digits entirely with rainbows
-    fillDigits_rainbow(false);
+    fillDigits_rainbow();
   } else {
     // Or heat colours
     fillDigits_heat();
@@ -418,7 +418,6 @@ void Matrix::displayString(const char *string){
     int width = drawChar(imageBuffer,string[ch],xpos,0,MATRIX5_FONT);
     
     xpos += width+1;
-    Serial.printf("Width was: %d xpos now:%d\n",width,xpos);
   }
 
   for (int y=0;y<5;y++){
@@ -523,15 +522,20 @@ void Matrix::advanceWindCycle(float speed){
   
   */
  
-  cycle = cycle + ( (speed * 5.0f ) / (float)FPS );
-  if (cycle > 255.0f) {
-    cycle -= 255.0f;
+  cycle = cycle + ((speed * 5.0f ) / (float)FPS);
+  
+  // loop it round
+  if (cycle > 255.0){
+    cycle = cycle - 255.0;
   }
 
+  // Catch accidental infinity
+  if (cycle > 255.0 || cycle < -255.0) {
+    cycle = 0;
+  }
 }
 
-void Matrix::fillDigits_rainbow(bool includePoints){
-
+void Matrix::fillDigits_rainbow(){
 
   uint8_t hue = cycle;
   fill_rainbow(leds, NUM_LEDS, hue, 1);
@@ -555,8 +559,8 @@ CRGB Matrix::colourFromTemperature(float temperature){
 
 void Matrix::fillDigits_heat(){
 
-
-  fill_palette(leds, NUM_LEDS, cycle, 1, scaledHeatPalette, 255, LINEARBLEND);
+  uint8_t startIndex = cycle;
+  fill_palette(leds, NUM_LEDS, startIndex, 1, scaledHeatPalette, 255, LINEARBLEND);
 
 }
 
@@ -594,6 +598,7 @@ void Matrix::initRain(){
 
 void Matrix::addRain( fract8 chanceOfRain, CRGB colour)
 {
+
   // for(int i = 0; i < NUM_LEDS; i++) {
   //   rainLayer[i].nscale8(230);
   // }

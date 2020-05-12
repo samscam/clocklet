@@ -160,9 +160,9 @@ void setup() {
 
   // DISPLAY A GREETING
   display->setStatusMessage("PART");
-  delay(5000);
+  delay(1000);
   display->setStatusMessage("TIME");
-  delay(5000);
+  delay(1000);
   String greeting = String("Hello "+owner);
   display->displayMessage(greeting.c_str(), rando);
 

@@ -11,9 +11,22 @@ void displayTests(Display *display){
     
     display->graphicsTest();
 
-
+    display->setStatusMessage("ABCD");
+    delay(3000);
+    display->setStatusMessage("EFGH");
+    delay(3000);
+    display->setStatusMessage("IJKL");
+    delay(3000);
+    display->setStatusMessage("MNO");
+    delay(3000);
+    display->setStatusMessage("PQRS");
+    delay(3000);
+    display->setStatusMessage("TUVW");
+    delay(3000);
+    display->setStatusMessage("XYZ");
+    delay(3000);
     display->setStatusMessage("FAST");
-    delay(1000);
+    delay(3000);
     runFast(display);
 
 }
