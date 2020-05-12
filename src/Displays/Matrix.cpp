@@ -78,7 +78,7 @@ void Matrix::displayMessage(const char *stringy, MessageType messageType = good)
 
 void Matrix::setStatusMessage(const char * string){
   fillDigits_rainbow(true);
-  setDigits(string);
+  displayString(string);
   FastLED.show();
 }
 
@@ -176,6 +176,53 @@ void Matrix::scrollText(const char *stringy, CRGB startColour, CRGB endColour) {
   // }
 }
 
+int Matrix::drawChar(bool imageBuffer[255][5], char character, int xpos, int ypos, const byte* font){
+  Serial.printf("Rendering: %c\n",character);
+  int width = 0;
+  bool charfound = false;
+  int elementCount = 138;// sizeof(font) / sizeof(font[0]);
+  Serial.println(elementCount);
+  int i = 0;
+  while (!charfound && i < elementCount) {
+    char ascii = font[i];
+    width = font[i+1];
+    int height = font[i+2];
+    int glyphBits = width*height;
+    size_t glyphBytes = glyphBits/8 + (glyphBits % 8 != 0);
+
+    i += 3;
+    if (ascii == character) {
+      charfound = true;
+      Serial.printf("Found glyph: %d\n",ascii);
+      Serial.printf("Width: %d Height: %d Bits:%d Bytes:%d\n",width,height,glyphBits,glyphBytes);
+      int glyphx = 0;
+      int glyphy = 0;
+
+      // render it into the buffer
+      for (int b = 0; b < glyphBytes; b++ ){
+        byte workingByte = font[i+b];
+        int bit = 0;
+
+        while (bit < 8){
+          byte crunched = workingByte << bit;
+          crunched = crunched >> 7;
+          Serial.print(crunched);
+          imageBuffer[ glyphx+xpos][ glyphy+ypos ] = crunched;
+          bit++;
+          glyphx++;
+          if (glyphx==width){
+            glyphx=0;
+            glyphy++;
+          }
+        }
+
+      }
+      Serial.println("");
+    }
+    i += glyphBytes;
+  }
+  return width;
+}   
 
 // MARK: DISPLAY TIME --------------------------------------
 
@@ -230,7 +277,7 @@ void Matrix::displayTime(const DateTime& time, Weather weather){
 
   _blinkColon = (time.second() % 2) == 0;
 
-  CRGB dotColour;
+  CRGB dotColour = CRGB::Black;
   switch(_deviceState){
     case ok:
       dotColour = CRGB::Black;
@@ -257,6 +304,7 @@ void Matrix::displayTime(const DateTime& time, Weather weather){
   FastLED.show();
 
 }
+
 
 void Matrix::maskTime(const DateTime& time){
   int digit[4];
@@ -285,8 +333,6 @@ void Matrix::setDigit(int number, int digit){
   setDigitMask(mask,digit);
 }
 
-
-
 void Matrix::setDigit(char character, int digit){
   uint16_t mask = 0;
 
@@ -308,6 +354,7 @@ void Matrix::setDigit(char character, int digit){
 
   setDigitMask(mask,digit);
 }
+
 
 
 
@@ -363,34 +410,48 @@ void Matrix::setDot(bool state, CRGB colour){
 }
 
 /// Display a string (up to the length of the display)
-void Matrix::setDigits(const char *string){
-  // for (int i=0;i<DIGIT_COUNT;i++){
-  //   setDigit(string[i],i);
-  // }
+void Matrix::displayString(const char *string){
+
+  bool imageBuffer[255][5] = {0};
+  int xpos = 0;
+  for (int ch=0;ch<strlen(string);ch++){  
+    int width = drawChar(imageBuffer,string[ch],xpos,0,MATRIX5_FONT);
+    
+    xpos += width+1;
+    Serial.printf("Width was: %d xpos now:%d\n",width,xpos);
+  }
+
+  for (int y=0;y<5;y++){
+    for (int x=0;x<17;x++){
+      if (!imageBuffer[x][y]){
+        leds[ XYsafe(x,4-y)] = CRGB::Black; 
+      }
+    }
+  }
 }
 
 /// Display an integer
 void Matrix::setDigits(int number, CRGB colour){
   fillDigits_gradient(colour,colour);
-  // bool negative = false;
+  bool negative = false;
 
-  // if (number < 0) {
-  //   negative = true;
-  //   number = number * -1;
-  // }
+  if (number < 0) {
+    negative = true;
+    number = number * -1;
+  }
 
-  // for (int i=0;i<DIGIT_COUNT-1;i++){
-  //   int fromRight = DIGIT_COUNT - i - 1;
-  //   int units = number % 10;
-  //   setDigit(units,fromRight);
-  //   number = number / 10;
-  // }
+  for (int i=0;i<4-1;i++){
+    int fromRight = 4 - i - 1;
+    int units = number % 10;
+    setDigit(units,fromRight);
+    number = number / 10;
+  }
 
-  // if (negative){
-  //   setDigit('-',0);
-  // } else {
-  //   setDigit(' ',0);
-  // }
+  if (negative){
+    setDigit('-',0);
+  } else {
+    setDigit(' ',0);
+  }
 
 }
 

@@ -81,14 +81,15 @@ private:
   void scrollText(const char *stringy, CRGB colour);
   void scrollText(const char *stringy, CRGB startColour, CRGB endColour);
   void scrollText_randomColour(const char *stringy);
+  
+  int drawChar(bool imageBuffer[255][5], char character, int xpos, int ypos, const byte* font);
 
   void setDigit(int number, int digit);
   void setDigit(char character, int digit);
 
-  void setDigits(const char *string);
+  void displayString(const char *string);
 
   void setDigits(float number, CRGB colour = CRGB::White);
-
 
   void setDigitMask(uint16_t mask, int digit);
 
