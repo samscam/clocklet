@@ -11,22 +11,16 @@ void displayTests(Display *display){
     
     display->graphicsTest();
 
-    display->setStatusMessage("ABCD");
-    delay(3000);
-    display->setStatusMessage("EFGH");
-    delay(3000);
-    display->setStatusMessage("IJKL");
-    delay(3000);
-    display->setStatusMessage("MNO");
-    delay(3000);
-    display->setStatusMessage("PQRS");
-    delay(3000);
-    display->setStatusMessage("TUVW");
-    delay(3000);
-    display->setStatusMessage("XYZ");
-    delay(3000);
-    display->setStatusMessage("FAST");
-    delay(3000);
+    // // Uppercase message
+    // display->displayMessage("THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG", rando);
+
+    // // Lowercase message
+    // display->displayMessage("pack my box with five dozen liquor jugs", rando);
+
+    display->displayMessage("Clocklet wants a bagel", rando);
+    delay(1000);
+    display->displayMessage("CLOCKLET WANTS A FUCKING BAGEL", rando);
+
     runFast(display);
 
 }

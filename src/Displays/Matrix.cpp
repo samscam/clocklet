@@ -115,7 +115,7 @@ void Matrix::graphicsTest(){
   delay(500);
 
   // Rainbow
-  fill_rainbow(leds,NUM_LEDS,0);
+  fill_rainbow(leds,NUM_LEDS,0,255/NUM_LEDS);
   FastLED.show();
   delay(500);
 
@@ -149,10 +149,77 @@ void Matrix::scrollText(const char *stringy, CRGB colour){
 }
 
 void Matrix::scrollText(const char *stringy, CRGB startColour, CRGB endColour) {
-  // Serial.println(stringy);
+  
+  Serial.printf("Scrolling: %s\n",stringy);
 
-  // char charbuffer[DIGIT_COUNT] = { 0 };
-  // int origLen = strlen(stringy);
+  int remainingCharacters = strlen(stringy);
+  int charCount = 0;
+  bool imageBuffer[255][5] = {};
+  
+  int lastGlyphWidth = 0;
+  int shiftedSinceLastChar = 0;
+
+  bool isScrolling = true;
+  while (isScrolling){
+    
+    fillDigits_gradient(startColour,endColour);
+
+    // Render the buffer
+    for (int y=0;y<5;y++){
+      for (int x=0;x<17;x++){
+        if (!imageBuffer[x][y]){
+          leds[ XYsafe(x,4-y)] = CRGB::Black; 
+        }
+      }
+    }
+    FastLED.show();
+    FastLED.delay(80);
+
+    // Shift it one to the left
+    for (int col = 0; col<255-1; col++){
+      for (int row = 0; row<5; row++){
+        imageBuffer[col][row] = imageBuffer[col+1][row];
+      }
+    }
+
+    shiftedSinceLastChar ++;
+
+    // Do we need another character adding?
+    if (shiftedSinceLastChar > lastGlyphWidth && remainingCharacters > 0){
+      char thisCharacter = stringy[charCount];
+
+      lastGlyphWidth = drawChar(imageBuffer,thisCharacter,COLUMNS,0,MATRIX5_FONT);
+      remainingCharacters--;
+      charCount++;
+      shiftedSinceLastChar = 0;
+    }
+    if (remainingCharacters == 0 && shiftedSinceLastChar > lastGlyphWidth + COLUMNS){
+      isScrolling = false;
+    }
+    
+  }
+}
+
+/// Display a string (up to the length of the display)
+void Matrix::displayString(const char *string){
+
+  bool imageBuffer[255][5] = {0};
+  int xpos = 0;
+  for (int ch=0;ch<strlen(string);ch++){  
+    int width = drawChar(imageBuffer,string[ch],xpos,0,MATRIX5_FONT);
+    
+    xpos += width+1;
+  }
+
+  for (int y=0;y<5;y++){
+    for (int x=0;x<17;x++){
+      if (!imageBuffer[x][y]){
+        leds[ XYsafe(x,4-y)] = CRGB::Black; 
+      }
+    }
+  }
+}
+
   // int extendedLen = origLen + DIGIT_COUNT;
   // char res[extendedLen];
   // memset(res, 0, extendedLen);
@@ -177,24 +244,28 @@ void Matrix::scrollText(const char *stringy, CRGB startColour, CRGB endColour) {
   //   FastLED.delay(200);
 
   // }
-}
 
 int Matrix::drawChar(bool imageBuffer[255][5], char character, int xpos, int ypos, const byte* font){
 
   int width = 0;
   bool charfound = false;
-  int elementCount = 138;// sizeof(font) / sizeof(font[0]);
-  Serial.println(elementCount);
+  
   int i = 0;
-  while (!charfound && i < elementCount) {
+
+  while (!charfound && font[i] != 0x00) {
     char ascii = font[i];
     width = font[i+1];
     int height = font[i+2];
     int glyphBits = width*height;
     size_t glyphBytes = glyphBits/8 + (glyphBits % 8 != 0);
+    
+    // Serial.printf("Scanning glyph %c\n",ascii);
 
     i += 3;
     if (ascii == character) {
+      // Serial.printf("Found glyph for %c\n",character);
+      // Serial.printf("Width %d height %d bits %d bytes %d\n",width,height,glyphBits,glyphBytes);
+
       charfound = true;
       int glyphx = 0;
       int glyphy = 0;
@@ -207,6 +278,7 @@ int Matrix::drawChar(bool imageBuffer[255][5], char character, int xpos, int ypo
         while (bit < 8 && processedBits<glyphBits){
           byte crunched = workingByte << bit;
           crunched = crunched >> 7;
+          // Serial.print(crunched);
           imageBuffer[ glyphx+xpos][ glyphy+ypos ] = crunched;
           bit++;
           processedBits++;
@@ -218,7 +290,9 @@ int Matrix::drawChar(bool imageBuffer[255][5], char character, int xpos, int ypo
         }
 
       }
+      // Serial.println("");
     }
+    
     i += glyphBytes;
   }
   return width;
@@ -409,25 +483,7 @@ void Matrix::setDot(bool state, CRGB colour){
   }
 }
 
-/// Display a string (up to the length of the display)
-void Matrix::displayString(const char *string){
 
-  bool imageBuffer[255][5] = {0};
-  int xpos = 0;
-  for (int ch=0;ch<strlen(string);ch++){  
-    int width = drawChar(imageBuffer,string[ch],xpos,0,MATRIX5_FONT);
-    
-    xpos += width+1;
-  }
-
-  for (int y=0;y<5;y++){
-    for (int x=0;x<17;x++){
-      if (!imageBuffer[x][y]){
-        leds[ XYsafe(x,4-y)] = CRGB::Black; 
-      }
-    }
-  }
-}
 
 /// Display an integer
 void Matrix::setDigits(int number, CRGB colour){

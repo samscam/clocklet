@@ -132,7 +132,7 @@ private:
   CRGBPalette16 scaledHeatPalette;
   CRGBPalette256 temperaturePalette;
   float cycle = 0; // this is a float because 255 is not high enough resolution
-
+  
 };
 
 #endif
