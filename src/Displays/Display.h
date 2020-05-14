@@ -6,7 +6,7 @@
 #include "../weather/weather.h"
 
 enum MessageType {
-  good, bad, rando
+  good, bad, rando, rainbow
 };
 
 // General purpose protocol for clock displays

@@ -3,6 +3,8 @@
 #include "Matrix.h"
 #include <Fonts/MatrixFont.h>
 #include "../settings.h"
+#include "MatrixUtils.h"
+
 
 FASTLED_USING_NAMESPACE
 
@@ -73,6 +75,9 @@ void Matrix::displayMessage(const char *stringy, MessageType messageType = good)
     case rando:
     scrollText_randomColour(stringy);
     break;
+    case rainbow:
+    scrollText_rainbow(stringy);
+    break;
   }
 }
 
@@ -115,15 +120,21 @@ void Matrix::graphicsTest(){
   delay(500);
 
   // Rainbow
-  fill_rainbow(leds,NUM_LEDS,0,255/NUM_LEDS);
-  FastLED.show();
-  delay(500);
+  
 
-  // for (int f = -10; f<41; f++){
-  //     CRGB colour = colourFromTemperature((float)f);
-  //     setDigits(f,colour);
-  //     frameLoop();
-  // }
+
+  for (int i=0;i<100;i++){
+    fill_matrix_radial_rainbow(leds,COLUMNS,ROWS,8,30,i,50);
+    FastLED.show();
+    delay(10);
+  }
+
+  for (float f = -10; f<41; f+=0.1){
+      CRGB colour = colourFromTemperature((float)f);
+      setDigits(f,colour);
+      FastLED.show();
+      delay(100);
+  }
 }
 
 // PRIVATE
@@ -148,22 +159,41 @@ void Matrix::scrollText(const char *stringy, CRGB colour){
   scrollText(stringy, colour, colour);
 }
 
-void Matrix::scrollText(const char *stringy, CRGB startColour, CRGB endColour) {
+void Matrix::scrollText_rainbow(const char *stringy){
+  scrollText(stringy, CRGB::Black, CRGB::Black, true);
+}
+
+void Matrix::scrollText(const char *stringy, CRGB startColour, CRGB endColour, bool rainbow) {
   
   Serial.printf("Scrolling: %s\n",stringy);
 
   int remainingCharacters = strlen(stringy);
+
   int charCount = 0;
   bool imageBuffer[255][5] = {};
   
   int lastGlyphWidth = 0;
   int shiftedSinceLastChar = 0;
+  uint8_t step = 0;
 
   bool isScrolling = true;
-  while (isScrolling){
-    
-    fillDigits_gradient(startColour,endColour);
+  
+  TickType_t xLastWakeTime = xTaskGetTickCount();
+  const TickType_t xFrequency = pdMS_TO_TICKS(1000/FPS);
 
+  int millisPerStep = 100;
+  ulong lastmillis = millis();
+
+  while (isScrolling){
+    if (rainbow){
+      fill_matrix_radial_rainbow(leds,COLUMNS,ROWS,8,30,step,10);
+    } else {
+      fillDigits_gradient(startColour,endColour,step);
+    }
+    
+    
+
+    step++;
     // Render the buffer
     for (int y=0;y<5;y++){
       for (int x=0;x<17;x++){
@@ -173,7 +203,13 @@ void Matrix::scrollText(const char *stringy, CRGB startColour, CRGB endColour) {
       }
     }
     FastLED.show();
-    FastLED.delay(80);
+    vTaskDelayUntil(&xLastWakeTime, xFrequency);
+
+    if (millis()-lastmillis < millisPerStep){
+      continue;
+    }
+
+    lastmillis = millis();
 
     // Shift it one to the left
     for (int col = 0; col<255-1; col++){
@@ -220,30 +256,6 @@ void Matrix::displayString(const char *string){
   }
 }
 
-  // int extendedLen = origLen + DIGIT_COUNT;
-  // char res[extendedLen];
-  // memset(res, 0, extendedLen);
-  // memcpy(res,stringy,origLen);
-
-  // int i;
-  // for ( i = 0; i < extendedLen ; i++ ) {
-  //   fillDigits_gradient(startColour,endColour);
-
-  //   for ( int d = 0; d < DIGIT_COUNT ; d++ ) {
-  //     if (d == 3) {
-  //       charbuffer[d] = res[i];
-  //     } else {
-  //       charbuffer[d] = charbuffer[d+1];
-  //     }
-
-  //     setDigit(charbuffer[d], d);
-
-  //   }
-
-  //   FastLED.show();
-  //   FastLED.delay(200);
-
-  // }
 
 int Matrix::drawChar(bool imageBuffer[255][5], char character, int xpos, int ypos, const byte* font){
 
@@ -252,19 +264,21 @@ int Matrix::drawChar(bool imageBuffer[255][5], char character, int xpos, int ypo
   
   int i = 0;
 
+  // Each time we want to draw a char it will iterate through the font table until it finds the right glyph
   while (!charfound && font[i] != 0x00) {
-    char ascii = font[i];
-    width = font[i+1];
-    int height = font[i+2];
+
+    // The font table structure is... (one byte at a time)
+    char ascii = font[i]; // Ascii code for the glyph
+    width = font[i+1];    // Width of the glyph
+    int height = font[i+2];// Height of the glyph
     int glyphBits = width*height;
-    size_t glyphBytes = glyphBits/8 + (glyphBits % 8 != 0);
-    
-    // Serial.printf("Scanning glyph %c\n",ascii);
+    size_t glyphBytes = glyphBits/8 + (glyphBits % 8 != 0); // this many bytes of actual bitmap data
+    // ... and then on to the next ascii code
+    // Some kind of lookup (or not re-inventing the wheel here) would probably be preferable,
+    // but it works and is easy to edit...
 
     i += 3;
     if (ascii == character) {
-      // Serial.printf("Found glyph for %c\n",character);
-      // Serial.printf("Width %d height %d bits %d bytes %d\n",width,height,glyphBits,glyphBytes);
 
       charfound = true;
       int glyphx = 0;
@@ -278,7 +292,7 @@ int Matrix::drawChar(bool imageBuffer[255][5], char character, int xpos, int ypo
         while (bit < 8 && processedBits<glyphBits){
           byte crunched = workingByte << bit;
           crunched = crunched >> 7;
-          // Serial.print(crunched);
+          
           imageBuffer[ glyphx+xpos][ glyphy+ypos ] = crunched;
           bit++;
           processedBits++;
@@ -290,7 +304,6 @@ int Matrix::drawChar(bool imageBuffer[255][5], char character, int xpos, int ypo
         }
 
       }
-      // Serial.println("");
     }
     
     i += glyphBytes;
@@ -511,55 +524,13 @@ void Matrix::setDigits(int number, CRGB colour){
 }
 
 /// Display a float
-/// This really doesn't work properly.
 void Matrix::setDigits(float number, CRGB colour){
   fillDigits_gradient(colour,colour);
-
-  // // Decompose the float
-  // float integral, fractional;
-  // fractional = modff(number, &integral);
-
-  // int digit = 0;
-
-  // bool negative = (fractional < 0) ;
-  // if (negative){
-  //   setDigit('-',digit);
-  //   digit++;
-
-  //   integral = fabsf(integral);
-  //   fractional = fabsf(fractional);
-  // }
-
-  // int integralInt = integral;
-  // bool doneDot = false;
-  // for (;digit<DIGIT_COUNT;digit++){
-    
-  //   if (integralInt > 0){
-  //     int first = integralInt;
-  //     int exp = 0;
-  //     while (first > 10){
-  //       first = first / 10;
-  //       exp ++;
-  //     }
-  //     setDigit(first,digit);
-  //     integralInt -= first * pow(10,exp);
-  //   } else {
-
-  //     if (!doneDot){
-  //       setDot(true,digit-1, colour);
-  //       doneDot = true;
-  //     }
-
-  //     int firstFract = fractional * 10;
-
-  //     setDigit(firstFract,digit);
-  //     float dumper;
-  //     fractional = modff(fractional*10,&dumper);
-
-  //   }
-  // }
-
+  char buf[10];
+  sprintf(buf,"%3.1f",number);
+  displayString(buf);
 }
+
 // WIND
 
 void Matrix::advanceWindCycle(float speed){
@@ -593,9 +564,8 @@ void Matrix::advanceWindCycle(float speed){
 
 void Matrix::fillDigits_rainbow(){
 
-  uint8_t hue = cycle;
-  fill_rainbow(leds, NUM_LEDS, hue, 1);
-  
+  uint8_t hue = -cycle;
+  fill_matrix_radial_rainbow(leds,COLUMNS,ROWS,8,30,hue,50);
 }
 
 
@@ -607,7 +577,7 @@ CRGB Matrix::colourFromTemperature(float temperature){
   if (temperature < min) { temperature = min; }
   if (temperature > max) { temperature = max; }
 
-  uint8_t scaled = (int)roundf(((temperature - min) / (max - min)) * 255.0);
+  uint8_t scaled = roundf(((temperature - min) / (max - min)) * 255.0);
 
   CRGB col = ColorFromPalette(temperaturePalette, scaled);
   return col;
@@ -629,7 +599,7 @@ void Matrix::regenerateHeatPalette(float minTemp, float maxTemp){
   }
 }
 
-void Matrix::fillDigits_gradient(CRGB startColour, CRGB endColour){
+void Matrix::fillDigits_gradient(CRGB startColour, CRGB endColour, uint16_t startPos, double direction){
 
   fill_gradient_RGB(leds , 0,  startColour, NUM_LEDS, endColour);
 

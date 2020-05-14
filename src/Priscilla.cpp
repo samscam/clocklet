@@ -159,15 +159,15 @@ void setup() {
   LOGMEM;
 
   // DISPLAY A GREETING
-  display->setStatusMessage("PART");
-  delay(1000);
-  display->setStatusMessage("TIME");
-  delay(1000);
-  String greeting = String("Hello "+owner);
-  display->displayMessage(greeting.c_str(), rando);
+  display->displayMessage("CLOCKLET",rainbow);
+  // delay(1000);
+  // display->setStatusMessage("TIME");
+  // delay(1000);
+  // String greeting = String("Hello "+owner);
+  // display->displayMessage(greeting.c_str(), rando);
 
   // Uncomment to run various display tests:
-  displayTests(display);  
+  // displayTests(display);  
   
   LOGMEM;
 
@@ -297,9 +297,9 @@ void loop() {
   if (millis() > lastRandomMessageTime + nextMessageDelay){
     Serial.println("Random message");
     const char* message = randoMessage();
-    display->displayMessage(message, rando);
-    display->displayMessage(message, rando);
-    display->displayMessage(message, rando);
+    display->displayMessage(message, rainbow);
+    display->displayMessage(message, rainbow);
+
     lastRandomMessageTime = millis();
     nextMessageDelay = 1000 * 60 * random(5,59);
   }

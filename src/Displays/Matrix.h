@@ -79,9 +79,10 @@ private:
   void scrollText(const char *stringy);
   void scrollText_fail(const char *stringy);
   void scrollText(const char *stringy, CRGB colour);
-  void scrollText(const char *stringy, CRGB startColour, CRGB endColour);
+  void scrollText(const char *stringy, CRGB startColour, CRGB endColour, bool rainbow = false);
   void scrollText_randomColour(const char *stringy);
-  
+  void scrollText_rainbow(const char *stringy);
+
   int drawChar(bool imageBuffer[255][5], char character, int xpos, int ypos, const byte* font);
 
   void setDigit(int number, int digit);
@@ -99,8 +100,7 @@ private:
 
   void fillDigits_rainbow();
   void fillDigits_heat(); //temps in •c
-  void fillDigits_gradient(CRGB startColour, CRGB endColour);
-
+  void fillDigits_gradient(CRGB startColour, CRGB endColour, uint16_t startPos = 0, double direction = 0);
 
   void regenerateHeatPalette(float minTemp, float maxTemp);
 
@@ -132,7 +132,7 @@ private:
   CRGBPalette16 scaledHeatPalette;
   CRGBPalette256 temperaturePalette;
   float cycle = 0; // this is a float because 255 is not high enough resolution
-  
+
 };
 
 #endif
