@@ -187,7 +187,7 @@ void setup() {
     display->setDeviceState(bluetooth);
     startProvisioning();
   }
-  // startProvisioning();
+  startProvisioning();
   
   LOGMEM;
   locationManager = new LocationManager();
@@ -386,9 +386,9 @@ void sensibleDelay(int milliseconds){
 
 void updatesHourly(){
   
-  if (isProvisioningActive()){
-    return;
-  }
+  // if (isProvisioningActive()){
+  //   return;
+  // }
 
   LOGMEM;
   Serial.println("Hourly update");
@@ -424,9 +424,9 @@ void updatesDaily(){
   #endif
   generateDSTTimes(rtc.now().year());
 
-  if (isProvisioningActive()){
-    return;
-  }
+  // if (isProvisioningActive()){
+  //   return;
+  // }
 
   // Firmware updates
 
