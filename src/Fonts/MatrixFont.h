@@ -1,3 +1,5 @@
+#pragma once
+
 const uint16_t MATRIX_FONT_NUMBERS[] PROGMEM = {
 0b0111101101101111, // 0
 0b0111010010110010, // 1

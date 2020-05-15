@@ -352,6 +352,7 @@ void Matrix::displayTime(const DateTime& time, Weather weather){
   precip = precip - 25;
   precip = precip < 0 ? 0 : precip;
   fract8 rainChance = (precip * 255) / 75.0;
+  
 
   if (rainChance > 0) {
     switch (weather.precipType) {

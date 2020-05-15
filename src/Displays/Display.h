@@ -1,5 +1,4 @@
-#ifndef PRISCILLA_DISPLAY
-#define PRISCILLA_DISPLAY
+#pragma once
 
 #include <Arduino.h>
 #include <RTClib.h>
@@ -56,5 +55,3 @@ public:
   virtual void graphicsTest() {}
 
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef PRISCILLA_MATRIX
-#define PRISCILLA_MATRIX
+#pragma once
 
 #include <Arduino.h>
 #include <FastLED.h>
@@ -136,5 +135,3 @@ private:
   float cycle = 0; // this is a float because 255 is not high enough resolution
 
 };
-
-#endif
