@@ -17,11 +17,11 @@ void displayTests(Display *display){
     // // Lowercase message
     // display->displayMessage("pack my box with five dozen liquor jugs", rando);
 
-    display->displayMessage("Clocklet wants a bagel", rando);
-    delay(1000);
-    display->displayMessage("CLOCKLET WANTS A FUCKING BAGEL", rando);
+    // display->displayMessage("Clocklet wants a bagel", rando);
+    // delay(1000);
+    // display->displayMessage("CLOCKLET WANTS A FUCKING BAGEL", rando);
 
-    runFast(display);
+    // runFast(display);
 
 }
 

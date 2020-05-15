@@ -101,40 +101,55 @@ void Matrix::setDeviceState(DeviceState newState){
 }
 
 void Matrix::graphicsTest(){
-  // Red
-  fill_solid(leds, NUM_LEDS, CRGB::Red);
-  displayString("Red");
-  FastLED.show();
-  delay(500);
+  // // Red
+  // fill_solid(leds, NUM_LEDS, CRGB::Red);
+  // displayString("Red");
+  // FastLED.show();
+  // delay(500);
 
-  // Green
-  fill_solid(leds, NUM_LEDS, CRGB::Green);
-  displayString("Green");
-  FastLED.show();
-  delay(500);
+  // // Green
+  // fill_solid(leds, NUM_LEDS, CRGB::Green);
+  // displayString("Green");
+  // FastLED.show();
+  // delay(500);
 
-  // Blue
-  fill_solid(leds, NUM_LEDS, CRGB::Blue);
-  displayString("Blue");
-  FastLED.show();
-  delay(500);
+  // // Blue
+  // fill_solid(leds, NUM_LEDS, CRGB::Blue);
+  // displayString("Blue");
+  // FastLED.show();
+  // delay(500);
 
-  // Rainbow
-  
+  // // Rainbow
 
+  // for (int i=0;i<100;i++){
+  //   fill_matrix_radial_rainbow(leds,COLUMNS,ROWS,8,30,i,50);
+  //   FastLED.show();
+  //   delay(10);
+  // }
 
-  for (int i=0;i<100;i++){
-    fill_matrix_radial_rainbow(leds,COLUMNS,ROWS,8,30,i,50);
+  // // Temperature gradients
+  // for (float f = -10; f<41; f+=0.1){
+  //     CRGB colour = colourFromTemperature((float)f);
+  //     setDigits(f,colour);
+  //     FastLED.show();
+  //     delay(100);
+  // }
+
+  // Rain
+
+  TickType_t xLastWakeTime = xTaskGetTickCount();
+  const TickType_t xFrequency = pdMS_TO_TICKS(1000/FPS);
+  fract8 rate = 50;
+  bool done = false;
+  ulong startMillis = millis();
+  while (millis()-startMillis < 10000){
+    fill_solid(leds, NUM_LEDS, CRGB::Black);
+    addRain(rate,CRGB::Blue);
+
     FastLED.show();
-    delay(10);
+    vTaskDelayUntil(&xLastWakeTime, xFrequency);
   }
 
-  for (float f = -10; f<41; f+=0.1){
-      CRGB colour = colourFromTemperature((float)f);
-      setDigits(f,colour);
-      FastLED.show();
-      delay(100);
-  }
 }
 
 // PRIVATE
@@ -336,18 +351,18 @@ void Matrix::displayTime(const DateTime& time, Weather weather){
   // We are shaving off anything under a 25% chance of rain and calling that zero
   precip = precip - 25;
   precip = precip < 0 ? 0 : precip;
-  fract8 rainRate = (precip * 255) / 75.0;
+  fract8 rainChance = (precip * 255) / 75.0;
 
-  if (rainRate > 0) {
+  if (rainChance > 0) {
     switch (weather.precipType) {
       case Snow:
-        addSnow(rainRate);
+        addSnow(rainChance);
         break;
       case Rain:
-        addRain(rainRate, CRGB::Blue);
+        addRain(rainChance, CRGB::Blue);
         break;
       case Sleet:
-        addRain(rainRate, CRGB::White);
+        addRain(rainChance, CRGB::White);
         break;
     }
   }
@@ -624,18 +639,44 @@ void Matrix::initRain(){
 
 void Matrix::addRain( fract8 chanceOfRain, CRGB colour)
 {
+  
+  uint8_t framesPerDrop = 6;
+  // Fade down previous drops
+  nscale8(rainLayer,NUM_LEDS,230);
+  
+  // Shift the drops down one row
+  if (rainFrame > framesPerDrop){
+    rainFrame = 0;
+    for (int row=ROWS-1;row>0;row--){
+      for (int col=0;col<COLUMNS;col++){
+        rainDrops[row][col]=rainDrops[row-1][col];
+      }
+    }
 
-  // for(int i = 0; i < NUM_LEDS; i++) {
-  //   rainLayer[i].nscale8(230);
-  // }
-  // if( random8() < chanceOfRain) {
-  //   int segnum = random8(4 * NUM_DIGITS);
+    // Populate the top row with new raindrops
+    for (int col=0;col<COLUMNS;col++){
+      rainDrops[0][col] = random8() < chanceOfRain/4;
+    }
+  }
 
-  //   rainLayer[ allvsegs[segnum] ] = colour;
-  // }
-  // nscale8_video(leds, NUM_LEDS, 255 - (chanceOfRain * 0.7));
+  rainFrame++;
+  // Render the leading droplets into the layer
+  for (int col=0;col<COLUMNS;col++){
+    for (int row=0;row<ROWS;row++){
+      if (rainDrops[row][col]){
+        rainLayer[ XY(col,row) ] = colour;
+      }
+    }
+  }
+  
+  // Fade the background colours on the main layer down
+  nscale8_video(leds, NUM_LEDS, 255 - (chanceOfRain * 0.5));
 
-  // for(int i = 0; i < NUM_LEDS; i++) { leds[i] += rainLayer[i] ; }
+  // And composite on the raindrops
+  for(int i = 0; i < NUM_LEDS; i++) {
+    leds[i].nscale8(255-(rainLayer[i].b * 0.9));
+    leds[i] += rainLayer[i] ; 
+  }
 }
 
 // Snow

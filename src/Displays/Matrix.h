@@ -126,6 +126,8 @@ private:
 
   bool rainbows = false;
 
+  uint8_t rainFrame = 0;
+  bool rainDrops[ROWS][COLUMNS] = {{0}} ;
   CRGB rainLayer[NUM_LEDS];
   CRGB lighteningLayer[NUM_LEDS];
 

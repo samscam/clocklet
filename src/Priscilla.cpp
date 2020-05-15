@@ -160,9 +160,7 @@ void setup() {
 
   // DISPLAY A GREETING
   display->displayMessage("CLOCKLET",rainbow);
-  // delay(1000);
-  // display->setStatusMessage("TIME");
-  // delay(1000);
+
   // String greeting = String("Hello "+owner);
   // display->displayMessage(greeting.c_str(), rando);
 
@@ -179,7 +177,7 @@ void setup() {
 
   if (isProvisioned){
     if (waitForWifi(6000)){
-      display->displayMessage("Everything is awesome", good);
+      // display->displayMessage("Everything is awesome", good);
     } else {
       display->displayMessage("Network is pants", bad);
       display->setDeviceState(noNetwork);
