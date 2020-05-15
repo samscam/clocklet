@@ -1,4 +1,5 @@
 #include "met-office.h"
+#include <SpiRamJsonAllocator.h>
 
 MetOffice::MetOffice(WiFiClient &client) : WeatherClient(client)  {
   this->client = &client;
@@ -51,7 +52,7 @@ bool MetOffice::readReponseContent() {
   Serial.println("Reading metoffice content");
 
   // Allocate a temporary memory pool
-  DynamicJsonDocument root(METOFFICE_MAX_CONTENT_SIZE);
+  SpiRamJsonDocument root(METOFFICE_MAX_CONTENT_SIZE);
   auto error = deserializeJson(root,*client);
 
 
@@ -73,7 +74,7 @@ bool MetOffice::readReponseContent() {
   JsonArray periods = root["SiteRep"]["DV"]["Location"]["Period"];
   Serial.println("metoffice MUNGE");
 
-  DynamicJsonDocument flatRepsDoc = DynamicJsonDocument(2048);
+  SpiRamJsonDocument flatRepsDoc = SpiRamJsonDocument(2048);
   JsonArray flatReps = flatRepsDoc.createNestedArray();
   int i=0;
   bool stop = false;

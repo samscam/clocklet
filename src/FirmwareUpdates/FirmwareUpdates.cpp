@@ -9,6 +9,8 @@
 #include "settings.h"
 
 #include "esp_log.h"
+#include <SpiRamJsonAllocator.h>
+
 
 const char* TAG = "Firmware Updates";
 
@@ -121,7 +123,7 @@ bool FirmwareUpdates::checkForUpdates(bool useStaging) {
     }
 
     // Parse JSON object
-    DynamicJsonDocument doc(capacity);
+    SpiRamJsonDocument doc(capacity);
     DeserializationError error = deserializeJson(doc, *client);
 
     ESP_LOGV(TAG, "TRASHING");

@@ -1,4 +1,5 @@
 #include "darksky.h"
+#include <SpiRamJsonAllocator.h>
 
 #define TAG "DARKSKY"
 
@@ -20,7 +21,7 @@ void DarkSky::setTimeHorizon(uint8_t hours){
 bool DarkSky::readReponseContent() {
 
   // Allocate a temporary memory pool
-  DynamicJsonDocument root(30720);
+  SpiRamJsonDocument root(30720);
   auto error = deserializeJson(root,*client);
 
   if (error) {
