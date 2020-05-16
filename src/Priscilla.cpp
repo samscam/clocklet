@@ -52,17 +52,18 @@ Matrix *display = new Matrix();
 
 // ----------- RTC
 
-#if defined(TIME_GPS)
-#include "TimeThings/GPSTime.h"
-RTC_GPS rtc = RTC_GPS();
-
-#elif defined(TIME_DS3231)
-RTC_DS3231 rtc = RTC_DS3231();
-
-#elif defined(TIME_ESP32)
+// We will always use the internal ESP32 time now...
 #include "TimeThings/ESP32Rtc.h"
 RTC_ESP32 rtc = RTC_ESP32();
 
+
+#if defined(TIME_GPS)
+#include "TimeThings/GPSTime.h"
+RTC_GPS gpsRTC = RTC_GPS();
+#endif
+
+#if defined(TIME_DS3231)
+RTC_DS3231 ds3231 = RTC_DS3231();
 #endif
 
 #if defined(LOCATION_GPS)
@@ -151,7 +152,7 @@ void setup() {
   }
 
   Serial.println("Clock starting!");
-  Wire.begin();
+
 
   display->setup();
   display->setBrightness(currentBrightness());
@@ -190,6 +191,7 @@ void setup() {
   startProvisioning();
   
   LOGMEM;
+
   locationManager = new LocationManager();
   if (!locationManager->hasSavedLocation()){
     display->displayMessage("Where am I", bad);
@@ -198,6 +200,21 @@ void setup() {
     rainbows.setLocation(locationManager->getLocation());
   }
 
+  // Initialise I2c stuff (DS3231)
+  #if defined(TIME_DS3231)
+
+  #if defined(CLOCKBRAIN)
+  Wire.begin(22, 21); // Got the damn pins the wrong way round on clockbrain
+  #else
+  Wire.begin();
+  #endif
+
+  if (!ds3231.begin()){
+    Serial.println("Could not connect to DS3231");
+  }
+  #endif
+
+  // Start the internal RTC and NTP sync
   rtc.begin();
 
 }
