@@ -138,7 +138,7 @@ void setup() {
   LOGMEM;
 
   analogReadResolution(12);
-
+  analogSetPinAttenuation(LIGHT_PIN,ADC_0db);
   // Randomise the random seed - Not sure if this is random enough
   // We don't actually need to do this if the wireless subsystems are active
   uint16_t seed = analogRead(A0);
@@ -252,17 +252,17 @@ void loop() {
   if (detectTouchPeriod() > 500){
     display->displayMessage("That tickles",rando);
   }
-  if (detectTouchPeriod() > 5000){
-    startProvisioning();
-    display->setDeviceState(bluetooth);
-    display->displayMessage("Bluetooth is on",good);
-  }
-  if (detectTouchPeriod() > 10000){
-    display->displayMessage("Keep holding for restart",bad);
-  }
-  if (detectTouchPeriod() > 15000){
-    ESP.restart();
-  }
+  // if (detectTouchPeriod() > 5000){
+  //   startProvisioning();
+  //   display->setDeviceState(bluetooth);
+  //   display->displayMessage("Bluetooth is on",good);
+  // }
+  // if (detectTouchPeriod() > 10000){
+  //   display->displayMessage("Keep holding for restart",bad);
+  // }
+  // if (detectTouchPeriod() > 15000){
+  //   ESP.restart();
+  // }
 
   #if defined(BATTERY_MONITORING)
       float voltage = batteryVoltage();
@@ -505,13 +505,12 @@ uint16_t dstAdjust(DateTime time){
 
 // MARK: BRIGHTNESS SENSING -------------------------
 
-int lightPin = 36;
 const int readingWindow = 10;
 uint16_t readings[readingWindow] = {1024};
 int readingIndex = 0;
 
 float currentBrightness(){
-  readings[readingIndex] = analogRead(lightPin);
+  readings[readingIndex] = analogRead(LIGHT_PIN);
   readingIndex++;
   if (readingIndex == readingWindow) { readingIndex = 0; }
   uint16_t sum = 0; // The sum can be a 16 bit integer because
@@ -521,6 +520,7 @@ float currentBrightness(){
   }
 
   uint16_t lightReading = sum / (uint16_t)readingWindow;
+  // Serial.printf("Light %d\n",lightReading);
   return lightReading / 4096.0f;
 
 }
@@ -531,6 +531,8 @@ long startTouchMillis = 0;
 /// Returns the number of ms which the user has been touching the device
 long detectTouchPeriod(){
   int touchValue = touchRead(27);
+  // Serial.printf("Touch %d\n",touchValue);
+  return 0;
 
   // if (touchValue < 43){ // touch threshold is a mess
   //   if (!startTouchMillis){

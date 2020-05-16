@@ -1,5 +1,4 @@
-#ifndef PRISCILLA
-#define PRISCILLA
+#pragma once
 
 #include <Arduino.h>
 
@@ -47,5 +46,4 @@ void espShutdown();
 #endif
 
 
-
-#endif
+#define LIGHT_PIN 36
