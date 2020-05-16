@@ -5,18 +5,23 @@
 #include "lwip/apps/sntp.h"
 
 boolean RTC_ESP32::begin(void){
+  
   configTime(0*3600,0*3600,"pool.ntp.org");
   return true;
 }
 void RTC_ESP32::adjust(const DateTime& dt){
-  // do nothing
+  timeval tv = {dt.unixtime(),0};
+  timezone tz = {0,0};
+  settimeofday(&tv,&tz);
 }
 
 DateTime RTC_ESP32::now(){
   timeval tv;
-  gettimeofday(&tv,NULL);
+  timezone tz = {0,0};
+  gettimeofday(&tv,&tz);
   return DateTime(tv.tv_sec);
 }
+
 
 /* ESP32 calibration experiment
 #include "soc/rtc.h"

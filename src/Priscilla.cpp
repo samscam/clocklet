@@ -186,7 +186,7 @@ void setup() {
   } else {
     display->displayMessage("I need your wifi", bad);
     display->setDeviceState(bluetooth);
-    startProvisioning();
+    // startProvisioning();
   }
   startProvisioning();
   
@@ -212,6 +212,18 @@ void setup() {
   if (!ds3231.begin()){
     Serial.println("Could not connect to DS3231");
   }
+  // Sync the known time to the main clock on the next second boundary...
+  Serial.println("Syncing ds3231 >> esp32 time");
+  DateTime time3231 = ds3231.now();
+  while (ds3231.now() == time3231){
+    delay(1);
+  }
+  time3231 = ds3231.now();
+  rtc.adjust(time3231);
+
+  char ds3231_buf[64] = "DDD, DD MMM YYYY hh:mm:ss";
+  char esp32_buf[64] =  "DDD, DD MMM YYYY hh:mm:ss";
+  Serial.printf("Sync complete... time is:\n - ds3231: %s\n - esp32: %s\n",time3231.toString(ds3231_buf),rtc.now().toString(esp32_buf));
   #endif
 
   // Start the internal RTC and NTP sync
@@ -422,6 +434,20 @@ void updatesHourly(){
   } else {
     display->displayMessage("Where am I", bad);
   }
+
+  // Hourly sync the system (ntp) time back to the ds3231
+  Serial.println("Syncing time: esp32 >> ds3231");
+  uint32_t u32 = rtc.now().unixtime();
+  while (rtc.now().unixtime() == u32){
+    delay(1);
+  }
+  DateTime timertc = rtc.now();
+  ds3231.adjust(timertc);
+
+  char ds3231_buf[64] = "DDD, DD MMM YYYY hh:mm:ss";
+  char esp32_buf[64] =  "DDD, DD MMM YYYY hh:mm:ss";
+  Serial.printf("Sync complete... time is:\n - ds3231: %s\n - esp32: %s\n",ds3231.now().toString(ds3231_buf),rtc.now().toString(esp32_buf));
+
 }
 
 void updatesDaily(){
@@ -439,6 +465,8 @@ void updatesDaily(){
     }
   }
   #endif
+
+
   generateDSTTimes(rtc.now().year());
 
   // if (isProvisioningActive()){
