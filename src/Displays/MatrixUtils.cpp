@@ -30,6 +30,21 @@ void fill_matrix_radial_rainbow(CRGB *leds,
 
 }
 
+void fillMatrixWave(CRGB *leds, int columns, int rows, uint8_t position, uint8_t step, CRGBPalette256 palette){
+  uint8_t yp;
+  uint8_t palpos;
+  uint8_t xchunk = 255/(columns*2);
+  uint8_t ychunk = 255/(rows*2);
+
+  for (int x=0;x<columns;x++){
+    for (int y=0;y<rows;y++){
+      yp = sin8((x * (xchunk)) + position);
+      palpos = yp + (y*ychunk);
+      leds[XYsafe(x,4-y)] = palette[palpos];
+    }
+  }
+}
+
 uint16_t XY( uint8_t x, uint8_t y)
 {
   uint16_t i;

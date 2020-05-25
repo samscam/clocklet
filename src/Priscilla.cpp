@@ -159,14 +159,16 @@ void setup() {
 
   LOGMEM;
 
+  // Uncomment to run various display tests:
+  displayTests(display);  
+
   // DISPLAY A GREETING
   display->displayMessage("CLOCKLET",rainbow);
 
   // String greeting = String("Hello "+owner);
   // display->displayMessage(greeting.c_str(), rando);
 
-  // Uncomment to run various display tests:
-  // displayTests(display);  
+
   
   LOGMEM;
 

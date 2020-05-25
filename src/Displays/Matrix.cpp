@@ -33,7 +33,7 @@ Matrix::Matrix() : Display() {
 
 
 boolean Matrix::setup() {
-  FastLED.addLeds<LED_TYPE,DATA_PIN,CLOCK_PIN,COLOR_ORDER>(leds, NUM_LEDS);//.setCorrection(TypicalLEDStrip);
+  FastLED.addLeds<LED_TYPE,DATA_PIN,CLOCK_PIN,COLOR_ORDER >(leds, NUM_LEDS);//.setCorrection(TypicalLEDStrip);
   temperaturePalette = temperatureGPalette;
   initRain();
   regenerateHeatPalette(0.0,0.0);
@@ -102,30 +102,32 @@ void Matrix::setDeviceState(DeviceState newState){
 
 void Matrix::graphicsTest(){
   // // Red
-  // fill_solid(leds, NUM_LEDS, CRGB::Red);
+  fill_solid(leds, NUM_LEDS, CRGB::Red);
   // displayString("Red");
-  // FastLED.show();
-  // delay(500);
+  FastLED.show();
+  delay(2000);
 
   // // Green
-  // fill_solid(leds, NUM_LEDS, CRGB::Green);
+  fill_solid(leds, NUM_LEDS, CRGB::Green);
   // displayString("Green");
-  // FastLED.show();
-  // delay(500);
+  FastLED.show();
+  delay(2000);
 
   // // Blue
-  // fill_solid(leds, NUM_LEDS, CRGB::Blue);
+  fill_solid(leds, NUM_LEDS, CRGB::Blue);
   // displayString("Blue");
-  // FastLED.show();
-  // delay(500);
+  FastLED.show();
+  delay(2000 );
 
   // // Rainbow
 
-  // for (int i=0;i<100;i++){
-  //   fill_matrix_radial_rainbow(leds,COLUMNS,ROWS,8,30,i,50);
-  //   FastLED.show();
-  //   delay(10);
-  // }
+  for (int i=0;i<100;i++){
+    fill_matrix_radial_rainbow(leds,COLUMNS,ROWS,8,30,i,50);
+    FastLED.show();
+    delay(10);
+  }
+
+
 
   // // Temperature gradients
   // for (float f = -10; f<41; f+=0.1){
@@ -137,14 +139,34 @@ void Matrix::graphicsTest(){
 
   // Rain
 
+  // SETUP FAKE FRAMERATE
   TickType_t xLastWakeTime = xTaskGetTickCount();
   const TickType_t xFrequency = pdMS_TO_TICKS(1000/FPS);
-  fract8 rate = 50;
-  bool done = false;
+
+  CRGBPalette256 pal;
+  // pal = RainbowStripeColors_p;
+  regenerateHeatPalette(0,20);
+
+  pal = scaledHeatPalette;
+  uint8_t position = 0;
   ulong startMillis = millis();
   while (millis()-startMillis < 10000){
+    fillMatrixWave(leds,COLUMNS,ROWS,position,1,pal);
+    position++;
+    FastLED.show();
+    vTaskDelayUntil(&xLastWakeTime, xFrequency);
+  }
+
+  // RAIN
+  fract8 rate = 50;
+  bool done = false;
+  uint8_t hue = 0;
+  startMillis = millis();
+  while (millis()-startMillis < 10000){
     fill_solid(leds, NUM_LEDS, CRGB::Black);
-    addRain(rate,CRGB::Blue);
+
+    addRain(rate,CHSV(hue,255,255));
+    hue++;
 
     FastLED.show();
     vTaskDelayUntil(&xLastWakeTime, xFrequency);
@@ -349,10 +371,10 @@ void Matrix::displayTime(const DateTime& time, Weather weather){
   // PRECIPITATION --------
 
   // We are shaving off anything under a 25% chance of rain and calling that zero
-  precip = precip - 25;
+  precip = precip - 20;
   precip = precip < 0 ? 0 : precip;
-  fract8 rainChance = (precip * 255) / 75.0;
-  
+  fract8 rainChance = (precip * 255) / 80.0;
+
 
   if (rainChance > 0) {
     switch (weather.precipType) {
@@ -602,17 +624,22 @@ CRGB Matrix::colourFromTemperature(float temperature){
 void Matrix::fillDigits_heat(){
 
   uint8_t startIndex = cycle;
-  fill_palette(leds, NUM_LEDS, startIndex, 1, scaledHeatPalette, 255, LINEARBLEND);
-
+  // fill_palette(leds, NUM_LEDS, startIndex, 1, scaledHeatPalette, 255, LINEARBLEND);
+  fillMatrixWave(leds,COLUMNS,ROWS,startIndex,1,scaledHeatPalette);
 }
 
 void Matrix::regenerateHeatPalette(float minTemp, float maxTemp){
-  scaledHeatPalette = CRGBPalette16();
+  CRGBPalette32 tempPalette = CRGBPalette32();
   float tempChunk = (maxTemp - minTemp) / 16.0f;
+  int z=31;
   for (int i = 0; i < 16; i++) {
     float temp = minTemp + (tempChunk * i);
-    scaledHeatPalette[i] = colourFromTemperature(temp);
+    CRGB colour = colourFromTemperature(temp);
+    tempPalette[i] = colour;
+    tempPalette[z] = colour;
+    z--;
   }
+  UpscalePalette(tempPalette,scaledHeatPalette);
 }
 
 void Matrix::fillDigits_gradient(CRGB startColour, CRGB endColour, uint16_t startPos, double direction){

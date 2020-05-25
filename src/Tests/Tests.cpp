@@ -11,18 +11,14 @@ void displayTests(Display *display){
     
     display->graphicsTest();
 
-    // // Uppercase message
-    // display->displayMessage("THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG", rando);
-
-    // // Lowercase message
-    // display->displayMessage("pack my box with five dozen liquor jugs", rando);
+ 
 
     // display->displayMessage("Clocklet wants a bagel", rando);
     // delay(1000);
     // display->displayMessage("CLOCKLET WANTS A FUCKING BAGEL", rando);
 
-    // runFast(display);
-
+    runFast(display);
+    
 }
 
 

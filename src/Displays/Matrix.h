@@ -130,7 +130,7 @@ private:
   CRGB rainLayer[NUM_LEDS];
   CRGB lighteningLayer[NUM_LEDS];
 
-  CRGBPalette16 scaledHeatPalette;
+  CRGBPalette256 scaledHeatPalette;
   CRGBPalette256 temperaturePalette;
   float cycle = 0; // this is a float because 255 is not high enough resolution
 
