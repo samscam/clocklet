@@ -560,7 +560,7 @@ long startTouchMillis = 0;
 
 /// Returns the number of ms which the user has been touching the device
 long detectTouchPeriod(){
-  int touchValue = touchRead(27);
+  int touchValue = touchRead(TOUCH_PIN);
   // Serial.printf("Touch %d\n",touchValue);
   return 0;
 

@@ -17,6 +17,12 @@
 #define BATTERY_PIN A13
 #endif
 
+#if defined(CLOCKBRAIN)
+#define TOUCH_PIN T7
+#else
+#define TOUCH_PIN T6
+#endif
+
 // Function declarations
 
 void updatesDaily();
