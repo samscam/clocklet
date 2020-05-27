@@ -21,7 +21,6 @@ void fill_matrix_radial_rainbow(CRGB *leds,
 
                 hyp = sqrt(pow(x-centrex,2) + pow(y-centrey,2));
                 hue = initialHue - ( hyp * deltaHue);
-                // Serial.printf("%d,%d hyp:%f hue:%d\n",x,y,hyp,hue);
                 leds[XYsafe(x,y)] = CHSV(hue,saturation,brightness);
   
             }
