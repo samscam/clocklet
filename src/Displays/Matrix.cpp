@@ -46,6 +46,23 @@ void Matrix::frameLoop() {
 }
 
 void Matrix::setWeather(Weather weather) {
+
+//   _weather = {
+//   .summary = "No weather yet",
+//   .type = 0,
+//   .precipChance = 1.0f,
+//   .precipIntensity = 1.0f,
+//   .precipType = Rain,
+//   .maxTmp = 01.0f,
+//   .minTmp = 08.0f,
+//   .currentTmp = 02.0f,
+//   .thunder = false,
+//   .windSpeed = 10.0f,
+//   .cloudCover = 0.0f,
+//   .pressure = 0.0f,
+// };
+
+
   _weather = weather;
   
   regenerateHeatPalette(_weather.minTmp,_weather.maxTmp);
