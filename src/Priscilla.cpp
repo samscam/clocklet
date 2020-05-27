@@ -399,8 +399,14 @@ void displayTime(DateTime utcTime){
     display->setSecondaryTime(displayTime,"Mumbai");
 }
 
+// TickType_t xLastWakeTime = xTaskGetTickCount();
+// const TickType_t xFrequency = pdMS_TO_TICKS(1000/FPS);
+
 void sensibleDelay(int milliseconds){
   // #ifdef RAINBOWDISPLAY
+  // BAD SAM BAD SAM!!!
+  // vTaskDelayUntil(&xLastWakeTime, xFrequency);
+
     FastLED.delay(milliseconds);
   // #else
   //   Serial.print("Sleeping for: ");

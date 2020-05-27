@@ -2,6 +2,8 @@
 
 #define FPS               60
 #define TIME_24_HOUR      true
+#define BLINK_SEPARATOR   true
+#define SHOW_DATE         false
 
 // MAP FOR PREFERENCES - keeping it here for now...
   // preferences.putString("owner","people");

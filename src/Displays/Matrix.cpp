@@ -136,14 +136,22 @@ void Matrix::graphicsTest(){
   FastLED.show();
   delay(2000 );
 
+
+  // SETUP FAKE FRAMERATE
+  TickType_t xLastWakeTime = xTaskGetTickCount();
+  const TickType_t xFrequency = pdMS_TO_TICKS(1000/FPS);
+
   // // Rainbow
 
-  for (int i=0;i<100;i++){
-    fill_matrix_radial_rainbow(leds,COLUMNS,ROWS,8,30,i,50);
+  ulong startMillis = millis();
+  uint8_t position = 0;
+  while (millis()-startMillis < 60000){
+    fill_matrix_radial_rainbow(leds,COLUMNS,ROWS,8,30,position,30);
+    position++;
     FastLED.show();
-    delay(10);
-  }
+    vTaskDelayUntil(&xLastWakeTime, xFrequency);
 
+  }
 
 
   // // Temperature gradients
@@ -156,17 +164,14 @@ void Matrix::graphicsTest(){
 
   // Rain
 
-  // SETUP FAKE FRAMERATE
-  TickType_t xLastWakeTime = xTaskGetTickCount();
-  const TickType_t xFrequency = pdMS_TO_TICKS(1000/FPS);
 
   CRGBPalette256 pal;
   // pal = RainbowStripeColors_p;
   regenerateHeatPalette(0,20);
 
   pal = scaledHeatPalette;
-  uint8_t position = 0;
-  ulong startMillis = millis();
+  position = 0;
+  startMillis = millis();
   while (millis()-startMillis < 10000){
     fillMatrixWave(leds,COLUMNS,ROWS,position,1,pal);
     position++;
@@ -372,7 +377,7 @@ void Matrix::displayTime(const DateTime& time, Weather weather){
 
   // Advance the wind cycle
   advanceWindCycle(weather.windSpeed);
-
+  
   if (rainbows){
     // Fill the digits entirely with rainbows
     fillDigits_rainbow();
@@ -387,37 +392,23 @@ void Matrix::displayTime(const DateTime& time, Weather weather){
 
   // PRECIPITATION --------
 
-  // We are shaving off anything under a 25% chance of rain and calling that zero
+  // We are shaving off anything under a 20% chance of rain and calling that zero
   precip = precip - 20;
   precip = precip < 0 ? 0 : precip;
   fract8 rainChance = (precip * 255) / 80.0;
 
 
-  if (rainChance > 0) {
-    switch (weather.precipType) {
-      case Snow:
-        addSnow(rainChance);
-        break;
-      case Rain:
-        addRain(rainChance, CRGB::Blue);
-        break;
-      case Sleet:
-        addRain(rainChance, CRGB::White);
-        break;
-    }
-  }
-
   if (minTmp <= 0.0f){
     addFrost();
   }
 
-  if (weather.thunder){
-    addLightening();
+  if (SHOW_DATE){
+    maskDate(time);
+  } else {
+    maskTime(time);
   }
 
-  maskTime(time);
-
-  _blinkColon = (time.second() % 2) == 0;
+  _blinkColon = BLINK_SEPARATOR ? (time.second() % 2) == 0 : true;
 
   CRGB dotColour = CRGB::Black;
   switch(_deviceState){
@@ -443,6 +434,27 @@ void Matrix::displayTime(const DateTime& time, Weather weather){
 
   setDot(_blinkColon,dotColour);
 
+
+  if (rainChance > 0) {
+    switch (weather.precipType) {
+      case Snow:
+        addSnow(rainChance);
+        break;
+      case Rain:
+        addRain(rainChance, CRGB::Blue);
+        break;
+      case Sleet:
+        addRain(rainChance, CRGB::White);
+        break;
+    }
+  }
+
+
+  if (weather.thunder){
+    addLightening();
+  }
+
+
   FastLED.show();
 
 }
@@ -467,6 +479,28 @@ void Matrix::maskTime(const DateTime& time){
   if (digit[0] == 0){
     setDigit(' ',0);
   }
+}
+
+void Matrix::maskDate(const DateTime& time){
+  int digit[4];
+
+  int day = time.day();
+  digit[0] = day/10;                      // left digit
+  digit[1] = day - (day/10)*10;             // right digit
+
+  int month = time.month();
+  digit[2] = month/10;
+  digit[3] = month - (month/10)*10;
+
+  for (int i = 0; i<4 ; i++){
+    setDigit(digit[i], i);
+  }
+
+  // skip leading zeroes
+  if (digit[0] == 0){
+    setDigit(' ',0);
+  }
+
 }
 
 
@@ -535,20 +569,28 @@ void Matrix::setDigitMask(uint16_t mask, int digit){
 
 }
 
-void Matrix::setDot(bool state, CRGB colour){
-  leds[ XYsafe(8,0) ] = CRGB::Black ;
-  leds[ XYsafe(8,2) ] = CRGB::Black ;
-  leds[ XYsafe(8,4) ] = CRGB::Black ;
+void Matrix::setDot(bool state, CRGB colour, SeparatorStyle style){
 
-  if (!state){
-    leds[ XYsafe(8,1) ] =  colour ;
-    leds[ XYsafe(8,3) ] =  colour ;
+  uint8_t separatorMask = style;
+
+  for (int y = 0;y<5;y++){
+
+    uint8_t thisPixelVal = (uint8_t)(separatorMask << (7-y)) >> 7;
+
+    if (!thisPixelVal){
+      leds[ XYsafe(8,4-y) ] = CRGB::Black;
+    }
+    if (thisPixelVal && !state){
+      leds[ XYsafe(8,4-y) ] = colour;
+    }
   }
-  
+
     //black column after the dots
   for (int n=0;n<5;n++){
     leds[ XYsafe(9,n) ] = CRGB::Black;
   }
+
+
 }
 
 
@@ -620,7 +662,7 @@ void Matrix::advanceWindCycle(float speed){
 void Matrix::fillDigits_rainbow(){
 
   uint8_t hue = -cycle;
-  fill_matrix_radial_rainbow(leds,COLUMNS,ROWS,8,30,hue,50);
+  fill_matrix_radial_rainbow(leds,COLUMNS,ROWS,8,30,hue,30);
 }
 
 
@@ -715,11 +757,11 @@ void Matrix::addRain( fract8 chanceOfRain, CRGB colour)
   }
   
   // Fade the background colours on the main layer down
-  nscale8_video(leds, NUM_LEDS, 255 - (chanceOfRain * 0.5));
+  nscale8_video(leds, NUM_LEDS, 255 - (chanceOfRain * 0.2));
 
   // And composite on the raindrops
   for(int i = 0; i < NUM_LEDS; i++) {
-    leds[i].nscale8(255-(rainLayer[i].b * 0.9));
+    leds[i].nscale8(255-(rainLayer[i].b * 0.6));
     leds[i] += rainLayer[i] ; 
   }
 }
@@ -761,7 +803,7 @@ void Matrix::addFrost(){
 
 void Matrix::addLightening(){
   for(int i = 0; i < NUM_LEDS; i++) {
-    lighteningLayer[i].nscale8(150);
+    lighteningLayer[i].nscale8(210);
   }
   if(random8() == 1) {
     fill_solid(lighteningLayer, NUM_LEDS, CRGB::White);

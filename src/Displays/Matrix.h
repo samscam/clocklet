@@ -33,6 +33,15 @@ enum DeviceState {
   bluetooth
 };
 
+enum SeparatorStyle {
+  none = 0b0,
+  point = 0b00001,
+  colon = 0b01010,
+  bullet = 0b00100,
+  bar = 0b11111,
+  apostrophe = 0b11000
+};
+
 class Matrix: public Display {
 public:
   Matrix();
@@ -72,6 +81,7 @@ private:
 
   void displayTime(const DateTime& time, Weather weather);
   void maskTime(const DateTime& time);
+  void maskDate(const DateTime& time);
 
   void updateBrightness();
 
@@ -93,7 +103,8 @@ private:
 
   void setDigitMask(uint16_t mask, int digit);
 
-  void setDot(bool state, CRGB colour = CRGB::Black);
+
+  void setDot(bool state, CRGB colour = CRGB::Black,SeparatorStyle style = colon );
   
   void advanceWindCycle(float speed);
 
