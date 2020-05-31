@@ -16,12 +16,19 @@ class NetworkDetailsViewModel: ObservableObject{
     
     private var bag = [AnyCancellable]()
     
-    private let networkService: NetworkService
+    fileprivate let networkService: NetworkService
     
     init(_ networkService: NetworkService){
         self.networkService = networkService
         networkSummary = NetworkSummaryViewModel(networkService)
-        networkService.$availableNetworks.publisher.compactMap{$0}.assign(to: \.availableNetworks, on: self).store(in: &bag)
+        networkService
+            .$availableNetworks
+            .compactMap{$0}
+            .catch({ (error) in
+                return Just<[AvailableNetwork]?>(nil)
+            })
+            .assign(to: \.availableNetworks, on: self)
+            .store(in: &bag)
     }
 }
 
@@ -37,7 +44,7 @@ struct NetworkDetailView: View {
                 }
                 
                 self.viewModel.availableNetworks.map{
-                    AvailableNetworksView($0)
+                    AvailableNetworksView($0,networkService: self.viewModel.networkService)
                 }
                 
             }.padding()

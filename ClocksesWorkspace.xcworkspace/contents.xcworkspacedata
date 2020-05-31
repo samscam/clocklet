@@ -7,7 +7,4 @@
    <FileRef
       location = "group:CombineBluetooth">
    </FileRef>
-   <FileRef
-      location = "group:/Users/sam/Development/Clockses/iOS/CombineBluetoothPlayground.playground">
-   </FileRef>
 </Workspace>

@@ -15,14 +15,35 @@ enum LocationProxyError: Error {
     case authorizationRestricted
 }
 
+
 class LocationProxy: NSObject, CLLocationManagerDelegate {
+    
     let locationManager = CLLocationManager()
-    private let locationPublisher = PassthroughSubject<CLLocation, Error>()
-    var publisher: AnyPublisher<CLLocation, Error>
-    var shouldFetchLocation: Bool = false
+    
+    private let authSubject = CurrentValueSubject<CLAuthorizationStatus, Never>(CLLocationManager.authorizationStatus())
+    
+    lazy var authPublisher: AnyPublisher<CLAuthorizationStatus, Never> = {
+       return authSubject
+        .eraseToAnyPublisher()
+    }()
+    
+    private let locationSubject = PassthroughSubject<CLLocation, Error>()
+    
+    lazy var locationPublisher: AnyPublisher<CLLocation, Error> = {
+        // prob weak self this
+        return locationSubject.handleEvents(receiveSubscription: { [weak self] _ in
+            print("Starting updates")
+            self?.locationManager.startUpdatingLocation()
+        }, receiveCompletion: { [weak self] _ in
+            print("Completion - stopping updates")
+            self?.locationManager.stopUpdatingLocation()
+        }, receiveCancel: { [weak self] in
+            print("Cancel - stopping updates")
+            self?.locationManager.stopUpdatingLocation()
+        }).eraseToAnyPublisher()
+    }()
 
     override init(){
-        publisher = locationPublisher.eraseToAnyPublisher()
         super.init()
         locationManager.delegate = self
         
@@ -37,41 +58,27 @@ class LocationProxy: NSObject, CLLocationManagerDelegate {
         case .authorizedAlways, .authorizedWhenInUse:
             locationManager.requestLocation()
         case .notDetermined:
-            shouldFetchLocation = true
             locationManager.requestWhenInUseAuthorization()
         default:
             break
         }
-        
-        
     }
+    
     func disable(){
         locationManager.stopUpdatingLocation()
     }
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let lastLocation = locations.last {
-            locationPublisher.send(lastLocation)
+            locationSubject.send(lastLocation)
         }
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        switch status {
-        case .authorizedWhenInUse, .authorizedAlways:
-            if shouldFetchLocation {
-                locationManager.requestLocation()
-                shouldFetchLocation = false
-            }
-        case .denied:
-            locationPublisher.send(completion: Subscribers.Completion.failure(LocationProxyError.authorizationDenied))
-        case .restricted:
-            locationPublisher.send(completion: Subscribers.Completion.failure(LocationProxyError.authorizationRestricted))
-        default:
-            break
-        }
+        authSubject.send(status)
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        locationPublisher.send(completion: Subscribers.Completion.failure(error))
+        locationSubject.send(completion: Subscribers.Completion.failure(error))
     }
     
 }

@@ -17,25 +17,24 @@ public class Connection: NSObject{
     
     private weak var central: Central? = nil
     
-    public var advertisementData: AdvertisementData
     
     public init(cbPeripheral: CBPeripheral, advertisementData: [String: Any], rssi: Int, central: Central, knownPeripheralTypes: [Advertiser.Type]){
         
         self.cbPeripheral = cbPeripheral
         self.rssi = rssi
         self.central = central
-        self.advertisementData = AdvertisementData(advertisementData)
-        
+
         super.init()
         
+        let adData = AdvertisementData(advertisementData)
+        
+        
         self.cbPeripheral.delegate = self
-        
-        
         let name = cbPeripheral.name ?? cbPeripheral.identifier.shortString
         
         // Discover a suitable peripheral class...
         // Hoping this happens on first shot through...
-        if let advertiseduuids = self.advertisementData.serviceUUIDs {
+        if let advertiseduuids = adData.serviceUUIDs {
             
             print("Advertised uuids for \(name): \(advertiseduuids)")
             
@@ -46,6 +45,7 @@ public class Connection: NSObject{
                 }) {
                 print("🏴‍☠️ Found \(firstKnownPeripheral)")
                 let actualPeripheral = firstKnownPeripheral.init(uuid: cbPeripheral.identifier, name: name, connection: self)
+                actualPeripheral.advertisementData = adData
                 self.peripheral = actualPeripheral
             }
         }
@@ -53,7 +53,7 @@ public class Connection: NSObject{
     
     func update(advertisementData: [String : Any], rssi: Int){
         self.rssi = rssi
-        self.advertisementData = AdvertisementData(advertisementData)
+        peripheral?.advertisementData = AdvertisementData(advertisementData)
     }
     
     func connect(){
@@ -101,6 +101,7 @@ extension Connection: CBPeripheralDelegate{
         cbServices
             .forEach{
                 if var wrapper = self.peripheral?.serviceWrapper(for: $0) {
+                    wrapper.didDiscover()
                     wrapper.cbService = $0
                     cbPeripheral.discoverCharacteristics(nil, for: $0)
                 }
@@ -162,6 +163,9 @@ extension Connection: CBPeripheralDelegate{
     }
     
     public func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
+        if let serviceWrapper = self.peripheral?.serviceWrapper(for:characteristic.service) {
+            serviceWrapper.didWriteValue(for:characteristic, error: error)
+        }
         
     }
     
@@ -173,7 +177,7 @@ extension Connection: CBPeripheralDelegate{
     public func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         self.peripheral?.objectWillChange.send()
         if let service = self.peripheral?.serviceWrapper(for: characteristic.service){
-            service.didUpdateValue(for: characteristic)
+            service.didUpdateValue(for: characteristic, error: error)
         }
     }
     
@@ -182,7 +186,7 @@ extension Connection: CBPeripheralDelegate{
     }
     
     public func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
-        
+
     }
     
     public func peripheralIsReady(toSendWriteWithoutResponse peripheral: CBPeripheral) {

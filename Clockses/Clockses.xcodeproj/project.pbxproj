@@ -10,6 +10,7 @@
 		220DDB11236B9E3900429503 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220DDB10236B9E3900429503 /* MapView.swift */; };
 		222271A5232B887100508ADA /* ClockSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222271A4232B887100508ADA /* ClockSummaryView.swift */; };
 		22350E83233D359E00452BDF /* NetworkCharacteristics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22350E82233D359E00452BDF /* NetworkCharacteristics.swift */; };
+		2241E52523DD0ABB00ACE8A7 /* LocationProxyTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2241E52423DD0ABB00ACE8A7 /* LocationProxyTestView.swift */; };
 		224C538F234F6CDD00A68928 /* ClockListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224C538E234F6CDD00A68928 /* ClockListView.swift */; };
 		224C5391234FAE7300A68928 /* ClockDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224C5390234FAE7300A68928 /* ClockDetailsView.swift */; };
 		22551952235870240056B9CD /* LocationSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22551951235870240056B9CD /* LocationSummaryView.swift */; };
@@ -24,6 +25,7 @@
 		22836EBE2286297C0020B46F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 22836EBC2286297C0020B46F /* LaunchScreen.storyboard */; };
 		22836EC92286297C0020B46F /* ClocksesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22836EC82286297C0020B46F /* ClocksesTests.swift */; };
 		22836ED722862AAC0020B46F /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22836ED622862AAC0020B46F /* CoreBluetooth.framework */; };
+		228A1C8E2462BB6C00033937 /* SettingsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228A1C8D2462BB6C00033937 /* SettingsService.swift */; };
 		228DF25F234FB41E00480588 /* NetworkSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228DF25E234FB41E00480588 /* NetworkSummaryView.swift */; };
 		228DF261234FDF6400480588 /* ClockListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228DF260234FDF6400480588 /* ClockListViewModel.swift */; };
 		228DF2662350704D00480588 /* ClockDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228DF2652350704D00480588 /* ClockDetailsViewModel.swift */; };
@@ -49,6 +51,7 @@
 		220DDB10236B9E3900429503 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		222271A4232B887100508ADA /* ClockSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockSummaryView.swift; sourceTree = "<group>"; };
 		22350E82233D359E00452BDF /* NetworkCharacteristics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkCharacteristics.swift; sourceTree = "<group>"; };
+		2241E52423DD0ABB00ACE8A7 /* LocationProxyTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProxyTestView.swift; sourceTree = "<group>"; };
 		224C538E234F6CDD00A68928 /* ClockListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockListView.swift; sourceTree = "<group>"; };
 		224C5390234FAE7300A68928 /* ClockDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockDetailsView.swift; sourceTree = "<group>"; };
 		22551951235870240056B9CD /* LocationSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSummaryView.swift; sourceTree = "<group>"; };
@@ -67,6 +70,7 @@
 		22836EC82286297C0020B46F /* ClocksesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClocksesTests.swift; sourceTree = "<group>"; };
 		22836ECA2286297C0020B46F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		22836ED622862AAC0020B46F /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
+		228A1C8D2462BB6C00033937 /* SettingsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsService.swift; sourceTree = "<group>"; };
 		228DF25E234FB41E00480588 /* NetworkSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSummaryView.swift; sourceTree = "<group>"; };
 		228DF260234FDF6400480588 /* ClockListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockListViewModel.swift; sourceTree = "<group>"; };
 		228DF2652350704D00480588 /* ClockDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockDetailsViewModel.swift; sourceTree = "<group>"; };
@@ -75,6 +79,7 @@
 		22B391C52368FD58009DF144 /* EnterPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterPasswordView.swift; sourceTree = "<group>"; };
 		22BE0A3F235DE4EA00EB8780 /* Clock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clock.swift; sourceTree = "<group>"; };
 		22E2D9B9233A970F00B4FCFD /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		22EEFBCE2383564F00687236 /* Clockses.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Clockses.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +124,7 @@
 		22836EB2228629750020B46F /* Clockses */ = {
 			isa = PBXGroup;
 			children = (
+				22EEFBCE2383564F00687236 /* Clockses.entitlements */,
 				22E2D988233A944500B4FCFD /* Bluetooth Models */,
 				228DF2622350701800480588 /* Business */,
 				228DF2642350703700480588 /* Clock List */,
@@ -154,6 +160,7 @@
 			children = (
 				22836EB3228629750020B46F /* AppDelegate.swift */,
 				22E2D9B9233A970F00B4FCFD /* SceneDelegate.swift */,
+				22604280236E40F800710F37 /* LocationProxy.swift */,
 			);
 			path = Business;
 			sourceTree = "<group>";
@@ -164,6 +171,7 @@
 				22551953235870F10056B9CD /* OtherSettingsView.swift */,
 				22585258235694A0005C9696 /* ConfigItemView.swift */,
 				227CC3052367925D00D7770D /* PropertiesView.swift */,
+				2241E52423DD0ABB00ACE8A7 /* LocationProxyTestView.swift */,
 			);
 			path = "Shared Views";
 			sourceTree = "<group>";
@@ -182,7 +190,6 @@
 			isa = PBXGroup;
 			children = (
 				228DF2652350704D00480588 /* ClockDetailsViewModel.swift */,
-				22604280236E40F800710F37 /* LocationProxy.swift */,
 				224C5390234FAE7300A68928 /* ClockDetailsView.swift */,
 				22551951235870240056B9CD /* LocationSummaryView.swift */,
 				220DDB10236B9E3900429503 /* MapView.swift */,
@@ -208,6 +215,7 @@
 				22A0AE032351492F00D04338 /* NetworkService.swift */,
 				22350E82233D359E00452BDF /* NetworkCharacteristics.swift */,
 				229F3C69235F427100EEA785 /* LocationService.swift */,
+				228A1C8D2462BB6C00033937 /* SettingsService.swift */,
 			);
 			path = "Bluetooth Models";
 			sourceTree = "<group>";
@@ -259,7 +267,7 @@
 		22836EA8228629750020B46F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1020;
+				LastSwiftUpdateCheck = 1120;
 				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "Spotlight Kid Ltd";
 				TargetAttributes = {
@@ -317,6 +325,7 @@
 			files = (
 				22551954235870F10056B9CD /* OtherSettingsView.swift in Sources */,
 				22B391C62368FD58009DF144 /* EnterPasswordView.swift in Sources */,
+				2241E52523DD0ABB00ACE8A7 /* LocationProxyTestView.swift in Sources */,
 				22551952235870240056B9CD /* LocationSummaryView.swift in Sources */,
 				228DF25F234FB41E00480588 /* NetworkSummaryView.swift in Sources */,
 				229F3C68235EF82200EEA785 /* Clock.swift in Sources */,
@@ -334,6 +343,7 @@
 				224C5391234FAE7300A68928 /* ClockDetailsView.swift in Sources */,
 				22604281236E40F800710F37 /* LocationProxy.swift in Sources */,
 				220DDB11236B9E3900429503 /* MapView.swift in Sources */,
+				228A1C8E2462BB6C00033937 /* SettingsService.swift in Sources */,
 				22A0AE042351492F00D04338 /* NetworkService.swift in Sources */,
 				22E2D9BA233A971000B4FCFD /* SceneDelegate.swift in Sources */,
 			);
@@ -420,7 +430,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -475,7 +485,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -489,7 +499,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Clockses/Clockses.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = 9M28MQ9SZC;
 				INFOPLIST_FILE = Clockses/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -499,6 +511,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = uk.co.spotlightkid.Clockses;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -508,7 +521,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Clockses/Clockses.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = 9M28MQ9SZC;
 				INFOPLIST_FILE = Clockses/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -518,6 +533,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = uk.co.spotlightkid.Clockses;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

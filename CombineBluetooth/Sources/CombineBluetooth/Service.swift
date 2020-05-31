@@ -4,56 +4,46 @@ import Combine
 
 // SERVICES
 
+public enum ServiceError: Error {
+    case invalidated
+}
+
 public protocol ServiceWrapper: HasUUID {
     var cbService: CBService? { get set }
-    func didUpdateValue(for: CBCharacteristic)
+    func didUpdateValue(for: CBCharacteristic, error: Error?)
+    func didWriteValue(for: CBCharacteristic, error: Error?)
     func didDiscoverCharacteristics()
+    
+    func didDiscover()
     func didInvalidate()
 }
 
 public protocol InnerServiceProtocol: class, HasUUID {
     static var uuid: CBUUID { get }
-    var objectWillChange: ObservableObjectPublisher { get }
     init()
 }
 
-public protocol ServiceProtocol: InnerServiceProtocol, ObservableObject {
-    
-}
-
-extension ServiceProtocol where Self: ObservableObject{
-    func willChange(){
-        self.objectWillChange.send()
-    }
-}
+public protocol ServiceProtocol: InnerServiceProtocol {}
 
 
 @propertyWrapper
 public class Service<Value:ServiceProtocol>: ServiceWrapper {
+
   
-    public var wrappedValue: Value {
+    public var wrappedValue: Value? {
         didSet {
             self.publisher.send(wrappedValue)
         }
     }
     
-//    private var _value: Value?
-//
-//    public var wrappedValue: Value? {
-//        get{
-//            return _value
-//        }
-//    }
-    
     public let uuid: CBUUID
-    public var publisher: CurrentValueSubject<Value,Never>
+    public var publisher: CurrentValueSubject<Value?,ServiceError>
     public var cbService: CBService?
     
-    public init(wrappedValue value: Value){
+    public init(wrappedValue value: Value?){
         self.wrappedValue = value
-//        self._value = value
         self.uuid = value.uuid
-        self.publisher = CurrentValueSubject<Value,Never>(value)
+        self.publisher = CurrentValueSubject<Value?,ServiceError>(value)
     }
     
     deinit {
@@ -64,45 +54,39 @@ public class Service<Value:ServiceProtocol>: ServiceWrapper {
     public var projectedValue: Service {
         return self
     }
+    
     public func didDiscoverCharacteristics(){
         guard let cbCharacteristics = self.cbService?.characteristics else {
             return
         }
         
         for cbCharacteristic in cbCharacteristics {
-            if let characteristicWrapper = self.characteristicWrapper(for: cbCharacteristic) {
+            
+            if let characteristicWrapper = wrappedValue?.characteristicWrapper(for: cbCharacteristic) {
                 characteristicWrapper.cbCharacteristic = cbCharacteristic
             }
         }
     }
     
-    public func didUpdateValue(for cbCharacteristic: CBCharacteristic){
-        self.wrappedValue.objectWillChange.send()
-        self.characteristicWrapper(for: cbCharacteristic)?.valueWasUpdated()
+    public func didUpdateValue(for cbCharacteristic: CBCharacteristic, error: Error?){
+        wrappedValue?.characteristicWrapper(for: cbCharacteristic)?.didUpdateValue(error: error)
     }
     
-    public func didInvalidate(){
-//        self._value = nil
-        self.cbService = nil
-//        self.publisher.send(nil)
-    }
-    
-    var characteristicWrappers: [CharacteristicWrapper]{
-//        if let value = wrappedValue {
-            let m = Mirror(reflecting: wrappedValue)
-            return m.children.compactMap { $0.value as? CharacteristicWrapper}
-//        } else {
-//            return []
-//        }
-    }
-    
-    //
-    func characteristicWrapper(for cbCharacteristic: CBCharacteristic)->CharacteristicWrapper?{
-        return characteristicWrappers.first { (characteristic) -> Bool in
-            return characteristic.uuid == cbCharacteristic.uuid
+    public func didWriteValue(for characteristic: CBCharacteristic, error: Error?) {
+        if let characteristicWrapper = wrappedValue?.characteristicWrapper(for: characteristic) {
+            characteristicWrapper.didWriteValue(error: error)
         }
     }
     
+    public func didDiscover(){
+        self.wrappedValue = .init()
+    }
+    
+    public func didInvalidate(){
+        self.cbService = nil
+        self.wrappedValue = nil
+        self.publisher.send(completion: .failure(.invalidated))
+    }
     
     
 }
@@ -118,6 +102,17 @@ public extension ServiceProtocol {
         return m.children.compactMap{ $0.value as? HasUUID }.map{ $0.uuid }
     }
     
+    var characteristicWrappers: [CharacteristicWrapper]{
+        let m = Mirror(reflecting: self)
+        return m.children.compactMap { $0.value as? CharacteristicWrapper}
+    }
+    
+    //
+    func characteristicWrapper(for cbCharacteristic: CBCharacteristic)->CharacteristicWrapper?{
+        return characteristicWrappers.first { (characteristic) -> Bool in
+            return characteristic.uuid == cbCharacteristic.uuid
+        }
+    }
 
 }
 

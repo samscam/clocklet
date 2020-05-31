@@ -3,7 +3,9 @@ import Combine
 import PlaygroundSupport
 import CombineBluetooth
 
+
 // Service examples
+var str = ""
 
 class NetworkService: ServiceProtocol {
     static var uuid: CBUUID = CBUUID(string:"68D924A1-C1B2-497B-AC16-FD1D98EDB41F")
@@ -29,9 +31,6 @@ netService.wibbles = "Really"
 
 netService.$wibbles.uuid
 
-
-
-
 // Peripheral examples
 
 class Clock: Peripheral {
@@ -54,7 +53,7 @@ Clock.advertisedUUIDs
 
 
 
-PlaygroundPage.current.needsIndefiniteExecution = true
+//PlaygroundPage.current.needsIndefiniteExecution = true
 
 let central = Central()
 var connectionPub = central.discoverConnections(for: Clock.self)

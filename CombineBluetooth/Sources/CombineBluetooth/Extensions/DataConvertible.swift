@@ -27,6 +27,20 @@ extension Int: DataConvertible{}
 extension Double: DataConvertible{}
 extension Float: DataConvertible{}
 
+extension Bool: DataConvertible{
+    
+    public init?(data: Data) {
+        var value: Self = false
+        guard data.count == MemoryLayout.size(ofValue: value) else { return nil }
+        _ = withUnsafeMutableBytes(of: &value, { data.copyBytes(to: $0)} )
+        self = value
+    }
+
+    public var data: Data {
+        return withUnsafeBytes(of: self) { Data($0) }
+    }
+}
+
 extension String: DataConvertible{
     public init?(data: Data){
         self.init(data: data, encoding: .utf8)
@@ -49,23 +63,23 @@ extension RawRepresentable where Self:DataConvertible, RawValue: DataConvertible
     }
 }
 
-extension Optional: DataConvertible where Wrapped: DataConvertible{
-    public init?(data: Data) {
-        if let w = Wrapped.init(data: data){
-            self = .some(w)
-        } else {
-            self = nil
-        }
-    }
-    public var data: Data {
-        switch self {
-        case .some(let val):
-            return val.data
-        case .none:
-            return Data()
-        }
-    }
-}
+//extension Optional: DataConvertible where Wrapped: DataConvertible{
+//    public init?(data: Data) {
+//        if let w = Wrapped.init(data: data){
+//            self = .some(w)
+//        } else {
+//            self = nil
+//        }
+//    }
+//    public var data: Data {
+//        switch self {
+//        case .some(let val):
+//            return val.data
+//        case .none:
+//            return Data()
+//        }
+//    }
+//}
 
 public protocol JSONCharacteristic: Codable, DataConvertible {}
 
@@ -73,6 +87,7 @@ public extension DataConvertible where Self: JSONCharacteristic {
     init?(data: Data){
         let decoder = JSONDecoder()
         do {
+            print("Decoding JSON:")
             print(String(data: data, encoding: .utf8) ?? "No data")
             self = try decoder.decode(Self.self, from: data)
         } catch {

@@ -35,7 +35,7 @@ public struct ManufacturerData {
         
         let res = data[2...]
         self.residual = res
-        print("Residual: ", String(data:res, encoding: .utf8))
+        print("Residual: ", String(data:res, encoding: .utf8) ?? "--novalue--")
     
         
         

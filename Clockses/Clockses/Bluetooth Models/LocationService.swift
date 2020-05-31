@@ -13,11 +13,15 @@ import Combine
 import CoreLocation
 
 class LocationService: ServiceProtocol {
+    
+    required init(){}
+    let objectWillChange = ObservableObjectPublisher() // If we leave it to the synthesised one it doesn't work :/
 
     static let uuid = CBUUID(string: "87888F3E-C1BF-4832-9823-F19C73328D30")
     
-    @Characteristic(CBUUID(string:"C8C7FF91-531A-4306-A68A-435374CB12A9")) var currentLocation: CurrentLocation? = nil
-    required init(){}
+    @Characteristic(CBUUID(string:"C8C7FF91-531A-4306-A68A-435374CB12A9")) var currentLocation: CurrentLocation?
+    
+
 }
 
 enum LocationStatus: String, DataConvertible {

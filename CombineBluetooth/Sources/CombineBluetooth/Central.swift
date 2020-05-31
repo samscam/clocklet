@@ -20,15 +20,15 @@ public class Central: NSObject {
             .filter({ (state) -> Bool in
                 return state == .poweredOn
             }).handleEvents(receiveOutput: { state in 
-                print("trying to start scan")
+                print("CENTRAL: starting scan")
                 self.isScanning = true
                 self._cbCentralManager.scanForPeripherals(withServices: services?.compactMap({$0}) , options: nil) // Ends up with empty array rather than nil???
         }, receiveCompletion: { (completion) in
-            print("Completed: trying to stop scan")
+            print("CENTRAL: Completed: Stopping scan")
             self._cbCentralManager.stopScan()
             self.isScanning = false
         }, receiveCancel: {
-            print("Cancelled: trying to stop scan")
+            print("CENTRAL: Cancelled: Stopping scan")
             self._cbCentralManager.stopScan()
             self.isScanning = false
         })

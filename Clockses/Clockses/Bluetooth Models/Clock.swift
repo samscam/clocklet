@@ -28,7 +28,7 @@ class Clock: Peripheral, Identifiable, Advertiser {
                 return _caseColor
         }
         
-        return CaseColor(rawValue: String(lastComponent)) ?? _caseColor
+        return CaseColor(rawValue: String(mfrString)) ?? _caseColor
         }
         set {
             _caseColor = newValue
@@ -47,21 +47,21 @@ class Clock: Peripheral, Identifiable, Advertiser {
     }
     
     
-    @Service var networkService: NetworkService = NetworkService()
-    @Service var locationService: LocationService = LocationService()
+    @Service var networkService: NetworkService?
+    @Service var locationService: LocationService?
     
     static var advertised: [InnerServiceProtocol.Type] = [NetworkService.self]
 }
 
 
 enum CaseColor: String, Codable {
-    case bare
+    case bones
     case black
     case wood
     
     var imageName: String {
         switch self{
-        case .bare: return "esp32feather"
+        case .bones: return "esp32feather"
         case .black: return "black-clocklet"
         case .wood: return "wood-clocklet"
         }

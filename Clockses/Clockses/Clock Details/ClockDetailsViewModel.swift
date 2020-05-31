@@ -73,6 +73,9 @@ class ClockDetailsViewModel: ObservableObject {
             .publisher
             .compactMap{$0}
             .map(NetworkSummaryViewModel.init)
+            .catch({ (serviceError) in
+                Just<NetworkSummaryViewModel?>(nil)
+            })
             .assign(to: \.networkSummary, on: self)
             .store(in: &bag)
         
@@ -80,6 +83,9 @@ class ClockDetailsViewModel: ObservableObject {
             .publisher
             .compactMap{$0}
             .map(NetworkDetailsViewModel.init)
+            .catch{ serviceError in
+                Just<NetworkDetailsViewModel?>(nil)
+            }
             .assign(to: \.networkDetails, on: self)
             .store(in: &bag)
         
@@ -89,6 +95,9 @@ class ClockDetailsViewModel: ObservableObject {
             .publisher
             .compactMap{$0}
             .map(LocationSummaryViewModel.init)
+            .catch{ serviceError in
+                Just<LocationSummaryViewModel?>(nil)
+            }
             .assign(to: \.locationSummaryViewModel, on: self)
             .store(in: &bag)
                 

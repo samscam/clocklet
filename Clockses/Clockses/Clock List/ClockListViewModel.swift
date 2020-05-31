@@ -35,13 +35,13 @@ class ClockListViewModel: ObservableObject {
     func startScanning(){
         _cancellableClocks = central
             .discoverConnections(for: Clock.self)
-            .timeout(20, scheduler: DispatchQueue.main)
             .map{ $0.compactMap{ $0.peripheral as? Clock } }
             .map{ $0.map(ClockSummaryViewModel.init) }
             .assign(to: \.clockItems, on: self)
     }
     
     func stopScanning(){
+        _cancellableClocks?.cancel()
         _cancellableClocks = nil
     }
     

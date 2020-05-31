@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+
 struct AvailableNetworksView: View {
     var availableNetworks: [AvailableNetwork]
     
@@ -19,23 +20,17 @@ struct AvailableNetworksView: View {
     }
     
     @State var showPopover: Bool = false
-    @State var selectedNetwork: AvailableNetwork? = nil
     
     var body: some View {
         ConfigItemView(icon: Image(systemName:"antenna.radiowaves.left.and.right"), title: "Available networks") {
             VStack{
                 ForEach(self.availableNetworks){ network in
-                    
-                    Button(action: {
-                        self.selectedNetwork = network
-                    }) {
+                    NavigationLink(destination:EnterPasswordView(network: network, networkService: self.networkService)){
                         AvailableNetworkView(network: network)
                     }
                 }
             }
-            .popover(item: self.$selectedNetwork) { (network) -> EnterPasswordView in
-                EnterPasswordView(network: network, networkService: self.networkService)
-            }
+
         }
 
     }

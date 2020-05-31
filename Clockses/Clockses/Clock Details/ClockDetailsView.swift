@@ -63,11 +63,11 @@ extension ContentSizeCategory{
 struct ClockDetailsView_Previews: PreviewProvider {
     
     static let viewModel: ClockDetailsViewModel = {
-        var clock = Clock("Foop",.bare)
+        var clock = Clock("Foop",.bones)
         
         clock.caseColor = .wood
-        clock.networkService.currentNetwork = CurrentNetwork(status: .connected, connected: true, ssid: "Fishnet", channel: 1, ip: nil, rssi: -20)
-        clock.locationService.currentLocation = CurrentLocation(lat: 53.431808, lng: -2.218080)
+        clock.networkService?.currentNetwork = CurrentNetwork(status: .connected, connected: true, ssid: "Fishnet", channel: 1, ip: nil, rssi: -20)
+//        clock.locationService.currentLocation = CurrentLocation(lat: 53.431808, lng: -2.218080)
         var viewModel = ClockDetailsViewModel(clock: clock)
         viewModel.connectionErrorMessage = "This all went wrong today"
         return viewModel

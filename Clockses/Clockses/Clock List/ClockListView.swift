@@ -46,7 +46,7 @@ struct ClockListView_Previews: PreviewProvider {
         listView.viewModel.clockItems = [
             ClockSummaryViewModel(clock: Clock("Clock One", .black)),
             ClockSummaryViewModel(clock: Clock("Clock Two", .wood)),
-            ClockSummaryViewModel(clock: Clock("Clock Three", .bare))
+            ClockSummaryViewModel(clock: Clock("Clock Three", .bones))
         ]
         return listView
     }

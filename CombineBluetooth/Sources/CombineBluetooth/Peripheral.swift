@@ -5,6 +5,7 @@ import Combine
 // PERIPHERAL
 public protocol Advertiser: InnerPeripheralProtocol{
     static var advertised: [InnerServiceProtocol.Type] { get }
+
 }
 
 public extension Advertiser where Self:InnerPeripheralProtocol{
@@ -28,9 +29,7 @@ open class Peripheral: PeripheralProtocol, ObservableObject {
     @Published public var state: ConnectionState = .disconnected(error: nil)
     @Published public var name: String
     
-    public var advertisementData: AdvertisementData? {
-        return self.connection?.advertisementData
-    }
+    @Published public var advertisementData: AdvertisementData?
     
     weak var connection: Connection?
     
@@ -67,7 +66,7 @@ public protocol InnerPeripheralProtocol: class {
     var state: ConnectionState { get set }
     init(uuid: UUID, name: String, connection: Connection)
     var objectWillChange: ObservableObjectPublisher { get }
-    
+        var advertisementData: AdvertisementData? {get set}
 }
 
 

@@ -29,39 +29,52 @@ class LocationSummaryViewModel: ObservableObject{
             return
         }
         
-        locationService.$currentLocation.publisher.compactMap{
-            $0??.description
-        }.assign(to: \.coordinates, on: self)
+        locationService.$currentLocation.compactMap{
+            $0?.description
+        }
+        .catch{ error in
+            return Just("Error: \(error.localizedDescription)")
+        }
+        .assign(to: \.coordinates, on: self)
             .store(in: &bag)
         
         locationService
             .$currentLocation
-            .publisher
-            .compactMap{$0??.location}
-            .flatMap{ GeocoderProxy().futureReversePublisher($0).catch { (error) -> AnyPublisher<String,Never> in
-                return Just("Oh dear").eraseToAnyPublisher()
-                }
-        }.assign(to: \.title, on: self)
+            .compactMap{$0?.location}
+            .flatMap{ location in
+                GeocoderProxy().futureReversePublisher(location)
+            }
+            .catch { (error) in
+                Just("Error: \(error.localizedDescription)")
+            }
+            .assign(to: \.title, on: self)
             .store(in: &bag)
         
         
         locationService
             .$currentLocation
-            .publisher
-            .compactMap{$0??.location.coordinate}
+            .compactMap{$0?.location.coordinate}
+            .catch{ error in
+                Just(nil)
+            }
             .assign(to: \.coord2d, on: self)
             .store(in: &bag)
         
-        locationProxy.publisher.sink(receiveCompletion: { (completion) in
-            
-        }) { (location) in
-            locationService.currentLocation = CurrentLocation(lat: location.coordinate.latitude, lng: location.coordinate.longitude)
-        }.store(in: &bag)
+        
     }
     
     
     func setCurrentLocation(){
-        locationProxy.enable()
+        
+        guard let locationService = locationService else {
+            return
+        }
+        
+        locationProxy.locationPublisher.sink(receiveCompletion: { (completion) in
+            
+        }) { (location) in
+            locationService.currentLocation = CurrentLocation(lat: location.coordinate.latitude, lng: location.coordinate.longitude)
+        }.store(in: &bag)
     }
     
 }

@@ -24,53 +24,71 @@ class NetworkSummaryViewModel: ObservableObject{
     init(_ networkService: NetworkService){
         self.networkService = networkService
         
-        networkService.$currentNetwork.publisher.sink { [weak self] (currentNetwork) in
+        networkService
+            .$currentNetwork
+            .sink(receiveCompletion: { (completion) in
+                switch completion {
+                case .failure(let error):
+                    self.icon = Image(systemName:"wifi")
+                    self.color = .red
+                    self.title = "Error"
+                    self.errorMessage = error.localizedDescription
+                case .finished:
+                    self.icon = Image(systemName:"wifi")
+                    self.color = .red
+                    self.title = "Completed"
+                }
+                
+            }) { [weak self] (currentNetwork) in
             guard let self = self else {
                 return
             }
-            if let w1 = currentNetwork,
-                let currentNetwork = w1 {
-                self.title = currentNetwork.ssid
-                switch currentNetwork.status {
-                case .connectionFailed:
-                    self.color = .red
-                    self.icon = Image(systemName:"wifi.exclamationmark")
-                    self.errorMessage = "Connection Failed"
-                case .connectionLost:
-                    self.color = .red
-                    self.icon = Image(systemName:"wifi.exclamationmark")
-                    self.errorMessage = "Connection Lost"
-                case .disconnected:
-                    self.color = .red
-                    self.icon = Image(systemName:"wifi.exclamationmark")
-                    self.errorMessage = "Disconnected"
-                case .idle:
-                    self.icon = Image(systemName:"wifi.slash")
-                    self.color = .orange
-                    self.errorMessage = "Idle"
-                case .noSSID:
-                    self.color = .red
-                    self.icon = Image(systemName:"wifi.exclamationmark")
-                    self.errorMessage = "No SSID"
-                case .noShield:
-                    self.color = .red
-                    self.icon = Image(systemName:"wifi.slash")
-                    self.errorMessage = "Wifi broken"
-                case .scanCompleted:
-                    self.color = .green
-                    self.icon = Image(systemName:"wifi")
-                    self.errorMessage = "Scan completed"
-                    
-                case .connected:
-                    self.color = .green
-                    self.icon = Image(systemName:"wifi")
-                    self.errorMessage = nil
-                }
-            } else {
+                
+            guard let currentNetwork = currentNetwork else {
                 self.icon = Image(systemName:"wifi")
                 self.color = .orange
                 self.title = "Checking network"
+                return
             }
+            
+            self.title = currentNetwork.ssid
+            switch currentNetwork.status {
+            case .connectionFailed:
+                self.color = .red
+                self.icon = Image(systemName:"wifi.exclamationmark")
+                self.errorMessage = "Connection Failed"
+            case .connectionLost:
+                self.color = .red
+                self.icon = Image(systemName:"wifi.exclamationmark")
+                self.errorMessage = "Connection Lost"
+            case .disconnected:
+                self.color = .red
+                self.icon = Image(systemName:"wifi.exclamationmark")
+                self.errorMessage = "Disconnected"
+            case .idle:
+                self.icon = Image(systemName:"wifi.slash")
+                self.color = .orange
+                self.errorMessage = "Idle"
+            case .noSSID:
+                self.color = .red
+                self.icon = Image(systemName:"wifi.exclamationmark")
+                self.title = "Network unavailable"
+                self.errorMessage = nil
+            case .noShield:
+                self.color = .red
+                self.icon = Image(systemName:"wifi.slash")
+                self.errorMessage = "Wifi broken"
+            case .scanCompleted:
+                self.color = .green
+                self.icon = Image(systemName:"wifi")
+                self.errorMessage = "Scan completed"
+                
+            case .connected:
+                self.color = .green
+                self.icon = Image(systemName:"wifi")
+                self.errorMessage = nil
+            }
+                
         }.store(in: &bag)
 //        let c = networkService.$currentNetwork.
     }
