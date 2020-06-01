@@ -114,6 +114,9 @@ void setup() {
   Preferences preferences = Preferences();
   preferences.begin("clocklet", false);
 
+
+
+
   uint32_t serial = preferences.getUInt("serial");
   Serial.printf("Serial number: %d\n",serial);
 
@@ -160,13 +163,13 @@ void setup() {
   LOGMEM;
 
   // Uncomment to run various display tests:
-  displayTests(display);  
+  // displayTests(display);  
 
   // DISPLAY A GREETING
   display->displayMessage("CLOCKLET",rainbow);
 
-  // String greeting = String("Hello "+owner);
-  // display->displayMessage(greeting.c_str(), rando);
+  String greeting = String("Hello "+owner);
+  display->displayMessage(greeting.c_str(), rainbow);
 
 
   
