@@ -72,13 +72,14 @@ open class Peripheral: PeripheralProtocol, ObservableObject {
 }
 
 public protocol PeripheralProtocol: ObservableObject, InnerPeripheralProtocol {}
+
 public protocol InnerPeripheralProtocol: class {
     var uuid: UUID { get }
     var name: String { get set }
     var state: ConnectionState { get set }
     init(uuid: UUID, name: String, connection: Connection)
     var objectWillChange: ObservableObjectPublisher { get }
-        var advertisementData: AdvertisementData? {get set}
+    var advertisementData: AdvertisementData? {get set}
 }
 
 
