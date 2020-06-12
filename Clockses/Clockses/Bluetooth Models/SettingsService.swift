@@ -19,8 +19,9 @@ class SettingsService: ServiceProtocol {
     
     static let uuid = CBUUID(string: "28C65464-311E-4ABF-B6A0-D03B0BAA2815")
     
-    @Characteristic(CBUUID(string:"256543AE-AA83-4A95-9347-7C7DFDD98B71")) var twelveHour: Bool?
+    @Characteristic(CBUUID(string:"9982B160-23EF-42FF-9848-31D9FF21F490")) var availableSeparatorAnimations: String?
     
-    @Characteristic(CBUUID(string:"9982B160-23EF-42FF-9848-31D9FF21F490")) var flashDots: Bool?
+//    @Characteristic(CBUUID(string:"2371E298-DCE5-4E1C-9CB2-5542213CE81C")) var separatorAnimation: String?
+    
     
 }

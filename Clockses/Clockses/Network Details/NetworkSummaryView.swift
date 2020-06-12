@@ -11,6 +11,71 @@ import Network
 import Combine
 import CombineBluetooth
 
+extension WifiStatus {
+    var icon: Image {
+        switch self{
+        case .connectionFailed:
+            return Image(systemName:"wifi.exclamationmark")
+        case .connectionLost:
+            return Image(systemName:"wifi.exclamationmark")
+        case .disconnected:
+            return Image(systemName:"wifi.exclamationmark")
+        case .idle:
+            return Image(systemName:"wifi.slash")
+        case .noSSID:
+            return Image(systemName:"wifi.exclamationmark")
+        case .noShield:
+            return Image(systemName:"wifi.slash")
+        case .scanCompleted:
+            return Image(systemName:"wifi")
+        case .connected:
+            return Image(systemName:"wifi")
+        }
+    }
+    
+    var title: String {
+        switch self {
+        case .connectionFailed:
+            return "Connection Failed"
+        case .connectionLost:
+            return "Connection Lost"
+        case .disconnected:
+            return "Disconnected"
+        case .idle:
+            return "Idle"
+        case .noSSID:
+            return "Network unavailable"
+        case .noShield:
+            return "Wifi broken"
+        case .scanCompleted:
+            return "Scan completed"
+        case .connected:
+            return "Connected"
+        }
+    }
+    
+    var colour: Color{
+        switch self {
+        case .connectionFailed:
+            return .red
+        case .connectionLost:
+            return .red
+        case .disconnected:
+            return .red
+        case .idle:
+            return .orange
+        case .noSSID:
+            return .red
+        case .noShield:
+            return .red
+        case .scanCompleted:
+            return .green
+        case .connected:
+            return .green
+        }
+    }
+}
+
 class NetworkSummaryViewModel: ObservableObject{
     @Published var title: String = ""
     @Published var errorMessage: String? = nil
@@ -40,60 +105,60 @@ class NetworkSummaryViewModel: ObservableObject{
                 }
                 
             }) { [weak self] (currentNetwork) in
-            guard let self = self else {
-                return
-            }
+                guard let self = self else {
+                    return
+                }
                 
-            guard let currentNetwork = currentNetwork else {
-                self.icon = Image(systemName:"wifi")
-                self.color = .orange
-                self.title = "Checking network"
-                return
-            }
-            
-            self.title = currentNetwork.ssid
-            switch currentNetwork.status {
-            case .connectionFailed:
-                self.color = .red
-                self.icon = Image(systemName:"wifi.exclamationmark")
-                self.errorMessage = "Connection Failed"
-            case .connectionLost:
-                self.color = .red
-                self.icon = Image(systemName:"wifi.exclamationmark")
-                self.errorMessage = "Connection Lost"
-            case .disconnected:
-                self.color = .red
-                self.icon = Image(systemName:"wifi.exclamationmark")
-                self.errorMessage = "Disconnected"
-            case .idle:
-                self.icon = Image(systemName:"wifi.slash")
-                self.color = .orange
-                self.errorMessage = "Idle"
-            case .noSSID:
-                self.color = .red
-                self.icon = Image(systemName:"wifi.exclamationmark")
-                self.title = "Network unavailable"
-                self.errorMessage = nil
-            case .noShield:
-                self.color = .red
-                self.icon = Image(systemName:"wifi.slash")
-                self.errorMessage = "Wifi broken"
-            case .scanCompleted:
-                self.color = .green
-                self.icon = Image(systemName:"wifi")
-                self.errorMessage = "Scan completed"
+                guard let currentNetwork = currentNetwork else {
+                    self.icon = Image(systemName:"wifi")
+                    self.color = .orange
+                    self.title = "Checking network"
+                    return
+                }
                 
-            case .connected:
-                self.color = .green
-                self.icon = Image(systemName:"wifi")
-                self.errorMessage = nil
-            }
+                self.title = currentNetwork.ssid
+                switch currentNetwork.status {
+                case .connectionFailed:
+                    self.color = .red
+                    self.icon = Image(systemName:"wifi.exclamationmark")
+                    self.errorMessage = "Connection Failed"
+                case .connectionLost:
+                    self.color = .red
+                    self.icon = Image(systemName:"wifi.exclamationmark")
+                    self.errorMessage = "Connection Lost"
+                case .disconnected:
+                    self.color = .red
+                    self.icon = Image(systemName:"wifi.exclamationmark")
+                    self.errorMessage = "Disconnected"
+                case .idle:
+                    self.icon = Image(systemName:"wifi.slash")
+                    self.color = .orange
+                    self.errorMessage = "Idle"
+                case .noSSID:
+                    self.color = .red
+                    self.icon = Image(systemName:"wifi.exclamationmark")
+                    self.title = "Network unavailable"
+                    self.errorMessage = nil
+                case .noShield:
+                    self.color = .red
+                    self.icon = Image(systemName:"wifi.slash")
+                    self.errorMessage = "Wifi broken"
+                case .scanCompleted:
+                    self.color = .green
+                    self.icon = Image(systemName:"wifi")
+                    self.errorMessage = "Scan completed"
+                    
+                case .connected:
+                    self.color = .green
+                    self.icon = Image(systemName:"wifi")
+                    self.errorMessage = nil
+                }
                 
         }.store(in: &bag)
-//        let c = networkService.$currentNetwork.
+        //        let c = networkService.$currentNetwork.
     }
     
-
+    
 }
 
 //extension CurrentNetwork {
@@ -112,33 +177,34 @@ class NetworkSummaryViewModel: ObservableObject{
 //    }
 //}
 struct NetworkSummaryView: View {
-    
-    @ObservedObject var viewModel: NetworkSummaryViewModel
+    @EnvironmentObject var networkService: NetworkService
     
     var body: some View {
-        
-        ConfigItemView(icon: viewModel.icon, iconColor: viewModel.color, title: viewModel.title) {
-            self.viewModel.errorMessage.map{Text($0)}
+        networkService.currentNetwork.map{ currentNetwork in
+            
+            ConfigItemView(icon: currentNetwork.status.icon, iconColor: currentNetwork.status.colour, title: currentNetwork.ssid) {
+                Text(currentNetwork.status.title)
+            }
         }
+        
     }
 }
 
 
 
 struct NetworkSummaryView_Previews: PreviewProvider {
-
+    
+    
     
     static var previews: some View {
+        
         Group{
-            ForEach(WifiStatus.allCases){ status -> NetworkSummaryView in
-                let networkService = NetworkService()
-                networkService.currentNetwork = CurrentNetwork(status: status, connected: true, ssid: "Fishnet", channel: 5, ip: IPv4Address("192.167.234.12"), rssi: -20)
-                let viewModel = NetworkSummaryViewModel(networkService)
-                
-                return NetworkSummaryView(viewModel: viewModel)
+            ForEach(WifiStatus.allCases){ status in
+//                let networkService = NetworkService()
+                return NetworkSummaryView()
                 
             }.previewLayout(.sizeThatFits)
-        
+            
         }
         
     }

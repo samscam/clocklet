@@ -49,6 +49,7 @@ class Clock: Peripheral, Identifiable, Advertiser {
     
     @Service var networkService: NetworkService?
     @Service var locationService: LocationService?
+    @Service var settingsService: SettingsService?
     
     static var advertised: [InnerServiceProtocol.Type] = [NetworkService.self]
 }
@@ -57,12 +58,14 @@ class Clock: Peripheral, Identifiable, Advertiser {
 enum CaseColor: String, Codable {
     case bones
     case black
+    case blue
     case wood
     
     var imageName: String {
         switch self{
         case .bones: return "esp32feather"
         case .black: return "black-clocklet"
+        case .blue: return "blue"
         case .wood: return "wood-clocklet"
         }
     }

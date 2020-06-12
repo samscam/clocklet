@@ -13,44 +13,40 @@ import CombineBluetooth
 
 struct ClockDetailsView: View {
     
-    @ObservedObject var viewModel: ClockDetailsViewModel
-    
+    @EnvironmentObject var clock: Clock
     
     var body: some View {
         ScrollView{
             VStack(){
-                viewModel.image.resizable().aspectRatio(contentMode: .fit).frame(width: nil, height: 200, alignment: .center)
+                Image(clock.caseColor.imageName).resizable().aspectRatio(contentMode: .fit).frame(width: nil, height: 200, alignment: .center)
                 
-                ConfigItemView(icon: viewModel.connectionIcon ,
-                               iconColor: viewModel.connectionColor,
-                               title: viewModel.connectionMessage) {
-                                self.viewModel.connectionErrorMessage.map{ Text($0) }
+                ConfigItemView(icon: Image(systemName:clock.state.iconSystemName) ,
+                               iconColor: clock.state.color,
+                               title: clock.state.description){
+                               EmptyView()
                 }
                 
-                viewModel.networkDetails.map{
-                    NavigationLink(destination:NetworkDetailView(viewModel: $0)){
-                        viewModel.networkSummary.flatMap{
-                            NetworkSummaryView(viewModel: $0)
-                        }
-                    }.accentColor(nil)
+                clock.networkService.map{ networkService in
+                    NavigationLink(destination: NetworkDetailView().environmentObject(networkService)){
+                        NetworkSummaryView().environmentObject(networkService)
+                        }.accentColor(nil)
+                    
                 }
                 
-                viewModel.locationSummaryViewModel.map{
-                    LocationSummaryView($0)
+                clock.locationService.map{ locationService in
+                    LocationSummaryView().environmentObject(locationService)
                 }
                 
             }
             .padding()
             .animation(.default)
             .onAppear {
-                self.viewModel.onAppear()
-                self.viewModel.connect()
-            }.onDisappear {
-                self.viewModel.onDisappear()
-                //                self.viewModel.clock.disconnect()
+                self.clock.connect()
             }
             
-        }.navigationBarTitle(Text(viewModel.title), displayMode:.large)
+        }.navigationBarTitle( Text(clock.name), displayMode:.inline)
+            .navigationBarItems(trailing: Image(systemName:clock.state.iconSystemName).foregroundColor(clock.state.color))
+        
     }
 }
 
@@ -61,24 +57,27 @@ extension ContentSizeCategory{
 }
 
 struct ClockDetailsView_Previews: PreviewProvider {
-    
-    static let viewModel: ClockDetailsViewModel = {
-        var clock = Clock("Foop",.bones)
-        
-        clock.caseColor = .wood
-        clock.networkService?.currentNetwork = CurrentNetwork(status: .connected, connected: true, ssid: "Fishnet", channel: 1, ip: nil, rssi: -20)
-//        clock.locationService.currentLocation = CurrentLocation(lat: 53.431808, lng: -2.218080)
-        var viewModel = ClockDetailsViewModel(clock: clock)
-        viewModel.connectionErrorMessage = "This all went wrong today"
-        return viewModel
+    static let clock: Clock = {
+        let clock = Clock("Foop",.bones)
+        return clock
     }()
+//    static let viewModel: ClockDetailsViewModel = {
+//        var clock = Clock("Foop",.bones)
+//
+//        clock.caseColor = .wood
+//        clock.networkService?.currentNetwork = CurrentNetwork(status: .connected, connected: true, ssid: "Fishnet", channel: 1, ip: nil, rssi: -20)
+////        clock.locationService.currentLocation = CurrentLocation(lat: 53.431808, lng: -2.218080)
+//        var viewModel = ClockDetailsViewModel(clock: clock)
+//        viewModel.connectionErrorMessage = "This all went wrong today"
+//        return viewModel
+//    }()
     
     static var previews: some View {
         Group{
             ForEach(ContentSizeCategory.allCases, id: \.hashValue) { item  in
                 
                 NavigationView{
-                    ClockDetailsView(viewModel: viewModel)
+                    ClockDetailsView().environmentObject(clock)
                 }
                 .environment(\.sizeCategory,item).previewDevice("iPhone SE")
                 
@@ -101,3 +100,31 @@ struct ClockDetailsView_Previews: PreviewProvider {
     
 }
 
+extension ConnectionState{
+    var iconSystemName: String {
+        switch self {
+            case .connected: return "bolt.fill"
+            case .connecting: return "bolt"
+            case .disconnected: return "bolt.slash.fill"
+        }
+    }
+    
+    var color: Color {
+        switch self {
+            case .connected: return .green
+            case .connecting: return .orange
+            case .disconnected: return .red
+        }
+    }
+}
+
+extension ConnectionState: CustomStringConvertible {
+
+    public var description: String {
+        switch self {
+            case .connected: return "Connected"
+            case .connecting: return "Connecting"
+            case .disconnected: return "Disconnected"
+        }
+    }
+}

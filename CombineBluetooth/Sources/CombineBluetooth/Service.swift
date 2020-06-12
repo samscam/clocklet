@@ -8,7 +8,7 @@ public enum ServiceError: Error {
     case invalidated
 }
 
-public protocol ServiceWrapper: HasUUID {
+internal protocol ServiceWrapper: HasUUID {
     var cbService: CBService? { get set }
     func didUpdateValue(for: CBCharacteristic, error: Error?)
     func didWriteValue(for: CBCharacteristic, error: Error?)
@@ -23,7 +23,7 @@ public protocol InnerServiceProtocol: class, HasUUID {
     init()
 }
 
-public protocol ServiceProtocol: InnerServiceProtocol {}
+public protocol ServiceProtocol: InnerServiceProtocol, ObservableObject {}
 
 
 @propertyWrapper
@@ -83,6 +83,7 @@ public class Service<Value:ServiceProtocol>: ServiceWrapper {
     }
     
     public func didInvalidate(){
+        wrappedValue?.characteristicWrappers.forEach{ $0.invalidate() }
         self.cbService = nil
         self.wrappedValue = nil
         self.publisher.send(completion: .failure(.invalidated))

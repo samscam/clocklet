@@ -11,6 +11,7 @@ public protocol CharacteristicWrapper: class, HasUUID {
     
     /// This is called internally by the service wrapper after a write transaction has taken place
     func didWriteValue(error: Error?)
+    func invalidate()
     
     var cbCharacteristic: CBCharacteristic? { get set }
 }
@@ -68,7 +69,9 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Publ
                 
                 // check if we can actually write to this characteristic...
                 if (cbCharacteristic.properties.contains(.write)){
+                    // these can crash if diconnected :(
                     cbCharacteristic.service.peripheral.writeValue(data, for: cbCharacteristic, type: .withResponse)
+                    
                 } else if (cbCharacteristic.properties.contains(.writeWithoutResponse)){
                         cbCharacteristic.service.peripheral.writeValue(data, for: cbCharacteristic, type: .withoutResponse)
                 } else {
@@ -122,5 +125,11 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Publ
     
     public var projectedValue: Characteristic {
         return self
+    }
+    
+    public func invalidate(){
+        cbCharacteristic = nil
+        wrappedValue = nil
+        
     }
 }

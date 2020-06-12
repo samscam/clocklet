@@ -15,7 +15,7 @@ class NetworkService: ServiceProtocol {
     
     required init(){}
     
-    let objectWillChange = ObservableObjectPublisher() // If we leave it to the synthesised one it doesn't work :/
+//    let objectWillChange = ObservableObjectPublisher() // If we leave it to the synthesised one it doesn't work :/
     
     static let uuid = CBUUID(string: "68D924A1-C1B2-497B-AC16-FD1D98EDB41F")
     

@@ -24,9 +24,17 @@ public enum ConnectionState {
 
 
 open class Peripheral: PeripheralProtocol, ObservableObject {
-    public let objectWillChange: ObservableObjectPublisher = ObservableObjectPublisher()
     
-    @Published public var state: ConnectionState = .disconnected(error: nil)
+    @Published public var state: ConnectionState = .disconnected(error: nil) {
+        didSet{
+            switch state {
+            case .disconnected:
+                self.invalidate()
+            default:
+                break
+            }
+        }
+    }
     @Published public var name: String
     
     @Published public var advertisementData: AdvertisementData?
@@ -55,6 +63,10 @@ open class Peripheral: PeripheralProtocol, ObservableObject {
     public func disconnect(){
         connection?.disconnect()
     }
+    
+    func invalidate(){
+        serviceWrappers.forEach{$0.didInvalidate()}
+    }
 
 
 }
@@ -81,12 +93,12 @@ public extension InnerPeripheralProtocol {
         return m.children.compactMap{ $0.value as? InnerServiceProtocol }
     }
     
-    var serviceWrappers: [ServiceWrapper]{
+    internal var serviceWrappers: [ServiceWrapper]{
         let m = Mirror(reflecting: self)
         return m.children.compactMap { $0.value as? ServiceWrapper}
     }
     
-    func serviceWrapper(for cbService: CBService) -> ServiceWrapper? {
+    internal func serviceWrapper(for cbService: CBService) -> ServiceWrapper? {
         return serviceWrappers.first { (service) -> Bool in
             return service.uuid == cbService.uuid
         }

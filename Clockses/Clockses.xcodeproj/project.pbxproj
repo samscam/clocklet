@@ -27,11 +27,12 @@
 		22836ED722862AAC0020B46F /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22836ED622862AAC0020B46F /* CoreBluetooth.framework */; };
 		228A1C8E2462BB6C00033937 /* SettingsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228A1C8D2462BB6C00033937 /* SettingsService.swift */; };
 		228DF25F234FB41E00480588 /* NetworkSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228DF25E234FB41E00480588 /* NetworkSummaryView.swift */; };
-		228DF261234FDF6400480588 /* ClockListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228DF260234FDF6400480588 /* ClockListViewModel.swift */; };
+		228DF261234FDF6400480588 /* ClockList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228DF260234FDF6400480588 /* ClockList.swift */; };
 		228DF2662350704D00480588 /* ClockDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228DF2652350704D00480588 /* ClockDetailsViewModel.swift */; };
 		229AD7BA236CE745006BEB07 /* CombineBluetooth in Frameworks */ = {isa = PBXBuildFile; productRef = 229AD7B9236CE745006BEB07 /* CombineBluetooth */; };
 		229F3C68235EF82200EEA785 /* Clock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BE0A3F235DE4EA00EB8780 /* Clock.swift */; };
 		229F3C6A235F427100EEA785 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F3C69235F427100EEA785 /* LocationService.swift */; };
+		22A034E2248DA52800FA7370 /* GeocoderProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A034E1248DA52800FA7370 /* GeocoderProxy.swift */; };
 		22A0AE042351492F00D04338 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A0AE032351492F00D04338 /* NetworkService.swift */; };
 		22B391C62368FD58009DF144 /* EnterPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B391C52368FD58009DF144 /* EnterPasswordView.swift */; };
 		22E2D9BA233A971000B4FCFD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E2D9B9233A970F00B4FCFD /* SceneDelegate.swift */; };
@@ -72,9 +73,10 @@
 		22836ED622862AAC0020B46F /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		228A1C8D2462BB6C00033937 /* SettingsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsService.swift; sourceTree = "<group>"; };
 		228DF25E234FB41E00480588 /* NetworkSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSummaryView.swift; sourceTree = "<group>"; };
-		228DF260234FDF6400480588 /* ClockListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockListViewModel.swift; sourceTree = "<group>"; };
+		228DF260234FDF6400480588 /* ClockList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockList.swift; sourceTree = "<group>"; };
 		228DF2652350704D00480588 /* ClockDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockDetailsViewModel.swift; sourceTree = "<group>"; };
 		229F3C69235F427100EEA785 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
+		22A034E1248DA52800FA7370 /* GeocoderProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeocoderProxy.swift; sourceTree = "<group>"; };
 		22A0AE032351492F00D04338 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		22B391C52368FD58009DF144 /* EnterPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterPasswordView.swift; sourceTree = "<group>"; };
 		22BE0A3F235DE4EA00EB8780 /* Clock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clock.swift; sourceTree = "<group>"; };
@@ -161,6 +163,7 @@
 				22836EB3228629750020B46F /* AppDelegate.swift */,
 				22E2D9B9233A970F00B4FCFD /* SceneDelegate.swift */,
 				22604280236E40F800710F37 /* LocationProxy.swift */,
+				22A034E1248DA52800FA7370 /* GeocoderProxy.swift */,
 			);
 			path = Business;
 			sourceTree = "<group>";
@@ -179,7 +182,7 @@
 		228DF2642350703700480588 /* Clock List */ = {
 			isa = PBXGroup;
 			children = (
-				228DF260234FDF6400480588 /* ClockListViewModel.swift */,
+				228DF260234FDF6400480588 /* ClockList.swift */,
 				224C538E234F6CDD00A68928 /* ClockListView.swift */,
 				222271A4232B887100508ADA /* ClockSummaryView.swift */,
 			);
@@ -337,8 +340,9 @@
 				227CC3062367925D00D7770D /* PropertiesView.swift in Sources */,
 				2255195823588AF50056B9CD /* NetworkDetailView.swift in Sources */,
 				22836EB4228629750020B46F /* AppDelegate.swift in Sources */,
-				228DF261234FDF6400480588 /* ClockListViewModel.swift in Sources */,
+				228DF261234FDF6400480588 /* ClockList.swift in Sources */,
 				22585259235694A0005C9696 /* ConfigItemView.swift in Sources */,
+				22A034E2248DA52800FA7370 /* GeocoderProxy.swift in Sources */,
 				224C538F234F6CDD00A68928 /* ClockListView.swift in Sources */,
 				224C5391234FAE7300A68928 /* ClockDetailsView.swift in Sources */,
 				22604281236E40F800710F37 /* LocationProxy.swift in Sources */,

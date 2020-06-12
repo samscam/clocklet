@@ -6,7 +6,7 @@ import Combine
  CENTRAL should probably be called CentralManager
 */
 
-public class Central: NSObject {
+public class Central: NSObject, ObservableObject {
 
     private let _cbCentralManager: CBCentralManager = CBCentralManager()
     
@@ -55,6 +55,12 @@ public class Central: NSObject {
         
     }
     
+    public func disconnectAllDevices(){
+        connections.forEach { (_, connection) in
+            connection.disconnect()
+        }
+    }
+    
     private var knownPeripheralTypes: [Advertiser.Type] = []
     
     
@@ -79,6 +85,7 @@ public class Central: NSObject {
         _cbCentralManager.cancelPeripheralConnection(peripheral)
     }
     
+
 }
 
 extension Central: CBCentralManagerDelegate {
