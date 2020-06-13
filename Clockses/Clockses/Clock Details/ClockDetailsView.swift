@@ -25,6 +25,16 @@ struct ClockDetailsView: View {
                                title: clock.state.description){
                                EmptyView()
                 }
+
+                clock.settingsService.map{ settingsService in
+                    NavigationLink(destination:
+                    ClockSettingsView().environmentObject(settingsService)){
+                        ConfigItemView(icon: Image(systemName:"clock") ,
+                                       title: "Clock Settings"){
+                                       EmptyView()
+                        }
+                    }
+                }
                 
                 clock.networkService.map{ networkService in
                     NavigationLink(destination: NetworkDetailView().environmentObject(networkService)){
@@ -45,7 +55,7 @@ struct ClockDetailsView: View {
             }
             
         }.navigationBarTitle( Text(clock.name), displayMode:.inline)
-            .navigationBarItems(trailing: Image(systemName:clock.state.iconSystemName).foregroundColor(clock.state.color))
+        .navigationBarItems(trailing: Image(systemName:clock.state.iconSystemName).foregroundColor(clock.state.color))
         
     }
 }
