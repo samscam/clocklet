@@ -11,8 +11,6 @@ import Combine
 import CombineBluetooth
 import SwiftUI
 
-// BEST LINK https://medium.com/ios-os-x-development/learn-master-%EF%B8%8F-the-basics-of-combine-in-5-minutes-639421268219
-
 
 class ClockList: ObservableObject {
     @Published var isScanning = true
@@ -49,25 +47,3 @@ class ClockList: ObservableObject {
     }
     
 }
-
-//class ClockSummaryViewModel: ObservableObject, Identifiable {
-//    var id: UUID {
-//        return clock.id
-//    }
-//    
-//    @Published var image: Image
-//    @Published var title: String = ""
-//    var bag: [AnyCancellable] = []
-//    
-//    lazy var detailsViewModel = ClockDetailsViewModel(clock: self.clock)
-//    
-//    let clock: Clock
-//    
-//    init(clock: Clock){
-//        self.clock = clock
-//        
-//        image = Image(clock.caseColor.imageName)
-//        
-//        clock.$name.assign(to: \.title, on: self).store(in: &bag)
-//    }
-//}

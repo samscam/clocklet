@@ -10,80 +10,10 @@ import SwiftUI
 import Combine
 import CoreLocation
 
-//class LocationSummaryViewModel: ObservableObject{
-//
-//    @Published var isResolving: Bool = true
-//    @Published var title: String = "Resolving..."
-//    @Published var coordinates: String? = nil
-//    @Published var coord2d: CLLocationCoordinate2D? = nil
-//
-//    private var locationService: LocationService?
-//
-//    private var locationProxy = LocationProxy()
-//
-//    var bag: [AnyCancellable] = []
-//
-//    init(_ locationService: LocationService?){
-//        self.locationService = locationService
-//
-//        guard let locationService = locationService else {
-//            return
-//        }
-//
-//        locationService.$currentLocation.compactMap{
-//            $0?.description
-//        }
-//        .catch{ error in
-//            return Just("Error: \(error.localizedDescription)")
-//        }
-//        .assign(to: \.coordinates, on: self)
-//            .store(in: &bag)
-//
-//        locationService
-//            .$currentLocation
-//            .compactMap{$0?.location}
-//            .flatMap{ location in
-//                GeocoderProxy().futureReversePublisher(location)
-//            }
-//            .catch { (error) in
-//                Just("Error: \(error.localizedDescription)")
-//            }
-//            .assign(to: \.title, on: self)
-//            .store(in: &bag)
-//
-//
-//        locationService
-//            .$currentLocation
-//            .compactMap{$0?.location.coordinate}
-//            .catch{ error in
-//                Just(nil)
-//            }
-//            .assign(to: \.coord2d, on: self)
-//            .store(in: &bag)
-//
-//
-//    }
-//
-//
-//    func setCurrentLocation(){
-//
-//        guard let locationService = locationService else {
-//            return
-//        }
-//
-//        locationProxy.locationPublisher.sink(receiveCompletion: { (completion) in
-//
-//        }) { (location) in
-//            locationService.currentLocation = CurrentLocation(lat: location.coordinate.latitude, lng: location.coordinate.longitude)
-//        }.store(in: &bag)
-//    }
-//
-//}
 
 struct LocationSummaryView: View {
     
     @EnvironmentObject var locationService: LocationService
-    
     
     var body: some View {
         ConfigItemView(icon: Image(systemName:"location"), title: "Location") {
