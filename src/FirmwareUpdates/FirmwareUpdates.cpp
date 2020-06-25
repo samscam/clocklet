@@ -52,7 +52,8 @@ bool FirmwareUpdates::_getWithRedirects(HTTPClient ** httpsptr, WiFiClientSecure
     https->collectHeaders(headerKeys,3);
     ESP_LOGV(TAG, "Get");
     int httpCode = https->GET();
-    ESP_LOGV(TAG, "nonNeg");
+
+
     // httpCode will be negative on error
     if (httpCode < 0) {
         ESP_LOGE(TAG, "HTTP error: %s\n-- URL: %s", *https->errorToString(httpCode).c_str(), url);
@@ -60,6 +61,9 @@ bool FirmwareUpdates::_getWithRedirects(HTTPClient ** httpsptr, WiFiClientSecure
         delete https;
         return false;
     }
+
+    ESP_LOGV(TAG, "nonNegative status");
+
     ESP_LOGV(TAG, "Redirects");
     // Handle redirects
     if (httpCode >= 300 && httpCode < 400 ){
