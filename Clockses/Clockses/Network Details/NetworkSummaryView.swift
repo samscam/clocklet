@@ -182,8 +182,22 @@ struct NetworkSummaryView: View {
     var body: some View {
         networkService.currentNetwork.map{ currentNetwork in
             
-            ConfigItemView(icon: currentNetwork.status.icon, iconColor: currentNetwork.status.colour, title: currentNetwork.ssid) {
-                Text(currentNetwork.status.title)
+            ConfigItemView(icon: currentNetwork.status == .connected ? currentNetwork.wifiStrengthBars : currentNetwork.status.icon , iconColor: currentNetwork.status.colour, title: "Network") {
+                
+                VStack(alignment: .leading){
+                    HStack{
+                        Text("SSID:")
+                        Text(currentNetwork.ssid).bold()
+                    }
+                    HStack{
+                        Text("Status:")
+                        Text(currentNetwork.status.title).bold()
+                    }
+                    HStack{
+                        Text("IP Address:")
+                        Text(currentNetwork.ip?.debugDescription ?? "No ip address").bold()
+                    }
+                }
             }
         }
         
@@ -200,10 +214,10 @@ struct NetworkSummaryView_Previews: PreviewProvider {
         
         Group{
             ForEach(WifiStatus.allCases){ status in
-//                let networkService = NetworkService()
+                
                 return NetworkSummaryView()
                 
-            }.previewLayout(.sizeThatFits)
+            }.previewLayout(.sizeThatFits).environmentObject(NetworkService())
             
         }
         

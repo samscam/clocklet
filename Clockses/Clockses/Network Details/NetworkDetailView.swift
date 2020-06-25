@@ -19,14 +19,10 @@ struct NetworkDetailView: View {
             VStack{
                 
                 NetworkSummaryView()
-//
-//                networkService.availableNetworks.map{
-//                    AvailableNetworksView()
-//                }
-//                self.viewModel.availableNetworks.map{
-//                    AvailableNetworksView($0,networkService: self.viewModel.networkService)
-//                }
-//                
+                
+                networkService.availableNetworks.map{ _ in
+                    AvailableNetworksView().environmentObject(self.networkService.$availableNetworks)
+                }
             }.padding()
         }.navigationBarTitle(Text("Network Settings"), displayMode:.large)
         
@@ -34,13 +30,19 @@ struct NetworkDetailView: View {
 }
 
 struct NetworkDetailView_Previews: PreviewProvider {
-    static var previews: some View {
+    static let networkService: NetworkService = {  
         let networkService = NetworkService()
         networkService.currentNetwork = CurrentNetwork(status: .connectionFailed, connected: false, ssid: "Some Net", channel: 1, ip: nil, rssi: -20)
         networkService.availableNetworks = [
                     AvailableNetwork(ssid: "Broccoli", enctype: .open, rssi: -20, channel: 4, bssid:"SOMETHING"),
             AvailableNetwork(ssid: "My Wifi is Nice", enctype: .open, rssi: -20, channel: 4, bssid:"mywifi")
         ]
+        return networkService
+        
+    }()
+    
+    static var previews: some View {
+
         return NetworkDetailView().environmentObject(networkService)
         
     }
