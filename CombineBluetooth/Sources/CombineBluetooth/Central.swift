@@ -8,18 +8,30 @@ import Combine
 
 public class Central: NSObject, ObservableObject {
 
-    private let _cbCentralManager: CBCentralManager = CBCentralManager()
+    private let _cbCentralManager: CBCentralManager
     
     @Published var state: CBManagerState = .unknown
     @Published var connections: [UUID:Connection] = [:]
     @Published public var isScanning: Bool = false
     
-    func scan(forServices services: Set<CBUUID>? = nil)->AnyPublisher<[Connection],Never>{
+    /// Initialise the Central
+    /// Optionally provide a `CBCentralManager` for mocking
+    public init(cbCentralManager: CBCentralManager = CBCentralManager()){
+        _cbCentralManager = cbCentralManager
+        super.init()
+        
+        _cbCentralManager.delegate = self
+        state = _cbCentralManager.state
+    }
+    
+    let allCBPeripherals: CurrentValueSubject<[CBPeripheral],Error> = .init([])
+    
+    private func scan(forServices services: Set<CBUUID>? = nil)->AnyPublisher<[Connection],Never>{
         
         return $state
             .filter({ (state) -> Bool in
                 return state == .poweredOn
-            }).handleEvents(receiveOutput: { state in 
+            }).handleEvents(receiveOutput: { state in
                 print("CENTRAL: starting scan")
                 self.isScanning = true
                 self._cbCentralManager.scanForPeripherals(withServices: services?.compactMap({$0}) , options: nil) // Ends up with empty array rather than nil???
@@ -38,13 +50,6 @@ public class Central: NSObject, ObservableObject {
         }).eraseToAnyPublisher()
     }
     
-    public override init(){
-        super.init()
-        _cbCentralManager.delegate = self
-        state = _cbCentralManager.state
-    }
-    
-    let allCBPeripherals: CurrentValueSubject<[CBPeripheral],Error> = .init([])
     
     public func discoverConnections<T: PeripheralProtocol & Advertiser>(for peripheralType: T.Type) -> AnyPublisher<[Connection],Never> {
         registerPeripheralType(peripheralType)
