@@ -69,6 +69,7 @@ extension ContentSizeCategory{
 struct ClockDetailsView_Previews: PreviewProvider {
     static let clock: Clock = {
         let clock = Clock("Foop",.bones)
+        clock.connect()
         return clock
     }()
 //    static let viewModel: ClockDetailsViewModel = {
@@ -83,16 +84,11 @@ struct ClockDetailsView_Previews: PreviewProvider {
 //    }()
     
     static var previews: some View {
-        Group{
-            ForEach(ContentSizeCategory.allCases, id: \.hashValue) { item  in
-                
-                NavigationView{
-                    ClockDetailsView().environmentObject(clock)
-                }
-                .environment(\.sizeCategory,item).previewDevice("iPhone SE")
-                
-            }
+
+        NavigationView{
+            ClockDetailsView().environmentObject(clock)
         }
+        
     }
     //        ClockDetailsView(clock: )
     //        let clock = ClockModel(id: UUID(), serial: 5, name: "Clocklet #291", caseColor: .wood)
