@@ -4,6 +4,7 @@
 #include <Fonts/MatrixFont.h>
 #include "../settings.h"
 #include "MatrixUtils.h"
+#include "../TimeThings/TimeUtils.h"
 
 
 FASTLED_USING_NAMESPACE
@@ -402,12 +403,19 @@ void Matrix::displayTime(const DateTime& time, Weather weather){
     addFrost();
   }
 
-  if (SHOW_DATE){
+  if (DECIMAL_TIME){
+    double decTime = decimalise(time);
+    
+    char buf[10];
+    sprintf(buf,"%.3f",decTime);
+    displayString(buf);
+  } else if (SHOW_DATE){
     maskDate(time);
   } else {
     maskTime(time);
   }
 
+  if (!DECIMAL_TIME){
   _blinkColon = BLINK_SEPARATOR ? (time.second() % 2) == 0 : true;
 
   CRGB dotColour = CRGB::Black;
