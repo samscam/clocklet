@@ -21,8 +21,8 @@
 
 #define NUM_LEDS    COLUMNS * ROWS
 
-#define MAX_BRIGHTNESS 127
-#define MIN_BRIGHTNESS 10
+#define MAX_BRIGHTNESS 80
+#define MIN_BRIGHTNESS 6
 
 enum DeviceState {
   ok,
