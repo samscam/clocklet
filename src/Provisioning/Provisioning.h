@@ -5,7 +5,7 @@
 
 bool isAlreadyProvisioned();
 bool isProvisioningActive();
-void startProvisioning();
+void startProvisioning(QueueHandle_t prefsChangedQueue);
 void wifi_init_sta();
 
 void doBackgroundThings(void * parameter);

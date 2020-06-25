@@ -11,6 +11,9 @@
 #include <ArduinoJson.h>
 #define MAX_NETS 128
 
+#include "BTPreferencesService.h"
+
+
 struct NetworkInfo {
     uint8_t index;
     uint8_t enctype;
@@ -25,6 +28,8 @@ void wifiEventCb(WiFiEvent_t event);
 class BlueStuff: public BLEServerCallbacks {
 
 public:
+    BlueStuff(QueueHandle_t preferencesChangedQueue);
+
     void startBlueStuff();
     void stopBlueStuff();
 
@@ -39,6 +44,7 @@ public:
     bool _shouldScan = false;
     
 private:
+    QueueHandle_t _preferencesChangedQueue;
     bool _keepRunning = true;
 
     void _startNetworkService();
@@ -50,6 +56,10 @@ private:
     void _encodeNetInfo(JsonDocument &doc, NetworkInfo netInfo);
 
     BLEServer *pServer;
+
+    BLEService *sv_GAS;
+    BLECharacteristic *ch_ServiceChanged;
+    
 
     // Network provisioning
     BLEService *sv_network;
@@ -67,6 +77,7 @@ private:
     BLECharacteristic *ch_brightness; // read/write min/max brightness
     
     // std::vector<NetworkInfo> networks;
+    BTPreferencesService* _preferencesService;
 
 };
 

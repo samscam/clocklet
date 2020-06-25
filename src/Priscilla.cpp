@@ -91,6 +91,10 @@ DarkSky *weatherClient = new DarkSky(secureClient);
 
 Rainbows rainbows;
 
+// Global Notification queues
+
+QueueHandle_t prefsChangedQueue;
+
 
 // SETUP  --------------------------------------
 void setup() {
@@ -110,11 +114,18 @@ void setup() {
 
   Serial.printf("Firmware Version: %s\n",VERSION);
 
+  // Notification queues
+  prefsChangedQueue = xQueueCreate(1, sizeof(bool));
+
   // Read things from preferences...
   Preferences preferences = Preferences();
   preferences.begin("clocklet", false);
 
-
+  // preferences.putString("owner","Sam");
+  // preferences.putUInt("serial",7);
+  // preferences.putUInt("hwrev",5); // hardware rev
+  // preferences.putString("swmigrev",VERSION) // last fw version used - update after migrations!
+  // preferences.putString("casecolour","blue");
 
 
   uint32_t serial = preferences.getUInt("serial");
@@ -193,7 +204,8 @@ void setup() {
     display->setDeviceState(bluetooth);
     // startProvisioning();
   }
-  startProvisioning();
+
+  startProvisioning(prefsChangedQueue);
   
   LOGMEM;
 
@@ -264,6 +276,13 @@ bool didDisplay = false;
 void loop() {
 
   display->setBrightness(currentBrightness());
+
+  // Check for preferences changes
+  bool prefsDidChange = false;
+  xQueueReceive(prefsChangedQueue, &prefsDidChange, (TickType_t)0 );
+  if (prefsDidChange){
+    Serial.println("PREFS DID CHANGE");
+  }
 
   // Check for touches...
   if (detectTouchPeriod() > 500){

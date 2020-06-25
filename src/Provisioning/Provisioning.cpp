@@ -88,7 +88,7 @@ void doBackgroundThings(void * parameter) {
 }
 
 
-void startProvisioning() {
+void startProvisioning(QueueHandle_t prefsChangedQueue) {
 
     if (provisioningIsActive){
         return;
@@ -99,18 +99,18 @@ void startProvisioning() {
     BaseType_t core = 0;
 
     ESP_LOGE(TAG, "Starting provisioning");
-    blueStuff = new BlueStuff();
+    blueStuff = new BlueStuff(prefsChangedQueue);
     // blueStuff->startBlueStuff();
     
       
-  xTaskCreatePinnedToCore(
-    doBackgroundThings,
-    "BlueStuffTask",
-    5000,
-    NULL,
-    1,
-    &blueStuffTask,
-    core);
+    xTaskCreatePinnedToCore(
+        doBackgroundThings,
+        "BlueStuffTask",
+        5000,
+        NULL,
+        1,
+        &blueStuffTask,
+        core);
 
 }
 
