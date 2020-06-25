@@ -8,8 +8,10 @@ void runTests(){
 }
 
 void displayTests(Display *display){
+    while(1){
+        display->graphicsTest();
+    }
     
-    display->graphicsTest();
 
  
 
