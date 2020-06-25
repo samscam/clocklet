@@ -24,8 +24,8 @@ enum CharacteristicState<Value> {
 }
 
 @propertyWrapper
-public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Publisher {
-
+public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Publisher, ObservableObject {
+    
     public enum CharacteristicError: Error{
         case noCBCharacteristic
         case couldNotWriteValue
@@ -33,7 +33,7 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Publ
 
     public let uuid: CBUUID
     
-    private let subject = CurrentValueSubject<Value?,Error>(nil)
+    public let subject = CurrentValueSubject<Value?,Error>(nil)
     
     public typealias Output = Value?
     public typealias Failure = Error
@@ -51,6 +51,9 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Publ
     }
     
     private var _value: Value? {
+        willSet{
+            objectWillChange.send()
+        }
         didSet{
             subject.send(_value)
         }
@@ -69,7 +72,7 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Publ
                 
                 // check if we can actually write to this characteristic...
                 if (cbCharacteristic.properties.contains(.write)){
-                    // these can crash if diconnected :(
+                    // these can crash if disconnected :(
                     cbCharacteristic.service.peripheral.writeValue(data, for: cbCharacteristic, type: .withResponse)
                     
                 } else if (cbCharacteristic.properties.contains(.writeWithoutResponse)){
@@ -89,6 +92,7 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Publ
         if let cbc = cbCharacteristic,
             let data = cbc.value {
             self._value = Value(data: data)
+            
         }
     }
     
