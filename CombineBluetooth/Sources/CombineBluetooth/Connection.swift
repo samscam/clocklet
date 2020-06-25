@@ -73,6 +73,7 @@ public class Connection: NSObject{
     }
     
     func didDisconnect(error: Error?){
+        peripheral?.didDisconnect()
         peripheral?.state = .disconnected(error: error)
     }
     
@@ -96,6 +97,8 @@ extension Connection: CBPeripheralDelegate{
 
         // Have we got services?
         guard let cbServices = cbPeripheral.services else { return }
+        
+        self.peripheral?.objectWillChange.send()
         
         // Map the CBServices onto our Services
         cbServices

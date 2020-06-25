@@ -25,6 +25,8 @@ public enum ConnectionState {
 
 open class Peripheral: PeripheralProtocol, ObservableObject {
     
+    
+    
     @Published public var state: ConnectionState = .disconnected(error: nil) {
         didSet{
             switch state {
@@ -64,6 +66,10 @@ open class Peripheral: PeripheralProtocol, ObservableObject {
         connection?.disconnect()
     }
     
+    public func didDisconnect(){
+        invalidate()
+    }
+    
     func invalidate(){
         serviceWrappers.forEach{$0.didInvalidate()}
     }
@@ -80,6 +86,7 @@ public protocol InnerPeripheralProtocol: class {
     init(uuid: UUID, name: String, connection: Connection)
     var objectWillChange: ObservableObjectPublisher { get }
     var advertisementData: AdvertisementData? {get set}
+    func didDisconnect()
 }
 
 
