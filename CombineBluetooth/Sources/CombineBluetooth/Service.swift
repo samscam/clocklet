@@ -23,7 +23,9 @@ public protocol InnerServiceProtocol: class, HasUUID {
     init()
 }
 
-public protocol ServiceProtocol: InnerServiceProtocol, ObservableObject {}
+public protocol ServiceProtocol: InnerServiceProtocol, ObservableObject where ObjectWillChangePublisher == ObservableObjectPublisher {
+    
+}
 
 
 @propertyWrapper
@@ -61,7 +63,7 @@ public class Service<Value:ServiceProtocol>: ServiceWrapper {
         }
         
         for cbCharacteristic in cbCharacteristics {
-            
+            wrappedValue?.objectWillChange.send()
             if let characteristicWrapper = wrappedValue?.characteristicWrapper(for: cbCharacteristic) {
                 characteristicWrapper.cbCharacteristic = cbCharacteristic
             }
@@ -69,6 +71,7 @@ public class Service<Value:ServiceProtocol>: ServiceWrapper {
     }
     
     public func didUpdateValue(for cbCharacteristic: CBCharacteristic, error: Error?){
+        wrappedValue?.objectWillChange.send()
         wrappedValue?.characteristicWrapper(for: cbCharacteristic)?.didUpdateValue(error: error)
     }
     
