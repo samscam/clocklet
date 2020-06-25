@@ -12,16 +12,17 @@ FASTLED_USING_NAMESPACE
 // This is a gradient palette for the temperature scale
 
 DEFINE_GRADIENT_PALETTE (temperatureGPalette) {
-0,   127, 127, 255, // -10
-51,  255, 255, 255, // 0
-61,  127, 255, 255, // 2
-76,  0,   255, 255, // 5
-102, 0,   255, 0,   // 10
-127, 255, 255, 0,   // 15
-153, 255, 128,   0,   // 20
-177, 255, 0,   0,   // 25
-204, 255, 0,   255,   // 30
-255, 120, 0,   255  // 40
+0,   127, 127, 255, // -10  very light blue
+51,  255, 255, 255, // 0    white
+61,  127, 255, 255, // 2    light cyan
+76,  0,   255, 255, // 5    cyan
+102, 0,   255, 0,   // 10   green
+127, 255, 255, 0,   // 15   yellow
+153, 255, 128, 0,   // 20   orange
+177, 255, 0,   0,   // 25   red
+204, 255, 0,   32,  // 30   magenta
+229, 255, 0,   128, // 35   magenta
+255, 120, 0,   255  // 40   purple
 };
 
 
@@ -47,22 +48,6 @@ void Matrix::frameLoop() {
 }
 
 void Matrix::setWeather(Weather weather) {
-
-//   _weather = {
-//   .summary = "No weather yet",
-//   .type = 0,
-//   .precipChance = 1.0f,
-//   .precipIntensity = 1.0f,
-//   .precipType = Rain,
-//   .maxTmp = 01.0f,
-//   .minTmp = 08.0f,
-//   .currentTmp = 02.0f,
-//   .thunder = false,
-//   .windSpeed = 10.0f,
-//   .cloudCover = 0.0f,
-//   .pressure = 0.0f,
-// };
-
 
   _weather = weather;
   
@@ -119,6 +104,8 @@ void Matrix::setDeviceState(DeviceState newState){
 }
 
 void Matrix::graphicsTest(){
+  setBrightness(0.2);
+  
   // // Red
   fill_solid(leds, NUM_LEDS, CRGB::Red);
   // displayString("Red");
@@ -140,13 +127,13 @@ void Matrix::graphicsTest(){
 
   // SETUP FAKE FRAMERATE
   TickType_t xLastWakeTime = xTaskGetTickCount();
-  const TickType_t xFrequency = pdMS_TO_TICKS(1000/FPS);
+  TickType_t xFrequency = pdMS_TO_TICKS(1000/FPS);
 
   // // Rainbow
 
   ulong startMillis = millis();
   uint8_t position = 0;
-  while (millis()-startMillis < 60000){
+  while (millis()-startMillis < 10000){
     fill_matrix_radial_rainbow(leds,COLUMNS,ROWS,8,30,position,30);
     position++;
     FastLED.show();
@@ -154,20 +141,20 @@ void Matrix::graphicsTest(){
 
   }
 
-
-  // // Temperature gradients
-  // for (float f = -10; f<41; f+=0.1){
-  //     CRGB colour = colourFromTemperature((float)f);
-  //     setDigits(f,colour);
-  //     FastLED.show();
-  //     delay(100);
-  // }
+  xFrequency = pdMS_TO_TICKS(1000/10);
+  // Temperature gradients
+  for (float f = -10; f<41; f+=0.1){
+      CRGB colour = colourFromTemperature((float)f);
+      setDigits(f,colour);
+      FastLED.show();
+      vTaskDelayUntil(&xLastWakeTime, xFrequency);
+  }
 
   // Rain
 
-
+  xFrequency = pdMS_TO_TICKS(1000/FPS);
   CRGBPalette256 pal;
-  // pal = RainbowStripeColors_p;
+  
   regenerateHeatPalette(0,20);
 
   pal = scaledHeatPalette;
@@ -303,7 +290,6 @@ void Matrix::displayString(const char *string){
   int xpos = 0;
   for (int ch=0;ch<strlen(string);ch++){  
     int width = drawChar(imageBuffer,string[ch],xpos,0,MATRIX5_FONT);
-    
     xpos += width+1;
   }
 
@@ -441,7 +427,7 @@ void Matrix::displayTime(const DateTime& time, Weather weather){
   }
 
   setDot(_blinkColon,dotColour);
-
+  }
 
   if (rainChance > 0) {
     switch (weather.precipType) {
@@ -668,9 +654,7 @@ void Matrix::advanceWindCycle(float speed){
 }
 
 void Matrix::fillDigits_rainbow(){
-
-  uint8_t hue = -cycle;
-  fill_matrix_radial_rainbow(leds,COLUMNS,ROWS,8,30,hue,30);
+  fill_matrix_radial_rainbow(leds,COLUMNS,ROWS,8,30,cycle,20);
 }
 
 
