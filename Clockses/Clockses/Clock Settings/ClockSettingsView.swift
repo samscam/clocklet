@@ -11,30 +11,38 @@ import SwiftUI
 struct ClockSettingsView: View {
     
     @EnvironmentObject var settingsService: SettingsService
-    @State private var selectedSeparatorAnimation = 0
+    
     
     var body: some View {
-        
+        ScrollView{
         VStack{
             
                 ConfigItemView(icon: Image(systemName:"rays"), title: "Blink separators") {
+                    
                     self.settingsService.availableSeparatorAnimations.map{ available in
-                        Picker(selection: self.$selectedSeparatorAnimation, label: Text("")){
-                            ForEach(0 ..< available.count) {
-                                Text(available[$0])
-                            }
-                        }.pickerStyle(SegmentedPickerStyle())
-                    }
-
+                        
+                        
+                        Picker("What do you want", selection: self.$settingsService.separatorAnimationSelection) {
+                                
+                            ForEach(available, id: \.self ) { item in
+                                    Text(item)
+                                }
+                            }.pickerStyle(SegmentedPickerStyle())
+                            
+                        }
+                        
                         
                 }
-            
+            Text(self.settingsService.separatorAnimationSelection)
         }.padding()
+        }
     }
 }
 
-struct ClockSettingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        ClockSettingsView()
-    }
-}
+//struct ClockSettingsView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ClockSettingsView()
+//    }
+//}
+
+

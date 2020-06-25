@@ -14,7 +14,8 @@ import Combine
 
 class SettingsService: ServiceProtocol {
     
-
+    var bag: [AnyCancellable] = []
+    
     required init(){
     }
     
@@ -24,5 +25,40 @@ class SettingsService: ServiceProtocol {
     
     @Characteristic(CBUUID(string:"2371E298-DCE5-4E1C-9CB2-5542213CE81C")) var separatorAnimation: String?
     
+    @Published var separatorAnimationSelection: String = "Static" {
+        didSet{
+            separatorAnimation = separatorAnimationSelection
+        }
+    }
+    
     
 }
+
+
+//struct StringOption: Identifiable, DataConvertible, JSONCharacteristic {
+//    init(_ string: String) {
+//        id = string
+//    }
+//
+//    var id: String
+//
+//    public init?(data: Data){
+//        guard let value = String(data: data, encoding: .utf8) else {
+//            return nil
+//        }
+//
+//        id = value
+//    }
+//
+//    public var data: Data {
+//        return Data(id.utf8)
+//    }
+//}
+//
+//extension StringOption: Codable {
+//
+//}
+//
+//extension StringOption: Hashable{
+//
+//}

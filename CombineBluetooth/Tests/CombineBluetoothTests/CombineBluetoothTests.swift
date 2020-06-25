@@ -1,4 +1,5 @@
 import XCTest
+import CoreBluetooth
 @testable import CombineBluetooth
 
 final class CombineBluetoothTests: XCTestCase {
@@ -12,4 +13,9 @@ final class CombineBluetoothTests: XCTestCase {
     static var allTests = [
         ("testExample", testExample),
     ]
+}
+
+
+class MockCBCentralManager: CBCentralManager {
+    
 }
