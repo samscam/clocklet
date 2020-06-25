@@ -5,7 +5,7 @@
 #include "BlueStuff.h"
 #include "esp_bt_device.h"
 
-// #include "BLE2902.h"
+#include "BLE2902.h"
 
 #include <esp_log.h>
 #include <Preferences.h>
@@ -128,6 +128,9 @@ class SetLocationCallback: public BLECharacteristicCallbacks {
 	}
 };
 
+BlueStuff::BlueStuff(QueueHandle_t preferencesChangedQueue){
+    _preferencesChangedQueue =  preferencesChangedQueue;
+}
 
 void BlueStuff::startBlueStuff(){
     LOGMEM;
@@ -138,6 +141,7 @@ void BlueStuff::startBlueStuff(){
     Preferences preferences = Preferences();
     preferences.begin("clocklet", true);
     uint32_t serial = preferences.getUInt("serial");
+    String caseColour = preferences.getString("casecolour");
     if (isnan(serial)){
         serial = 0;
     }
@@ -148,18 +152,40 @@ void BlueStuff::startBlueStuff(){
     asprintf(&deviceName,"%s #%d",shortName,serial);
     LOGMEM;
     BLEDevice::init(deviceName);
-    LOGMEM;
+    
     esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT);
-    LOGMEM;
+    
     BLEDevice::setEncryptionLevel(ESP_BLE_SEC_ENCRYPT);
-    LOGMEM;
+    
     pServer = BLEDevice::createServer();
     pServer->setCallbacks(this);
-    LOGMEM;
+    
+
+    // Add the Generic Attribute Service 0x1801
+    // - and 
+    // This is for informing clients that the services have changed and that
+    // the client should try and discover the services from scratch.
+    // This would be better if we knew whether the services have actually changed
+    // since the given client last connected. But for now we are going to say yes every time.
+
+    // Good explanation: https://punchthrough.com/attribute-caching-in-ble-advantages-and-pitfalls/
+    // Another one: https://www.oreilly.com/library/view/getting-started-with/9781491900550/ch04.html#gatt_service
+    // What I would have hoped would be that the library knew how to do this
+    // But no!
+
+    // But then... is this right???
+
+    sv_GAS = pServer->createService(BLEUUID((uint16_t)0x1801));
+    ch_ServiceChanged = sv_GAS->createCharacteristic(BLEUUID((uint16_t)0x2A05),BLECharacteristic::PROPERTY_READ|BLECharacteristic::PROPERTY_NOTIFY);
+    ch_ServiceChanged->addDescriptor(new BLE2902());
+    sv_GAS->start();
+
     _startNetworkService();
-    LOGMEM;
     _startLocationService();
-    LOGMEM;
+
+    _preferencesService = new BTPreferencesService(pServer, _preferencesChangedQueue);
+
+
     // Start Advertising...
     BLEAdvertisementData adData;
     adData.setName(deviceName);
@@ -167,8 +193,7 @@ void BlueStuff::startBlueStuff(){
     // adData.setPartialServices(BLEUUID(SV_NETWORK_UUID));
     adData.setAppearance(256); // GENERIC CLOCK
 
-    // This should really be in the correct format - with manufacturer id as the first bytes, etc etc.
-    adData.setManufacturerData("1,bones");
+    adData.setManufacturerData(caseColour.c_str());
 
     BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
     
@@ -200,11 +225,16 @@ void BlueStuff::stopBlueStuff(){
 
 void BlueStuff::onConnect(BLEServer* server) {
 
+
     WiFi.onEvent(wifiEventCb);
 
     delay(2000);
     _shouldScan = true;
     _updateCurrentNetwork();
+
+    ch_ServiceChanged->notify(true);
+    // Pass a message back up to say that we are connected
+    
 }
 
 void BlueStuff::onDisconnect(BLEServer* server) {
@@ -283,7 +313,6 @@ void BlueStuff::_updateCurrentNetwork(){
     uint len = outputStr.length()+1;
     char json[len];
     outputStr.toCharArray(json,len);
-    Serial.println(json);
 
     ch_currentNetwork->setValue(json);
     ch_currentNetwork->notify(true);
@@ -394,7 +423,7 @@ void BlueStuff::wifiEvent(WiFiEvent_t event){
 }
 
 
-
+// Disaster! We are limited to 512 chars in a gatt value...
 void BlueStuff::_startWifiScan(){
     LOGMEM;
     bool runningScan = (WiFi.scanNetworks(true,true,false) == WIFI_SCAN_RUNNING);
@@ -407,7 +436,7 @@ void BlueStuff::_startWifiScan(){
         }
     }
 
-    StaticJsonDocument<1024> doc;
+    StaticJsonDocument<2048> doc;
     // DynamicJsonDocument doc(2048);
     // JsonArray array = doc.createNestedArray();
 
