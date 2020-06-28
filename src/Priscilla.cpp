@@ -16,6 +16,7 @@
 #include "TimeThings/NTP.h"
 
 #include "rom/uart.h"
+#include <soc/efuse_reg.h>
 
 // CONFIGURATION  --------------------------------------
 
@@ -98,6 +99,8 @@ QueueHandle_t prefsChangedQueue;
 
 // SETUP  --------------------------------------
 void setup() {
+
+
   delay(2000);
   
   Serial.begin(115200);
@@ -117,24 +120,21 @@ void setup() {
   // Notification queues
   prefsChangedQueue = xQueueCreate(1, sizeof(bool));
 
+  // Read things from eFuse
+  uint32_t hwrev = REG_GET_FIELD(EFUSE_BLK3_RDATA6_REG, EFUSE_BLK3_DOUT6);
+  uint32_t serial = REG_GET_FIELD(EFUSE_BLK3_RDATA7_REG, EFUSE_BLK3_DOUT7);
+
+  Serial.printf("Serial number: %d\n",serial);
+  Serial.printf("Hardware revision: %d\n",hwrev);
+
   // Read things from preferences...
   Preferences preferences = Preferences();
   preferences.begin("clocklet", false);
 
-  // preferences.putString("owner","Sam");
-  // preferences.putUInt("serial",7);
-  // preferences.putUInt("hwrev",5); // hardware rev
-  // preferences.putString("swmigrev",VERSION) // last fw version used - update after migrations!
+  // WHAT am I doing about the case colour? efuse or nvram?
   // preferences.putString("casecolour","blue");
 
-
-  uint32_t serial = preferences.getUInt("serial");
-  Serial.printf("Serial number: %d\n",serial);
-
-  uint32_t hwrev = preferences.getUInt("hwrev");
-  Serial.printf("Hardware revision: %d\n",hwrev);
-
-  // Quickie migration thing - will improve this!!
+  // Post-update migrations
   String swmigrev = preferences.getString("swmigrev","0.0.0");
 
   if (swmigrev != VERSION){
@@ -143,7 +143,7 @@ void setup() {
     Serial.println("MIGRATED!");
   }
 
-  String owner = preferences.getString("owner");
+  String owner = preferences.getString("owner","");
   Serial.printf("Owner: %s\n",owner.c_str());
 
   preferences.end();

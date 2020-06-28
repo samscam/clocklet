@@ -42,6 +42,12 @@ enum SeparatorStyle {
   apostrophe = 0b11000
 };
 
+enum SeparatorAnimation {
+  on,
+  blink,
+  fade
+};
+
 class Matrix: public Display {
 public:
   Matrix();
@@ -74,6 +80,8 @@ public:
   void setDigits(int number, CRGB colour = CRGB::White);
 
   void setDeviceState(DeviceState state);
+
+  void setSeparatorAnimation(SeparatorAnimation animation);
 
   void graphicsTest();
 
