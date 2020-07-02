@@ -27,19 +27,18 @@ public struct AdvertisementData{
 }
 
 public struct ManufacturerData {
-    init(_ data: Data){
+    init?(_ data: Data){
+        guard data.count >= 3 else {
+            return nil
+        }
         // first two bytes are the manufacturer
         let mfr = data[0...1]
         self.manufacturerId = mfr
-        print("Manufacturer: ",mfr)
-        
-        let res = data[2...]
-        self.residual = res
-        print("Residual: ", String(data:res, encoding: .utf8) ?? "--novalue--")
-    
-        
         
         // The rest is arbitrary
+        let res = data[2...]
+        self.residual = res
+        
     }
     public var manufacturerId: Data?
     public var residual: Data?

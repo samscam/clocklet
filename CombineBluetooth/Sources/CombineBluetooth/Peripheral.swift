@@ -16,7 +16,6 @@ public extension Advertiser where Self:InnerPeripheralProtocol{
 
 
 public enum ConnectionState {
-
     case disconnected(error: Error? = nil)
     case connecting
     case connected
@@ -59,7 +58,14 @@ open class Peripheral: PeripheralProtocol, ObservableObject {
     }
     
     public func connect(){
-        connection?.connect()
+        switch state {
+        case .disconnected:
+            connection?.connect()
+        default:
+            break
+        }
+        
+        
     }
     
     public func disconnect(){

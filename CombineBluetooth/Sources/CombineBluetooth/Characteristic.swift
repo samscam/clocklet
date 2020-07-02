@@ -26,6 +26,8 @@ enum CharacteristicState<Value> {
 @propertyWrapper
 public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Publisher, ObservableObject {
     
+
+    
     public enum CharacteristicError: Error{
         case noCBCharacteristic
         case couldNotWriteValue
@@ -41,12 +43,11 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Publ
     public func receive<S>(subscriber: S) where S : Subscriber, Characteristic.Failure == S.Failure, Characteristic.Output == S.Input {
         subject.receive(subscriber: subscriber)
     }
-    
+
     public var cbCharacteristic: CBCharacteristic?
     
     public init(wrappedValue value: Value? = nil, _ uuid: CBUUID){
         self._value = value
-        subject.send(value)
         self.uuid = uuid
     }
     
@@ -58,7 +59,7 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Publ
             subject.send(_value)
         }
     }
-    
+
     public var wrappedValue: Value? {
         get{
             return _value
@@ -67,7 +68,7 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Publ
             
             _value = newValue
             
-            if let cbCharacteristic = cbCharacteristic,
+            if let cbCharacteristic = self.cbCharacteristic,
                 let data = _value?.data {
                 
                 // check if we can actually write to this characteristic...
@@ -91,6 +92,8 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Publ
     public func didUpdateValue(error: Error?){
         if let cbc = cbCharacteristic,
             let data = cbc.value {
+            // Set the value and trigger ui updates
+            // But don't send the value back to the server
             self._value = Value(data: data)
             
         }

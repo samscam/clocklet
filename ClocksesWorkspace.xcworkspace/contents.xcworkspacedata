@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Clockses/Clockses.xcodeproj">
+      location = "group:/Users/sam/Projects/Clocks/Client Apps/iOS/Clockses/Clocklet.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:CombineBluetooth">

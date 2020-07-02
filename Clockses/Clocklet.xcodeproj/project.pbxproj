@@ -1,0 +1,636 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 52;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		220DDB11236B9E3900429503 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220DDB10236B9E3900429503 /* MapView.swift */; };
+		222271A5232B887100508ADA /* ClockSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222271A4232B887100508ADA /* ClockSummaryView.swift */; };
+		22350E83233D359E00452BDF /* NetworkCharacteristics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22350E82233D359E00452BDF /* NetworkCharacteristics.swift */; };
+		2241E52523DD0ABB00ACE8A7 /* LocationProxyTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2241E52423DD0ABB00ACE8A7 /* LocationProxyTestView.swift */; };
+		224C538F234F6CDD00A68928 /* ClockListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224C538E234F6CDD00A68928 /* ClockListView.swift */; };
+		224C5391234FAE7300A68928 /* ClockDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224C5390234FAE7300A68928 /* ClockDetailsView.swift */; };
+		22551952235870240056B9CD /* LocationSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22551951235870240056B9CD /* LocationSummaryView.swift */; };
+		22551954235870F10056B9CD /* OtherSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22551953235870F10056B9CD /* OtherSettingsView.swift */; };
+		2255195623587DB70056B9CD /* AvailableNetworksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2255195523587DB70056B9CD /* AvailableNetworksView.swift */; };
+		2255195823588AF50056B9CD /* NetworkDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2255195723588AF50056B9CD /* NetworkDetailView.swift */; };
+		22585259235694A0005C9696 /* ConfigItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22585258235694A0005C9696 /* ConfigItemView.swift */; };
+		22604281236E40F800710F37 /* LocationProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22604280236E40F800710F37 /* LocationProxy.swift */; };
+		227CC3062367925D00D7770D /* PropertiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227CC3052367925D00D7770D /* PropertiesView.swift */; };
+		227D5B812497A71F0021FA52 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 227D5B802497A71F0021FA52 /* Assets.xcassets */; };
+		22836EB4228629750020B46F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22836EB3228629750020B46F /* AppDelegate.swift */; };
+		22836EBE2286297C0020B46F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 22836EBC2286297C0020B46F /* LaunchScreen.storyboard */; };
+		22836EC92286297C0020B46F /* ClockletTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22836EC82286297C0020B46F /* ClockletTests.swift */; };
+		22836ED722862AAC0020B46F /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22836ED622862AAC0020B46F /* CoreBluetooth.framework */; };
+		228A1C8E2462BB6C00033937 /* SettingsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228A1C8D2462BB6C00033937 /* SettingsService.swift */; };
+		228DF25F234FB41E00480588 /* NetworkSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228DF25E234FB41E00480588 /* NetworkSummaryView.swift */; };
+		228DF261234FDF6400480588 /* ClockList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228DF260234FDF6400480588 /* ClockList.swift */; };
+		229AD7BA236CE745006BEB07 /* CombineBluetooth in Frameworks */ = {isa = PBXBuildFile; productRef = 229AD7B9236CE745006BEB07 /* CombineBluetooth */; };
+		229F3C68235EF82200EEA785 /* Clock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BE0A3F235DE4EA00EB8780 /* Clock.swift */; };
+		229F3C6A235F427100EEA785 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F3C69235F427100EEA785 /* LocationService.swift */; };
+		22A034E2248DA52800FA7370 /* GeocoderProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A034E1248DA52800FA7370 /* GeocoderProxy.swift */; };
+		22A0AE042351492F00D04338 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A0AE032351492F00D04338 /* NetworkService.swift */; };
+		22B2D0B324943B3500D570E2 /* ClockSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B2D0B224943B3500D570E2 /* ClockSettingsView.swift */; };
+		22B391C62368FD58009DF144 /* EnterPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B391C52368FD58009DF144 /* EnterPasswordView.swift */; };
+		22E2D9BA233A971000B4FCFD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E2D9B9233A970F00B4FCFD /* SceneDelegate.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		22836EC52286297C0020B46F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 22836EA8228629750020B46F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 22836EAF228629750020B46F;
+			remoteInfo = Clockses;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		220DDB10236B9E3900429503 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
+		222271A4232B887100508ADA /* ClockSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockSummaryView.swift; sourceTree = "<group>"; };
+		22350E82233D359E00452BDF /* NetworkCharacteristics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkCharacteristics.swift; sourceTree = "<group>"; };
+		2241E52423DD0ABB00ACE8A7 /* LocationProxyTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProxyTestView.swift; sourceTree = "<group>"; };
+		224C538E234F6CDD00A68928 /* ClockListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockListView.swift; sourceTree = "<group>"; };
+		224C5390234FAE7300A68928 /* ClockDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockDetailsView.swift; sourceTree = "<group>"; };
+		22551951235870240056B9CD /* LocationSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSummaryView.swift; sourceTree = "<group>"; };
+		22551953235870F10056B9CD /* OtherSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherSettingsView.swift; sourceTree = "<group>"; };
+		2255195523587DB70056B9CD /* AvailableNetworksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailableNetworksView.swift; sourceTree = "<group>"; };
+		2255195723588AF50056B9CD /* NetworkDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkDetailView.swift; sourceTree = "<group>"; };
+		22585258235694A0005C9696 /* ConfigItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigItemView.swift; sourceTree = "<group>"; };
+		22604280236E40F800710F37 /* LocationProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProxy.swift; sourceTree = "<group>"; };
+		227CC3052367925D00D7770D /* PropertiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertiesView.swift; sourceTree = "<group>"; };
+		227D5B802497A71F0021FA52 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Clockses/Assets.xcassets; sourceTree = "<group>"; };
+		22836EB0228629750020B46F /* Clocklet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clocklet.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		22836EB3228629750020B46F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		22836EBD2286297C0020B46F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		22836EBF2286297C0020B46F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		22836EC42286297C0020B46F /* ClockletTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClockletTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		22836EC82286297C0020B46F /* ClockletTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockletTests.swift; sourceTree = "<group>"; };
+		22836ECA2286297C0020B46F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		22836ED622862AAC0020B46F /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
+		228A1C8D2462BB6C00033937 /* SettingsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsService.swift; sourceTree = "<group>"; };
+		228DF25E234FB41E00480588 /* NetworkSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSummaryView.swift; sourceTree = "<group>"; };
+		228DF260234FDF6400480588 /* ClockList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockList.swift; sourceTree = "<group>"; };
+		229F3C69235F427100EEA785 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
+		22A034E1248DA52800FA7370 /* GeocoderProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeocoderProxy.swift; sourceTree = "<group>"; };
+		22A0AE032351492F00D04338 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
+		22B2D0B224943B3500D570E2 /* ClockSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockSettingsView.swift; sourceTree = "<group>"; };
+		22B391C52368FD58009DF144 /* EnterPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterPasswordView.swift; sourceTree = "<group>"; };
+		22BE0A3F235DE4EA00EB8780 /* Clock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clock.swift; sourceTree = "<group>"; };
+		22E2D9B9233A970F00B4FCFD /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		22EEFBCE2383564F00687236 /* Clockses.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Clockses.entitlements; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		22836EAD228629750020B46F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				22836ED722862AAC0020B46F /* CoreBluetooth.framework in Frameworks */,
+				229AD7BA236CE745006BEB07 /* CombineBluetooth in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		22836EC12286297C0020B46F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		22836EA7228629750020B46F = {
+			isa = PBXGroup;
+			children = (
+				22836EB2228629750020B46F /* Clocklet */,
+				227D5B802497A71F0021FA52 /* Assets.xcassets */,
+				22836EC72286297C0020B46F /* ClockletTests */,
+				22836EB1228629750020B46F /* Products */,
+				22836ED522862AAB0020B46F /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		22836EB1228629750020B46F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				22836EB0228629750020B46F /* Clocklet.app */,
+				22836EC42286297C0020B46F /* ClockletTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		22836EB2228629750020B46F /* Clocklet */ = {
+			isa = PBXGroup;
+			children = (
+				22EEFBCE2383564F00687236 /* Clockses.entitlements */,
+				22E2D988233A944500B4FCFD /* Bluetooth Models */,
+				228DF2622350701800480588 /* Business */,
+				228DF2642350703700480588 /* Clock List */,
+				229076B323646DD700074A35 /* Clock Details */,
+				22B2D0B124943B1A00D570E2 /* Clock Settings */,
+				229076B423646E6100074A35 /* Network Details */,
+				228DF2632350702F00480588 /* Shared Views */,
+				22836EBC2286297C0020B46F /* LaunchScreen.storyboard */,
+				22836EBF2286297C0020B46F /* Info.plist */,
+			);
+			path = Clocklet;
+			sourceTree = "<group>";
+		};
+		22836EC72286297C0020B46F /* ClockletTests */ = {
+			isa = PBXGroup;
+			children = (
+				22836EC82286297C0020B46F /* ClockletTests.swift */,
+				22836ECA2286297C0020B46F /* Info.plist */,
+			);
+			path = ClockletTests;
+			sourceTree = "<group>";
+		};
+		22836ED522862AAB0020B46F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				22836ED622862AAC0020B46F /* CoreBluetooth.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		228DF2622350701800480588 /* Business */ = {
+			isa = PBXGroup;
+			children = (
+				22836EB3228629750020B46F /* AppDelegate.swift */,
+				22E2D9B9233A970F00B4FCFD /* SceneDelegate.swift */,
+				22604280236E40F800710F37 /* LocationProxy.swift */,
+				22A034E1248DA52800FA7370 /* GeocoderProxy.swift */,
+			);
+			path = Business;
+			sourceTree = "<group>";
+		};
+		228DF2632350702F00480588 /* Shared Views */ = {
+			isa = PBXGroup;
+			children = (
+				22551953235870F10056B9CD /* OtherSettingsView.swift */,
+				22585258235694A0005C9696 /* ConfigItemView.swift */,
+				227CC3052367925D00D7770D /* PropertiesView.swift */,
+				2241E52423DD0ABB00ACE8A7 /* LocationProxyTestView.swift */,
+			);
+			path = "Shared Views";
+			sourceTree = "<group>";
+		};
+		228DF2642350703700480588 /* Clock List */ = {
+			isa = PBXGroup;
+			children = (
+				228DF260234FDF6400480588 /* ClockList.swift */,
+				224C538E234F6CDD00A68928 /* ClockListView.swift */,
+				222271A4232B887100508ADA /* ClockSummaryView.swift */,
+			);
+			path = "Clock List";
+			sourceTree = "<group>";
+		};
+		229076B323646DD700074A35 /* Clock Details */ = {
+			isa = PBXGroup;
+			children = (
+				224C5390234FAE7300A68928 /* ClockDetailsView.swift */,
+				22551951235870240056B9CD /* LocationSummaryView.swift */,
+				220DDB10236B9E3900429503 /* MapView.swift */,
+			);
+			path = "Clock Details";
+			sourceTree = "<group>";
+		};
+		229076B423646E6100074A35 /* Network Details */ = {
+			isa = PBXGroup;
+			children = (
+				228DF25E234FB41E00480588 /* NetworkSummaryView.swift */,
+				2255195723588AF50056B9CD /* NetworkDetailView.swift */,
+				2255195523587DB70056B9CD /* AvailableNetworksView.swift */,
+				22B391C52368FD58009DF144 /* EnterPasswordView.swift */,
+			);
+			path = "Network Details";
+			sourceTree = "<group>";
+		};
+		22B2D0B124943B1A00D570E2 /* Clock Settings */ = {
+			isa = PBXGroup;
+			children = (
+				22B2D0B224943B3500D570E2 /* ClockSettingsView.swift */,
+			);
+			path = "Clock Settings";
+			sourceTree = "<group>";
+		};
+		22E2D988233A944500B4FCFD /* Bluetooth Models */ = {
+			isa = PBXGroup;
+			children = (
+				22BE0A3F235DE4EA00EB8780 /* Clock.swift */,
+				22A0AE032351492F00D04338 /* NetworkService.swift */,
+				22350E82233D359E00452BDF /* NetworkCharacteristics.swift */,
+				229F3C69235F427100EEA785 /* LocationService.swift */,
+				228A1C8D2462BB6C00033937 /* SettingsService.swift */,
+			);
+			path = "Bluetooth Models";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		22836EAF228629750020B46F /* Clocklet */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 22836ECD2286297C0020B46F /* Build configuration list for PBXNativeTarget "Clocklet" */;
+			buildPhases = (
+				22836EAC228629750020B46F /* Sources */,
+				22836EAD228629750020B46F /* Frameworks */,
+				22836EAE228629750020B46F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Clocklet;
+			packageProductDependencies = (
+				229AD7B9236CE745006BEB07 /* CombineBluetooth */,
+			);
+			productName = Clockses;
+			productReference = 22836EB0228629750020B46F /* Clocklet.app */;
+			productType = "com.apple.product-type.application";
+		};
+		22836EC32286297C0020B46F /* ClockletTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 22836ED02286297C0020B46F /* Build configuration list for PBXNativeTarget "ClockletTests" */;
+			buildPhases = (
+				22836EC02286297C0020B46F /* Sources */,
+				22836EC12286297C0020B46F /* Frameworks */,
+				22836EC22286297C0020B46F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				22836EC62286297C0020B46F /* PBXTargetDependency */,
+			);
+			name = ClockletTests;
+			productName = ClocksesTests;
+			productReference = 22836EC42286297C0020B46F /* ClockletTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		22836EA8228629750020B46F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1120;
+				LastUpgradeCheck = 1020;
+				ORGANIZATIONNAME = "Spotlight Kid Ltd";
+				TargetAttributes = {
+					22836EAF228629750020B46F = {
+						CreatedOnToolsVersion = 10.2.1;
+					};
+					22836EC32286297C0020B46F = {
+						CreatedOnToolsVersion = 10.2.1;
+						TestTargetID = 22836EAF228629750020B46F;
+					};
+				};
+			};
+			buildConfigurationList = 22836EAB228629750020B46F /* Build configuration list for PBXProject "Clocklet" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 22836EA7228629750020B46F;
+			productRefGroup = 22836EB1228629750020B46F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				22836EAF228629750020B46F /* Clocklet */,
+				22836EC32286297C0020B46F /* ClockletTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		22836EAE228629750020B46F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				227D5B812497A71F0021FA52 /* Assets.xcassets in Resources */,
+				22836EBE2286297C0020B46F /* LaunchScreen.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		22836EC22286297C0020B46F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		22836EAC228629750020B46F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				22551954235870F10056B9CD /* OtherSettingsView.swift in Sources */,
+				22B391C62368FD58009DF144 /* EnterPasswordView.swift in Sources */,
+				2241E52523DD0ABB00ACE8A7 /* LocationProxyTestView.swift in Sources */,
+				22551952235870240056B9CD /* LocationSummaryView.swift in Sources */,
+				228DF25F234FB41E00480588 /* NetworkSummaryView.swift in Sources */,
+				229F3C68235EF82200EEA785 /* Clock.swift in Sources */,
+				222271A5232B887100508ADA /* ClockSummaryView.swift in Sources */,
+				229F3C6A235F427100EEA785 /* LocationService.swift in Sources */,
+				22350E83233D359E00452BDF /* NetworkCharacteristics.swift in Sources */,
+				2255195623587DB70056B9CD /* AvailableNetworksView.swift in Sources */,
+				227CC3062367925D00D7770D /* PropertiesView.swift in Sources */,
+				2255195823588AF50056B9CD /* NetworkDetailView.swift in Sources */,
+				22836EB4228629750020B46F /* AppDelegate.swift in Sources */,
+				228DF261234FDF6400480588 /* ClockList.swift in Sources */,
+				22585259235694A0005C9696 /* ConfigItemView.swift in Sources */,
+				22A034E2248DA52800FA7370 /* GeocoderProxy.swift in Sources */,
+				224C538F234F6CDD00A68928 /* ClockListView.swift in Sources */,
+				224C5391234FAE7300A68928 /* ClockDetailsView.swift in Sources */,
+				22B2D0B324943B3500D570E2 /* ClockSettingsView.swift in Sources */,
+				22604281236E40F800710F37 /* LocationProxy.swift in Sources */,
+				220DDB11236B9E3900429503 /* MapView.swift in Sources */,
+				228A1C8E2462BB6C00033937 /* SettingsService.swift in Sources */,
+				22A0AE042351492F00D04338 /* NetworkService.swift in Sources */,
+				22E2D9BA233A971000B4FCFD /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		22836EC02286297C0020B46F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				22836EC92286297C0020B46F /* ClockletTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		22836EC62286297C0020B46F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 22836EAF228629750020B46F /* Clocklet */;
+			targetProxy = 22836EC52286297C0020B46F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		22836EBC2286297C0020B46F /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				22836EBD2286297C0020B46F /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		22836ECB2286297C0020B46F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		22836ECC2286297C0020B46F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		22836ECE2286297C0020B46F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Clockses/Clockses.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
+				DEVELOPMENT_TEAM = 9M28MQ9SZC;
+				INFOPLIST_FILE = Clockses/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.spotlightkid.clocklet;
+				PRODUCT_NAME = Clocklet;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		22836ECF2286297C0020B46F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Clockses/Clockses.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
+				DEVELOPMENT_TEAM = 9M28MQ9SZC;
+				INFOPLIST_FILE = Clockses/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.spotlightkid.clocklet;
+				PRODUCT_NAME = Clocklet;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		22836ED12286297C0020B46F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 9M28MQ9SZC;
+				INFOPLIST_FILE = ClocksesTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.spotlightkid.ClocksesTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Clocklet.app/Clocklet";
+			};
+			name = Debug;
+		};
+		22836ED22286297C0020B46F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 9M28MQ9SZC;
+				INFOPLIST_FILE = ClocksesTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.spotlightkid.ClocksesTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Clocklet.app/Clocklet";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		22836EAB228629750020B46F /* Build configuration list for PBXProject "Clocklet" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				22836ECB2286297C0020B46F /* Debug */,
+				22836ECC2286297C0020B46F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		22836ECD2286297C0020B46F /* Build configuration list for PBXNativeTarget "Clocklet" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				22836ECE2286297C0020B46F /* Debug */,
+				22836ECF2286297C0020B46F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		22836ED02286297C0020B46F /* Build configuration list for PBXNativeTarget "ClockletTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				22836ED12286297C0020B46F /* Debug */,
+				22836ED22286297C0020B46F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		229AD7B9236CE745006BEB07 /* CombineBluetooth */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CombineBluetooth;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 22836EA8228629750020B46F /* Project object */;
+}
