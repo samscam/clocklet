@@ -39,6 +39,8 @@ PreferencesGlueString::PreferencesGlueString(const char *uuid, const char *prefs
         BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
     _characteristic->setAccessPermissions(ESP_GATT_PERM_READ_ENCRYPTED | ESP_GATT_PERM_WRITE_ENCRYPTED);
     _characteristic->setCallbacks(this);
+    String value = _preferences->getString(_prefsKey,"Blink");
+    _characteristic->setValue(value.c_str());
 }
 
 void PreferencesGlueString::onWrite(BLECharacteristic* pCharacteristic) {
@@ -49,7 +51,7 @@ void PreferencesGlueString::onWrite(BLECharacteristic* pCharacteristic) {
 }
 
 void PreferencesGlueString::onRead(BLECharacteristic* pCharacteristic) {
-    String value = _preferences->getString(_prefsKey,"Blink");
-    pCharacteristic->setValue(value.c_str());
+    // String value = _preferences->getString(_prefsKey);
+    // pCharacteristic->setValue(value.c_str());
 }
 

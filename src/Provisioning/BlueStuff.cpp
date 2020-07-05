@@ -1,16 +1,14 @@
 
-#include <Preferences.h>
-
-
 #include "BlueStuff.h"
 #include "esp_bt_device.h"
+
+#include <Preferences.h>
 
 #include "BLE2902.h"
 
 #include <esp_log.h>
-#include <Preferences.h>
 #include "Loggery.h"
-
+#include <soc/efuse_reg.h>
 #include "../Location/LocationManager.h"
 
 #define SV_NETWORK_UUID     "68D924A1-C1B2-497B-AC16-FD1D98EDB41F"
@@ -138,9 +136,13 @@ void BlueStuff::startBlueStuff(){
 
     Serial.println("Starting BLE work!");
 
+    uint32_t hwrev = REG_GET_FIELD(EFUSE_BLK3_RDATA6_REG, EFUSE_BLK3_DOUT6);
+    uint32_t serial = REG_GET_FIELD(EFUSE_BLK3_RDATA7_REG, EFUSE_BLK3_DOUT7);
+
+
     Preferences preferences = Preferences();
     preferences.begin("clocklet", true);
-    uint32_t serial = preferences.getUInt("serial");
+    
     String caseColour = preferences.getString("casecolour");
     if (isnan(serial)){
         serial = 0;
@@ -186,28 +188,41 @@ void BlueStuff::startBlueStuff(){
     _preferencesService = new BTPreferencesService(pServer, _preferencesChangedQueue);
 
 
-    // Start Advertising...
-    BLEAdvertisementData adData;
-    adData.setName(deviceName);
-    // adData.setShortName(deviceName);
-    // adData.setPartialServices(BLEUUID(SV_NETWORK_UUID));
-    adData.setAppearance(256); // GENERIC CLOCK
+    // BLE Advertising
 
-    adData.setManufacturerData(caseColour.c_str());
-
-    BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
-    
-    // pAdvertising->setAdvertisementData(adData);
-    pAdvertising->setScanResponseData(adData);
-
-    pAdvertising->addServiceUUID(SV_NETWORK_UUID);
+    BLEAdvertising *pAdvertising = pServer->getAdvertising();
     
     pAdvertising->setScanResponse(true);
-    pAdvertising->setMinPreferred(0x06);  // functions that help with iPhone connections issue
-    pAdvertising->setMinPreferred(0x12);
+
+    BLEAdvertisementData advertisementData;
+
+    advertisementData.setName(deviceName);
+    advertisementData.setPartialServices(BLEUUID(SV_NETWORK_UUID));
+    
+    pAdvertising->setAdvertisementData(advertisementData);
+
+    BLEAdvertisementData scanResponseData;
+
+    const char * caseColourStr = caseColour.c_str();
+    size_t colStrLen = sizeof(caseColourStr);
+
+    char mfrdataBuffer[colStrLen+2];
+
+    const char vendorID[2] = { 0x02, 0xE5 };
+    memcpy(mfrdataBuffer, vendorID, 2);
+    memcpy(mfrdataBuffer+2, caseColourStr, colStrLen);
+
+    scanResponseData.setManufacturerData(mfrdataBuffer);
+    pAdvertising->setScanResponseData(scanResponseData);
+    
+    pAdvertising->setAppearance(256); // GENERIC CLOCK
+    // pAdvertising->addServiceUUID(SV_NETWORK_UUID);
+    
+    // pAdvertising->setMinPreferred(0x06);  // functions that help with iPhone connections issue
+    // pAdvertising->setMinPreferred(0x12);
 
 
-    BLEDevice::startAdvertising();
+    pAdvertising->start();
 
     
     LOGMEM;
