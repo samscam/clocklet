@@ -17,21 +17,37 @@ struct ClockSummaryView: View {
     var body: some View {
         
         ZStack{
-            Image(clock.caseColor.imageName).resizable().aspectRatio(contentMode: .fit)
+            Image(clock.caseColor.imageName).renderingMode(.original).resizable().aspectRatio(contentMode: .fit)
+            
             if colorScheme == .light {
-                Rectangle().foregroundColor(.clear).background(LinearGradient(gradient: Gradient(colors:[Color(hue: 0, saturation: 0, brightness: 1, opacity: 0) ,.white]), startPoint: .top, endPoint: .bottom)).padding(.top, 100)
+                Rectangle().foregroundColor(.clear).background(
+                    LinearGradient(gradient: Gradient(colors:[Color(hue: 0, saturation: 0, brightness: 1, opacity: 0) ,.white]), startPoint: .top, endPoint: .bottom)
+                        )
+                    .padding(.top, 100)
             } else {
                 Rectangle().foregroundColor(.clear).background(LinearGradient(gradient: Gradient(colors:[Color(hue: 0, saturation: 0, brightness: 0, opacity: 0) ,.black]), startPoint: .top, endPoint: .bottom)).padding(.top, 100)
             }
-            Text(clock.name).font(.largeTitle).bold().shadow(color: colorScheme == .light ? .white : .black, radius: 2, x: 0, y: 0).padding(.top, 100)
-        }.frame( minHeight: 200, idealHeight: 200, maxHeight: 200, alignment: .center)
+            Text(clock.name).font(.largeTitle).bold()
+                .foregroundColor(.primary)
+                .shadow(color: colorScheme == .light ? .white : .black, radius: 2, x: 0, y: 0).padding(.top, 100)
+        }
     }
  
 }
 
-//struct ClockSummaryView_Previews: PreviewProvider {
-//    
-//    static var previews: some View {
+struct ClockSummaryView_Previews: PreviewProvider {
+    static let clock = Clock("One", .black)
+    
+    
+    static var previews: some View {
+        ClockSummaryView()
+            .environmentObject(clock)
+//            .background(Color.black)
+            .previewLayout(.sizeThatFits)
+            .colorScheme(.dark)
+//            .environment(\.colorScheme, .dark)
+    }
+}
 //        let clock = Clock("Clocklet #002",.wood)
 //        clock.caseColor = .wood
 //        let vm = ClockSummaryViewModel(clock: clock)

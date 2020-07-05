@@ -38,6 +38,7 @@ class ClockList: ObservableObject {
         }
         _cancellableClocks = central
             .discoverConnections(for: Clock.self)
+            .timeout(10, scheduler: DispatchQueue.main)
             .map{ $0.compactMap{ $0.peripheral as? Clock } }
             .assign(to: \.clocks, on: self)
     }
@@ -45,6 +46,14 @@ class ClockList: ObservableObject {
     func stopScanning(){
         _cancellableClocks?.cancel()
         _cancellableClocks = nil
+    }
+    
+    func toggleScanning(){
+        if isScanning {
+            stopScanning()
+        } else {
+            startScanning()
+        }
     }
     
     func disconnectAllDevices(){

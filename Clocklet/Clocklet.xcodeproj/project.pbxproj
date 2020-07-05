@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		220DDB11236B9E3900429503 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220DDB10236B9E3900429503 /* MapView.swift */; };
 		222271A5232B887100508ADA /* ClockSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222271A4232B887100508ADA /* ClockSummaryView.swift */; };
+		222500CB24AE452B00B5872A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 222500CA24AE452A00B5872A /* Assets.xcassets */; };
 		22350E83233D359E00452BDF /* NetworkCharacteristics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22350E82233D359E00452BDF /* NetworkCharacteristics.swift */; };
 		2241E52523DD0ABB00ACE8A7 /* LocationProxyTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2241E52423DD0ABB00ACE8A7 /* LocationProxyTestView.swift */; };
 		224C538F234F6CDD00A68928 /* ClockListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224C538E234F6CDD00A68928 /* ClockListView.swift */; };
@@ -20,7 +21,6 @@
 		22585259235694A0005C9696 /* ConfigItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22585258235694A0005C9696 /* ConfigItemView.swift */; };
 		22604281236E40F800710F37 /* LocationProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22604280236E40F800710F37 /* LocationProxy.swift */; };
 		227CC3062367925D00D7770D /* PropertiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227CC3052367925D00D7770D /* PropertiesView.swift */; };
-		227D5B812497A71F0021FA52 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 227D5B802497A71F0021FA52 /* Assets.xcassets */; };
 		22836EB4228629750020B46F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22836EB3228629750020B46F /* AppDelegate.swift */; };
 		22836EBE2286297C0020B46F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 22836EBC2286297C0020B46F /* LaunchScreen.storyboard */; };
 		22836EC92286297C0020B46F /* ClockletTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22836EC82286297C0020B46F /* ClockletTests.swift */; };
@@ -51,6 +51,8 @@
 /* Begin PBXFileReference section */
 		220DDB10236B9E3900429503 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		222271A4232B887100508ADA /* ClockSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockSummaryView.swift; sourceTree = "<group>"; };
+		222500C924AE451D00B5872A /* Clocklet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Clocklet.entitlements; sourceTree = "<group>"; };
+		222500CA24AE452A00B5872A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		22350E82233D359E00452BDF /* NetworkCharacteristics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkCharacteristics.swift; sourceTree = "<group>"; };
 		2241E52423DD0ABB00ACE8A7 /* LocationProxyTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProxyTestView.swift; sourceTree = "<group>"; };
 		224C538E234F6CDD00A68928 /* ClockListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockListView.swift; sourceTree = "<group>"; };
@@ -62,7 +64,6 @@
 		22585258235694A0005C9696 /* ConfigItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigItemView.swift; sourceTree = "<group>"; };
 		22604280236E40F800710F37 /* LocationProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProxy.swift; sourceTree = "<group>"; };
 		227CC3052367925D00D7770D /* PropertiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertiesView.swift; sourceTree = "<group>"; };
-		227D5B802497A71F0021FA52 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Clockses/Assets.xcassets; sourceTree = "<group>"; };
 		22836EB0228629750020B46F /* Clocklet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clocklet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22836EB3228629750020B46F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		22836EBD2286297C0020B46F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -81,7 +82,6 @@
 		22B391C52368FD58009DF144 /* EnterPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterPasswordView.swift; sourceTree = "<group>"; };
 		22BE0A3F235DE4EA00EB8780 /* Clock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clock.swift; sourceTree = "<group>"; };
 		22E2D9B9233A970F00B4FCFD /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		22EEFBCE2383564F00687236 /* Clockses.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Clockses.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,7 +108,6 @@
 			isa = PBXGroup;
 			children = (
 				22836EB2228629750020B46F /* Clocklet */,
-				227D5B802497A71F0021FA52 /* Assets.xcassets */,
 				22836EC72286297C0020B46F /* ClockletTests */,
 				22836EB1228629750020B46F /* Products */,
 				22836ED522862AAB0020B46F /* Frameworks */,
@@ -127,7 +126,7 @@
 		22836EB2228629750020B46F /* Clocklet */ = {
 			isa = PBXGroup;
 			children = (
-				22EEFBCE2383564F00687236 /* Clockses.entitlements */,
+				222500C924AE451D00B5872A /* Clocklet.entitlements */,
 				22E2D988233A944500B4FCFD /* Bluetooth Models */,
 				228DF2622350701800480588 /* Business */,
 				228DF2642350703700480588 /* Clock List */,
@@ -135,6 +134,7 @@
 				22B2D0B124943B1A00D570E2 /* Clock Settings */,
 				229076B423646E6100074A35 /* Network Details */,
 				228DF2632350702F00480588 /* Shared Views */,
+				222500CA24AE452A00B5872A /* Assets.xcassets */,
 				22836EBC2286297C0020B46F /* LaunchScreen.storyboard */,
 				22836EBF2286297C0020B46F /* Info.plist */,
 			);
@@ -315,7 +315,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				227D5B812497A71F0021FA52 /* Assets.xcassets in Resources */,
+				222500CB24AE452B00B5872A /* Assets.xcassets in Resources */,
 				22836EBE2286297C0020B46F /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -511,11 +511,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Clockses/Clockses.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Clocklet/Clocklet.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = 9M28MQ9SZC;
-				INFOPLIST_FILE = Clockses/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Clocklet/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -533,11 +533,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Clockses/Clockses.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Clocklet/Clocklet.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = 9M28MQ9SZC;
-				INFOPLIST_FILE = Clockses/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Clocklet/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

@@ -17,7 +17,21 @@
                BlueprintIdentifier = "22836EAF228629750020B46F"
                BuildableName = "Clocklet.app"
                BlueprintName = "Clocklet"
-               ReferencedContainer = "container:Clockses.xcodeproj">
+               ReferencedContainer = "container:Clocklet.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "22836EC32286297C0020B46F"
+               BuildableName = "ClockletTests.xctest"
+               BlueprintName = "ClockletTests"
+               ReferencedContainer = "container:Clocklet.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -28,16 +42,6 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "22836EC32286297C0020B46F"
-               BuildableName = "ClocksesTests.xctest"
-               BlueprintName = "ClocksesTests"
-               ReferencedContainer = "container:Clockses.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -57,7 +61,7 @@
             BlueprintIdentifier = "22836EAF228629750020B46F"
             BuildableName = "Clocklet.app"
             BlueprintName = "Clocklet"
-            ReferencedContainer = "container:Clockses.xcodeproj">
+            ReferencedContainer = "container:Clocklet.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <LocationScenarioReference
@@ -78,7 +82,7 @@
             BlueprintIdentifier = "22836EAF228629750020B46F"
             BuildableName = "Clocklet.app"
             BlueprintName = "Clocklet"
-            ReferencedContainer = "container:Clockses.xcodeproj">
+            ReferencedContainer = "container:Clocklet.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
