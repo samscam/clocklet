@@ -1,36 +1,57 @@
 #include "weather-client.h"
+#include <esp_log.h>
 
+#define TAG "WEATHER"
 
-WeatherClient::WeatherClient(WiFiClient &client) {
+WeatherClient::WeatherClient(WiFiClient &client) : UpdateJob() {
   this->client = &client;
   Serial.print("Setting Default Weather");
   this->horizonWeather = defaultWeather;
   this->rainbowWeather = defaultWeather;
 };
 
+bool WeatherClient::performUpdate(){
+    return fetchWeather();
+}
 
 bool WeatherClient::fetchWeather(){
-
-  if (connect(this->server, this->ssl)) {
-    if (sendRequest(this->server, this->resource) && skipResponseHeaders()) {
-      Serial.println("Got weather response");
-      if (readReponseContent()){
-        Serial.print("Weather: ");
-        Serial.println(horizonWeather.summary);
-      }
-      
-      disconnect();
-      return true;
+    // Requires location
+    if (!_currentLocation){
+        ESP_LOGE(TAG, "No location");
+        return false;
     }
-  }
-  Serial.println("Weather fetch failed");
-  return false;
+
+    // Requires network
+    if (!connect(this->server, this->ssl)) {
+        ESP_LOGE(TAG, "Failed to connect");
+        return false;
+    }
+
+    if (!sendRequest(this->server, this->resource)){
+        ESP_LOGE(TAG, "Request to server failed");
+        return false;
+    }
+    
+    if (!skipResponseHeaders()) {
+        ESP_LOGE(TAG, "Failed to skip response headers");
+        return false;
+    }
+
+    ESP_LOGI(TAG, "Got weather response");
+    if (readReponseContent()){
+        ESP_LOGI(TAG, "Weather %s",horizonWeather.summary);
+        disconnect();
+        return true;
+    }
+
+    ESP_LOGE(TAG, "Weather Parsing failed");
+    return false;
 }
 
 // Open connection to the HTTP server
 bool WeatherClient::connect(char* host, bool ssl) {
-  Serial.print("Connect to ");
-  Serial.println(host);
+  ESP_LOGD(TAG,"Connect to: %s",host);
+  
   bool ok;
 
   if (ssl){
@@ -42,7 +63,7 @@ bool WeatherClient::connect(char* host, bool ssl) {
   } else {
     ok = client -> connect(host, 80);
   }
-  Serial.println(ok ? "Connected" : "Connection Failed!");
+  ESP_LOGD(TAG,ok ? "Connected" : "Connection Failed!");
 
 
   return ok;
@@ -50,21 +71,21 @@ bool WeatherClient::connect(char* host, bool ssl) {
 
 // Send the HTTP GET request to the server
 bool WeatherClient::sendRequest(char* host, char* resource) {
-  Serial.print("Request ");
-  Serial.println(host);
-  Serial.println(resource);
-  // close any connection before send a new request.
+    ESP_LOGD(TAG,"... sending request");
+    ESP_LOGD(TAG,"Host: %s",host);
+    ESP_LOGD(TAG,"Resource: %s",resource);
+    
+    // close any connection before send a new request.
+    client -> print("GET ");
+    client -> print(resource);
+    client -> println(" HTTP/1.1");
+    client -> print("Host: ");
+    client -> println(host);
+    client -> println("Connection: close");
+    client -> println("User-Agent: Clocklet");
+    client -> println();
 
-  client -> print("GET ");
-  client -> print(resource);
-  client -> println(" HTTP/1.1");
-  client -> print("Host: ");
-  client -> println(host);
-  client -> println("Connection: close");
-  client -> println("User-Agent: Clocklet");
-  client -> println();
-
-  return true;
+    return true;
 }
 
 
@@ -76,16 +97,12 @@ bool WeatherClient::skipResponseHeaders() {
   client -> setTimeout(WEATHER_HTTP_TIMEOUT);
   bool ok = client -> find(endOfHeaders);
 
-  if (!ok) {
-    Serial.println("No response or invalid response!");
-  }
-
   return ok;
 }
 
 
 // Close the connection with the HTTP server
 void WeatherClient::disconnect() {
-  Serial.println("Disconnect from weather server");
+  ESP_LOGI(TAG, "Disconnecting from weather server");
   client -> stop();
 }

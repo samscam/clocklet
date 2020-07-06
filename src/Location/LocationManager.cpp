@@ -32,7 +32,7 @@ Location LocationManager::getLocation(){
 }
 
 bool LocationManager::setLocation(Location newLocation){
-    if (!isValidLocation(newLocation)){
+    if (!newLocation){
         return false;
     }
     currentLocation = newLocation;
@@ -53,18 +53,9 @@ bool LocationManager::setLocation(Location newLocation){
 }
 
 bool isValidLocation(Location location){
-    if (isnan(location.lat) || isnan(location.lng)){
+    if (location){
+        return true;
+    } else {
         return false;
     }
-    if (location.lat == 0 && location.lng == 0){
-        return false;
-    }
-    if (location.lat > 90 || location.lat < -90){
-        return false;
-    }
-    if (location.lng > 180 || location.lng < -180){
-        return false;
-    }
-
-    return true;
 }

@@ -4,7 +4,7 @@
 #define TAG "DARKSKY"
 
 DarkSky::DarkSky(WiFiClient &client) : WeatherClient(client) {
-  this->client = &client;
+  // this->client = &client;
   this->server = (char *)DARKSKY_SERVER;
   this->ssl = true;
   
@@ -21,7 +21,7 @@ void DarkSky::setTimeHorizon(uint8_t hours){
 bool DarkSky::readReponseContent() {
 
   // Allocate a temporary memory pool
-  SpiRamJsonDocument root(30720);
+  SpiRamJsonDocument root(131072);
   auto error = deserializeJson(root,*client);
 
   if (error) {
@@ -53,6 +53,7 @@ void DarkSky::setLocation(Location location){
   strcpy(this->resource,buffer);
   ESP_LOGD(TAG,"Weather fetch path %s",this->resource);
   
+  this->setNeedsUpdate();
 }
 
 Weather DarkSky::_parseWeatherBlock(JsonObject block){

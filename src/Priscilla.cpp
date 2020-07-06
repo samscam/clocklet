@@ -95,7 +95,11 @@ Rainbows rainbows;
 // Global Notification queues
 
 QueueHandle_t prefsChangedQueue;
+QueueHandle_t weatherChangedQueue;
+QueueHandle_t locationChangedQueue;
+QueueHandle_t networkChangedQueue;
 
+UpdateScheduler updateScheduler = UpdateScheduler();
 
 // SETUP  --------------------------------------
 void setup() {
@@ -214,6 +218,7 @@ void setup() {
     display->displayMessage("Where am I", bad);
     display->setDeviceState(noLocation);
   } else {
+    weatherClient->setLocation(locationManager->getLocation());
     rainbows.setLocation(locationManager->getLocation());
   }
 
@@ -245,6 +250,11 @@ void setup() {
 
   // Start the internal RTC and NTP sync
   rtc.begin();
+
+
+  // Start Update Scheduler
+  updateScheduler.addJob(weatherClient,hourly);
+  updateScheduler.start();
 
 }
 
@@ -288,6 +298,7 @@ void loop() {
   if (detectTouchPeriod() > 500){
     display->displayMessage("That tickles",rando);
   }
+
   // if (detectTouchPeriod() > 5000){
   //   startProvisioning();
   //   display->setDeviceState(bluetooth);
@@ -327,23 +338,23 @@ void loop() {
   //   needsDaily = true;
   // }
 
-  if ( time.unixtime() > lastDailyUpdate + (60 * 60 * 24)) {
-    needsDaily = true;
-  }
+  // if ( time.unixtime() > lastDailyUpdate + (60 * 60 * 24)) {
+  //   needsDaily = true;
+  // }
 
-  //Daily update
-  if (needsDaily){
-    updatesDaily();
-    time = rtc.now();
-    lastDailyUpdate = time.unixtime();
-  }
+  // //Daily update
+  // if (needsDaily){
+  //   updatesDaily();
+  //   time = rtc.now();
+  //   lastDailyUpdate = time.unixtime();
+  // }
 
-  // Hourly updates
-  if ( time.unixtime() > lastHourlyUpdate + (60 * 60)){
-    updatesHourly();
-    time = rtc.now();
-    lastHourlyUpdate = time.unixtime();
-  }
+  // // Hourly updates
+  // if ( time.unixtime() > lastHourlyUpdate + (60 * 60)){
+  //   updatesHourly();
+  //   time = rtc.now();
+  //   lastHourlyUpdate = time.unixtime();
+  // }
 
   if (millis() > lastRandomMessageTime + nextMessageDelay){
     Serial.println("Random message");
@@ -451,19 +462,19 @@ void updatesHourly(){
 
   LOGMEM;
   Serial.println("Hourly update");
-  if (locationManager -> hasSavedLocation()){
-    if (reconnect()) {
-      weatherClient -> setLocation(locationManager -> getLocation());
-      weatherClient -> setTimeHorizon(12);
-      weatherClient -> fetchWeather();
-      display->setWeather(weatherClient->horizonWeather);
-      rainbows.setWeather(weatherClient->rainbowWeather);
-      LOGMEM;
-    }
+  // if (locationManager -> hasSavedLocation()){
+  //   if (reconnect()) {
+  //     weatherClient -> setLocation(locationManager -> getLocation());
+  //     weatherClient -> setTimeHorizon(12);
+  //     weatherClient -> fetchWeather();
+  //     display->setWeather(weatherClient->horizonWeather);
+  //     rainbows.setWeather(weatherClient->rainbowWeather);
+  //     LOGMEM;
+  //   }
 
-  } else {
-    display->displayMessage("Where am I", bad);
-  }
+  // } else {
+  //   display->displayMessage("Where am I", bad);
+  // }
 
   // Hourly sync the system (ntp) time back to the ds3231
   Serial.println("Syncing time: esp32 >> ds3231");
@@ -499,9 +510,6 @@ void updatesDaily(){
 
   generateDSTTimes(rtc.now().year());
 
-  // if (isProvisioningActive()){
-  //   return;
-  // }
 
   // Firmware updates
 

@@ -23,7 +23,6 @@ public:
 
 private:
 
-  Location _currentLocation;
   Weather _parseWeatherBlock(JsonObject block);
   uint8_t _timeHorizon;
 
