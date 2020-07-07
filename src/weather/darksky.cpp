@@ -8,7 +8,7 @@ DarkSky::DarkSky(WiFiClient &client) : WeatherClient(client) {
   this->server = (char *)DARKSKY_SERVER;
   this->ssl = true;
   
-  Serial.print("Setting Default Weather");
+  ESP_LOGV(TAG,"Setting Default Weather");
   this->horizonWeather = defaultWeather;
   this->rainbowWeather = defaultWeather;
 };
@@ -21,7 +21,7 @@ void DarkSky::setTimeHorizon(uint8_t hours){
 bool DarkSky::readReponseContent() {
 
   // Allocate a temporary memory pool
-  SpiRamJsonDocument root(131072);
+  SpiRamJsonDocument root(65536); // woo a whole 64k
   auto error = deserializeJson(root,*client);
 
   if (error) {
@@ -29,7 +29,7 @@ bool DarkSky::readReponseContent() {
     return false;
   }
 
-  ESP_LOGD(TAG,"Weather deserialised... parsing...");
+  ESP_LOGI(TAG,"Weather deserialised... parsing...");
 
   rainbowWeather = _parseWeatherBlock(root["hourly"]["data"][0]);
 
@@ -39,7 +39,7 @@ bool DarkSky::readReponseContent() {
     horizonWeather += block;
   }
 
-  ESP_LOGD(TAG,"Weather parsing done");
+  ESP_LOGI(TAG,"Weather parsing done");
   return true;
 }
 
