@@ -34,6 +34,7 @@ bool WeatherClient::fetchWeather(){
     
     if (!skipResponseHeaders()) {
         ESP_LOGE(TAG, "Failed to skip response headers");
+        disconnect();
         return false;
     }
 
