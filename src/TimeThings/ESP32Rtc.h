@@ -8,6 +8,7 @@ public:
     boolean begin(void);
     void adjust(const DateTime& dt);
     DateTime now();
+    DateTime localTime();
 };
 
 #endif
