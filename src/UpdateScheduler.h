@@ -4,9 +4,9 @@
 #include <vector>
 #include <memory>
 
-#define timeS_TO_MicroS(xTimeInSeconds) (xTimeInSeconds * 1000000)
+#define timeS_TO_MicroS(xTimeInSeconds) (((int64_t) xTimeInSeconds) * ((int64_t) 1000000))
 
-enum UpdateFrequency{
+enum UpdateFrequency: int64_t{
     minutely = 60,
     hourly = 60*60,
     daily = 60*60*24,
@@ -29,7 +29,7 @@ class UpdateJob {
     private:
         
         int retryCount = 0;
-        time_t nextUpdateTime = 0;
+        int64_t nextUpdateTime = 0;
 
 };
 
