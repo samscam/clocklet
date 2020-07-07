@@ -227,7 +227,7 @@ void setup() {
     rainbows.setLocation(locationManager->getLocation());
   }
   weatherClient.setTimeHorizon(12);
-
+  weatherClient.weatherChangedQueue = weatherChangedQueue;
 
   // Initialise I2c stuff (DS3231)
   #if defined(TIME_DS3231)

@@ -42,6 +42,8 @@ bool WeatherClient::fetchWeather(){
     if (readReponseContent()){
         ESP_LOGI(TAG, "Weather %s",horizonWeather.summary);
         disconnect();
+        bool change = true;
+        xQueueSend(weatherChangedQueue, &change, (TickType_t) 0);
         return true;
     }
 

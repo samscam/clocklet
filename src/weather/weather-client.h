@@ -15,6 +15,8 @@
 class WeatherClient: public UpdateJob {
 
 public:
+  
+  QueueHandle_t weatherChangedQueue;
 
   WeatherClient(WiFiClient &client);
   virtual ~WeatherClient() {};
@@ -52,6 +54,8 @@ public:
   
   virtual bool readReponseContent() { return false; };
   
+private:
+
 };
 
 
