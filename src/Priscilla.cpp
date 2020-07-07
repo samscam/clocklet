@@ -18,6 +18,8 @@
 #include "rom/uart.h"
 #include <soc/efuse_reg.h>
 
+#define TAG "PRISCILLA"
+
 // CONFIGURATION  --------------------------------------
 
 
@@ -36,7 +38,7 @@ int32_t secondaryTimeZone = 330; // Mumbai is +5:30
 // #elif defined(MATRIX)
 
 #include "Displays/Matrix.h"
-Matrix *display = new Matrix();
+Matrix display = Matrix();
 
 // #elif defined(EPAPER)
 
@@ -74,18 +76,16 @@ LocationManager *locationManager;
 #endif
 
 
-// ---------- Networking
+// ---------- WEATHER CLIENT
 
 WiFiClientSecure secureClient; // << https on esp32
 // WiFiClient client; // <<  plain http, and https on atmelwinc
 
-
-// ---------- WEATHER CLIENT
 // #include "weather/met-office.h"
 // WeatherClient *weatherClient = new MetOffice(client); // << It's plain HTTP
 
 #include "weather/darksky.h"
-DarkSky *weatherClient = new DarkSky(secureClient);
+DarkSky weatherClient = DarkSky(secureClient);
 
 
 // RAINBOWS
@@ -123,6 +123,7 @@ void setup() {
 
   // Notification queues
   prefsChangedQueue = xQueueCreate(1, sizeof(bool));
+  weatherChangedQueue = xQueueCreate(1, sizeof(bool));
 
   // Read things from eFuse
   uint32_t hwrev = REG_GET_FIELD(EFUSE_BLK3_RDATA6_REG, EFUSE_BLK3_DOUT6);
@@ -157,6 +158,7 @@ void setup() {
 
   analogReadResolution(12);
   analogSetPinAttenuation(LIGHT_PIN,ADC_0db);
+
   // Randomise the random seed - Not sure if this is random enough
   // We don't actually need to do this if the wireless subsystems are active
   uint16_t seed = analogRead(A0);
@@ -169,11 +171,11 @@ void setup() {
     delay(100);
   }
 
-  Serial.println("Clock starting!");
+  ESP_LOGI(TAG,"Clock starting!");
 
 
-  display->setup();
-  display->setBrightness(currentBrightness());
+  display.setup();
+  display.setBrightness(currentBrightness());
 
   LOGMEM;
 
@@ -181,10 +183,10 @@ void setup() {
   // displayTests(display);  
 
   // DISPLAY A GREETING
-  display->displayMessage("CLOCKLET",rainbow);
+  display.displayMessage("CLOCKLET",rainbow);
 
   String greeting = String("Hello "+owner);
-  display->displayMessage(greeting.c_str(), rainbow);
+  display.displayMessage(greeting.c_str(), rainbow);
 
 
   
@@ -198,14 +200,14 @@ void setup() {
 
   if (isProvisioned){
     if (waitForWifi(6000)){
-      // display->displayMessage("Everything is awesome", good);
+      // display.displayMessage("Everything is awesome", good);
     } else {
-      display->displayMessage("Network is pants", bad);
-      display->setDeviceState(noNetwork);
+      display.displayMessage("Network is pants", bad);
+      display.setDeviceState(noNetwork);
     }
   } else {
-    display->displayMessage("I need your wifi", bad);
-    display->setDeviceState(bluetooth);
+    display.displayMessage("I need your wifi", bad);
+    display.setDeviceState(bluetooth);
     // startProvisioning();
   }
 
@@ -213,14 +215,19 @@ void setup() {
   
   LOGMEM;
 
+
+  // Setup weather
+
   locationManager = new LocationManager();
   if (!locationManager->hasSavedLocation()){
-    display->displayMessage("Where am I", bad);
-    display->setDeviceState(noLocation);
+    display.displayMessage("Where am I", bad);
+    display.setDeviceState(noLocation);
   } else {
-    weatherClient->setLocation(locationManager->getLocation());
+    weatherClient.setLocation(locationManager->getLocation());
     rainbows.setLocation(locationManager->getLocation());
   }
+  weatherClient.setTimeHorizon(12);
+
 
   // Initialise I2c stuff (DS3231)
   #if defined(TIME_DS3231)
@@ -234,7 +241,8 @@ void setup() {
   if (!ds3231.begin()){
     Serial.println("Could not connect to DS3231");
   }
-  // Sync the known time to the main clock on the next second boundary...
+
+  // Sync the ESP time to the DS3231 time on the next second boundary...
   Serial.println("Syncing ds3231 >> esp32 time");
   DateTime time3231 = ds3231.now();
   while (ds3231.now() == time3231){
@@ -245,7 +253,7 @@ void setup() {
 
   char ds3231_buf[64] = "DDD, DD MMM YYYY hh:mm:ss";
   char esp32_buf[64] =  "DDD, DD MMM YYYY hh:mm:ss";
-  Serial.printf("Sync complete... time is:\n - ds3231: %s\n - esp32: %s\n",time3231.toString(ds3231_buf),rtc.now().toString(esp32_buf));
+  ESP_LOGI(TAG,"Sync complete... time is:\n - ds3231: %s\n - esp32: %s\n",time3231.toString(ds3231_buf),rtc.now().toString(esp32_buf));
   #endif
 
   // Start the internal RTC and NTP sync
@@ -253,7 +261,7 @@ void setup() {
 
 
   // Start Update Scheduler
-  updateScheduler.addJob(weatherClient,hourly);
+  updateScheduler.addJob(&weatherClient,hourly);
   updateScheduler.start();
 
 }
@@ -285,27 +293,40 @@ bool didDisplay = false;
 
 void loop() {
 
-  display->setBrightness(currentBrightness());
+  display.setBrightness(currentBrightness());
 
-  // Check for preferences changes
+  // ---- MONITOR QUEUES -----
+
+  // ... preferences
   bool prefsDidChange = false;
   xQueueReceive(prefsChangedQueue, &prefsDidChange, (TickType_t)0 );
   if (prefsDidChange){
     Serial.println("PREFS DID CHANGE");
   }
 
+  // ... weather
+  bool weatherDidChange = false;
+  xQueueReceive(weatherChangedQueue, &weatherDidChange, (TickType_t)0 );
+  if (weatherDidChange){
+    Serial.println("Weather did change");
+    display.setWeather(weatherClient.horizonWeather);
+    rainbows.setWeather(weatherClient.rainbowWeather);
+  }
+
+  //
+
   // Check for touches...
   if (detectTouchPeriod() > 500){
-    display->displayMessage("That tickles",rando);
+    display.displayMessage("That tickles",rando);
   }
 
   // if (detectTouchPeriod() > 5000){
   //   startProvisioning();
-  //   display->setDeviceState(bluetooth);
-  //   display->displayMessage("Bluetooth is on",good);
+  //   display.setDeviceState(bluetooth);
+  //   display.displayMessage("Bluetooth is on",good);
   // }
   // if (detectTouchPeriod() > 10000){
-  //   display->displayMessage("Keep holding for restart",bad);
+  //   display.displayMessage("Keep holding for restart",bad);
   // }
   // if (detectTouchPeriod() > 15000){
   //   ESP.restart();
@@ -313,7 +334,7 @@ void loop() {
 
   #if defined(BATTERY_MONITORING)
       float voltage = batteryVoltage();
-      display->setBatteryLevel(batteryLevel(voltage));
+      display.setBatteryLevel(batteryLevel(voltage));
 
       if (voltage < cutoffVoltage){
         
@@ -359,62 +380,69 @@ void loop() {
   if (millis() > lastRandomMessageTime + nextMessageDelay){
     Serial.println("Random message");
     const char* message = randoMessage();
-    display->displayMessage(message, rainbow);
-    display->displayMessage(message, rainbow);
+    display.displayMessage(message, rainbow);
+    display.displayMessage(message, rainbow);
 
     lastRandomMessageTime = millis();
     nextMessageDelay = 1000 * 60 * random(5,59);
   }
 
-  time = rtc.now();
+  // time = rtc.now();
   // Minutes precision updates
   // Will fail when starting at zero :/
-  switch (precision) {
-    case minutes:
-      if (time.minute() != lastTime.minute()){
-        displayTime(time);
-        lastTime = time;
-        didDisplay = true;
-        display->frameLoop();
-      }
-      break;
-    case seconds:
-      if (time.second() != lastTime.second()){
-        displayTime(time);
-        lastTime = time;
-        didDisplay = true;
-        display->frameLoop();
-      }
-      break;
-    case subseconds:
-      display->setRainbows(rainbows.rainbowProbability(time));
-      displayTime(time);
-      didDisplay = true;
-      display->frameLoop();
-      break;
-  }
+  DateTime localTime = rtc.localTime();
+  display.setRainbows(rainbows.rainbowProbability(time));
+  display.setTime(localTime);
+  display.frameLoop();
+
+  sensibleDelay(1000/FPS);
+
+  // switch (precision) {
+  //   case minutes:
+  //     if (time.minute() != lastTime.minute()){
+  //       displayTime(time);
+  //       lastTime = time;
+  //       didDisplay = true;
+  //       display.frameLoop();
+  //     }
+  //     break;
+  //   case seconds:
+  //     if (time.second() != lastTime.second()){
+  //       displayTime(time);
+  //       lastTime = time;
+  //       didDisplay = true;
+  //       display.frameLoop();
+  //     }
+  //     break;
+  //   case subseconds:
+  //     display.setRainbows(rainbows.rainbowProbability(time));
+  //     displayTime(time);
+  //     didDisplay = true;
+  //     display.frameLoop();
+  //     break;
+  // }
 
 
 
 
-  time = rtc.now();
+  // time = rtc.now();
 
-  if (didDisplay){
-    switch (precision) {
-        case minutes:
-        sensibleDelay( (59 - time.second() ) * 1000 );
-        break;
-      case seconds:
-        sensibleDelay(900); // This should really be the time to the next second boundary - latency
-        break;
-      case subseconds:
-        sensibleDelay(1000/FPS);
-        break;
-    }
-    didDisplay = false;
-  // } else {
-  //   delay(10);
-  }
+  // if (didDisplay){
+  //   switch (precision) {
+  //       case minutes:
+  //       sensibleDelay( (59 - time.second() ) * 1000 );
+  //       break;
+  //     case seconds:
+  //       sensibleDelay(900); // This should really be the time to the next second boundary - latency
+  //       break;
+  //     case subseconds:
+  //       sensibleDelay(1000/FPS);
+  //       break;
+  //   }
+  //   didDisplay = false;
+  // // } else {
+  // //   delay(10);
+  // }
 
 }
 
@@ -424,12 +452,12 @@ void displayTime(DateTime utcTime){
     displayTime = utcTime + TimeSpan(dstAdjust(utcTime) * 3600);
     displayTime = displayTime + TimeSpan(tzAdjust * 60);
     
-    display->setTime(displayTime);
+    display.setTime(displayTime);
 
     // secondary time
     displayTime = utcTime; //+ TimeSpan(dstAdjust(time) * 3600); -- no dst in india
     displayTime = displayTime + TimeSpan(secondaryTimeZone * 60);
-    display->setSecondaryTime(displayTime,"Mumbai");
+    display.setSecondaryTime(displayTime,"Mumbai");
 }
 
 // TickType_t xLastWakeTime = xTaskGetTickCount();
@@ -455,10 +483,6 @@ void sensibleDelay(int milliseconds){
 // MARK: UPDATE CYCLE ---------------------------------------
 
 void updatesHourly(){
-  
-  // if (isProvisioningActive()){
-  //   return;
-  // }
 
   LOGMEM;
   Serial.println("Hourly update");
@@ -467,13 +491,13 @@ void updatesHourly(){
   //     weatherClient -> setLocation(locationManager -> getLocation());
   //     weatherClient -> setTimeHorizon(12);
   //     weatherClient -> fetchWeather();
-  //     display->setWeather(weatherClient->horizonWeather);
+  //     display.setWeather(weatherClient->horizonWeather);
   //     rainbows.setWeather(weatherClient->rainbowWeather);
   //     LOGMEM;
   //   }
 
   // } else {
-  //   display->displayMessage("Where am I", bad);
+  //   display.displayMessage("Where am I", bad);
   // }
 
   // Hourly sync the system (ntp) time back to the ds3231
@@ -500,9 +524,9 @@ void updatesDaily(){
     DateTime ntpTime;
     if (timeFromNTP(ntpTime)){
       rtc.adjust(ntpTime);
-      // display->displayMessage("Synchronised with NTP", good);
+      // display.displayMessage("Synchronised with NTP", good);
     } else {
-      // display->displayMessage("No sync", bad);
+      // display.displayMessage("No sync", bad);
     }
   }
   #endif
@@ -523,10 +547,10 @@ void updatesDaily(){
     bool staging = preferences.getBool("staging",false);
     if (firmwareUpdates->checkForUpdates(staging)){
       if (firmwareUpdates->updateAvailable){
-        display->displayMessage("Updating Firmware", rando);
-        display->setStatusMessage("wait");
+        display.displayMessage("Updating Firmware", rando);
+        display.setStatusMessage("wait");
         if (!firmwareUpdates->startUpdate()){
-          display->displayMessage("Update failed... sorry",bad);
+          display.displayMessage("Update failed... sorry",bad);
         }
       }
     } else {
@@ -656,7 +680,7 @@ void espSleep(int milliseconds){
 }
 
 void espShutdown(){
-  // display->setStatusMessage("LOW BATTERY");
+  // display.setStatusMessage("LOW BATTERY");
   // Serial.println("LOW BATTERY shutting down");
   // esp_deep_sleep_start();
 }
