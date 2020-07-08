@@ -19,16 +19,17 @@
 #define SV_LOCATION_UUID "87888F3E-C1BF-4832-9823-F19C73328D30"
 #define CH_CURRENTLOCATION_UUID "C8C7FF91-531A-4306-A68A-435374CB12A9"
 
+#define TAG "BLUESTUFF"
 
 BlueStuff *blueStuffInstance;
 
-static char LOG_TAG[] = "BLUESTUFF";
+
 
 class JoinNetworkCallback: public BLECharacteristicCallbacks {
 	void onWrite(BLECharacteristic* pCharacteristic) {
         LOGMEM;
 		std::string msg = pCharacteristic->getValue();
-        Serial.printf("BLE received: %s\n", msg.c_str());
+        ESP_LOGI(TAG,"BLE received: %s\n", msg.c_str());
         // ESP_LOGI(LOG_TAG, "BLE received: %s", msg.c_str());
 
         StaticJsonDocument<512> doc;
@@ -37,7 +38,7 @@ class JoinNetworkCallback: public BLECharacteristicCallbacks {
         // Fish out and validate the SSID
         const char * ssid = doc["ssid"];
         if (strlen(ssid) == 0 || strlen(ssid) > 32) {
-            ESP_LOGI("Invalid ssid length");
+            ESP_LOGI(TAG,"Invalid ssid length");
             return;
         }
 
@@ -53,7 +54,7 @@ class JoinNetworkCallback: public BLECharacteristicCallbacks {
         // For WPA2-PSK we are on an 8-63 char ascii phrase or 64 hex digits
         const char * psk = doc["psk"];
         if (strlen(psk) < 8 || strlen(psk) > 64) {
-            ESP_LOGI(LOG_TAG, "BLE received: %s", msg.c_str());
+            ESP_LOGI(TAG, "BLE received: %s", msg.c_str());
             return;
         }
 
@@ -79,20 +80,20 @@ class SetLocationCallback: public BLECharacteristicCallbacks {
 	void onWrite(BLECharacteristic* pCharacteristic) {
         LOGMEM;
 		std::string msg = pCharacteristic->getValue();
-        Serial.printf("BLE received: %s\n", msg.c_str());
+        ESP_LOGI(TAG,"BLE received: %s\n", msg.c_str());
 
         StaticJsonDocument<512> doc;
         deserializeJson(doc,msg);
         
         const double lat = doc["lat"];
         if (isnan(lat)) {
-            ESP_LOGI("Invalid latitude");
+            ESP_LOGI(TAG,"Invalid latitude");
             return;
         }
 
         const double lng = doc["lng"];
         if (isnan(lng)) {
-            ESP_LOGI("Invalid longitude");
+            ESP_LOGI(TAG,"Invalid longitude");
             return;
         }
         Location newLocation = {};
@@ -105,7 +106,7 @@ class SetLocationCallback: public BLECharacteristicCallbacks {
     void onRead(BLECharacteristic* pCharacteristic) {
         LOGMEM;
 		std::string msg = pCharacteristic->getValue();
-		ESP_LOGI(LOG_TAG, "BLE received: %s, %i", msg.c_str(), msg.length());
+		ESP_LOGI(TAG, "BLE received: %s, %i", msg.c_str(), msg.length());
 		// esp_log_buffer_char(LOG_TAG, msg.c_str(), msg.length());
 		// esp_log_buffer_hex(LOG_TAG, msg.c_str(), msg.length());
         Location location = locationManager->getLocation();
@@ -120,7 +121,7 @@ class SetLocationCallback: public BLECharacteristicCallbacks {
         uint len = outputStr.length()+1;
         char json[len];
         outputStr.toCharArray(json,len);
-        Serial.println(json);
+        ESP_LOGD(TAG,json);
 
         pCharacteristic->setValue(json);
 	}
@@ -134,7 +135,7 @@ void BlueStuff::startBlueStuff(){
     LOGMEM;
     blueStuffInstance = this;
 
-    Serial.println("Starting BLE work!");
+    ESP_LOGI(TAG,"Starting BLE work!");
 
     uint32_t hwrev = REG_GET_FIELD(EFUSE_BLK3_RDATA6_REG, EFUSE_BLK3_DOUT6);
     uint32_t serial = REG_GET_FIELD(EFUSE_BLK3_RDATA7_REG, EFUSE_BLK3_DOUT7);
@@ -258,7 +259,7 @@ void BlueStuff::onDisconnect(BLEServer* server) {
 }
 
 void BlueStuff::_startNetworkService(){
-    ESP_LOGI(LOG_TAG, "Starting network service %s",SV_NETWORK_UUID);
+    ESP_LOGI(TAG, "Starting network service %s",SV_NETWORK_UUID);
     sv_network = pServer->createService(SV_NETWORK_UUID);
 
     ch_currentNetwork = sv_network->createCharacteristic(
@@ -297,7 +298,7 @@ void BlueStuff::_startNetworkService(){
 }
 
 void BlueStuff::_startLocationService(){
-    ESP_LOGI(LOG_TAG, "Starting location service %s",SV_LOCATION_UUID);
+    ESP_LOGI(TAG, "Starting location service %s",SV_LOCATION_UUID);
     sv_location= pServer->createService(SV_LOCATION_UUID);
 
     ch_currentLocation = sv_location->createCharacteristic(
@@ -344,93 +345,92 @@ void wifiEventCb(WiFiEvent_t event)
 
 void BlueStuff::wifiEvent(WiFiEvent_t event){
     
-    Serial.printf("[WiFi-event] event: %d\n", event);
+    ESP_LOGD(TAG,"[WiFi-event] event: %d\n", event);
 
 
     switch (event) {
         case SYSTEM_EVENT_WIFI_READY: 
-            Serial.println("WiFi interface ready");
+            ESP_LOGD(TAG,"WiFi interface ready");
             break;
         case SYSTEM_EVENT_SCAN_DONE:
-            // Serial.println("Completed scan for access points");
+            ESP_LOGD(TAG,"Completed scan for access points");
             break;
         case SYSTEM_EVENT_STA_START:
-            Serial.println("WiFi client started");
+            ESP_LOGD(TAG,"WiFi client started");
             _updateCurrentNetwork();    
             break;
         case SYSTEM_EVENT_STA_STOP:
-            Serial.println("WiFi clients stopped");
+            ESP_LOGD(TAG,"WiFi clients stopped");
             _updateCurrentNetwork();    
             break;
         case SYSTEM_EVENT_STA_CONNECTED:
-            Serial.println("Connected to access point");
+            ESP_LOGD(TAG,"Connected to access point");
             _updateCurrentNetwork();    
             break;
         case SYSTEM_EVENT_STA_DISCONNECTED:
-            Serial.println("Disconnected from WiFi access point");
+            ESP_LOGD(TAG,"Disconnected from WiFi access point");
             _updateCurrentNetwork();    
             break;
         case SYSTEM_EVENT_STA_AUTHMODE_CHANGE:
-            Serial.println("Authentication mode of access point has changed");
+            ESP_LOGD(TAG,"Authentication mode of access point has changed");
             _updateCurrentNetwork();    
             break;
         case SYSTEM_EVENT_STA_GOT_IP:
-            Serial.print("Obtained IP address: ");
-            Serial.println(WiFi.localIP());
+            ESP_LOGD(TAG,"Obtained IP address: %s",WiFi.localIP().toString());
             _updateCurrentNetwork();    
             break;
         case SYSTEM_EVENT_STA_LOST_IP:
-            Serial.println("Lost IP address and IP address is reset to 0");
+            ESP_LOGD(TAG,"Lost IP address and IP address is reset to 0");
             _updateCurrentNetwork();    
             break;
         case SYSTEM_EVENT_STA_WPS_ER_SUCCESS:
-            Serial.println("WiFi Protected Setup (WPS): succeeded in enrollee mode");
+            ESP_LOGD(TAG,"WiFi Protected Setup (WPS): succeeded in enrollee mode");
             break;
         case SYSTEM_EVENT_STA_WPS_ER_FAILED:
-            Serial.println("WiFi Protected Setup (WPS): failed in enrollee mode");
+            ESP_LOGD(TAG,"WiFi Protected Setup (WPS): failed in enrollee mode");
             break;
         case SYSTEM_EVENT_STA_WPS_ER_TIMEOUT:
-            Serial.println("WiFi Protected Setup (WPS): timeout in enrollee mode");
+            ESP_LOGD(TAG,"WiFi Protected Setup (WPS): timeout in enrollee mode");
             break;
         case SYSTEM_EVENT_STA_WPS_ER_PIN:
-            Serial.println("WiFi Protected Setup (WPS): pin code in enrollee mode");
+            ESP_LOGD(TAG,"WiFi Protected Setup (WPS): pin code in enrollee mode");
             break;
         case SYSTEM_EVENT_AP_START:
-            Serial.println("AP WiFi access point started");
+            ESP_LOGD(TAG,"AP WiFi access point started");
             break;
         case SYSTEM_EVENT_AP_STOP:
-            Serial.println("AP WiFi access point  stopped");
+            ESP_LOGD(TAG,"AP WiFi access point  stopped");
             break;
         case SYSTEM_EVENT_AP_STACONNECTED:
-            Serial.println("AP Client connected");
+            ESP_LOGD(TAG,"AP Client connected");
             break;
         case SYSTEM_EVENT_AP_STADISCONNECTED:
-            Serial.println("AP Client disconnected");
+            ESP_LOGD(TAG,"AP Client disconnected");
             break;
         case SYSTEM_EVENT_AP_STAIPASSIGNED:
-            Serial.println("AP Assigned IP address to client");
+            ESP_LOGD(TAG,"AP Assigned IP address to client");
             break;
         case SYSTEM_EVENT_AP_PROBEREQRECVED:
-            Serial.println("AP Received probe request");
+            ESP_LOGD(TAG,"AP Received probe request");
             break;
         case SYSTEM_EVENT_GOT_IP6:
             // _updateCurrentNetwork();    
-            Serial.println("IPv6 is preferred");
+            ESP_LOGD(TAG,"IPv6 is preferred");
             break;
         case SYSTEM_EVENT_ETH_START:
-            Serial.println("Ethernet started");
+            ESP_LOGD(TAG,"Ethernet started");
             break;
         case SYSTEM_EVENT_ETH_STOP:
-            Serial.println("Ethernet stopped");
+            ESP_LOGD(TAG,"Ethernet stopped");
             break;
         case SYSTEM_EVENT_ETH_CONNECTED:
-            Serial.println("Ethernet connected");
+            ESP_LOGD(TAG,"Ethernet connected");
             break;
         case SYSTEM_EVENT_ETH_DISCONNECTED:
-            Serial.println("Ethernet disconnected");
+            ESP_LOGD(TAG,"Ethernet disconnected");
             break;
         case SYSTEM_EVENT_ETH_GOT_IP:
-            Serial.println("Ethernet Obtained IP address");
+            ESP_LOGD(TAG,"Ethernet Obtained IP address");
             break;
         default: break;
     }
@@ -461,7 +461,7 @@ void BlueStuff::_startWifiScan(){
 
         WiFi.getNetworkInfo(netInfo.index,netInfo.ssid,netInfo.enctype,netInfo.rssi,netInfo.bssid,netInfo.channel);
         // networks.push_back(netInfo);
-        Serial.printf("Found %s (ch %d rssi %d)\n",netInfo.ssid,netInfo.channel,netInfo.rssi);
+        ESP_LOGD(TAG,"Found %s (ch %d rssi %d)\n",netInfo.ssid,netInfo.channel,netInfo.rssi);
 
         _encodeNetInfo(doc,netInfo);
     }
@@ -471,7 +471,7 @@ void BlueStuff::_startWifiScan(){
     uint len = outputStr.length()+1;
     char availableJson[len];
     outputStr.toCharArray(availableJson,len);
-    Serial.println(availableJson);
+    ESP_LOGD(TAG,availableJson);
     ch_availableNetworks->setValue(availableJson);
     ch_availableNetworks->notify(true);
     LOGMEM;
