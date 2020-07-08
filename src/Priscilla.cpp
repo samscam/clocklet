@@ -18,6 +18,9 @@
 #include "rom/uart.h"
 #include <soc/efuse_reg.h>
 
+#include "TimeThings/TimeSync.h"
+
+
 #define TAG "PRISCILLA"
 
 // CONFIGURATION  --------------------------------------
@@ -229,7 +232,8 @@ void setup() {
   weatherClient.setTimeHorizon(12);
   weatherClient.weatherChangedQueue = weatherChangedQueue;
 
-  // Initialise I2c stuff (DS3231)
+  // Setup DS3231
+      // Initialise I2c stuff (DS3231)
   #if defined(TIME_DS3231)
 
   #if defined(CLOCKBRAIN)
@@ -242,19 +246,9 @@ void setup() {
     Serial.println("Could not connect to DS3231");
   }
 
-  // Sync the ESP time to the DS3231 time on the next second boundary...
-  Serial.println("Syncing ds3231 >> esp32 time");
-  DateTime time3231 = ds3231.now();
-  while (ds3231.now() == time3231){
-    delay(1);
-  }
-  time3231 = ds3231.now();
-  rtc.adjust(time3231);
-
-  char ds3231_buf[64] = "DDD, DD MMM YYYY hh:mm:ss";
-  char esp32_buf[64] =  "DDD, DD MMM YYYY hh:mm:ss";
-  ESP_LOGI(TAG,"Sync complete... time is:\n - ds3231: %s\n - esp32: %s\n",time3231.toString(ds3231_buf),rtc.now().toString(esp32_buf));
   #endif
+  TimeSync *timeSync = new TimeSync(&ds3231, &rtc); // << deliberately leaking these here - should really go smart pointers
+  timeSync->performUpdate();
 
   // Start the internal RTC and NTP sync
   rtc.begin();
@@ -262,6 +256,7 @@ void setup() {
 
   // Start Update Scheduler
   updateScheduler.addJob(&weatherClient,hourly);
+  updateScheduler.addJob(timeSync,hourly);
   updateScheduler.start();
 
 }

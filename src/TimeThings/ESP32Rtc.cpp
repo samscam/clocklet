@@ -9,15 +9,20 @@
 #include "lwip/apps/sntp.h"
 
 boolean RTC_ESP32::begin(void){
-  static char* timezone = "GMT0BST,M3.5.0/1,M10.5.0";
+  const char* timezone = "GMT0BST,M3.5.0/1,M10.5.0";
 
   if(sntp_enabled()){
       sntp_stop();
   }
+
+  char* server0 = strdup("0.pool.ntp.org");
+  char* server1 = strdup("1.pool.ntp.org");
+  char* server2 = strdup("2.pool.ntp.org");
+
   sntp_setoperatingmode(SNTP_OPMODE_POLL);
-  sntp_setservername(0, "0.pool.ntp.org");
-  sntp_setservername(1, "1.pool.ntp.org");
-  sntp_setservername(2, "2.pool.ntp.org");
+  sntp_setservername(0, server0);
+  sntp_setservername(1, server1);
+  sntp_setservername(2, server2);
   sntp_init();
 
   setenv( "TZ", timezone, 1 );
@@ -27,7 +32,7 @@ boolean RTC_ESP32::begin(void){
 }
 
 void RTC_ESP32::adjust(const DateTime& dt){
-  timeval tv = {dt.unixtime(),0};
+  timeval tv = {(long)dt.unixtime(),0};
   timezone tz = {0,0};
   settimeofday(&tv,&tz);
 }

@@ -1,5 +1,4 @@
-#ifndef PRISCILLA_ESP32RTC
-#define PRISCILLA_ESP32RTC
+#pragma once
 
 #include <RTClib.h>
 
@@ -10,5 +9,3 @@ public:
     DateTime now();
     DateTime localTime();
 };
-
-#endif
