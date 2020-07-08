@@ -23,14 +23,9 @@
 #define TOUCH_PIN T6
 #endif
 
+#define LIGHT_PIN 36
+
 // Function declarations
-
-void updatesDaily();
-void updatesHourly();
-uint16_t dstAdjust(DateTime time);
-void generateDSTTimes(uint16_t year);
-
-void displayTime(DateTime utcTime);
 
 float currentBrightness();
 long detectTouchPeriod();
@@ -51,5 +46,3 @@ void espShutdown();
 
 #endif
 
-
-#define LIGHT_PIN 36

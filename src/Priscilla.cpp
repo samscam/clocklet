@@ -227,10 +227,11 @@ void setup() {
   if (!locationManager->hasSavedLocation()){
     display.displayMessage("Where am I", bad);
     display.setDeviceState(noLocation);
-  } else {
-    weatherClient.setLocation(locationManager->getLocation());
-    rainbows.setLocation(locationManager->getLocation());
   }
+
+  Location currentLocation = locationManager->getLocation();
+  rainbows.setLocation(currentLocation);
+  weatherClient.setLocation(currentLocation);
   weatherClient.setTimeHorizon(12);
   weatherClient.weatherChangedQueue = weatherChangedQueue;
 
@@ -349,6 +350,7 @@ void loop() {
   //   ESP.restart();
   // }
 
+  // BATTERY MONITORING
   #if defined(BATTERY_MONITORING)
       float voltage = batteryVoltage();
       display.setBatteryLevel(batteryLevel(voltage));
@@ -357,7 +359,6 @@ void loop() {
         
         espShutdown();
       }
-
   #endif
 
   #if defined(TIME_GPS)
@@ -367,32 +368,6 @@ void loop() {
   // This should always be UTC
   DateTime time = rtc.now();
 
-  bool needsDaily = false;
-
-  // Check for major variations in the time > 1 minute
-  // This often happens after a (delayed) NTP sync or when GPS gets a fix
-  // TimeSpan timeDiff = time - lastTime;
-  // if (timeDiff.totalseconds() > 60 || timeDiff.totalseconds() < -60 ) {
-  //   needsDaily = true;
-  // }
-
-  // if ( time.unixtime() > lastDailyUpdate + (60 * 60 * 24)) {
-  //   needsDaily = true;
-  // }
-
-  // //Daily update
-  // if (needsDaily){
-  //   updatesDaily();
-  //   time = rtc.now();
-  //   lastDailyUpdate = time.unixtime();
-  // }
-
-  // // Hourly updates
-  // if ( time.unixtime() > lastHourlyUpdate + (60 * 60)){
-  //   updatesHourly();
-  //   time = rtc.now();
-  //   lastHourlyUpdate = time.unixtime();
-  // }
 
   if (millis() > lastRandomMessageTime + nextMessageDelay){
     Serial.println("Random message");
@@ -404,9 +379,7 @@ void loop() {
     nextMessageDelay = 1000 * 60 * random(5,59);
   }
 
-  // time = rtc.now();
-  // Minutes precision updates
-  // Will fail when starting at zero :/
+
   DateTime localTime = rtc.localTime();
   display.setRainbows(rainbows.rainbowProbability(time));
   display.setTime(localTime);
@@ -414,201 +387,16 @@ void loop() {
 
   sensibleDelay(1000/FPS);
 
-  // switch (precision) {
-  //   case minutes:
-  //     if (time.minute() != lastTime.minute()){
-  //       displayTime(time);
-  //       lastTime = time;
-  //       didDisplay = true;
-  //       display.frameLoop();
-  //     }
-  //     break;
-  //   case seconds:
-  //     if (time.second() != lastTime.second()){
-  //       displayTime(time);
-  //       lastTime = time;
-  //       didDisplay = true;
-  //       display.frameLoop();
-  //     }
-  //     break;
-  //   case subseconds:
-  //     display.setRainbows(rainbows.rainbowProbability(time));
-  //     displayTime(time);
-  //     didDisplay = true;
-  //     display.frameLoop();
-  //     break;
-  // }
-
-
-
-
-  // time = rtc.now();
-
-  // if (didDisplay){
-  //   switch (precision) {
-  //       case minutes:
-  //       sensibleDelay( (59 - time.second() ) * 1000 );
-  //       break;
-  //     case seconds:
-  //       sensibleDelay(900); // This should really be the time to the next second boundary - latency
-  //       break;
-  //     case subseconds:
-  //       sensibleDelay(1000/FPS);
-  //       break;
-  //   }
-  //   didDisplay = false;
-  // // } else {
-  // //   delay(10);
-  // }
 
 }
 
-void displayTime(DateTime utcTime){
-    DateTime displayTime;
-    // adjust for timezone and DST
-    displayTime = utcTime + TimeSpan(dstAdjust(utcTime) * 3600);
-    displayTime = displayTime + TimeSpan(tzAdjust * 60);
-    
-    display.setTime(displayTime);
-
-    // secondary time
-    displayTime = utcTime; //+ TimeSpan(dstAdjust(time) * 3600); -- no dst in india
-    displayTime = displayTime + TimeSpan(secondaryTimeZone * 60);
-    display.setSecondaryTime(displayTime,"Mumbai");
-}
-
-// TickType_t xLastWakeTime = xTaskGetTickCount();
-// const TickType_t xFrequency = pdMS_TO_TICKS(1000/FPS);
 
 void sensibleDelay(int milliseconds){
-  // #ifdef RAINBOWDISPLAY
-  // BAD SAM BAD SAM!!!
-  // vTaskDelayUntil(&xLastWakeTime, xFrequency);
 
     FastLED.delay(milliseconds);
-  // #else
-  //   Serial.print("Sleeping for: ");
-  //   Serial.println(milliseconds);
-  //   #if defined(ESP32)
-  //     espSleep(milliseconds);
-  //   #else
-  //     delay(milliseconds);
-  //   #endif
-  // #endif
-}
-
-// MARK: UPDATE CYCLE ---------------------------------------
-
-void updatesHourly(){
-
-  LOGMEM;
-  Serial.println("Hourly update");
-  // if (locationManager -> hasSavedLocation()){
-  //   if (reconnect()) {
-  //     weatherClient -> setLocation(locationManager -> getLocation());
-  //     weatherClient -> setTimeHorizon(12);
-  //     weatherClient -> fetchWeather();
-  //     display.setWeather(weatherClient->horizonWeather);
-  //     rainbows.setWeather(weatherClient->rainbowWeather);
-  //     LOGMEM;
-  //   }
-
-  // } else {
-  //   display.displayMessage("Where am I", bad);
-  // }
-
-  // Hourly sync the system (ntp) time back to the ds3231
-  Serial.println("Syncing time: esp32 >> ds3231");
-  uint32_t u32 = rtc.now().unixtime();
-  while (rtc.now().unixtime() == u32){
-    delay(1);
-  }
-  DateTime timertc = rtc.now();
-  ds3231.adjust(timertc);
-
-  char ds3231_buf[64] = "DDD, DD MMM YYYY hh:mm:ss";
-  char esp32_buf[64] =  "DDD, DD MMM YYYY hh:mm:ss";
-  Serial.printf("Sync complete... time is:\n - ds3231: %s\n - esp32: %s\n",ds3231.now().toString(ds3231_buf),rtc.now().toString(esp32_buf));
 
 }
 
-void updatesDaily(){
-
-  Serial.println("Daily update");
-  LOGMEM;
-  #if defined(TIMESOURCE_NTP)
-  if (reconnect()) {
-    DateTime ntpTime;
-    if (timeFromNTP(ntpTime)){
-      rtc.adjust(ntpTime);
-      // display.displayMessage("Synchronised with NTP", good);
-    } else {
-      // display.displayMessage("No sync", bad);
-    }
-  }
-  #endif
-
-
-  generateDSTTimes(rtc.now().year());
-
-
-  // Firmware updates
-
-  
-  LOGMEM;
-
-  if (reconnect()) {
-    FirmwareUpdates *firmwareUpdates = new FirmwareUpdates;
-    Preferences preferences = Preferences();
-    preferences.begin("clocklet", true);
-    bool staging = preferences.getBool("staging",false);
-    if (firmwareUpdates->checkForUpdates(staging)){
-      if (firmwareUpdates->updateAvailable){
-        display.displayMessage("Updating Firmware", rando);
-        display.setStatusMessage("wait");
-        if (!firmwareUpdates->startUpdate()){
-          display.displayMessage("Update failed... sorry",bad);
-        }
-      }
-    } else {
-      ESP_LOGI("CORE","Update check failed");
-    }
-    preferences.end();
-
-    delete firmwareUpdates;
-    Serial.println("Firmware update done");
-    LOGMEM;
-  }
-}
-
-DateTime dstStart;
-DateTime dstEnd;
-
-void generateDSTTimes(uint16_t year){
-  // European DST rules:
-  // last sunday in march at 01:00 utc
-  DateTime eom = DateTime(year, 3, 31);
-  int lastSun = 31 - (eom.dayOfTheWeek() % 7);
-  dstStart = DateTime(year, 3, lastSun , 1);
-
-  // last sunday in october at 01:00 utc
-  DateTime eoo = DateTime(year, 10, 31);
-  lastSun = 31 - eoo.dayOfTheWeek();
-  dstEnd = DateTime(year, 10, lastSun , 1);
-
-  Serial.println(dstStart.unixtime());
-  Serial.println(dstEnd.unixtime());
-
-  // Making this work anywhere is going to be more complex.
-}
-
-uint16_t dstAdjust(DateTime time){
-  if (time.unixtime() >= dstStart.unixtime() && time.unixtime() < dstEnd.unixtime() ) {
-    return 1;
-  } else {
-    return 0;
-  }
-}
 
 // MARK: BRIGHTNESS SENSING -------------------------
 

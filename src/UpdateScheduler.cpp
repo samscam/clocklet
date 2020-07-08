@@ -109,3 +109,10 @@ void UpdateJob::setNeedsUpdate(){
 //     Serial.printf("Sync complete... time is:\n - ds3231: %s\n - esp32: %s\n",ds3231.now().toString(ds3231_buf),rtc.now().toString(esp32_buf));
 
 // }
+
+  // Check for major variations in the time > 1 minute
+  // This often happens after a (delayed) NTP sync or when GPS gets a fix
+  // TimeSpan timeDiff = time - lastTime;
+  // if (timeDiff.totalseconds() > 60 || timeDiff.totalseconds() < -60 ) {
+  //   needsDaily = true;
+  // }
