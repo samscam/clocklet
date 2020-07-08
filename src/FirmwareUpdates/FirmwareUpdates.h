@@ -2,10 +2,20 @@
 
 #include <HTTPClient.h>
 #include <WiFiClientSecure.h>
+#include "../UpdateScheduler.h"
 
-class FirmwareUpdates {
+enum FirmwareUpdateStatus {
+    idle,
+    updating,
+    failed,
+    complete
+};
+
+class FirmwareUpdates: public UpdateJob {
     public:
-    FirmwareUpdates();
+    FirmwareUpdates(QueueHandle_t firmwareUpdateQueue);
+
+    bool performUpdate();
 
     /**
      * Checks for firmware updates
@@ -42,5 +52,7 @@ class FirmwareUpdates {
     bool _processOTAUpdate(const char* url);
     char _downloadURL[2048];
     bool _getWithRedirects(HTTPClient ** httpsptr, WiFiClientSecure ** clientptr, const char* url, int depth = 0);
+    
+    QueueHandle_t _firmwareUpdateQueue;
 
 };

@@ -101,6 +101,7 @@ QueueHandle_t prefsChangedQueue;
 QueueHandle_t weatherChangedQueue;
 QueueHandle_t locationChangedQueue;
 QueueHandle_t networkChangedQueue;
+QueueHandle_t firmwareUpdateQueue;
 
 UpdateScheduler updateScheduler = UpdateScheduler();
 
@@ -127,6 +128,7 @@ void setup() {
   // Notification queues
   prefsChangedQueue = xQueueCreate(1, sizeof(bool));
   weatherChangedQueue = xQueueCreate(1, sizeof(bool));
+  firmwareUpdateQueue = xQueueCreate(1, sizeof(FirmwareUpdateStatus));
 
   // Read things from eFuse
   uint32_t hwrev = REG_GET_FIELD(EFUSE_BLK3_RDATA6_REG, EFUSE_BLK3_DOUT6);
@@ -253,10 +255,13 @@ void setup() {
   // Start the internal RTC and NTP sync
   rtc.begin();
 
+  FirmwareUpdates *firmwareUpdates = new FirmwareUpdates(firmwareUpdateQueue);
 
   // Start Update Scheduler
   updateScheduler.addJob(&weatherClient,hourly);
+  updateScheduler.addJob(firmwareUpdates,daily);
   updateScheduler.addJob(timeSync,hourly);
+
   updateScheduler.start();
 
 }
@@ -270,7 +275,6 @@ unsigned long nextMessageDelay = 1000 * 60 * 2;
 unsigned long lastHourlyUpdate = 0;
 unsigned long lastDailyUpdate = 0;
 
-DateTime lastTime = 0;
 
 enum Precision {
   minutes, seconds, subseconds
@@ -308,13 +312,31 @@ void loop() {
     rainbows.setWeather(weatherClient.rainbowWeather);
   }
 
-  //
+  // ... firmware updates
+  FirmwareUpdateStatus fwUpdateStatus = idle;
+  xQueueReceive(firmwareUpdateQueue, &fwUpdateStatus, (TickType_t)0 );
 
-  // Check for touches...
-  if (detectTouchPeriod() > 500){
-    display.displayMessage("That tickles",rando);
+  switch (fwUpdateStatus) {
+    case idle:
+      break;
+    case updating:
+      display.displayMessage("Updating Firmware", rando);
+      display.setStatusMessage("wait");
+      break;
+    case failed:
+      display.displayMessage("Update failed... sorry",bad);
+    case complete:
+      display.displayMessage("Update complete! Restarting...", good);
+
+      ESP.restart();
+      break;
   }
 
+
+  // Check for touches... (This is currently disabled lower down... watch my comments go out of sync!)
+  // if (detectTouchPeriod() > 500){
+  //   display.displayMessage("That tickles",rando);
+  // }
   // if (detectTouchPeriod() > 5000){
   //   startProvisioning();
   //   display.setDeviceState(bluetooth);

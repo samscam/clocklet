@@ -10,13 +10,49 @@
 
 #include "esp_log.h"
 #include <SpiRamJsonAllocator.h>
+#include "../Loggery.h"
 
+#include <Preferences.h>
 
-const char* TAG = "Firmware Updates";
+#define TAG "FIRMWARE";
 
 #define MAX_REDIRECT_DEPTH 5
 
-FirmwareUpdates::FirmwareUpdates() {};
+FirmwareUpdates::FirmwareUpdates(QueueHandle_t firmwareUpdateQueue) {
+    _firmwareUpdateQueue = firmwareUpdateQueue;
+};
+
+
+  // Firmware updates
+
+bool FirmwareUpdates::performUpdate(){
+    LOGMEM;
+    
+    FirmwareUpdateStatus fwUpdateStatus = idle;
+
+    Preferences preferences = Preferences();
+    preferences.begin("clocklet", true);
+    bool staging = preferences.getBool("staging",false);
+    if (checkForUpdates(staging)){
+        if (updateAvailable){
+            fwUpdateStatus = updating;
+            xQueueSend(_firmwareUpdateQueue, &fwUpdateStatus,(TickType_t)0 );
+            if (!startUpdate()){
+                fwUpdateStatus = failed;
+                xQueueSend(_firmwareUpdateQueue, &fwUpdateStatus,(TickType_t)0 );
+            }
+        }
+        preferences.end();
+        ESP_LOGI(TAG,"Firmware update check complete");
+        return true;
+    } else {
+        preferences.end();
+        ESP_LOGE(TAG,"Update check failed");
+        return false;
+    }
+
+}
+
 
 // Pass it a url... it will perform a get, process redirects
 bool FirmwareUpdates::_getWithRedirects(HTTPClient ** httpsptr, WiFiClientSecure ** clientptr, const char* url, int depth){
@@ -189,13 +225,39 @@ bool FirmwareUpdates::checkForUpdates(bool useStaging) {
         ESP_LOGE(TAG, "Assets section not found in payload");
         return false;
     }
-    JsonObject assets_0 = rel["assets"][0];
+    
+    // Iterate through the assets until we find something with the right name
+    // For clockbrains, that's "clockbrain.bin"
+    // For feathers, that's "feather.bin"
 
-    if (assets_0["browser_download_url"].isNull()){
+    JsonArray assets = rel["assets"];
+    JsonObject selectedAsset;
+    bool assetFound = false;
+
+    #if defined(CLOCKBRAIN)
+    const char* assetName = "clockbrain.bin";
+    #else
+    const char* assetName = "feather.bin";
+    #endif
+    
+    for(JsonVariant vasset : assets){
+        selectedAsset = vasset.as<JsonObject>();
+        if (strcmp(selectedAsset["name"],assetName) == 0) {
+            assetFound = true;
+            break;
+        }
+    }
+
+    if (!assetFound){
+        ESP_LOGE(TAG, "Correct asset for this device not found");
+        return false;
+    }
+
+    if (selectedAsset["browser_download_url"].isNull()){
         ESP_LOGE(TAG, "Download URL not found in payload");
         return false;
     }
-    const char * __downloadURL = assets_0["browser_download_url"];
+    const char * __downloadURL = selectedAsset["browser_download_url"];
 
     strcpy(_downloadURL,__downloadURL);
     ESP_LOGI(TAG, "Download URL is %s\n",_downloadURL);
@@ -287,7 +349,5 @@ bool FirmwareUpdates::_processOTAUpdate(const char * url)
     }
 
     ESP_LOGI(TAG, "OTA update has successfully completed. Rebooting ...");
-    ESP.restart();
-
     return true; // But this will never ever happen :)
 }
