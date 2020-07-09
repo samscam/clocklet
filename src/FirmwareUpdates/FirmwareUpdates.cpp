@@ -163,7 +163,12 @@ bool FirmwareUpdates::checkForUpdates(bool useStaging) {
     }
 
     // Parse JSON object
+    #if defined(CLOCKBRAIN)
     SpiRamJsonDocument doc(capacity);
+    #else
+    DynamicJsonDocument doc(capacity);
+    #endif
+    
     DeserializationError error = deserializeJson(doc, *client);
 
     ESP_LOGV(TAG, "TRASHING");

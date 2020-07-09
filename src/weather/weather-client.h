@@ -22,7 +22,7 @@ public:
   virtual ~WeatherClient() {};
 
   // Conformance to UpdateJob
-  bool performUpdate();
+  virtual bool performUpdate();
 
   // This tells the client to go and update the weather from the remote source
   bool fetchWeather();

@@ -33,12 +33,12 @@ int32_t secondaryTimeZone = 330; // Mumbai is +5:30
 
 // ----------- Display
 
-// #if defined(RAINBOWDISPLAY)
+#if defined(RAINBOWDISPLAY)
 
-// #include "Displays/RGBDigit.h"
-// RGBDigit *display = new RGBDigit();
+#include "Displays/RGBDigit.h"
+RGBDigit display = RGBDigit();
 
-// #elif defined(MATRIX)
+#elif defined(MATRIX)
 
 #include "Displays/Matrix.h"
 Matrix display = Matrix();
@@ -48,7 +48,7 @@ Matrix display = Matrix();
 // #include "Displays/Epaper.h"
 // Display *display = new EpaperDisplay();
 
-// #endif
+#endif
 
 
 //Adafruit7 display = Adafruit7();
@@ -215,9 +215,11 @@ void setup() {
     display.setDeviceState(bluetooth);
     // startProvisioning();
   }
-
-  startProvisioning(prefsChangedQueue);
   
+  #if defined(CLOCKBRAIN)
+  startProvisioning(prefsChangedQueue);
+  #endif
+
   LOGMEM;
 
 

@@ -74,6 +74,9 @@ void RGBDigit::displayMessage(const char *stringy, MessageType messageType = goo
     case rando:
     scrollText_randomColour(stringy);
     break;
+    case rainbow:
+    scrollText_randomColour(stringy);
+    break;
   }
 }
 
