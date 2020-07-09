@@ -17,7 +17,7 @@ const char* messages[] = {
   "Do the ham dance",
   "Just is the enemy of good",
   "Striving to be less shite",
-  "Baby fart? It was Mr Nobody",
+  "Baby fart? It was Mr Nobody!",
   "Rainbow is the new green",
   "Cyclists Dismount",
   "Bin fairies are real",
@@ -30,7 +30,9 @@ const char* messages[] = {
   "Make it so",
   "Everything is going to be fine",
   "Be a LERT!",
-  "Clocklet wants a bagel"
+  "Clocklet wants a bagel",
+  "Clocklet wants a fucking bagel!",
+  "Not long now",
 };
 
 #define numMessages (sizeof(messages)/sizeof(char *)) //array size
