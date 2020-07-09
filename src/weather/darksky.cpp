@@ -25,7 +25,7 @@ bool DarkSky::readReponseContent() {
   auto error = deserializeJson(root,*client);
 
   if (error) {
-    ESP_LOGE(TAG,"deserializeJson() failed with code %s",error);
+    ESP_LOGE(TAG,"deserializeJson() failed with code %s",error.c_str());
     return false;
   }
 

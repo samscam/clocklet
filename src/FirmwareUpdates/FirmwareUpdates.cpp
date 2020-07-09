@@ -92,7 +92,7 @@ bool FirmwareUpdates::_getWithRedirects(HTTPClient ** httpsptr, WiFiClientSecure
 
     // httpCode will be negative on error
     if (httpCode < 0) {
-        ESP_LOGE(TAG, "HTTP error: %s\n-- URL: %s", *https->errorToString(httpCode).c_str(), url);
+        ESP_LOGE(TAG, "HTTP error: %s\n-- URL: %s", https->errorToString(httpCode).c_str(), url);
         delete client;
         delete https;
         return false;
