@@ -71,16 +71,12 @@ bool FirmwareUpdates::_getWithRedirects(HTTPClient ** httpsptr, WiFiClientSecure
     *clientptr = client;
     *httpsptr = https;
 
-    ESP_LOGV(TAG, "created: https %p ... client %p",https,client);
-    ESP_LOGV(TAG, "assigned: httpsptr %p ... clientptr %p",httpsptr,clientptr);
-    ESP_LOGV(TAG, "deref: httpsptr %p ... clientptr %p",*httpsptr,*clientptr);
-
     ESP_LOGV(TAG, "BEGIN");
 
     if (!https->begin(*client, url)) {
         ESP_LOGE(TAG, "Could not begin HTTPS request to: %s",url);
-        delete client;
-        // delete https;
+        if (https){ delete https; }
+        if (client){ delete client; }
         return false;
     }
 
@@ -93,8 +89,8 @@ bool FirmwareUpdates::_getWithRedirects(HTTPClient ** httpsptr, WiFiClientSecure
     // httpCode will be negative on error
     if (httpCode < 0) {
         ESP_LOGE(TAG, "HTTP error: %s\n-- URL: %s", https->errorToString(httpCode).c_str(), url);
-        delete client;
-        // delete https;
+        if (https){ delete https; }
+        if (client){ delete client; }
         return false;
     }
 
@@ -110,15 +106,15 @@ bool FirmwareUpdates::_getWithRedirects(HTTPClient ** httpsptr, WiFiClientSecure
             https->end();
             client->flush();
 
-            delete client;
-            delete https;
+    if (https){ delete https; }
+    if (client){ delete client; }
         
             ESP_LOGI(TAG, "Redirecting: %s", redirectLocation.c_str());
             return _getWithRedirects(&*httpsptr, &*clientptr, redirectLocation.c_str(), depth++);
         } else {
             ESP_LOGE(TAG, "%d status code but no redirect location", httpCode);
-            delete client;
-            delete https;
+            if (https){ delete https; }
+            if (client){ delete client; }
             return false;
         }
     }
@@ -126,8 +122,9 @@ bool FirmwareUpdates::_getWithRedirects(HTTPClient ** httpsptr, WiFiClientSecure
     // Handle other non-200 status codes
     if (httpCode != 200){
         ESP_LOGE(TAG, "Bailing out due to %d status code", httpCode);
-        delete client;
-        delete https;
+        if (https){ delete https; }
+        if (client){ delete client; }
+
         return false;
     }
 
@@ -172,8 +169,8 @@ bool FirmwareUpdates::checkForUpdates(bool useStaging) {
     DeserializationError error = deserializeJson(doc, *client);
 
     ESP_LOGV(TAG, "TRASHING");
-    // delete client;
-    // delete https;
+    if (https){ delete https; }
+    if (client){ delete client; }
 
     if (error) {
         ESP_LOGE(TAG, "deserializeJson() failed: %s", error.c_str());
@@ -298,23 +295,23 @@ bool FirmwareUpdates::_processOTAUpdate(const char * url)
         ESP_LOGD(TAG, "Content length is %i",contentLength);
     } else {
         ESP_LOGE(TAG, "No content length found");
-        delete client;
-        delete https;
+        if (https){ delete https; }
+        if (client){ delete client; }
         return false;
     }
 
     if (!https->hasHeader("Content-Type")){
         ESP_LOGE(TAG, "No content type found");
-        delete client;
-        delete https;
+        if (https){ delete https; }
+        if (client){ delete client; }
         return false;
     }
 
     String contentType = https->header("Content-Type");
     if (contentType != "application/octet-stream") {
         ESP_LOGE(TAG, "Invalid content type: %s", contentType);
-        delete client;
-        delete https;
+        if (https){ delete https; }
+        if (client){ delete client; }
         return false;
     }
     ESP_LOGD(TAG, "Content type is %s", contentType);
@@ -322,8 +319,8 @@ bool FirmwareUpdates::_processOTAUpdate(const char * url)
 
     if (!Update.begin(contentLength)) {
         ESP_LOGE(TAG, "OTA could not start update - probably not enough free space");
-        delete client;
-        delete https;
+        if (https){ delete https; }
+        if (client){ delete client; }
         return false;
     }
 
@@ -334,22 +331,22 @@ bool FirmwareUpdates::_processOTAUpdate(const char * url)
         ESP_LOGI(TAG, "Written : %d successfully", written);
     } else {
         ESP_LOGE(TAG, "Written only : %d/%d " ,written, contentLength);
-        delete client;
-        delete https;
+        if (https){ delete https; }
+        if (client){ delete client; }
         return false;
     }
 
     if (!Update.end()) {
         ESP_LOGE(TAG, "An error Occurred. Error #: %d", Update.getError());
-        delete client;
-        delete https;
+        if (https){ delete https; }
+        if (client){ delete client; }
         return false;
     }
 
     if (!Update.isFinished()) {
         ESP_LOGE(TAG, "Something went wrong! OTA update hasn't been finished properly.");
-        delete client;
-        delete https;
+        if (https){ delete https; }
+        if (client){ delete client; }
         return false;
     }
 
