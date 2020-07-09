@@ -19,11 +19,13 @@
 
 #if defined(CLOCKBRAIN)
 #define TOUCH_PIN T7
+#define LIGHT_PIN 36
 #else
 #define TOUCH_PIN T6
+#define LIGHT_PIN A2
 #endif
 
-#define LIGHT_PIN 36
+
 
 // Function declarations
 
