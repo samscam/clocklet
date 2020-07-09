@@ -7,7 +7,7 @@
 #include "Location/LocationManager.h"
 #include <WiFi.h>
 
-#include "Provisioning/Provisioning.h"
+#include "Bluetooth/Provisioning.h"
 #include "FirmwareUpdates/FirmwareUpdates.h"
 #include <Preferences.h>
 #include "Weather/Rainbows.h"
