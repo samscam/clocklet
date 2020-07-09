@@ -1,5 +1,4 @@
-#ifndef PRISCILLA_WEATHER
-#define PRISCILLA_WEATHER
+#pragma once
 
 
 enum PrecipType {
@@ -57,6 +56,3 @@ static const Weather defaultWeather = {
   .cloudCover = 0.0f,
   .pressure = 0.0f,
 };
-
-
-#endif

@@ -21,7 +21,12 @@ void DarkSky::setTimeHorizon(uint8_t hours){
 bool DarkSky::readReponseContent() {
 
   // Allocate a temporary memory pool
+  #if defined(CLOCKBRAIN)
   SpiRamJsonDocument root(65536); // woo a whole 64k
+  #else
+  DynamicJsonDocument root(30720);
+  #endif
+  
   auto error = deserializeJson(root,*client);
 
   if (error) {

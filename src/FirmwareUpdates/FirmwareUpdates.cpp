@@ -76,11 +76,11 @@ bool FirmwareUpdates::_getWithRedirects(HTTPClient ** httpsptr, WiFiClientSecure
     ESP_LOGV(TAG, "deref: httpsptr %p ... clientptr %p",*httpsptr,*clientptr);
 
     ESP_LOGV(TAG, "BEGIN");
-    // WiFiClient& upcast = &*client;
+
     if (!https->begin(*client, url)) {
         ESP_LOGE(TAG, "Could not begin HTTPS request to: %s",url);
         delete client;
-        delete https;
+        // delete https;
         return false;
     }
 
@@ -94,7 +94,7 @@ bool FirmwareUpdates::_getWithRedirects(HTTPClient ** httpsptr, WiFiClientSecure
     if (httpCode < 0) {
         ESP_LOGE(TAG, "HTTP error: %s\n-- URL: %s", https->errorToString(httpCode).c_str(), url);
         delete client;
-        delete https;
+        // delete https;
         return false;
     }
 
@@ -172,8 +172,8 @@ bool FirmwareUpdates::checkForUpdates(bool useStaging) {
     DeserializationError error = deserializeJson(doc, *client);
 
     ESP_LOGV(TAG, "TRASHING");
-    delete client;
-    delete https;
+    // delete client;
+    // delete https;
 
     if (error) {
         ESP_LOGE(TAG, "deserializeJson() failed: %s", error.c_str());
