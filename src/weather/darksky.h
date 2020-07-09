@@ -12,10 +12,11 @@
 #define DARKSKY_MAX_CONTENT_SIZE 16384       // max size of the HTTP response
 
 
-class DarkSky : public WeatherClient {
+class DarkSky final : public WeatherClient {
 public:
   DarkSky(WiFiClient &client);
-
+  virtual ~DarkSky() {};
+  
   // Overrides
   bool readReponseContent();
   void setTimeHorizon(uint8_t hours);

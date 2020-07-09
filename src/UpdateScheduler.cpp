@@ -30,6 +30,9 @@ void UpdateScheduler::addJob(UpdateJob *job, UpdateFrequency freq){
     _jobs.push_back(job);
 }
 
+UpdateJob::UpdateJob(){
+
+}
 
 void UpdateJob::update(int64_t startTime){
     

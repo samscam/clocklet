@@ -11,11 +11,12 @@ enum FirmwareUpdateStatus {
     complete
 };
 
-class FirmwareUpdates: public UpdateJob {
+class FirmwareUpdates final: public UpdateJob {
     public:
     FirmwareUpdates(QueueHandle_t firmwareUpdateQueue);
+    virtual ~FirmwareUpdates() {};
 
-    bool performUpdate();
+    bool performUpdate() override;
 
     /**
      * Checks for firmware updates

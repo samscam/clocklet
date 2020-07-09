@@ -17,10 +17,9 @@ enum UpdateFrequency: int64_t{
 
 class UpdateJob {
     public:
-        UpdateJob() {};
+        UpdateJob();
         virtual ~UpdateJob() {};
-
-        virtual bool performUpdate();
+        virtual bool performUpdate() = 0;
         
         void update(int64_t startTime);
         void setNeedsUpdate();
