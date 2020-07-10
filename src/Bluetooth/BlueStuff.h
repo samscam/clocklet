@@ -7,7 +7,7 @@
 
 #include <WiFi.h>
 #include <WiFiMulti.h>
-
+#include "Utilities/Task.h"
 
 
 #include "BTPreferencesService.h"
@@ -15,11 +15,13 @@
 
 
 
-class BlueStuff: public BLEServerCallbacks {
+class BlueStuff: public BLEServerCallbacks, public Task {
 
 public:
-    BlueStuff(QueueHandle_t preferencesChangedQueue, QueueHandle_t networkChangedQueue);
-
+    BlueStuff(QueueHandle_t preferencesChangedQueue,
+                QueueHandle_t networkChangedQueue,
+                QueueHandle_t networkStatusQueue);
+    void run(void *data);
     void startBlueStuff();
     void stopBlueStuff();
 
@@ -30,15 +32,15 @@ public:
     void wifiEvent(WiFiEvent_t event);
 
     // WiFi callbacks
-
+    bool isAlreadyProvisioned();
     
 private:
 
     bool _keepRunning = true;
 
     void _startLocationService();
+    esp_err_t _app_prov_is_provisioned(bool *provisioned);
     
-
     BLEServer *pServer;
 
     BLEService *sv_GAS;
@@ -58,6 +60,6 @@ private:
 
     BTNetworkService* _networkService;
     QueueHandle_t _networkChangedQueue;
-
+    QueueHandle_t _networkStatusQueue;
 };
 

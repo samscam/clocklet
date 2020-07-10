@@ -7,7 +7,8 @@
 #include "Location/LocationManager.h"
 #include <WiFi.h>
 
-#include "Bluetooth/Provisioning.h"
+#include "Bluetooth/BlueStuff.h"
+
 #include "FirmwareUpdates/FirmwareUpdates.h"
 #include <Preferences.h>
 #include "Weather/Rainbows.h"
@@ -101,9 +102,12 @@ QueueHandle_t prefsChangedQueue;
 QueueHandle_t weatherChangedQueue;
 QueueHandle_t locationChangedQueue;
 QueueHandle_t networkChangedQueue;
+QueueHandle_t networkStatusQueue;
 QueueHandle_t firmwareUpdateQueue;
 
 UpdateScheduler updateScheduler = UpdateScheduler();
+
+BlueStuff *blueStuff;
 
 // SETUP  --------------------------------------
 void setup() {
@@ -128,6 +132,9 @@ void setup() {
   // Notification queues
   prefsChangedQueue = xQueueCreate(1, sizeof(bool));
   weatherChangedQueue = xQueueCreate(1, sizeof(bool));
+  
+  networkChangedQueue = xQueueCreate(1, sizeof(bool));
+  networkStatusQueue =  xQueueCreate(1, sizeof(wl_status_t));
   firmwareUpdateQueue = xQueueCreate(1, sizeof(FirmwareUpdateStatus));
 
   // Read things from eFuse
@@ -200,24 +207,30 @@ void setup() {
   WiFi.begin();
 
   LOGMEM;
-  // Checks for provisioning
-  bool isProvisioned = isAlreadyProvisioned();
 
-  if (isProvisioned){
-    if (waitForWifi(6000)){
-      // display.displayMessage("Everything is awesome", good);
-    } else {
-      display.displayMessage("Network is pants", bad);
-      display.setDeviceState(noNetwork);
-    }
-  } else {
-    display.displayMessage("I need your wifi", bad);
-    display.setDeviceState(bluetooth);
-    // startProvisioning();
-  }
+  // Start Bluetooth service
+
+
+  // Checks for provisioning
+  // bool isProvisioned = isAlreadyProvisioned();
+
+  // if (isProvisioned){
+  //   if (waitForWifi(6000)){
+  //     // display.displayMessage("Everything is awesome", good);
+  //   } else {
+  //     display.displayMessage("Network is pants", bad);
+  //     display.setDeviceState(noNetwork);
+  //   }
+  // } else {
+  //   display.displayMessage("I need your wifi", bad);
+  //   display.setDeviceState(bluetooth);
+  //   // startProvisioning();
+  // }
   
   #if defined(CLOCKBRAIN)
-  startProvisioning(prefsChangedQueue);
+  blueStuff = new BlueStuff(prefsChangedQueue,networkChangedQueue,networkStatusQueue);
+  blueStuff->start();
+
   #endif
 
   LOGMEM;

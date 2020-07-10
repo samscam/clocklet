@@ -4,10 +4,6 @@
 #include <esp_wifi_types.h>
 // MARK: NETWORK STUFF --------------------------------------
 
-NetworkWrangler::NetworkWrangler() {
-    
-}
-
 
 uint32_t lastConnectAttempt = 0;
 bool wifiStopped = false;

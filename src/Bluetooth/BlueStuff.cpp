@@ -5,6 +5,11 @@
 #include <Preferences.h>
 
 #include "BLE2902.h"
+#include <WiFi.h>
+#include <esp_wifi.h>
+#include <nvs_flash.h>
+#include <esp_err.h>
+#include <nvs.h>
 
 #include <esp_log.h>
 #include "Loggery.h"
@@ -74,11 +79,27 @@ class SetLocationCallback: public BLECharacteristicCallbacks {
 	}
 };
 
-BlueStuff::BlueStuff(QueueHandle_t preferencesChangedQueue, QueueHandle_t networkChangedQueue, QueueHandle_t networkStatusQueue){
+BlueStuff::BlueStuff(QueueHandle_t preferencesChangedQueue,
+            QueueHandle_t networkChangedQueue,
+            QueueHandle_t networkStatusQueue) : Task("UpdateScheduler", 5000,  5) {
+    this->setCore(0); // Run it on core zero
     _preferencesChangedQueue =  preferencesChangedQueue;
     _networkChangedQueue = networkChangedQueue;
     _networkStatusQueue = networkStatusQueue;
     
+}
+
+void BlueStuff::run(void *data) {
+
+    startBlueStuff();
+
+    // Wait for ever...
+    TickType_t xFrequency = pdMS_TO_TICKS(1000);
+    TickType_t xLastWakeTime = xTaskGetTickCount();
+    for (;;){
+        vTaskDelayUntil(&xLastWakeTime, xFrequency);
+    }
+
 }
 
 void BlueStuff::startBlueStuff(){
@@ -94,6 +115,7 @@ void BlueStuff::startBlueStuff(){
     preferences.begin("clocklet", true);
     
     String caseColour = preferences.getString("casecolour");
+
     if (isnan(serial)){
         serial = 0;
     }
@@ -148,7 +170,8 @@ void BlueStuff::startBlueStuff(){
 
     advertisementData.setName(deviceName);
     advertisementData.setPartialServices(BLEUUID(SV_NETWORK_UUID));
-    
+    advertisementData.setAppearance(256);
+
     pAdvertising->setAdvertisementData(advertisementData);
 
     BLEAdvertisementData scanResponseData;
@@ -164,24 +187,13 @@ void BlueStuff::startBlueStuff(){
 
     scanResponseData.setManufacturerData(mfrdataBuffer);
     pAdvertising->setScanResponseData(scanResponseData);
-    
-    pAdvertising->setAppearance(256); // GENERIC CLOCK
-    // pAdvertising->addServiceUUID(SV_NETWORK_UUID);
-    
-    // pAdvertising->setMinPreferred(0x06);  // functions that help with iPhone connections issue
-    // pAdvertising->setMinPreferred(0x12);
 
+    // Mythical settings that help with iPhone connections issue - don't seem to make any odds
+    // pAdvertising->setMinPreferred(0x06);  
+    // pAdvertising->setMinPreferred(0x12);
 
     pAdvertising->start();
 
-    
-    LOGMEM;
-    while(true){
-        delay(5000);
-        if (_shouldScan){
-            _startWifiScan();
-        }
-    }
 }
 
 void BlueStuff::stopBlueStuff(){
@@ -190,12 +202,9 @@ void BlueStuff::stopBlueStuff(){
 
 void BlueStuff::onConnect(BLEServer* server) {
 
-
-
-
     delay(2000);
-    _shouldScan = true;
-    _updateCurrentNetwork();
+    // _shouldScan = true;
+    // _updateCurrentNetwork();
 
     ch_ServiceChanged->notify(true);
     // Pass a message back up to say that we are connected
@@ -203,8 +212,7 @@ void BlueStuff::onConnect(BLEServer* server) {
 }
 
 void BlueStuff::onDisconnect(BLEServer* server) {
-    WiFi.removeEvent(wifiEventCb);
-    _shouldScan = false;
+
 }
 
 
@@ -227,3 +235,48 @@ void BlueStuff::_startLocationService(){
 
 
 
+esp_err_t BlueStuff::_app_prov_is_provisioned(bool *provisioned)
+{
+    *provisioned = false;
+
+#ifdef CONFIG_RESET_PROVISIONED
+    nvs_flash_erase();
+#endif
+
+    if (nvs_flash_init() != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to init NVS");
+        return ESP_FAIL;
+    }
+
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+    if (esp_wifi_init(&cfg) != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to init wifi");
+        return ESP_FAIL;
+    }
+
+    /* Get WiFi Station configuration */
+    wifi_config_t wifi_cfg;
+    if (esp_wifi_get_config(ESP_IF_WIFI_STA, &wifi_cfg) != ESP_OK) {
+        return ESP_FAIL;
+    }
+
+    if (strlen((const char*) wifi_cfg.sta.ssid)) {
+        *provisioned = true;
+        ESP_LOGI(TAG, "Found ssid %s",     (const char*) wifi_cfg.sta.ssid);
+        ESP_LOGI(TAG, "Found password %s", (const char*) wifi_cfg.sta.password);
+    }
+    
+    return ESP_OK;
+}
+
+
+bool BlueStuff::isAlreadyProvisioned(){
+
+    bool provisioned;
+    
+    if (_app_prov_is_provisioned(&provisioned) != ESP_OK) {
+        ESP_LOGE(TAG, "Error getting device provisioning state");
+        return false;
+    }
+    return provisioned;
+}

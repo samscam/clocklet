@@ -6,6 +6,9 @@
 #include <WiFi.h>
 #include <ArduinoJson.h>
 
+#define SV_NETWORK_UUID     "68D924A1-C1B2-497B-AC16-FD1D98EDB41F"
+
+
 struct NetworkInfo {
     uint8_t index;
     uint8_t enctype;
