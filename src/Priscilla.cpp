@@ -226,6 +226,7 @@ void setup() {
   //   display.setDeviceState(bluetooth);
   //   // startProvisioning();
   // }
+  waitForWifi(6000);
   
   #if defined(CLOCKBRAIN)
   blueStuff = new BlueStuff(prefsChangedQueue,networkChangedQueue,networkStatusQueue);
