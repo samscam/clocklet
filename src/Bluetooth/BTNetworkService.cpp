@@ -13,8 +13,7 @@
 
 
 // This bit is horrible - really something else should be doing the job of catching wifi status updates and distributing them around via a queue
-BTNetworkService *btNetworkServiceInstance; // This remains a horrible fudge
-// Hasty wrapper... not clean at-all
+BTNetworkService *btNetworkServiceInstance;
 void wifiEventCb(WiFiEvent_t event)
 {
     // callback needs to definitely be on the right processor too!!!
@@ -23,6 +22,7 @@ void wifiEventCb(WiFiEvent_t event)
     }
 }
 
+// Initialise network related service and characteristics
 BTNetworkService::BTNetworkService(BLEServer *pServer, QueueHandle_t networkChangedQueue, QueueHandle_t networkStatusQueue){
     _networkChangedQueue = networkChangedQueue;
     _networkStatusQueue = networkStatusQueue;
@@ -46,6 +46,7 @@ BTNetworkService::BTNetworkService(BLEServer *pServer, QueueHandle_t networkChan
                                         );
     ch_availableNetworks->setAccessPermissions(ESP_GATT_PERM_READ_ENCRYPTED);
 
+
     ch_joinNetwork = sv_network->createCharacteristic(
                                             CH_JOINNETWORK_UUID,
                                             BLECharacteristic::PROPERTY_WRITE
@@ -65,9 +66,15 @@ BTNetworkService::BTNetworkService(BLEServer *pServer, QueueHandle_t networkChan
 
 
     sv_network->start();
+
+    _performWifiScan();
+    _updateCurrentNetwork();
 }
 
 void BTNetworkService::onWrite(BLECharacteristic* pCharacteristic) {
+
+
+
     LOGMEM;
     std::string msg = pCharacteristic->getValue();
     ESP_LOGI(TAG,"BLE received: %s\n", msg.c_str());
@@ -136,7 +143,7 @@ void BTNetworkService::_updateCurrentNetwork(){
 void BTNetworkService::wifiEvent(WiFiEvent_t event){
     
     ESP_LOGD(TAG,"[WiFi-event] event: %d\n", event);
-
+    _updateCurrentNetwork();
 
     switch (event) {
         case SYSTEM_EVENT_WIFI_READY: 
@@ -147,31 +154,24 @@ void BTNetworkService::wifiEvent(WiFiEvent_t event){
             break;
         case SYSTEM_EVENT_STA_START:
             ESP_LOGD(TAG,"WiFi client started");
-            _updateCurrentNetwork();    
             break;
         case SYSTEM_EVENT_STA_STOP:
             ESP_LOGD(TAG,"WiFi clients stopped");
-            _updateCurrentNetwork();    
             break;
         case SYSTEM_EVENT_STA_CONNECTED:
             ESP_LOGD(TAG,"Connected to access point");
-            _updateCurrentNetwork();    
             break;
         case SYSTEM_EVENT_STA_DISCONNECTED:
             ESP_LOGD(TAG,"Disconnected from WiFi access point");
-            _updateCurrentNetwork();    
             break;
         case SYSTEM_EVENT_STA_AUTHMODE_CHANGE:
             ESP_LOGD(TAG,"Authentication mode of access point has changed");
-            _updateCurrentNetwork();    
             break;
         case SYSTEM_EVENT_STA_GOT_IP:
             ESP_LOGD(TAG,"Obtained IP address: %s",WiFi.localIP().toString());
-            _updateCurrentNetwork();    
             break;
         case SYSTEM_EVENT_STA_LOST_IP:
             ESP_LOGD(TAG,"Lost IP address and IP address is reset to 0");
-            _updateCurrentNetwork();    
             break;
         case SYSTEM_EVENT_STA_WPS_ER_SUCCESS:
             ESP_LOGD(TAG,"WiFi Protected Setup (WPS): succeeded in enrollee mode");
@@ -204,7 +204,6 @@ void BTNetworkService::wifiEvent(WiFiEvent_t event){
             ESP_LOGD(TAG,"AP Received probe request");
             break;
         case SYSTEM_EVENT_GOT_IP6:
-            // _updateCurrentNetwork();    
             ESP_LOGD(TAG,"IPv6 is preferred");
             break;
         case SYSTEM_EVENT_ETH_START:
@@ -229,7 +228,7 @@ void BTNetworkService::wifiEvent(WiFiEvent_t event){
 
 
 // Disaster! We are limited to 512 chars in a gatt value...
-void BTNetworkService::_startWifiScan(){
+void BTNetworkService::_performWifiScan(){
     LOGMEM;
     bool runningScan = (WiFi.scanNetworks(true,true,false) == WIFI_SCAN_RUNNING);
     int networkCount = 0;

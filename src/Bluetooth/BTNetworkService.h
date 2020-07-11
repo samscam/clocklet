@@ -26,10 +26,12 @@ public:
 
     void wifiEvent(WiFiEvent_t event);
     void onWrite(BLECharacteristic* pCharacteristic);
-private:
 
+
+private:
+    void _performWifiScan();
     void _updateCurrentNetwork();
-    void _startWifiScan();
+
     void _encodeNetInfo(JsonDocument &doc, NetworkInfo netInfo);
 
 
