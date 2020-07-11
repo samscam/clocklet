@@ -201,18 +201,22 @@ void BlueStuff::stopBlueStuff(){
 }
 
 void BlueStuff::onConnect(BLEServer* server) {
-    
+    ESP_LOGI(TAG,"Bluetooth client connected");
     delay(2000);
     // _shouldScan = true;
     // _updateCurrentNetwork();
 
     ch_ServiceChanged->notify(true);
     // Pass a message back up to say that we are connected
+
+    _networkService->onConnect();
+    
     
 }
 
 void BlueStuff::onDisconnect(BLEServer* server) {
-
+    ESP_LOGI(TAG,"Bluetooth client disconnected");
+    _networkService->onDisconnect();
 }
 
 

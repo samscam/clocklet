@@ -27,6 +27,8 @@ public:
     void wifiEvent(WiFiEvent_t event);
     void onWrite(BLECharacteristic* pCharacteristic);
 
+    void onConnect();
+    void onDisconnect();
 
 private:
     void _performWifiScan();
@@ -48,6 +50,8 @@ private:
     BLECharacteristic *ch_availableNetworks; // returns list of known and available networks
     BLECharacteristic *ch_removeNetwork; // takes an SSID of one of the known networks - removes it from the list preventing future connection
     BLECharacteristic *ch_joinNetwork; // Joins a network
+
+    wifi_event_id_t _wifiEvent;
 };
 
 

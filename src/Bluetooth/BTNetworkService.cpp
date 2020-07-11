@@ -29,7 +29,7 @@ BTNetworkService::BTNetworkService(BLEServer *pServer, QueueHandle_t networkChan
 
     btNetworkServiceInstance = this;
 
-    WiFi.onEvent(wifiEventCb);
+
 
     ESP_LOGI(TAG, "Starting network service %s",SV_NETWORK_UUID);
     sv_network = pServer->createService(SV_NETWORK_UUID);
@@ -67,9 +67,19 @@ BTNetworkService::BTNetworkService(BLEServer *pServer, QueueHandle_t networkChan
 
     sv_network->start();
 
+
+}
+
+void BTNetworkService::onConnect(){
+    _wifiEvent = WiFi.onEvent(wifiEventCb);
     _performWifiScan();
     _updateCurrentNetwork();
 }
+
+void BTNetworkService::onDisconnect(){
+    WiFi.removeEvent(_wifiEvent);
+}
+
 
 void BTNetworkService::onWrite(BLECharacteristic* pCharacteristic) {
 
