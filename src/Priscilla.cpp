@@ -348,7 +348,7 @@ void loop() {
   }
 
   #if defined(FEATHER)
-  // Check for touches... (This is currently disabled lower down... watch my comments go out of sync!)
+  // Check for touches... (This doesn't work on the clockbrain ... but it doesn't need to work!)
   if (detectTouchPeriod() > 500){
     display.displayMessage("That tickles",rando);
   }
