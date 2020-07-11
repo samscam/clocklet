@@ -32,7 +32,7 @@ class SetLocationCallback: public BLECharacteristicCallbacks {
 	void onWrite(BLECharacteristic* pCharacteristic) {
         LOGMEM;
 		std::string msg = pCharacteristic->getValue();
-        ESP_LOGI(TAG,"BLE received: %s\n", msg.c_str());
+        ESP_LOGI(TAG,"BLE Location Characteristic Write: %s\n", msg.c_str());
 
         StaticJsonDocument<512> doc;
         deserializeJson(doc,msg);
@@ -58,7 +58,7 @@ class SetLocationCallback: public BLECharacteristicCallbacks {
     void onRead(BLECharacteristic* pCharacteristic) {
         LOGMEM;
 		std::string msg = pCharacteristic->getValue();
-		ESP_LOGI(TAG, "BLE received: %s, %i", msg.c_str(), msg.length());
+		ESP_LOGI(TAG, "BLE Location Characteristic Read: %s, %i", msg.c_str(), msg.length());
 		// esp_log_buffer_char(LOG_TAG, msg.c_str(), msg.length());
 		// esp_log_buffer_hex(LOG_TAG, msg.c_str(), msg.length());
         Location location = locationManager->getLocation();
@@ -201,7 +201,7 @@ void BlueStuff::stopBlueStuff(){
 }
 
 void BlueStuff::onConnect(BLEServer* server) {
-
+    
     delay(2000);
     // _shouldScan = true;
     // _updateCurrentNetwork();
