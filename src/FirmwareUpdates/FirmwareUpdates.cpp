@@ -13,6 +13,7 @@
 #include "../Loggery.h"
 
 #include <Preferences.h>
+#include "../network.h"
 
 #define TAG "FIRMWARE";
 
@@ -134,6 +135,10 @@ bool FirmwareUpdates::_getWithRedirects(HTTPClient ** httpsptr, WiFiClientSecure
 
 bool FirmwareUpdates::checkForUpdates(bool useStaging) {
     
+    if (!reconnect()){
+        return false;
+    }
+
     ESP_LOGI(TAG, "Checking for firmware updates");
 
     updateAvailable = false;

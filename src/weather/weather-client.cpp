@@ -1,5 +1,6 @@
 #include "weather-client.h"
 #include <esp_log.h>
+#include "../network.h"
 
 #define TAG "WEATHER"
 
@@ -15,6 +16,7 @@ bool WeatherClient::performUpdate(){
 }
 
 bool WeatherClient::fetchWeather(){
+
     // Requires location
     if (!_currentLocation){
         ESP_LOGE(TAG, "No location");
@@ -22,6 +24,10 @@ bool WeatherClient::fetchWeather(){
     }
 
     // Requires network
+    if (!reconnect()){
+      return false;
+    }
+
     if (!connect(this->server, this->ssl)) {
         ESP_LOGE(TAG, "Failed to connect");
         return false;
