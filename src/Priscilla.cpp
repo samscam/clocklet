@@ -227,11 +227,10 @@ void setup() {
   //   // startProvisioning();
   // }
   waitForWifi(6000);
-  
+
   #if defined(CLOCKBRAIN)
   blueStuff = new BlueStuff(prefsChangedQueue,networkChangedQueue,networkStatusQueue);
   blueStuff->start();
-
   #endif
 
   LOGMEM;
@@ -341,30 +340,32 @@ void loop() {
       display.setStatusMessage("wait");
       break;
     case failed:
-      display.displayMessage("Update failed... sorry",bad);
+      display.displayMessage("Update failed... sorry :(",bad);
     case complete:
       display.displayMessage("Update complete! Restarting...", good);
-
       ESP.restart();
       break;
   }
 
-
+  #if defined(FEATHER)
   // Check for touches... (This is currently disabled lower down... watch my comments go out of sync!)
-  // if (detectTouchPeriod() > 500){
-  //   display.displayMessage("That tickles",rando);
-  // }
-  // if (detectTouchPeriod() > 5000){
-  //   startProvisioning();
-  //   display.setDeviceState(bluetooth);
-  //   display.displayMessage("Bluetooth is on",good);
-  // }
-  // if (detectTouchPeriod() > 10000){
-  //   display.displayMessage("Keep holding for restart",bad);
-  // }
-  // if (detectTouchPeriod() > 15000){
-  //   ESP.restart();
-  // }
+  if (detectTouchPeriod() > 500){
+    display.displayMessage("That tickles",rando);
+  }
+  if (detectTouchPeriod() > 5000){
+    blueStuff = new BlueStuff(prefsChangedQueue,networkChangedQueue,networkStatusQueue);
+    blueStuff->start();
+
+    display.setDeviceState(bluetooth);
+    display.displayMessage("Bluetooth is on",good);
+  }
+  if (detectTouchPeriod() > 10000){
+    display.displayMessage("Keep holding for restart",bad);
+  }
+  if (detectTouchPeriod() > 15000){
+    ESP.restart();
+  }
+  #endif
 
   // BATTERY MONITORING
   #if defined(BATTERY_MONITORING)
@@ -438,26 +439,27 @@ float currentBrightness(){
 
 // MARK: TOUCH SENSITIVITY ------------------------
 long startTouchMillis = 0;
+uint16_t touchThreshold = 43;
 
 /// Returns the number of ms which the user has been touching the device
 long detectTouchPeriod(){
   int touchValue = touchRead(TOUCH_PIN);
-  // Serial.printf("Touch %d\n",touchValue);
-  return 0;
 
-  // if (touchValue < 43){ // touch threshold is a mess
-  //   if (!startTouchMillis){
-  //     startTouchMillis = millis();
-  //   }
-  //   return millis() - startTouchMillis;
-  // } else {
-  //   startTouchMillis = 0;
-  //   return 0;
-  // }
+
+  if (touchValue < touchThreshold){ // touch threshold is a mess
+    if (!startTouchMillis){
+      startTouchMillis = millis();
+    }
+    return millis() - startTouchMillis;
+  } else {
+    startTouchMillis = 0;
+    return 0;
+  }
 
 }
 
 // MARK: POWER MANAGEMENT -------------------------
+// This stuff is for the one battery powered device I've built - mostly irrelevant at the moment
 
 #if defined(BATTERY_MONITORING)
 
