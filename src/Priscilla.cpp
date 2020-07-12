@@ -342,7 +342,7 @@ void loop() {
         display.displayMessage("Updating Firmware", rando);
         fwUpdateStarted = true;
       } else {
-        display.setStatusMessage("wait");
+        display.setStatusMessage("WAIT");
       }
       
       delay(100);
