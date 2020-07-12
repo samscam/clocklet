@@ -305,6 +305,8 @@ Precision precision = subseconds;
 
 bool didDisplay = false;
 
+FirmwareUpdateStatus fwUpdateStatus = idle;
+bool fwUpdateStarted = false;
 
 void loop() {
 
@@ -329,18 +331,28 @@ void loop() {
   }
 
   // ... firmware updates
-  FirmwareUpdateStatus fwUpdateStatus = idle;
+  
   xQueueReceive(firmwareUpdateQueue, &fwUpdateStatus, (TickType_t)0 );
 
   switch (fwUpdateStatus) {
     case idle:
       break;
     case updating:
-      display.displayMessage("Updating Firmware", rando);
-      display.setStatusMessage("wait");
+      if (!fwUpdateStarted){
+        display.displayMessage("Updating Firmware", rando);
+        fwUpdateStarted = true;
+      } else {
+        display.setStatusMessage("wait");
+      }
+      
+      delay(100);
+      return;
+
       break;
     case failed:
       display.displayMessage("Update failed... sorry :(",bad);
+      fwUpdateStatus = idle;
+      break;
     case complete:
       display.displayMessage("Update complete! Restarting...", good);
       ESP.restart();

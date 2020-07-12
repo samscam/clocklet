@@ -38,7 +38,10 @@ bool FirmwareUpdates::performUpdate(){
         if (updateAvailable){
             fwUpdateStatus = updating;
             xQueueSend(_firmwareUpdateQueue, &fwUpdateStatus,(TickType_t)0 );
-            if (!startUpdate()){
+            if (startUpdate()){
+                fwUpdateStatus = complete;
+                xQueueSend(_firmwareUpdateQueue, &fwUpdateStatus,(TickType_t)0 );
+            } else {
                 fwUpdateStatus = failed;
                 xQueueSend(_firmwareUpdateQueue, &fwUpdateStatus,(TickType_t)0 );
             }
@@ -330,7 +333,10 @@ bool FirmwareUpdates::_processOTAUpdate(const char * url)
     }
 
     ESP_LOGI(TAG, "Starting Over-The-Air update. This may take some time to complete ...");
+
+    disableCore0WDT();
     size_t written = Update.writeStream(*client);
+    enableCore0WDT();
 
     if (written == contentLength) {
         ESP_LOGI(TAG, "Written : %d successfully", written);
