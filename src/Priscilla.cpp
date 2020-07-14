@@ -309,7 +309,7 @@ FirmwareUpdateStatus fwUpdateStatus = idle;
 bool fwUpdateStarted = false;
 
 void loop() {
-
+  
   display.setBrightness(currentBrightness());
 
   // ---- MONITOR QUEUES -----
@@ -443,9 +443,15 @@ float currentBrightness(){
     sum += readings[loop];
   }
 
-  uint16_t lightReading = sum / (uint16_t)readingWindow;
-  // Serial.printf("Light %d\n",lightReading);
-  return lightReading / 4096.0f;
+  float lightReading = sum / (float)readingWindow;
+
+  lightReading = lightReading / 4096.0f;
+  #if defined(CLOCKBRAIN) // actually this should be the display type
+  lightReading = lightReading * 10.0f; // Boost the level somewhat
+  #endif
+  lightReading = lightReading > 1.0f ? 1.0f : lightReading;
+
+  return lightReading;
 
 }
 
