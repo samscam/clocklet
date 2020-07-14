@@ -6,6 +6,8 @@
 #include "MatrixUtils.h"
 #include "../TimeThings/TimeUtils.h"
 
+#include <esp_log.h>
+#define TAG "MATRIX"
 
 FASTLED_USING_NAMESPACE
 
@@ -92,6 +94,7 @@ void Matrix::setStatusMessage(const char * string){
 
 void Matrix::setBrightness(float brightness){
   uint8_t scaledBrightness = MIN_BRIGHTNESS + (brightness * (MAX_BRIGHTNESS - MIN_BRIGHTNESS));
+  // ESP_LOGI(TAG,"BRIGHTNESS: %d",scaledBrightness);
   FastLED.setBrightness(scaledBrightness);
 }
 
@@ -212,7 +215,7 @@ void Matrix::scrollText_rainbow(const char *stringy){
 
 void Matrix::scrollText(const char *stringy, CRGB startColour, CRGB endColour, bool rainbow) {
   
-  Serial.printf("Scrolling: %s\n",stringy);
+  ESP_LOGI(TAG,"Scrolling: %s",stringy);
 
   int remainingCharacters = strlen(stringy);
 
@@ -781,7 +784,7 @@ void Matrix::addFrost(){
   // // We want the bottom row and the next one up...
 
   // for (int d = 0; d < NUM_DIGITS; d++){
-  //   // Serial.println((d*8) + 3);
+  //   // ESP_LOGI(TAG,((d*8) + 3);
 
   //   frostLayer[ (d*8) + 3 ] = CHSV(0,0,200);
   //   frostLayer[ (d*8) + 2 ] = CHSV(0,0,90);
