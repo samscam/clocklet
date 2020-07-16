@@ -12,7 +12,6 @@ public struct AdvertisementData{
     public var localName: String?
     public var manufacturerData: ManufacturerData?
     public var serviceUUIDs: Set<CBUUID>?
-    public var appearance: UInt16
     
     init(_ cbAdvertisementData: [String: Any]){
         if let localName = cbAdvertisementData[CBAdvertisementDataLocalNameKey] as? String {
@@ -23,9 +22,6 @@ public struct AdvertisementData{
         }
         if let uuids = cbAdvertisementData[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID] {
             self.serviceUUIDs = Set(uuids)
-        }
-        if let appearance = cbAdvertisementData[CBAdvertisement] as? String {
-            self.localName = localName
         }
     }
 }
