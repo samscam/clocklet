@@ -21,7 +21,7 @@ struct ScanningView: View{
         VStack{
             Image(systemName: self.clockList.isScanning ? "eye" : "eye.slash")
                 .resizable()
-                .scaledToFit()
+                .aspectRatio(contentMode: .fit)
                 .frame(width: 40 , height: 50, alignment: .center)
                 .scaleEffect(self.clockList.isScanning ? 2 : 1)
                 .opacity(self.clockList.isScanning ? 1.0 : 0.5)
@@ -76,9 +76,8 @@ struct ClockListView: View {
                                             ClockDetailsView().environmentObject(clock)){
                                 ClockSummaryView()
                                     .environmentObject(clock)
-                                
-
-                            }.transition(AnyTransition.opacity.animation(.easeInOut(duration: 1.0)))
+                            }
+                            .transition(AnyTransition.opacity.animation(.easeInOut(duration: 1.0)))
 
                             
                         }
@@ -93,6 +92,7 @@ struct ClockListView: View {
             }
             .navigationBarTitle(Text("Clocklet"))
             .onAppear {
+                
 //                self.clockList.disconnectAllDevices()
                 self.clockList.startScanning()
             }.onDisappear(){

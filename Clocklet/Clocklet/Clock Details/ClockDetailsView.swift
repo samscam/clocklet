@@ -18,35 +18,74 @@ struct ClockDetailsView: View {
     var body: some View {
         ScrollView{
             VStack(){
-                Image(clock.caseColor.imageName).resizable().aspectRatio(contentMode: .fit).frame(width: nil, height: 200, alignment: .center)
+                Image(clock.caseColor.imageName)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: nil, height: 200, alignment: .center)
                 
-                ConfigItemView(icon: Image(systemName:clock.state.iconSystemName) ,
-                               iconColor: clock.state.color,
-                               title: clock.state.description){
-                               EmptyView()
-                }
+                if(clock.state == .connected){
 
-                clock.settingsService.map{ settingsService in
-                    NavigationLink(destination:
-                    ClockSettingsView().environmentObject(settingsService)){
-                        ConfigItemView(icon: Image(systemName:"clock") ,
-                                       title: "Clock Settings"){
-                                       EmptyView()
-                        }
-                    }
-                }
-                
-                clock.networkService.map{ networkService in
-                    NavigationLink(destination: NetworkDetailView().environmentObject(networkService)){
-                        NetworkSummaryView().environmentObject(networkService)
-                        }.accentColor(nil)
+
+//                    clock.settingsService.map{ settingsService in
+//                        NavigationLink(destination:
+//                        ClockSettingsView().environmentObject(settingsService)){
+//                            ConfigItemView(icon: Image(systemName:"clock") ,
+//                                           title: "Clock Settings"){
+//                                           EmptyView()
+//                            }
+//                        }
+//                    }
                     
+                    clock.networkService.map{ networkService in
+                        NavigationLink(destination: NetworkDetailView().environmentObject(networkService)){
+                            NetworkSummaryView().environmentObject(networkService)
+                            }.accentColor(nil)
+                        
+                    }
+                    
+                    clock.locationService.map{ locationService in
+                        LocationSummaryView().environmentObject(locationService)
+                    }
+                    
+                } else {
+                    VStack(alignment:.center){
+                        Image(systemName:clock.state.iconSystemName)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 100, height: 100, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                            .foregroundColor(clock.state.color)
+                            .scaleEffect(clock.state == .connecting ? 0.8 : 1)
+                            .animation(Animation.easeInOut(duration: 1).repeatForever())
+                        
+                        Text(clock.state.description).bold()
+                        if let lastError = clock.state.lastErrorDescription {
+                            Text(lastError).lineLimit(nil).fixedSize(horizontal: false, vertical: true)
+                        }
+                        if clock.state == .disconnected() {
+                            Spacer()
+                            Button("Reconnect") {
+                                clock.connect()
+                            }.accentColor(Color(.systemBackground))
+                            .padding()
+                            .background(Capsule().fill(Color.accentColor))
+                        }
+                        
+                        if clock.state == .connecting {
+                            Spacer()
+                            Text("Make sure that your clocklet is nearby and showing the time. If the clocklet still doesn't connect, go into bluetooth settings and remove it from your list of devices, then try again. (Sorry)").lineLimit(nil).fixedSize(horizontal: false, vertical: true)
+                            Spacer()
+                            Button("Bluetooth Settings") {
+                                if let url = URL(string: "prefs:root=Bluetooth"){
+                                    UIApplication.shared.open(url)
+                                }
+                                
+                            }.accentColor(Color(.systemBackground))
+                            .padding()
+                            .background(Capsule().fill(Color.accentColor))
+                        }
+                    }.padding().frame(maxWidth: .infinity)
+
                 }
-                
-                clock.locationService.map{ locationService in
-                    LocationSummaryView().environmentObject(locationService)
-                }
-                
             }
             .padding()
             .animation(.default)
@@ -131,6 +170,15 @@ extension ConnectionState: CustomStringConvertible {
             case .connected: return "Connected"
             case .connecting: return "Connecting"
             case .disconnected: return "Disconnected"
+        }
+    }
+    
+    public var lastErrorDescription: String? {
+        switch self {
+        case .connected, .connecting:
+            return nil
+        case .disconnected(let error):
+            return error?.localizedDescription
         }
     }
 }
