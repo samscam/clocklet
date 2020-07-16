@@ -21,6 +21,23 @@ public enum ConnectionState {
     case connected
 }
 
+extension ConnectionState: Equatable {
+    public static func == (lhs: ConnectionState, rhs: ConnectionState) -> Bool {
+        switch (lhs,rhs){
+        case (.disconnected,.disconnected):
+            return true
+        case (.connecting,.connecting):
+            return true
+        case (.connected,.connected):
+            return true
+        default:
+            return false
+        }
+    }
+    
+    
+}
+
 
 open class Peripheral: PeripheralProtocol, ObservableObject {
     
