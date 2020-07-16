@@ -47,7 +47,7 @@ class LocationProxy: NSObject, CLLocationManagerDelegate {
         super.init()
         locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
         locationManager.delegate = self
-        
+        enable()
     }
     
     deinit{
