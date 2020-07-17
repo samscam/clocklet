@@ -1,3 +1,5 @@
 #pragma once
 
-void resetClocklet();
+void doReboot();
+void doPartialReset();
+void doFactoryReset();

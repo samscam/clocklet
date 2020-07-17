@@ -119,7 +119,7 @@ void BTNetworkService::onWrite(BLECharacteristic* pCharacteristic) {
     // Stop any in-progress scans...
     _shouldScan = false;
 
-    // Attempt to connect to the new network CRASHOLA!!!!
+    // Attempt to connect to the new network !!!!
     WiFi.disconnect();
     delay(1000);
     WiFi.begin(ssid,psk);
@@ -130,7 +130,7 @@ void BTNetworkService::onWrite(BLECharacteristic* pCharacteristic) {
 
 void BTNetworkService::_updateCurrentNetwork(){
     LOGMEM;
-    StaticJsonDocument<200> doc;
+    StaticJsonDocument<512> doc;
     doc["status"]=(int)WiFi.status();
     doc["ssid"]=WiFi.SSID();
     doc["connected"]=WiFi.isConnected();

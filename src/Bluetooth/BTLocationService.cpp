@@ -19,7 +19,7 @@ BTLocationService::BTLocationService(LocationManager *locationManager, BLEServer
                                         );
     _ch_currentLocation->setAccessPermissions(ESP_GATT_PERM_READ_ENCRYPTED | ESP_GATT_PERM_WRITE_ENCRYPTED);
 
-    _ch_currentLocation->setCallbacks(self);
+    _ch_currentLocation->setCallbacks(this);
 
     _sv_location->start();
 }

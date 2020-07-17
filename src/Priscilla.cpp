@@ -228,8 +228,12 @@ void setup() {
   // }
   waitForWifi(6000);
 
+
+  locationManager = new LocationManager(locationChangedQueue);
+
+
   #if defined(CLOCKBRAIN)
-  blueStuff = new BlueStuff(prefsChangedQueue,networkChangedQueue,networkStatusQueue);
+  blueStuff = new BlueStuff(prefsChangedQueue,networkChangedQueue,networkStatusQueue,locationManager);
   blueStuff->start();
   #endif
 
@@ -237,8 +241,6 @@ void setup() {
 
 
   // Setup weather
-
-  locationManager = new LocationManager(locationChangedQueue);
   if (!locationManager->hasSavedLocation()){
     display.displayMessage("Where am I", bad);
     display.setDeviceState(noLocation);

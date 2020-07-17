@@ -25,6 +25,7 @@ BTPreferencesService::BTPreferencesService(BLEServer *server, QueueHandle_t pref
     prefsChangedQueue,
     preferences);
     
+
     preferencesResetHandler = new PreferencesResetHandler(pservice);
 
     pservice->start();
@@ -64,14 +65,29 @@ PreferencesResetHandler::PreferencesResetHandler(BLEService *pService){
     _characteristic = pService->createCharacteristic(
         "DD3FB44B-A925-4FC3-8047-77B1B6028B25",
         BLECharacteristic::PROPERTY_WRITE);
-    uint16_t value = 0;
-    _characteristic->setValue(value);
+
     _characteristic->setAccessPermissions(ESP_GATT_PERM_WRITE_ENCRYPTED);
     _characteristic->setCallbacks(this);
 }
 
+
+enum ResetType {
+    nothing, reboot, partialReset, factoryReset
+};
+
 void PreferencesResetHandler::onWrite(BLECharacteristic* pCharacteristic) {
     uint8_t *value = pCharacteristic->getData();
     ESP_LOGI(TAG,"Reset handler triggered: %d",value[0]);
-    resetClocklet();
+    ResetType resetType = (ResetType)value[0];
+    switch (resetType) {
+        case reboot:
+            doReboot();
+            break;
+        case partialReset:
+            doPartialReset();
+            break;
+        case factoryReset:
+            doFactoryReset();
+            break;
+    }
 }
