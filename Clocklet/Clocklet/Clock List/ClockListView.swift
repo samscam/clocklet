@@ -58,16 +58,22 @@ struct ClockListView: View {
                         Text("Hello! This is the Clocklet app for configuring your Clocklet.")
                         Spacer()
                         if clockList.clocks.count == 0 {
-                            Button(action: {
-                                
-                            }) {
-                                Text("I've not got a clocklet").bold().foregroundColor(Color(.systemBackground)).frame(maxWidth: .infinity)
+                            Text("I've not got a clocklet").bold().foregroundColor(Color(.systemBackground)).frame(maxWidth: .infinity)
                                     
-                            }
+
                             .transition(AnyTransition.opacity.animation(.easeInOut(duration: 1.0)))
                             .padding()
                             .background(Capsule().fill(Color.accentColor))
-                        
+                            .onTapGesture {
+                                if let url = URL(string:"http://clocklet.co.uk") {
+                                    UIApplication.shared.open(url)
+                                }
+                                
+                            }
+                            .onLongPressGesture(minimumDuration: 5, maximumDistance: 30, perform: {
+                                clockList.createFakeClock()
+                            })
+
                                 
                         }
                             

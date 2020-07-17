@@ -26,15 +26,7 @@ struct ClockDetailsView: View {
                 if(clock.state == .connected){
 
 
-//                    clock.settingsService.map{ settingsService in
-//                        NavigationLink(destination:
-//                        ClockSettingsView().environmentObject(settingsService)){
-//                            ConfigItemView(icon: Image(systemName:"clock") ,
-//                                           title: "Clock Settings"){
-//                                           EmptyView()
-//                            }
-//                        }
-//                    }
+
                     
                     clock.networkService.map{ networkService in
                         NavigationLink(destination: NetworkDetailView().environmentObject(networkService)){
@@ -45,6 +37,17 @@ struct ClockDetailsView: View {
                     
                     clock.locationService.map{ locationService in
                         LocationSummaryView().environmentObject(locationService)
+                    }
+                    
+                    
+                    clock.settingsService.map{ settingsService in
+                        NavigationLink(destination:
+                        ClockSettingsView().environmentObject(settingsService)){
+                            ConfigItemView(icon: Image(systemName:"wrench") ,
+                                           title: "Technical stuff"){
+                                           EmptyView()
+                            }
+                        }
                     }
                     
                 } else {
@@ -70,19 +73,19 @@ struct ClockDetailsView: View {
                             .background(Capsule().fill(Color.accentColor))
                         }
                         
-                        if clock.state == .connecting {
-                            Spacer()
-                            Text("Make sure that your clocklet is nearby and showing the time. If the clocklet still doesn't connect, go into bluetooth settings and remove it from your list of devices, then try again. (Sorry)").lineLimit(nil).fixedSize(horizontal: false, vertical: true)
-                            Spacer()
-                            Button("Bluetooth Settings") {
-                                if let url = URL(string: "prefs:root=Bluetooth"){
-                                    UIApplication.shared.open(url)
-                                }
-                                
-                            }.accentColor(Color(.systemBackground))
-                            .padding()
-                            .background(Capsule().fill(Color.accentColor))
-                        }
+//                        if clock.state == .connecting {
+//                            Spacer()
+//                            Text("Make sure that your clocklet is nearby and showing the time. If the clocklet still doesn't connect, go into bluetooth settings and remove it from your list of devices, then try again. (Sorry)").lineLimit(nil).fixedSize(horizontal: false, vertical: true)
+//                            Spacer()
+//                            Button("Bluetooth Settings") {
+//                                if let url = URL(string: "prefs:root=Bluetooth"){
+//                                    UIApplication.shared.open(url)
+//                                }
+//
+//                            }.accentColor(Color(.systemBackground))
+//                            .padding()
+//                            .background(Capsule().fill(Color.accentColor))
+//                        }
                     }.padding().frame(maxWidth: .infinity)
 
                 }
@@ -91,7 +94,7 @@ struct ClockDetailsView: View {
             .animation(.default)
 
             
-        }.navigationBarTitle( Text(clock.name), displayMode:.inline)
+        }.navigationBarTitle( Text(clock.name), displayMode:.automatic)
         .navigationBarItems(trailing: Image(systemName:clock.state.iconSystemName).foregroundColor(clock.state.color))
         .onAppear {
              self.clock.connect()

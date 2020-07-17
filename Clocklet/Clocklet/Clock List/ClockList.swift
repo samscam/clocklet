@@ -21,7 +21,7 @@ class ClockList: ObservableObject {
     var _cancellableScanning: Cancellable?
     var _cancellableClocks: Cancellable?
     
-    let central: Central?
+    private var central: Central?
     
     init(central: Central?){
         self.central = central
@@ -58,6 +58,18 @@ class ClockList: ObservableObject {
     
     func disconnectAllDevices(){
         central?.disconnectAllDevices()
+    }
+    
+    func createFakeClock(){
+        
+        let fakeClock = Clock.mockClock()
+        
+        central = nil
+        _cancellableClocks?.cancel()
+        _cancellableScanning?.cancel()
+        isScanning = false
+        
+        clocks = [fakeClock]
     }
     
 }

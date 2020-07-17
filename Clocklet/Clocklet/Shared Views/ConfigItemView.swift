@@ -24,7 +24,7 @@ struct ConfigItemView<Content>: View where Content: View {
     }
     
     var body: some View{
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .center,spacing:10){
                 
                 icon.resizable().scaledToFit().frame(width: 30, height: 40, alignment: .center).foregroundColor(self.iconColor ?? Color("Black-ish"))
