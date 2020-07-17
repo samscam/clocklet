@@ -35,7 +35,7 @@ class FirmwareUpdates final: public UpdateJob {
     /**
      * Starts the update process
      * ... run checkForUpdate before calling this
-     * on sucessful completion, the system will be rebooted
+     * on sucessful completion, it will return true - the caller is responsible for subsequent reboot
      * OTHERWISE it will return false
      */
 
