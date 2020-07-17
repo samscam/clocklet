@@ -1,12 +1,14 @@
 #pragma once
 
 #include "LocationSource.h"
+#include <freertos/FreeRTOS.h>
+#include <freertos/queue.h>
 
 bool isValidLocation(Location location);
 
 class LocationManager: public LocationSource {
     public:
-    LocationManager();
+    LocationManager(QueueHandle_t locationChangedQueue);
 
     bool hasSavedLocation();
     Location getLocation();
@@ -14,4 +16,5 @@ class LocationManager: public LocationSource {
 
     private:
     Location currentLocation;
+    QueueHandle_t _locationChangedQueue;
 };

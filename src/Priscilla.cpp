@@ -132,7 +132,7 @@ void setup() {
   // Notification queues
   prefsChangedQueue = xQueueCreate(1, sizeof(bool));
   weatherChangedQueue = xQueueCreate(1, sizeof(bool));
-  
+  locationChangedQueue = xQueueCreate(1, sizeof(bool));
   networkChangedQueue = xQueueCreate(1, sizeof(bool));
   networkStatusQueue =  xQueueCreate(1, sizeof(wl_status_t));
   firmwareUpdateQueue = xQueueCreate(1, sizeof(FirmwareUpdateStatus));
@@ -238,7 +238,7 @@ void setup() {
 
   // Setup weather
 
-  locationManager = new LocationManager();
+  locationManager = new LocationManager(locationChangedQueue);
   if (!locationManager->hasSavedLocation()){
     display.displayMessage("Where am I", bad);
     display.setDeviceState(noLocation);
@@ -329,6 +329,17 @@ void loop() {
     display.setWeather(weatherClient.horizonWeather);
     rainbows.setWeather(weatherClient.rainbowWeather);
   }
+
+  // ... location
+  bool locationDidChange = false;
+  xQueueReceive(locationChangedQueue, &locationDidChange, (TickType_t)0 );
+  if (locationDidChange){
+    Serial.println("locationDidChange did change");
+    Location location = locationManager->getLocation();
+    weatherClient.setLocation(location);
+    rainbows.setLocation(location);
+  }
+
 
   // ... firmware updates
   

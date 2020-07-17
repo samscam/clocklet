@@ -12,7 +12,9 @@
 
 #include "BTPreferencesService.h"
 #include "BTNetworkService.h"
+#include "BTLocationService.h"
 
+#include "../Location/LocationManager.h"
 
 
 class BlueStuff: public BLEServerCallbacks, public Task {
@@ -20,7 +22,8 @@ class BlueStuff: public BLEServerCallbacks, public Task {
 public:
     BlueStuff(QueueHandle_t preferencesChangedQueue,
                 QueueHandle_t networkChangedQueue,
-                QueueHandle_t networkStatusQueue);
+                QueueHandle_t networkStatusQueue,
+                LocationManager *locationManager);
     void run(void *data);
     void startBlueStuff();
     void stopBlueStuff();
@@ -38,7 +41,6 @@ private:
 
     bool _keepRunning = true;
 
-    void _startLocationService();
     esp_err_t _app_prov_is_provisioned(bool *provisioned);
     
     BLEServer *pServer;
@@ -46,20 +48,15 @@ private:
     BLEService *sv_GAS;
     BLECharacteristic *ch_ServiceChanged;
     
-    BLEService *sv_location;
-    BLECharacteristic *ch_currentLocation; // read/write current location {"lng":lng,"lat":lat}
-
-    // Other clocklet prefs
-    BLEService *sv_preferences;
-    BLECharacteristic *ch_location; // read/write current location lat,lng pair
-    BLECharacteristic *ch_brightness; // read/write min/max brightness
     
-    // std::vector<NetworkInfo> networks;
     BTPreferencesService* _preferencesService;
     QueueHandle_t _preferencesChangedQueue;
 
     BTNetworkService* _networkService;
     QueueHandle_t _networkChangedQueue;
     QueueHandle_t _networkStatusQueue;
+
+    BTLocationService *_locationService;
+    LocationManager *_locationManager;
 };
 

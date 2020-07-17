@@ -1,7 +1,9 @@
 #include "LocationManager.h"
 #include <Preferences.h>
 
-LocationManager::LocationManager(){
+LocationManager::LocationManager(QueueHandle_t locationChangedQueue){
+    _locationChangedQueue = locationChangedQueue;
+    
     // Initialise with null island
     Serial.println("LocationManager constructor ******");
     currentLocation = {0,0};
@@ -44,11 +46,16 @@ bool LocationManager::setLocation(Location newLocation){
         preferences.putDouble("lng",newLocation.lng);
 
         preferences.end();
+
+        bool change = true;
+        xQueueSend(_locationChangedQueue, &change, (TickType_t) 0);
         return true;
+
     } else {
         Serial.println("[LocationManager] Couldn't start preferences for some reason");
         return false;
     }
+
 
 }
 
