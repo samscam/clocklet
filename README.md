@@ -1,23 +1,26 @@
-# Priscilla
+# Clocklet
+
+See also [clocklet.co.uk](https://clocklet.co.uk)
 
 ## Overview
 
 This project is the firmware for clocks made by @samscam including:
 
 ### Clocklet
-* Display: RGBDigit (neopixel) 7 segment display
-* Timekeeping: DS3231 RTC
+* 17x5 SK9822 LED Matrix display
+* Timekeeping: ESP32 (DS3231 as backup)
 * Synchronisation: NTP
-* Microcontroller: ESP32
+* Microcontroller: ESP32 Wrover on custom "Clockbrain" board
+
+### Old Clocklet
+Earlier prototypes used RGBDigit (WS2812B) 7 segment display and Adafruit Feather Huzzah32
 
 ### Mrs Clockety
 * Display: Waveshare epaper 2.9inch https://www.waveshare.com/2.9inch-e-paper-module.htm
 * Timekeeping: GPS
 * Synchronisation: GPS
 * Power management to run from a lipo battery
-* Microcontroller: ESP32
-
-There is code in the project for other variants and prototypes including some running on the Atmelsam Cortex M0 + ATWINC.
+* Microcontroller: Adafruit Feather Huzzah32
 
 It's all a work in progress.
 
