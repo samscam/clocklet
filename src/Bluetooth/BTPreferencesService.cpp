@@ -1,5 +1,5 @@
 #include "BTPreferencesService.h"
-
+#include "../ClockletSystem.h"
 
 BTPreferencesService::BTPreferencesService(BLEServer *server, QueueHandle_t prefsChangedQueue){
 
@@ -25,9 +25,12 @@ BTPreferencesService::BTPreferencesService(BLEServer *server, QueueHandle_t pref
     prefsChangedQueue,
     preferences);
     
+    preferencesResetHandler = new PreferencesResetHandler(pservice);
 
     pservice->start();
 }
+
+
 
 PreferencesGlueString::PreferencesGlueString(const char *uuid, const char *prefsKey, BLEService *pservice,QueueHandle_t prefsChangedQueue, Preferences *preferences){
     _prefsKey = prefsKey;
@@ -55,3 +58,20 @@ void PreferencesGlueString::onRead(BLECharacteristic* pCharacteristic) {
     // pCharacteristic->setValue(value.c_str());
 }
 
+
+
+PreferencesResetHandler::PreferencesResetHandler(BLEService *pService){
+    _characteristic = pService->createCharacteristic(
+        "DD3FB44B-A925-4FC3-8047-77B1B6028B25",
+        BLECharacteristic::PROPERTY_WRITE);
+    uint16_t value = 0;
+    _characteristic->setValue(value);
+    _characteristic->setAccessPermissions(ESP_GATT_PERM_WRITE_ENCRYPTED);
+    _characteristic->setCallbacks(this);
+}
+
+void PreferencesResetHandler::onWrite(BLECharacteristic* pCharacteristic) {
+    uint8_t *value = pCharacteristic->getData();
+    ESP_LOGI(TAG,"Reset handler triggered: %d",value[0]);
+    resetClocklet();
+}

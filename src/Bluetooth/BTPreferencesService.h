@@ -7,14 +7,21 @@
 
 #include <Preferences.h>
 
+class PreferencesResetHandler: public BLECharacteristicCallbacks {
+public:
+    PreferencesResetHandler(BLEService *pService);
+    void onWrite(BLECharacteristic* pCharacteristic);
+private:
+    BLECharacteristic *_characteristic;
+};
 
 class PreferencesGlueString: public BLECharacteristicCallbacks {
-    public:
+public:
     PreferencesGlueString(const char *uuid, const char *prefsKey, BLEService *pservice,QueueHandle_t prefsChangedQueue, Preferences *preferences);
     void onWrite(BLECharacteristic* pCharacteristic);
     void onRead(BLECharacteristic* pCharacteristic);
 
-    private:
+private:
     const char *_prefsKey;
     BLECharacteristic *_characteristic;
     Preferences *_preferences;
@@ -23,7 +30,7 @@ class PreferencesGlueString: public BLECharacteristicCallbacks {
 
 
 class BTPreferencesService {
-    public:
+public:
     BLEService *pservice;
 
 
@@ -31,6 +38,7 @@ class BTPreferencesService {
 
     BLECharacteristic *availableSeparatorAnimationsCharacteristic;
     PreferencesGlueString *separatorAnimationsGlue;
+    PreferencesResetHandler *preferencesResetHandler;
 };
 
 
