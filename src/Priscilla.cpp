@@ -138,11 +138,17 @@ void setup() {
   firmwareUpdateQueue = xQueueCreate(1, sizeof(FirmwareUpdateStatus));
 
   // Read things from eFuse
-  uint32_t hwrev = REG_GET_FIELD(EFUSE_BLK3_RDATA6_REG, EFUSE_BLK3_DOUT6);
+
+  uint32_t hwcaseField = REG_GET_FIELD(EFUSE_BLK3_RDATA6_REG, EFUSE_BLK3_DOUT6);
+
+  uint16_t hwrev = (hwcaseField << 16) >> 16;
+  uint16_t caseColour = hwcaseField >> 16;
+
   uint32_t serial = REG_GET_FIELD(EFUSE_BLK3_RDATA7_REG, EFUSE_BLK3_DOUT7);
 
   Serial.printf("Serial number: %d\n",serial);
   Serial.printf("Hardware revision: %d\n",hwrev);
+  Serial.printf("Case Colour: %d\n",caseColour);
 
   // Read things from preferences...
   Preferences preferences = Preferences();

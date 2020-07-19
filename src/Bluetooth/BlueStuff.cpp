@@ -48,14 +48,12 @@ void BlueStuff::startBlueStuff(){
 
     ESP_LOGI(TAG,"Starting BLE work!");
 
-    uint32_t hwrev = REG_GET_FIELD(EFUSE_BLK3_RDATA6_REG, EFUSE_BLK3_DOUT6);
+    uint32_t hwcaseField = REG_GET_FIELD(EFUSE_BLK3_RDATA6_REG, EFUSE_BLK3_DOUT6);
+
+    uint16_t hwrev = (hwcaseField << 16) >> 16;
+    uint16_t caseColour = hwcaseField >> 16;
+
     uint32_t serial = REG_GET_FIELD(EFUSE_BLK3_RDATA7_REG, EFUSE_BLK3_DOUT7);
-
-
-    Preferences preferences = Preferences();
-    preferences.begin("clocklet", true);
-    
-    String caseColour = preferences.getString("casecolour");
 
     if (isnan(serial)){
         serial = 0;
@@ -105,34 +103,38 @@ void BlueStuff::startBlueStuff(){
 
     BLEAdvertising *pAdvertising = pServer->getAdvertising();
     
-    pAdvertising->setScanResponse(true);
-
     BLEAdvertisementData advertisementData;
+    BLEAdvertisementData scanResponseData;
 
     advertisementData.setName(deviceName);
     advertisementData.setPartialServices(BLEUUID(SV_NETWORK_UUID));
-    advertisementData.setAppearance(256);
 
-    pAdvertising->setAdvertisementData(advertisementData);
-
-    BLEAdvertisementData scanResponseData;
-
-    const char * caseColourStr = caseColour.c_str();
-    size_t colStrLen = sizeof(caseColourStr);
-
-    char mfrdataBuffer[colStrLen+2];
+    char mfrdataBuffer[10];
 
     const char vendorID[2] = { 0x02, 0xE5 };
     memcpy(mfrdataBuffer, vendorID, 2);
-    memcpy(mfrdataBuffer+2, caseColourStr, colStrLen);
 
-    scanResponseData.setManufacturerData(mfrdataBuffer);
+    mfrdataBuffer[2] = (hwrev >> 0) & 0xFF;
+    mfrdataBuffer[3] = (hwrev >> 8) & 0xFF;
+
+    mfrdataBuffer[4] = (caseColour >> 0) & 0xFF;
+    mfrdataBuffer[5] = (caseColour >> 8) & 0xFF;
+
+    mfrdataBuffer[6] = (serial >> 0) & 0xFF;
+    mfrdataBuffer[7] = (serial >> 8) & 0xFF;
+    mfrdataBuffer[8] = (serial >> 16) & 0xFF;
+    mfrdataBuffer[9] = (serial >> 24) & 0xFF;
+
+    auto s = std::string(mfrdataBuffer,sizeof(mfrdataBuffer));
+    scanResponseData.setManufacturerData(s);
+
     pAdvertising->setScanResponseData(scanResponseData);
+    pAdvertising->setAdvertisementData(advertisementData);
 
     // Mythical settings that help with iPhone connections issue - don't seem to make any odds
-    // pAdvertising->setMinPreferred(0x06);  
-    // pAdvertising->setMinPreferred(0x12);
-
+    pAdvertising->setMinPreferred(0x06);  
+    pAdvertising->setMinPreferred(0x12);
+    pAdvertising->setScanResponse(true);
     pAdvertising->start();
 
 }
@@ -144,14 +146,10 @@ void BlueStuff::stopBlueStuff(){
 void BlueStuff::onConnect(BLEServer* server) {
     ESP_LOGI(TAG,"Bluetooth client connected");
     delay(2000);
-    // _shouldScan = true;
-    // _updateCurrentNetwork();
 
     ch_ServiceChanged->notify(true);
-    // Pass a message back up to say that we are connected
 
     _networkService->onConnect();
-    
     
 }
 
