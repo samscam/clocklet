@@ -270,7 +270,7 @@ void BTNetworkService::_performWifiScan(){
     uint len = outputStr.length()+1;
     char availableJson[len];
     outputStr.toCharArray(availableJson,len);
-    ESP_LOGD(TAG,availableJson);
+    ESP_LOGD(TAG,"%s",availableJson);
     ch_availableNetworks->setValue(availableJson);
     ch_availableNetworks->notify(true);
     LOGMEM;

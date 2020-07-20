@@ -71,7 +71,7 @@ bool WeatherClient::connect(char* host, bool ssl) {
   } else {
     ok = client -> connect(host, 80);
   }
-  ESP_LOGD(TAG,ok ? "Connected" : "Connection Failed!");
+  ESP_LOGD(TAG,"%s",ok ? "Connected" : "Connection Failed!");
 
 
   return ok;

@@ -8,6 +8,8 @@
 #define SV_LOCATION_UUID "87888F3E-C1BF-4832-9823-F19C73328D30"
 #define CH_CURRENTLOCATION_UUID "C8C7FF91-531A-4306-A68A-435374CB12A9"
 
+#define TAG "BTLocationService"
+
 BTLocationService::BTLocationService(LocationManager *locationManager, BLEServer *pServer){
     _locationManager = locationManager;
     ESP_LOGI(TAG, "Starting location service %s",SV_LOCATION_UUID);
@@ -68,7 +70,7 @@ void BTLocationService::onRead(BLECharacteristic* pCharacteristic) {
     uint len = outputStr.length()+1;
     char json[len];
     outputStr.toCharArray(json,len);
-    ESP_LOGD(TAG,json);
+    ESP_LOGD(TAG,"%s",json);
 
     pCharacteristic->setValue(json);
 }
