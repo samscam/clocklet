@@ -379,7 +379,7 @@ void loop() {
     display.displayMessage("That tickles",rando);
   }
   if (detectTouchPeriod() > 5000){
-    blueStuff = new BlueStuff(prefsChangedQueue,networkChangedQueue,networkStatusQueue);
+    blueStuff = new BlueStuff(prefsChangedQueue,networkChangedQueue,networkStatusQueue,locationManager);
     blueStuff->start();
 
     display.setDeviceState(bluetooth);
