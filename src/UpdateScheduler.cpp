@@ -18,6 +18,7 @@ void UpdateScheduler::run(void *data) {
 
         for (auto it = _jobs.begin(); it != _jobs.end(); it++) {
             (*it)->update(esp_timer_get_time());
+            delay(1);
         }
 
         vTaskDelayUntil(&xLastWakeTime, xFrequency);
