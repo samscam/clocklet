@@ -3,17 +3,9 @@
 #include <BLEDevice.h>
 #include <BLEUtils.h>
 #include <BLEService.h>
-#include <vector>
 
 #include <Preferences.h>
 
-class PreferencesResetHandler: public BLECharacteristicCallbacks {
-public:
-    PreferencesResetHandler(BLEService *pService);
-    void onWrite(BLECharacteristic* pCharacteristic);
-private:
-    BLECharacteristic *_characteristic;
-};
 
 class PreferencesGlueString: public BLECharacteristicCallbacks {
 public:
@@ -38,7 +30,6 @@ public:
 
     BLECharacteristic *availableSeparatorAnimationsCharacteristic;
     PreferencesGlueString *separatorAnimationsGlue;
-    PreferencesResetHandler *preferencesResetHandler;
 };
 
 

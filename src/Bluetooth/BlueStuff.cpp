@@ -13,8 +13,8 @@
 
 #include <esp_log.h>
 #include "Loggery.h"
-#include <soc/efuse_reg.h>
 
+#include "../ClockletSystem.h"
 
 
 #define TAG "BLUESTUFF"
@@ -48,26 +48,23 @@ void BlueStuff::startBlueStuff(){
 
     ESP_LOGI(TAG,"Starting BLE work!");
 
-    uint32_t hwcaseField = REG_GET_FIELD(EFUSE_BLK3_RDATA6_REG, EFUSE_BLK3_DOUT6);
-
-    uint16_t hwrev = (hwcaseField << 16) >> 16;
-    uint16_t caseColour = hwcaseField >> 16;
-
-    uint32_t serial = REG_GET_FIELD(EFUSE_BLK3_RDATA7_REG, EFUSE_BLK3_DOUT7);
+    uint16_t hwrev = clocklet_hwrev();
+    uint16_t caseColour = clocklet_caseColour();
+    uint32_t serial = clocklet_serial();
 
     if (isnan(serial)){
         serial = 0;
     }
     
     const char * shortName = "Clocklet";
+    
+    LOGMEM;
 
     char * deviceName;
     asprintf(&deviceName,"%s #%d",shortName,serial);
-    LOGMEM;
     BLEDevice::init(deviceName);
-    
+    free(deviceName);
     esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT);
-    
     BLEDevice::setEncryptionLevel(ESP_BLE_SEC_ENCRYPT);
     
     pServer = BLEDevice::createServer();
@@ -89,15 +86,13 @@ void BlueStuff::startBlueStuff(){
     // But then... is this right???
 
     sv_GAS = pServer->createService(BLEUUID((uint16_t)0x1801));
-    ch_ServiceChanged = sv_GAS->createCharacteristic(BLEUUID((uint16_t)0x2A05),BLECharacteristic::PROPERTY_READ|BLECharacteristic::PROPERTY_NOTIFY);
-    ch_ServiceChanged->addDescriptor(new BLE2902());
+    ch_ServiceChanged = sv_GAS->createCharacteristic(BLEUUID((uint16_t)0x2A05),BLECharacteristic::PROPERTY_INDICATE);
     sv_GAS->start();
-
-
+    
     _locationService = new BTLocationService(_locationManager,pServer);
     _networkService = new BTNetworkService(pServer, _networkChangedQueue, _networkStatusQueue);
     _preferencesService = new BTPreferencesService(pServer, _preferencesChangedQueue);
-
+    _technicalService = new BTTechnicalService(pServer);
 
     // BLE Advertising
 
@@ -136,7 +131,8 @@ void BlueStuff::startBlueStuff(){
     pAdvertising->setMinPreferred(0x12);
     pAdvertising->setScanResponse(true);
     pAdvertising->start();
-
+    
+    LOGMEM;
 }
 
 void BlueStuff::stopBlueStuff(){
@@ -145,9 +141,9 @@ void BlueStuff::stopBlueStuff(){
 
 void BlueStuff::onConnect(BLEServer* server) {
     ESP_LOGI(TAG,"Bluetooth client connected");
-    delay(2000);
+    delay(2000); 
 
-    ch_ServiceChanged->notify(true);
+    ch_ServiceChanged->indicate();
 
     _networkService->onConnect();
     

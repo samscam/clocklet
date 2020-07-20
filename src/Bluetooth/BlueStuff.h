@@ -13,6 +13,7 @@
 #include "BTPreferencesService.h"
 #include "BTNetworkService.h"
 #include "BTLocationService.h"
+#include "BTTechnicalService.h"
 
 #include "../Location/LocationManager.h"
 
@@ -48,7 +49,8 @@ private:
     BLEService *sv_GAS;
     BLECharacteristic *ch_ServiceChanged;
     
-    
+    BTTechnicalService* _technicalService;
+
     BTPreferencesService* _preferencesService;
     QueueHandle_t _preferencesChangedQueue;
 

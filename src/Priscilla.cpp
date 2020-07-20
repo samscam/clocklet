@@ -21,6 +21,7 @@
 
 #include "TimeThings/TimeSync.h"
 
+#include "ClockletSystem.h"
 
 #define TAG "PRISCILLA"
 
@@ -139,12 +140,9 @@ void setup() {
 
   // Read things from eFuse
 
-  uint32_t hwcaseField = REG_GET_FIELD(EFUSE_BLK3_RDATA6_REG, EFUSE_BLK3_DOUT6);
-
-  uint16_t hwrev = (hwcaseField << 16) >> 16;
-  uint16_t caseColour = hwcaseField >> 16;
-
-  uint32_t serial = REG_GET_FIELD(EFUSE_BLK3_RDATA7_REG, EFUSE_BLK3_DOUT7);
+  uint16_t hwrev = clocklet_hwrev();
+  uint16_t caseColour = clocklet_caseColour();
+  uint32_t serial = clocklet_serial();
 
   Serial.printf("Serial number: %d\n",serial);
   Serial.printf("Hardware revision: %d\n",hwrev);
@@ -153,9 +151,6 @@ void setup() {
   // Read things from preferences...
   Preferences preferences = Preferences();
   preferences.begin("clocklet", false);
-
-  // WHAT am I doing about the case colour? efuse or nvram?
-  // preferences.putString("casecolour","blue");
 
   // Post-update migrations
   String swmigrev = preferences.getString("swmigrev","0.0.0");
