@@ -23,7 +23,7 @@
 BlueStuff::BlueStuff(QueueHandle_t preferencesChangedQueue,
             QueueHandle_t networkChangedQueue,
             QueueHandle_t networkStatusQueue, LocationManager *locationManager) : Task("UpdateScheduler", 5000,  5) {
-    this->setCore(0); // Run it on core zero
+    this->setCore(1); // Run it on core one
     _preferencesChangedQueue =  preferencesChangedQueue;
     _networkChangedQueue = networkChangedQueue;
     _networkStatusQueue = networkStatusQueue;
