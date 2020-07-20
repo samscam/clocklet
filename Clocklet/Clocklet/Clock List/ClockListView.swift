@@ -137,10 +137,10 @@ struct ClockListView_Previews: PreviewProvider {
             clockList.clocks.append(Clock("Clocklet #5", .black))
         }
         DispatchQueue.main.asyncAfter(deadline: .now()+4) {
-            clockList.clocks.append(Clock("Clocklet #6", .blue))
+            clockList.clocks.append(Clock("Clocklet #6", .translucent))
         }
         DispatchQueue.main.asyncAfter(deadline: .now()+6) {
-            clockList.clocks.append(Clock("Clocklet #6", .blue))
+            clockList.clocks.append(Clock("Clocklet #6", .bluePink))
         }
         DispatchQueue.main.asyncAfter(deadline: .now()+7) {
             clockList.isScanning = false

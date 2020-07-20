@@ -40,12 +40,15 @@ struct ClockDetailsView: View {
                     }
                     
                     
-                    clock.settingsService.map{ settingsService in
-                        NavigationLink(destination:
-                        ClockSettingsView().environmentObject(settingsService)){
-                            ConfigItemView(icon: Image(systemName:"wrench") ,
-                                           title: "Technical stuff"){
-                                           EmptyView()
+                    clock.technicalService.map{ technicalService in
+                        clock.deviceInfoService.map{ deviceInfoService in
+                            NavigationLink(destination:
+                            ClockTechnicalView().environmentObject(technicalService)
+                                .environmentObject(deviceInfoService)){
+                                ConfigItemView(icon: Image(systemName:"wrench") ,
+                                               title: "Technical stuff"){
+                                               EmptyView()
+                                }
                             }
                         }
                     }

@@ -54,6 +54,7 @@ public class Connection: NSObject{
     func update(advertisementData: [String : Any], rssi: Int){
         self.rssi = rssi
         peripheral?.advertisementData = AdvertisementData(advertisementData)
+        peripheral?.objectWillChange.send()
     }
     
     func connect(){

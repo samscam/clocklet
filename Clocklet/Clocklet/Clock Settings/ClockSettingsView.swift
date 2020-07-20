@@ -36,41 +36,9 @@ struct ClockSettingsView: View {
                     }
                 }
 
-            Spacer()
-            ConfigItemView(icon: Image(systemName:"flame"), iconColor: .red, title: "Reset Clocklet") {
-                VStack(spacing:20){
-                    Button("Reboot"){
-                        settingsService.reset = .reboot
-                    }.accentColor(Color(.systemBackground))
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Capsule().fill(Color.orange))
-                    .frame(maxWidth: .infinity)
-                    Text("Clocklet will reboot. The app should reconnect once it has started.")
-                    
-                    Spacer()
-                    
-                    Button("Factory Reset") {
-                        settingsService.reset = .factoryReset;
-                    }.accentColor(Color(.systemBackground))
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Capsule().fill(Color.red))
-                    
-                    
-                    Text("Factory reset will erase everything including bluetooth pairing information. You will have to go into your phone's bluetooth settings afterwards and delete the entry for the Clocklet.")
-                }
-            }
+
         }.padding()
         }
-        .navigationBarTitle( Text("Technical Stuff"), displayMode:.automatic)
+        .navigationBarTitle( Text("Settings"), displayMode:.automatic)
     }
 }
-
-//struct ClockSettingsView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ClockSettingsView()
-//    }
-//}
-
-

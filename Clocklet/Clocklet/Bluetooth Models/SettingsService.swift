@@ -22,8 +22,7 @@ class SettingsService: ServiceProtocol {
     @Characteristic(CBUUID(string:"9982B160-23EF-42FF-9848-31D9FF21F490")) var availableSeparatorAnimations: [SeparatorAnimation]?
     
     @Characteristic(CBUUID(string:"2371E298-DCE5-4E1C-9CB2-5542213CE81C")) var separatorAnimation: SeparatorAnimation?
-    
-    @Characteristic(CBUUID(string:"DD3FB44B-A925-4FC3-8047-77B1B6028B25")) var reset: ResetType?
+
 
     
 }
@@ -52,18 +51,3 @@ extension SeparatorAnimation: DataConvertible {
     }
 }
 
-enum ResetType: Int, DataConvertible {
-    case nothing = 0
-    case reboot
-    case partialReset
-    case factoryReset
-}
-
-//
-//extension StringOption: Codable {
-//
-//}
-//
-//extension StringOption: Hashable{
-//
-//}
