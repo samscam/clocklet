@@ -61,7 +61,7 @@ void BTLocationService::onRead(BLECharacteristic* pCharacteristic) {
     Location location = _locationManager->getLocation();
 
     StaticJsonDocument<80> locDoc;
-    
+    locDoc["configured"]=_locationManager->hasSavedLocation();
     locDoc["lat"]=location.lat;
     locDoc["lng"]=location.lng;
 
