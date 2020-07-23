@@ -43,14 +43,14 @@ private:
 
   char time_string[6];
   char secondary_time_string[6];
-  const char* secondary_identifier = "";
+  const char *secondary_identifier = "";
 
   DateTime time;
 
-  const char* weather_string = "";
+  const char *weather_string = "";
   float batteryLevel = 0;
   bool needsDisplay = false;
 
-  const char* statusMessage = "";
+  const char *statusMessage = "";
 };
 #endif

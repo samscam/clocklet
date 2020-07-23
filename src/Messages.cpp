@@ -2,7 +2,7 @@
 
 // ----------- RANDOM MESSAGES
 
-const char* messages[] = {
+const char *messages[] = {
   "Ball Boy",
   "I am your number one fan",
   "This is not a shoe",
@@ -37,8 +37,8 @@ const char* messages[] = {
 
 #define numMessages (sizeof(messages)/sizeof(char *)) //array size
 
-const char* randoMessage(){
+const char * randoMessage(){
   int messageIndex = random(0,numMessages);
-  const char* randoMessage = messages[messageIndex];
+  const char *randoMessage = messages[messageIndex];
   return randoMessage;
 }

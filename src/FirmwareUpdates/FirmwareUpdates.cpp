@@ -152,7 +152,7 @@ bool FirmwareUpdates::checkForUpdates(bool useStaging) {
     WiFiClientSecure* client = nullptr;
     ESP_LOGV(TAG, "About to GET! %p ... %p",https,client);
 
-    const char* url;
+    const char *url;
     size_t capacity;
 
     if (useStaging){
