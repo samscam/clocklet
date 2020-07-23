@@ -163,9 +163,9 @@ void BlueStuff::onDisconnect(BLEServer* server) {
 
 
 
-esp_err_t BlueStuff::_app_prov_is_provisioned(bool *provisioned)
+esp_err_t BlueStuff::_app_prov_is_provisioned(bool &provisioned)
 {
-    *provisioned = false;
+    provisioned = false;
 
 
     if (nvs_flash_init() != ESP_OK) {
@@ -185,8 +185,8 @@ esp_err_t BlueStuff::_app_prov_is_provisioned(bool *provisioned)
         return ESP_FAIL;
     }
 
-    if (strlen((const char*) wifi_cfg.sta.ssid)) {
-        *provisioned = true;
+    if (strlen((const char *) wifi_cfg.sta.ssid)) {
+        provisioned = true;
         ESP_LOGI(TAG, "Found ssid %s",     (const char*) wifi_cfg.sta.ssid);
         ESP_LOGI(TAG, "Found password %s", (const char*) wifi_cfg.sta.password);
     }
@@ -199,7 +199,7 @@ bool BlueStuff::isAlreadyProvisioned(){
 
     bool provisioned;
     
-    if (_app_prov_is_provisioned(&provisioned) != ESP_OK) {
+    if (_app_prov_is_provisioned(provisioned) != ESP_OK) {
         ESP_LOGE(TAG, "Error getting device provisioning state");
         return false;
     }

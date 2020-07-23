@@ -42,7 +42,7 @@ private:
 
     bool _keepRunning = true;
 
-    esp_err_t _app_prov_is_provisioned(bool *provisioned);
+    esp_err_t _app_prov_is_provisioned(bool &provisioned);
     
     BLEServer *pServer;
 
