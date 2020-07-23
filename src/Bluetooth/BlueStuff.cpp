@@ -63,7 +63,7 @@ void BlueStuff::startBlueStuff(){
     char * deviceName;
     asprintf(&deviceName,"%s #%d",shortName,serial);
     BLEDevice::init(deviceName);
-    free(deviceName);
+    
     esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT);
     BLEDevice::setEncryptionLevel(ESP_BLE_SEC_ENCRYPT);
     
