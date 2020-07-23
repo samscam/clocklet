@@ -3,6 +3,8 @@
 
 #define MAX_NETS 128
 
+
+#include <esp_wifi.h>
 #include <esp_log.h>
 #include "Loggery.h"
 #define TAG "BTNetworkService"
@@ -129,10 +131,22 @@ void BTNetworkService::onWrite(BLECharacteristic* pCharacteristic) {
 
 
 void BTNetworkService::_updateCurrentNetwork(){
-    LOGMEM;
+    
     StaticJsonDocument<512> doc;
+
+    bool configured = false;
+
+    wifi_config_t wifi_cfg;
+    if (esp_wifi_get_config(ESP_IF_WIFI_STA, &wifi_cfg) == ESP_OK) {
+        const char *ssid = (const char *) wifi_cfg.sta.ssid;
+        if (strlen(ssid)) {
+            configured = true;
+            doc["ssid"]=ssid;
+        }
+    }
+    
+    doc["configured"] = configured;
     doc["status"]=(int)WiFi.status();
-    doc["ssid"]=WiFi.SSID();
     doc["connected"]=WiFi.isConnected();
     doc["channel"]=WiFi.channel();
     doc["ip"]=WiFi.localIP().toString();
