@@ -53,11 +53,7 @@ void BTLocationService::onWrite(BLECharacteristic* pCharacteristic) {
 }
 
 void BTLocationService::onRead(BLECharacteristic* pCharacteristic) {
-    LOGMEM;
-    std::string msg = pCharacteristic->getValue();
-    ESP_LOGI(TAG, "BLE Location Characteristic Read: %s, %i", msg.c_str(), msg.length());
-    // esp_log_buffer_char(LOG_TAG, msg.c_str(), msg.length());
-    // esp_log_buffer_hex(LOG_TAG, msg.c_str(), msg.length());
+    
     Location location = _locationManager->getLocation();
 
     StaticJsonDocument<80> locDoc;
@@ -73,4 +69,5 @@ void BTLocationService::onRead(BLECharacteristic* pCharacteristic) {
     ESP_LOGD(TAG,"%s",json);
 
     pCharacteristic->setValue(json);
+
 }
