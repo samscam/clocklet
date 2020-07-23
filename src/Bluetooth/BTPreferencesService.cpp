@@ -22,14 +22,27 @@ BTPreferencesService::BTPreferencesService(BLEServer *server, QueueHandle_t pref
     "sep_anim",
     pservice,
     prefsChangedQueue,
-    preferences);
+    preferences, "blink");
+
+
+    availableTimeStyles = pservice->createCharacteristic(
+        "698D2B57-5B54-48D7-A483-1AB4660FBAF9",
+        BLECharacteristic::PROPERTY_READ);
+    availableTimeStyles->setAccessPermissions(ESP_GATT_PERM_READ_ENCRYPTED);
+    availableTimeStyles->setValue("[\"24 Hour\",\"12 Hour\",\"Decimal\"]");
+
+    timeStyleGlue = new PreferencesGlueString("AE35C2DE-7D36-4699-A5CE-A0FA6A0A5483",
+    "time_style",
+    pservice,
+    prefsChangedQueue,
+    preferences,"24 Hour");
     
     pservice->start();
 }
 
 
 
-PreferencesGlueString::PreferencesGlueString(const char *uuid, const char *prefsKey, BLEService *pservice,QueueHandle_t prefsChangedQueue, Preferences *preferences){
+PreferencesGlueString::PreferencesGlueString(const char *uuid, const char *prefsKey, BLEService *pservice,QueueHandle_t prefsChangedQueue, Preferences *preferences, const char *defaultValue){
     _prefsKey = prefsKey;
     _preferences = preferences;
     _prefsChangedQueue = prefsChangedQueue;
@@ -39,7 +52,7 @@ PreferencesGlueString::PreferencesGlueString(const char *uuid, const char *prefs
         BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
     _characteristic->setAccessPermissions(ESP_GATT_PERM_READ_ENCRYPTED | ESP_GATT_PERM_WRITE_ENCRYPTED);
     _characteristic->setCallbacks(this);
-    String value = _preferences->getString(_prefsKey,"Blink");
+    String value = _preferences->getString(_prefsKey,defaultValue);
     _characteristic->setValue(value.c_str());
 }
 

@@ -9,7 +9,7 @@
 
 class PreferencesGlueString: public BLECharacteristicCallbacks {
 public:
-    PreferencesGlueString(const char *uuid, const char *prefsKey, BLEService *pservice,QueueHandle_t prefsChangedQueue, Preferences *preferences);
+    PreferencesGlueString(const char *uuid, const char *prefsKey, BLEService *pservice,QueueHandle_t prefsChangedQueue, Preferences *preferences, const char *defaultValue);
     void onWrite(BLECharacteristic* pCharacteristic);
     void onRead(BLECharacteristic* pCharacteristic);
 
@@ -30,6 +30,9 @@ public:
 
     BLECharacteristic *availableSeparatorAnimationsCharacteristic;
     PreferencesGlueString *separatorAnimationsGlue;
+
+    BLECharacteristic *availableTimeStyles;
+    PreferencesGlueString *timeStyleGlue;
 };
 
 
