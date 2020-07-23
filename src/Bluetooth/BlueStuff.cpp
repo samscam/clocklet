@@ -87,6 +87,9 @@ void BlueStuff::startBlueStuff(){
 
     sv_GAS = pServer->createService(BLEUUID((uint16_t)0x1801));
     ch_ServiceChanged = sv_GAS->createCharacteristic(BLEUUID((uint16_t)0x2A05),BLECharacteristic::PROPERTY_INDICATE);
+    BLE2902* p2902Descriptor = new BLE2902();
+    p2902Descriptor->setIndications(true);
+    ch_ServiceChanged->addDescriptor(p2902Descriptor);
     sv_GAS->start();
     
     _locationService = new BTLocationService(_locationManager,pServer);
@@ -131,7 +134,7 @@ void BlueStuff::startBlueStuff(){
     pAdvertising->setMinPreferred(0x12);
     pAdvertising->setScanResponse(true);
     pAdvertising->start();
-    
+
     LOGMEM;
 }
 
@@ -141,10 +144,12 @@ void BlueStuff::stopBlueStuff(){
 
 void BlueStuff::onConnect(BLEServer* server) {
     ESP_LOGI(TAG,"Bluetooth client connected");
-    delay(2000); 
-
+    
+    // Force service changed indication for the whole table
+    char val[4] = {0x00,0x00,0xFF,0xFF};
+    ch_ServiceChanged->setValue(val);
     ch_ServiceChanged->indicate();
-
+    delay(500);
     _networkService->onConnect();
     
 }
