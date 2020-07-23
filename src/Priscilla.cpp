@@ -190,7 +190,6 @@ void setup() {
   display.setup();
   display.setBrightness(currentBrightness());
 
-  LOGMEM;
 
   // Uncomment to run various display tests:
   // displayTests(display);  
@@ -198,54 +197,18 @@ void setup() {
   // DISPLAY A GREETING
   display.displayMessage("CLOCKLET",rainbow);
 
-  String greeting = String("Hello "+owner);
-  display.displayMessage(greeting.c_str(), rainbow);
 
-
-  
-  LOGMEM;
 
   WiFi.begin();
-
-  LOGMEM;
-
-  // Start Bluetooth service
-
-
-  // Checks for provisioning
-  // bool isProvisioned = isAlreadyProvisioned();
-
-  // if (isProvisioned){
-  //   if (waitForWifi(6000)){
-  //     // display.displayMessage("Everything is awesome", good);
-  //   } else {
-  //     display.displayMessage("Network is pants", bad);
-  //     display.setDeviceState(noNetwork);
-  //   }
-  // } else {
-  //   display.displayMessage("I need your wifi", bad);
-  //   display.setDeviceState(bluetooth);
-  //   // startProvisioning();
-  // }
-  waitForWifi(6000);
-
 
   locationManager = new LocationManager(locationChangedQueue);
 
 
   #if defined(CLOCKBRAIN)
   blueStuff = new BlueStuff(prefsChangedQueue,networkChangedQueue,networkStatusQueue,locationManager);
-  blueStuff->start();
+  blueStuff->startBlueStuff();
   #endif
 
-  LOGMEM;
-
-
-  // Setup weather
-  if (!locationManager->hasSavedLocation()){
-    display.displayMessage("Where am I", bad);
-    display.setDeviceState(noLocation);
-  }
 
   Location currentLocation = locationManager->getLocation();
   rainbows.setLocation(currentLocation);
@@ -414,7 +377,7 @@ void loop() {
 
   if (millis() > lastRandomMessageTime + nextMessageDelay){
     Serial.println("Random message");
-    const char* message = randoMessage();
+    const char *message = randoMessage();
     display.displayMessage(message, rainbow);
     display.displayMessage(message, rainbow);
 
