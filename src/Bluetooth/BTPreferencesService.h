@@ -15,6 +15,7 @@ public:
 
 private:
     const char *_prefsKey;
+    const char *_defaultValue;
     BLECharacteristic *_characteristic;
     Preferences *_preferences;
     QueueHandle_t _prefsChangedQueue;

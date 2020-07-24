@@ -126,7 +126,6 @@ void BTNetworkService::onWrite(BLECharacteristic* pCharacteristic) {
     delay(1000);
     WiFi.begin(ssid,psk);
 
-
 }
 
 

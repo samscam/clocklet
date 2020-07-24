@@ -85,6 +85,9 @@ public:
 
   void graphicsTest();
 
+  void setTimeStyle(TimeStyle timeStyle);
+
+
 private:
 
   void displayTime(const DateTime& time, Weather weather);
@@ -141,6 +144,8 @@ private:
   DateTime _time;
   Weather _weather;
   DeviceState _deviceState = ok;
+  
+  TimeStyle _timeStyle = twentyFourHour;
 
   bool rainbows = false;
 

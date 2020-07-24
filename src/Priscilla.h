@@ -29,6 +29,9 @@
 
 // Function declarations
 
+void updateDisplayPreferences();
+
+
 float currentBrightness();
 long detectTouchPeriod();
 

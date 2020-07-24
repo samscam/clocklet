@@ -197,7 +197,7 @@ void setup() {
   // DISPLAY A GREETING
   display.displayMessage("CLOCKLET",rainbow);
 
-
+  updateDisplayPreferences();
 
   WiFi.begin();
 
@@ -285,6 +285,8 @@ void loop() {
   xQueueReceive(prefsChangedQueue, &prefsDidChange, (TickType_t)0 );
   if (prefsDidChange){
     Serial.println("PREFS DID CHANGE");
+    updateDisplayPreferences();
+
   }
 
   // ... weather
@@ -396,6 +398,23 @@ void loop() {
 
 }
 
+void updateDisplayPreferences(){
+  Preferences preferences = Preferences();
+  preferences.begin("clocklet", false);
+  
+  String timeStyleString = preferences.getString("time_style");
+  ESP_LOGI(TAG,"NEW TIME STYLE***** %s",timeStyleString);
+  if (timeStyleString == "24 Hour"){
+    display.setTimeStyle(twentyFourHour);
+  } else if (timeStyleString == "12 Hour"){
+    display.setTimeStyle(twelveHour);
+  } else if (timeStyleString == "Decimal"){
+    display.setTimeStyle(decimal);
+  }
+
+  preferences.end();
+
+}
 
 void sensibleDelay(int milliseconds){
 

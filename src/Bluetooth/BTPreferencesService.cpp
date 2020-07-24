@@ -5,24 +5,24 @@ BTPreferencesService::BTPreferencesService(BLEServer *server, QueueHandle_t pref
     pservice = server->createService("28C65464-311E-4ABF-B6A0-D03B0BAA2815");
 
     Preferences *preferences = new Preferences();
-    preferences->begin("clocklet", false);
+    // preferences->begin("clocklet", false);
 
 
     // The available separator animations
     // JSON fragment
-    availableSeparatorAnimationsCharacteristic = pservice->createCharacteristic(
-        "9982B160-23EF-42FF-9848-31D9FF21F490",
-        BLECharacteristic::PROPERTY_READ);
-    availableSeparatorAnimationsCharacteristic->setAccessPermissions(ESP_GATT_PERM_READ_ENCRYPTED);
+    // availableSeparatorAnimationsCharacteristic = pservice->createCharacteristic(
+    //     "9982B160-23EF-42FF-9848-31D9FF21F490",
+    //     BLECharacteristic::PROPERTY_READ);
+    // availableSeparatorAnimationsCharacteristic->setAccessPermissions(ESP_GATT_PERM_READ_ENCRYPTED);
 
-    availableSeparatorAnimationsCharacteristic->setValue("[\"Static\",\"Blink\",\"Fade\"]");
+    // availableSeparatorAnimationsCharacteristic->setValue("[\"None\",\"Blink\",\"Fade\"]");
 
 
-    separatorAnimationsGlue = new PreferencesGlueString("2371E298-DCE5-4E1C-9CB2-5542213CE81C",
-    "sep_anim",
-    pservice,
-    prefsChangedQueue,
-    preferences, "blink");
+    // separatorAnimationsGlue = new PreferencesGlueString("2371E298-DCE5-4E1C-9CB2-5542213CE81C",
+    // "sep_anim",
+    // pservice,
+    // prefsChangedQueue,
+    // preferences, "Blink");
 
 
     availableTimeStyles = pservice->createCharacteristic(
@@ -46,26 +46,29 @@ PreferencesGlueString::PreferencesGlueString(const char *uuid, const char *prefs
     _prefsKey = prefsKey;
     _preferences = preferences;
     _prefsChangedQueue = prefsChangedQueue;
+    _defaultValue = defaultValue;
 
     _characteristic = pservice->createCharacteristic(
         uuid,
         BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
     _characteristic->setAccessPermissions(ESP_GATT_PERM_READ_ENCRYPTED | ESP_GATT_PERM_WRITE_ENCRYPTED);
     _characteristic->setCallbacks(this);
-    String value = _preferences->getString(_prefsKey,defaultValue);
-    _characteristic->setValue(value.c_str());
 }
 
 void PreferencesGlueString::onWrite(BLECharacteristic* pCharacteristic) {
     std::string value = pCharacteristic->getValue();
+    _preferences->begin("clocklet", false);
     _preferences->putString(_prefsKey, value.c_str());
+    _preferences->end();
     bool change = true;
     xQueueSend(_prefsChangedQueue, &change, (TickType_t) 0);
 }
 
 void PreferencesGlueString::onRead(BLECharacteristic* pCharacteristic) {
-    // String value = _preferences->getString(_prefsKey);
-    // pCharacteristic->setValue(value.c_str());
+    String value = _preferences->getString(_prefsKey,_defaultValue);
+    _preferences->begin("clocklet", false);
+    pCharacteristic->setValue(value.c_str());
+    _preferences->end();
 }
 
 

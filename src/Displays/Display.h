@@ -8,6 +8,10 @@ enum MessageType {
   good, bad, rando, rainbow
 };
 
+enum TimeStyle {
+  twentyFourHour, twelveHour, decimal
+};
+
 // General purpose protocol for clock displays
 class Display {
 public:
@@ -53,5 +57,8 @@ public:
 
   // Runs graphics tests
   virtual void graphicsTest() {}
+
+  // Sets the time display style
+  virtual void setTimeStyle(TimeStyle timeStyle) {}
 
 };

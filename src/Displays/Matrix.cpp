@@ -69,6 +69,10 @@ void Matrix::setTime(DateTime time) {
   _time = time;
 }
 
+void Matrix::setTimeStyle(TimeStyle timeStyle){
+  _timeStyle = timeStyle;
+}
+
 void Matrix::displayMessage(const char *stringy, MessageType messageType = good) {
   switch (messageType){
     case good:
@@ -94,7 +98,6 @@ void Matrix::setStatusMessage(const char * string){
 
 void Matrix::setBrightness(float brightness){
   uint8_t scaledBrightness = MIN_BRIGHTNESS + (brightness * (MAX_BRIGHTNESS - MIN_BRIGHTNESS));
-  // ESP_LOGI(TAG,"BRIGHTNESS: %d",scaledBrightness);
   FastLED.setBrightness(scaledBrightness);
 }
 
@@ -392,44 +395,50 @@ void Matrix::displayTime(const DateTime& time, Weather weather){
     addFrost();
   }
 
-  if (DECIMAL_TIME){
-    double decTime = decimalise(time);
-    
-    char buf[10];
-    sprintf(buf,"%.3f",decTime);
-    displayString(buf);
-  } else if (SHOW_DATE){
-    maskDate(time);
-  } else {
-    maskTime(time);
+  switch(_timeStyle) {
+    case twentyFourHour:
+      maskTime(time);
+      break;
+    case twelveHour:
+      maskTime(time);
+      break;
+    case decimal:
+      double decTime = decimalise(time);
+      char buf[10];
+      sprintf(buf,"%.3f",decTime);
+      displayString(buf);
+      break;
+    // case dateOnly:
+    //   maskDate(time);
   }
 
-  if (!DECIMAL_TIME){
-  _blinkColon = BLINK_SEPARATOR ? (time.second() % 2) == 0 : true;
 
-  CRGB dotColour = CRGB::Black;
-  switch(_deviceState){
-    case ok:
-      dotColour = CRGB::Black;
-      break;
-    case weatherFail:
-      dotColour = CRGB::LightYellow;
-      break;
-    case syncFail:
-      dotColour = CRGB::Violet;
-      break;
-    case noLocation:
-      dotColour = CRGB::LimeGreen;
-      break;
-    case noNetwork:
-      dotColour = CRGB::Red;
-      break;
-    case bluetooth:
-      dotColour = CRGB::Blue;
-      break;
-  }
+  if (_timeStyle != decimal){
+    _blinkColon = BLINK_SEPARATOR ? (time.second() % 2) == 0 : true;
 
-  setDot(_blinkColon,dotColour);
+    CRGB dotColour = CRGB::Black;
+    switch(_deviceState){
+      case ok:
+        dotColour = CRGB::Black;
+        break;
+      case weatherFail:
+        dotColour = CRGB::LightYellow;
+        break;
+      case syncFail:
+        dotColour = CRGB::Violet;
+        break;
+      case noLocation:
+        dotColour = CRGB::LimeGreen;
+        break;
+      case noNetwork:
+        dotColour = CRGB::Red;
+        break;
+      case bluetooth:
+        dotColour = CRGB::Blue;
+        break;
+    }
+
+    setDot(_blinkColon,dotColour);
   }
 
   if (rainChance > 0) {
@@ -460,7 +469,16 @@ void Matrix::displayTime(const DateTime& time, Weather weather){
 void Matrix::maskTime(const DateTime& time){
   int digit[4];
 
-  int h = time.hour();
+  int h;
+  if (_timeStyle == twelveHour){
+    h = time.hour() % 12 ;
+    if (h == 0) {
+      h = 12;
+    }
+  } else {
+    h = time.hour() ;
+  }
+  
   digit[0] = h/10;                      // left digit
   digit[1] = h - (h/10)*10;             // right digit
 
