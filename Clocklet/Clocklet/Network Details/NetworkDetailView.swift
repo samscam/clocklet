@@ -32,7 +32,7 @@ struct NetworkDetailView: View {
 struct NetworkDetailView_Previews: PreviewProvider {
     static let networkService: NetworkService = {  
         let networkService = NetworkService()
-        networkService.currentNetwork = CurrentNetwork(status: .connectionFailed, connected: false, ssid: "Some Net", channel: 1, ip: nil, rssi: -20)
+        networkService.currentNetwork = CurrentNetwork(status: .connectionFailed, connected: false, configured: true, ssid: "Some Net", channel: 1, ip: nil, rssi: -20)
         networkService.availableNetworks = [
                     AvailableNetwork(ssid: "Broccoli", enctype: .open, rssi: -20, channel: 4, bssid:"SOMETHING"),
             AvailableNetwork(ssid: "My Wifi is Nice", enctype: .open, rssi: -20, channel: 4, bssid:"mywifi")

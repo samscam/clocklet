@@ -25,17 +25,28 @@ class LocationService: ServiceProtocol {
         .flatMap{ location in
             self.geocoderProxy.futureReversePublisher(location)
         }
-        .catch { (error) in
-            Just(nil)
-        }
+        .replaceError(with: nil)
         .assign(to: \.placemark, on: self)
         .store(in: &bag)
+        
+        $currentLocation.map{
+            if let currentLocation = $0 {
+                return currentLocation.configured ? .configured : .notConfigured
+            } else {
+                return .unknown
+            }
+        }.replaceError(with: .unknown)
+        .assign(to: \.isConfigured, on: self)
+        .store(in: &bag)
+        
     }
     
     deinit {
         locationProxy.disable()
     }
 
+    @Published var isConfigured: ConfigState = .unknown
+    
     static let uuid = CBUUID(string: "87888F3E-C1BF-4832-9823-F19C73328D30")
     
     @Characteristic(CBUUID(string:"C8C7FF91-531A-4306-A68A-435374CB12A9")) var currentLocation: CurrentLocation?
@@ -48,27 +59,26 @@ class LocationService: ServiceProtocol {
         locationProxy.locationPublisher.sink(receiveCompletion: { (completion) in
 
         }) { [weak self] (location) in
-            self?.currentLocation = CurrentLocation(lat: location.coordinate.latitude, lng: location.coordinate.longitude)
+            self?.currentLocation = CurrentLocation(configured:true,
+                                                    lat: location.coordinate.latitude,
+                                                    lng: location.coordinate.longitude)
         }.store(in: &bag)
     }
 }
 
-enum LocationStatus: String, DataConvertible {
-    case notSet
-    case set
-}
 
 struct CurrentLocation: Codable, JSONCharacteristic, CustomStringConvertible{
-    let lat: Double
-    let lng: Double
+    let configured: Bool
+    let lat: Double?
+    let lng: Double?
 
     
     var description: String{
-        return "\(String(lat)),\(String(lng))"
+        return "\(String(lat ?? 0)),\(String(lng ?? 0))"
     }
     
     var location: CLLocation {
-        return CLLocation(latitude: lat, longitude: lng)
+        return CLLocation(latitude: lat ?? 0, longitude: lng ?? 0)
     }
     
 }

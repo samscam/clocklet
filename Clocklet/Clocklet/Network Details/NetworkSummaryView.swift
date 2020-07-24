@@ -116,7 +116,10 @@ class NetworkSummaryViewModel: ObservableObject{
                     return
                 }
                 
-                self.title = currentNetwork.ssid
+                
+                self.title = currentNetwork.ssid ?? "No network set"
+                
+                
                 switch currentNetwork.status {
                 case .connectionFailed:
                     self.color = .red
@@ -180,14 +183,16 @@ struct NetworkSummaryView: View {
     @EnvironmentObject var networkService: NetworkService
     
     var body: some View {
-        networkService.currentNetwork.map{ currentNetwork in
+
             
-            ConfigItemView(icon: currentNetwork.status == .connected ? currentNetwork.wifiStrengthBars : currentNetwork.status.icon , iconColor: currentNetwork.status.colour, title: "Network") {
+            networkService.currentNetwork.map{ currentNetwork in
+            
+                ConfigItemView(icon: currentNetwork.status == .connected ? currentNetwork.wifiStrengthBars : currentNetwork.status.icon , iconColor: currentNetwork.status.colour, title: "Network") {
                 
                 VStack(alignment: .leading){
                     HStack{
                         Text("SSID:")
-                        Text(currentNetwork.ssid).bold()
+                        Text(currentNetwork.ssid ?? "Network not configured").bold()
                     }
                     HStack{
                         Text("Status:")

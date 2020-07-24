@@ -8,6 +8,7 @@
 
 import Foundation
 import CombineBluetooth
+import Combine
 
 fileprivate extension Data {
 
@@ -61,6 +62,8 @@ extension ManufacturerData {
 }
 
 class Clock: Peripheral, Identifiable, Advertiser {
+
+    var bag: [AnyCancellable] = []
     
     var id: UUID {
         return uuid
@@ -100,6 +103,27 @@ class Clock: Peripheral, Identifiable, Advertiser {
     
     required init(uuid: UUID, name: String, connection: Connection) {
         super.init(uuid:uuid, name: name, connection: connection)
+        
+        let networkServiceState = $networkService.publisher
+            .replaceError(with: nil)
+            .flatMap { (networkService) in
+                return networkService?.$isConfigured.eraseToAnyPublisher() ?? Just(ConfigState.unknown).eraseToAnyPublisher()
+            }
+        
+        let locationServiceState = $locationService.publisher
+            .replaceError(with: nil)
+            .flatMap { (locationService) in
+                return locationService?.$isConfigured.eraseToAnyPublisher() ?? Just(ConfigState.unknown).eraseToAnyPublisher()
+            }
+        
+        
+        Publishers.CombineLatest(networkServiceState,locationServiceState)
+            .map{ netConfigured, locConfigured in
+                return netConfigured && locConfigured
+            }.replaceError(with: .unknown)
+            .assign(to: \.isConfigured, on: self)
+            .store(in: &bag)
+        
     }
     
     
@@ -111,6 +135,25 @@ class Clock: Peripheral, Identifiable, Advertiser {
     @Service var technicalService: TechnicalService?
     
     static var advertised: [InnerServiceProtocol.Type] = [NetworkService.self]
+    
+    @Published var isConfigured: ConfigState = .unknown
+}
+
+enum ConfigState: String {
+    case unknown
+    case notConfigured
+    case configured
+    
+    static func &&(lhs: ConfigState, rhs: ConfigState)->ConfigState{
+        switch (lhs, rhs){
+        case (.unknown,_), (_,.unknown):
+            return .unknown
+        case (.notConfigured,_), (_,.notConfigured):
+            return .notConfigured
+        case (.configured, .configured):
+            return .configured
+        }
+    }
 }
 
 

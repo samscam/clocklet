@@ -13,9 +13,24 @@ import Combine
 
 class NetworkService: ServiceProtocol {
     
-    required init(){}
+    var bag: [AnyCancellable] = []
+    
+    required init(){
+        $currentNetwork.map{
+            if let currentNetwork = $0 {
+                return currentNetwork.configured ? .configured : .notConfigured
+            } else {
+                return .unknown
+            }
+        }.replaceError(with: .unknown)
+        .assign(to: \.isConfigured, on: self)
+        .store(in: &bag)
+    }
     
     static let uuid = CBUUID(string: "68D924A1-C1B2-497B-AC16-FD1D98EDB41F")
+    
+    
+    @Published var isConfigured: ConfigState = .unknown
     
     @Characteristic(CBUUID(string: "AF2B36C7-0E65-457F-A8AB-B996B656CF32")) var availableNetworks: [AvailableNetwork]?
     @Characteristic(CBUUID(string: "BEB5483E-36E1-4688-B7F5-EA07361B26A8")) var currentNetwork: CurrentNetwork?
@@ -24,5 +39,6 @@ class NetworkService: ServiceProtocol {
     func joinNetwork(_ network: AvailableNetwork, psk: String? = nil) throws {
         joinNetwork = JoinNetwork(ssid: network.ssid, psk: psk, enctype: network.enctype)
     }
+    
     
 }

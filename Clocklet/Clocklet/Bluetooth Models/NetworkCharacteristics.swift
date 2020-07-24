@@ -12,7 +12,6 @@ import CoreBluetooth
 import CombineBluetooth
 
 protocol Network{
-    var ssid: String { get }
     var channel: Int { get }
     var rssi: Int { get }
 }
@@ -30,7 +29,8 @@ struct AvailableNetwork: Network, Codable, Identifiable, JSONCharacteristic {
 struct CurrentNetwork: Network, Codable, JSONCharacteristic {
     let status: WifiStatus
     let connected: Bool
-    let ssid: String
+    let configured: Bool
+    let ssid: String?
     let channel: Int
     let ip: IPv4Address?
     let rssi: Int

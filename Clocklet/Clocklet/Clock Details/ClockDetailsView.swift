@@ -25,7 +25,11 @@ struct ClockDetailsView: View {
                 
                 if(clock.state == .connected){
 
-
+                    if(clock.isConfigured == .configured){
+                        clock.settingsService.map{ settingsService in
+                            ClockSettingsView().environmentObject(settingsService)
+                        }
+                    }
 
                     
                     clock.networkService.map{ networkService in
@@ -64,7 +68,9 @@ struct ClockDetailsView: View {
                             .animation(Animation.easeInOut(duration: 1).repeatForever())
                         
                         Text(clock.state.description).bold()
-                        if let lastError = clock.state.lastErrorDescription {
+                        
+                        // Note that if-let works in xcode 12
+                        clock.state.lastErrorDescription.map{ lastError in
                             Text(lastError).lineLimit(nil).fixedSize(horizontal: false, vertical: true)
                         }
                         if clock.state == .disconnected() {
@@ -76,19 +82,6 @@ struct ClockDetailsView: View {
                             .background(Capsule().fill(Color.accentColor))
                         }
                         
-//                        if clock.state == .connecting {
-//                            Spacer()
-//                            Text("Make sure that your clocklet is nearby and showing the time. If the clocklet still doesn't connect, go into bluetooth settings and remove it from your list of devices, then try again. (Sorry)").lineLimit(nil).fixedSize(horizontal: false, vertical: true)
-//                            Spacer()
-//                            Button("Bluetooth Settings") {
-//                                if let url = URL(string: "prefs:root=Bluetooth"){
-//                                    UIApplication.shared.open(url)
-//                                }
-//
-//                            }.accentColor(Color(.systemBackground))
-//                            .padding()
-//                            .background(Capsule().fill(Color.accentColor))
-//                        }
                     }.padding().frame(maxWidth: .infinity)
 
                 }
