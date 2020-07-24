@@ -17,44 +17,47 @@ struct LocationSummaryView: View {
     
     var body: some View {
         ConfigItemView(icon: Image(systemName:"location"), title: "Location") {
+            self.locationService.currentLocation.map{ currentLocation in
                 VStack(alignment:.leading){
-                    
-                    self.locationService.placemark.map{ placemark in
-                        Text(placemark.locality ?? "Unknown Place")
-                    }
-                    
-                    self.locationService.placemark.map{ placemark in
-                        Text(placemark.timeZone?.identifier ?? "Unknown time zone")
-                    }
-                    
-                    self.locationService.currentLocation.map{
                         
-                        MapView(coordinate: $0.location.coordinate)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                            .frame(height: 150)
-                    }
-                    
-                    Button(action: {
-                        self.locationService.setCurrentLocation()
-                    }) {
-                        HStack{
-                            Spacer()
-                            Text("Set to current location")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding()
-                            Spacer()
+                    if currentLocation.configured {
+                        self.locationService.placemark.map{ placemark in
+                            VStack(alignment:.leading){
+                            HStack{
+                                Text("Place:")
+                                Text(placemark.locality ?? "Unknown Place").bold()
+                            }
+                            
+                            HStack{
+                                Text("Time zone:")
+                                Text(placemark.timeZone?.identifier ?? "Unknown time zone").bold()
+                            }
+                            }
                         }
-                        
-                        
-                        
+                    } else {
+                        Button(action: {
+                            self.locationService.setCurrentLocation()
+                        }) {
+                            HStack{
+                                Spacer()
+                                Text("Set to current location")
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                    .padding()
+                                Spacer()
+                            }
+                            
+                            
+                            
+                        }
+                        .background(Color.gray)
+                        .clipShape(RoundedRectangle(cornerRadius:10))
                     }
-                    .background(Color.gray)
-                    .clipShape(RoundedRectangle(cornerRadius:10))
-                    
                 }
+                
+
             }
-        
+        }
     }
 }
 
@@ -71,3 +74,38 @@ struct LocationSummaryView: View {
 //    }
 //}
 //
+
+/**
+ 
+ 
+ locationService.placemark.map{ placemark in
+     HStack{
+         Text("City:").bold()
+         Text(placemark.locality ?? "Unknown Place")
+     }
+     
+     HStack{
+         Text("Time zone:").bold()
+         Text(placemark.timeZone?.identifier ?? "Unknown time zone")
+     }
+ }
+ 
+ 
+ Button(action: {
+     locationService.setCurrentLocation()
+ }) {
+     HStack{
+         Spacer()
+         Text("Set to current location")
+             .font(.headline)
+             .foregroundColor(.white)
+             .padding()
+         Spacer()
+     }
+     
+     
+     
+ }
+ .background(Color.gray)
+ .clipShape(RoundedRectangle(cornerRadius:10))
+ */

@@ -10,27 +10,52 @@ import Foundation
 import CoreBluetooth
 import CombineBluetooth
 import Combine
-
+import SwiftUI
 
 class SettingsService: ServiceProtocol {
+    
     
     required init(){
     }
     
     static let uuid = CBUUID(string: "28C65464-311E-4ABF-B6A0-D03B0BAA2815")
     
-    @Characteristic(CBUUID(string:"9982B160-23EF-42FF-9848-31D9FF21F490")) var availableSeparatorAnimations: [SeparatorAnimation]?
+    @Characteristic(CBUUID(string:"9982B160-23EF-42FF-9848-31D9FF21F490")) var availableSeparatorAnimations: [String]?
     
-    @Characteristic(CBUUID(string:"2371E298-DCE5-4E1C-9CB2-5542213CE81C")) var separatorAnimation: SeparatorAnimation?
+    @Characteristic(CBUUID(string:"2371E298-DCE5-4E1C-9CB2-5542213CE81C")) var separatorAnimation: String?
 
-
+    @Characteristic(CBUUID(string:"698D2B57-5B54-48D7-A483-1AB4660FBAF9")) var availableTimeStyles: [String]?
     
+    @Characteristic(CBUUID(string:"AE35C2DE-7D36-4699-A5CE-A0FA6A0A5483")) var timeStyle: String?
+    
+    lazy var selectedTimeStyle = Binding<String>(
+        get:{ return self.timeStyle ?? "None"},
+        set:{ self.timeStyle = $0 }
+    )
+    
+    lazy var selectedAnimation = Binding<String>(
+        get:{ return self.separatorAnimation ?? "Blink"},
+        set:{ self.separatorAnimation = $0 }
+    )
 }
+
+extension SettingsService {
+    var timeStyles: [String] { get {
+        return self.availableTimeStyles ?? []
+    }}
+    
+    var separatorAnimations: [String] { get {
+        return self.availableSeparatorAnimations ?? []
+    }}
+        
+}
+
+
 
 enum SeparatorAnimation: String, RawRepresentable, Identifiable, Codable {
     var id: String { return self.rawValue }
     
-    case Static
+    case None
     case Blink
     case Fade
 }

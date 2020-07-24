@@ -8,37 +8,41 @@
 
 import SwiftUI
 
+extension String: Identifiable {
+    
+    public var id: String {
+        return self
+    }
+}
+
 struct ClockSettingsView: View {
     
     @EnvironmentObject var settingsService: SettingsService
     
-    @State var sepAnim: SeparatorAnimation = .Static
     
     var body: some View {
-        ScrollView{
         VStack{
-            
+            settingsService.availableTimeStyles.map { _ in
+                ConfigItemView(icon: Image(systemName:"24.circle"), title: "Time Style") {
+                    Picker("What do you want", selection: self.settingsService.selectedTimeStyle){
+                        ForEach(self.settingsService.timeStyles){ timeStyle in
+                            Text(timeStyle)
+                        }
+                    }.pickerStyle(SegmentedPickerStyle())
+                }
+            }
+            settingsService.availableSeparatorAnimations.map { _ in
                 ConfigItemView(icon: Image(systemName:"rays"), title: "Blink separators") {
                     
-                    self.settingsService.availableSeparatorAnimations.map{ available in
-                        VStack{
-                        Picker("What do you want", selection: self.$sepAnim){ // self.$settingsService.separatorAnimation) {
-                                    
-                                ForEach(available) { item in
-                                    Text(item.rawValue)
-                                    }
-                            }.pickerStyle(SegmentedPickerStyle())
-                            
-
-                        Text(self.sepAnim.rawValue)
-                        Text(self.settingsService.separatorAnimation?.rawValue ?? "Unknown")
+                    Picker("What do you want", selection: self.settingsService.selectedAnimation){
+                        ForEach(self.settingsService.separatorAnimations) { item in
+                            Text(item)
                         }
-                    }
+                    }.pickerStyle(SegmentedPickerStyle())
                 }
+            }
+            
 
-
-        }.padding()
         }
-        .navigationBarTitle( Text("Settings"), displayMode:.automatic)
     }
 }
