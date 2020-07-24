@@ -51,10 +51,10 @@ bool waitForWifi(uint32_t milliseconds){
           Serial.println("WL_CONNECT_FAILED");
           break;
         case WL_CONNECTION_LOST:
-          Serial.println("WL_CONNECT_FAILED");
+          Serial.println("WL_CONNECTION_LOST");
           break;
         case WL_DISCONNECTED:
-          Serial.println("WL_CONNECT_FAILED");
+          Serial.println("WL_DISCONNECTED");
           break;
       }
     }
