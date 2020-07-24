@@ -9,7 +9,7 @@
 import SwiftUI
 
 
-struct ConfigItemView<Content>: View where Content: View {
+struct ConfigItemView<Content:View>: View {
     var icon: Image
     var iconColor: Color?
     var title: String

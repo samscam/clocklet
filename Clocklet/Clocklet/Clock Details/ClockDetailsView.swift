@@ -70,7 +70,7 @@ struct ClockDetailsView: View {
                         if clock.state == .disconnected() {
                             Spacer()
                             Button("Reconnect") {
-                                clock.connect()
+                                self.clock.connect()
                             }.accentColor(Color(.systemBackground))
                             .padding()
                             .background(Capsule().fill(Color.accentColor))

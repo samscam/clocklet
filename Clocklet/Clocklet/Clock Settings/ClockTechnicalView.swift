@@ -42,7 +42,7 @@ struct ClockTechnicalView: View {
             ConfigItemView(icon: Image(systemName:"flame"), iconColor: .red, title: "Reset Clocklet") {
                 VStack(spacing:20){
                     Button(action:{
-                        technicalService.reset = .reboot
+                        self.technicalService.reset = .reboot
                     }){
                         Text("Reboot")
                             .accentColor(Color(.systemBackground))
@@ -55,7 +55,7 @@ struct ClockTechnicalView: View {
                     Spacer()
                     
                     Button(action:{
-                        technicalService.reset = .factoryReset;
+                        self.technicalService.reset = .factoryReset;
                     }){
                         Text("Factory Reset")
                             .accentColor(Color(.systemBackground))

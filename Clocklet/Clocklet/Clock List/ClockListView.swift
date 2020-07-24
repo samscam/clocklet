@@ -71,7 +71,7 @@ struct ClockListView: View {
                                 
                             }
                             .onLongPressGesture(minimumDuration: 5, maximumDistance: 30, perform: {
-                                clockList.createFakeClock()
+                                self.clockList.createFakeClock()
                             })
 
                                 
