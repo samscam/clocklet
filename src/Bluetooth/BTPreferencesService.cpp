@@ -1,28 +1,28 @@
 #include "BTPreferencesService.h"
 
+#define TAG "BT-PREFS"
+
 BTPreferencesService::BTPreferencesService(BLEServer *server, QueueHandle_t prefsChangedQueue){
 
     pservice = server->createService("28C65464-311E-4ABF-B6A0-D03B0BAA2815");
 
     Preferences *preferences = new Preferences();
-    // preferences->begin("clocklet", false);
-
 
     // The available separator animations
     // JSON fragment
-    // availableSeparatorAnimationsCharacteristic = pservice->createCharacteristic(
-    //     "9982B160-23EF-42FF-9848-31D9FF21F490",
-    //     BLECharacteristic::PROPERTY_READ);
-    // availableSeparatorAnimationsCharacteristic->setAccessPermissions(ESP_GATT_PERM_READ_ENCRYPTED);
+    availableSeparatorAnimationsCharacteristic = pservice->createCharacteristic(
+        "9982B160-23EF-42FF-9848-31D9FF21F490",
+        BLECharacteristic::PROPERTY_READ);
+    availableSeparatorAnimationsCharacteristic->setAccessPermissions(ESP_GATT_PERM_READ_ENCRYPTED);
 
-    // availableSeparatorAnimationsCharacteristic->setValue("[\"None\",\"Blink\",\"Fade\"]");
+    availableSeparatorAnimationsCharacteristic->setValue("[\"None\",\"Blink\",\"Fade\"]");
 
 
-    // separatorAnimationsGlue = new PreferencesGlueString("2371E298-DCE5-4E1C-9CB2-5542213CE81C",
-    // "sep_anim",
-    // pservice,
-    // prefsChangedQueue,
-    // preferences, "Blink");
+    separatorAnimationsGlue = new PreferencesGlueString("2371E298-DCE5-4E1C-9CB2-5542213CE81C",
+    "sep_anim",
+    pservice,
+    prefsChangedQueue,
+    preferences, "Blink");
 
 
     availableTimeStyles = pservice->createCharacteristic(
