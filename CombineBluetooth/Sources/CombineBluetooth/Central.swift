@@ -51,7 +51,7 @@ public class Central: NSObject, ObservableObject {
     }
     
     
-    public func discoverConnections<T: PeripheralProtocol & Advertiser>(for peripheralType: T.Type) -> AnyPublisher<[Connection],Never> {
+    public func discoverConnections<T: PeripheralProtocol & AdvertisementMatcher>(for peripheralType: T.Type) -> AnyPublisher<[Connection],Never> {
         registerPeripheralType(peripheralType)
         let cons = scan(forServices: peripheralType.advertisedUUIDs).map{ $0.filter { connection -> Bool in
             return connection.peripheral is T
@@ -66,10 +66,10 @@ public class Central: NSObject, ObservableObject {
         }
     }
     
-    private var knownPeripheralTypes: [Advertiser.Type] = []
+    private var knownPeripheralTypes: [AdvertisementMatcher.Type] = []
     
     
-    private func registerPeripheralType<T: Advertiser>(_ type: T.Type){
+    private func registerPeripheralType<T: AdvertisementMatcher>(_ type: T.Type){
         
         // Types don't conform to Equatable but they do allow == so we have to do this...
         if !knownPeripheralTypes.contains(where: { (knownType) -> Bool in

@@ -18,8 +18,7 @@ internal protocol ServiceWrapper: HasUUID {
     func didInvalidate()
 }
 
-public protocol InnerServiceProtocol: class, HasUUID {
-    static var uuid: CBUUID { get }
+public protocol InnerServiceProtocol: class {
     init()
 }
 
@@ -29,33 +28,44 @@ public protocol ServiceProtocol: InnerServiceProtocol, ObservableObject where Ob
 
 
 @propertyWrapper
-public class Service<Value:ServiceProtocol>: ServiceWrapper {
+public class Service<Value:ServiceProtocol>: ServiceWrapper, Publisher {
 
   
     public var wrappedValue: Value? {
         didSet {
-            self.publisher.send(wrappedValue)
+            self.subject.send(wrappedValue)
         }
     }
     
     public let uuid: CBUUID
-    public var publisher: CurrentValueSubject<Value?,ServiceError>
+    
+
     public var cbService: CBService?
     
-    public init(wrappedValue value: Value?){
-        self.wrappedValue = value
-        self.uuid = value.uuid
-        self.publisher = CurrentValueSubject<Value?,ServiceError>(value)
-    }
+
     
-    deinit {
-        print("Service deinited \(self.uuid)")
+    public init(wrappedValue value: Value? = nil, _ uuid: String){
+        self.wrappedValue = value
+        self.uuid = CBUUID(string: uuid)
     }
     
     
     public var projectedValue: Service {
         return self
     }
+    
+    // Publisher conformance
+    private let subject = CurrentValueSubject<Value?,ServiceError>(nil)
+    
+    public typealias Output = Value?
+    public typealias Failure = ServiceError
+    
+    public func receive<S>(subscriber: S) where S : Subscriber, Service.Failure == S.Failure, Service.Output == S.Input {
+        subject.receive(subscriber: subscriber)
+    }
+    
+    
+    // ServiceWrapper conformance
     
     public func didDiscoverCharacteristics(){
         guard let cbCharacteristics = self.cbService?.characteristics else {
@@ -89,16 +99,12 @@ public class Service<Value:ServiceProtocol>: ServiceWrapper {
         wrappedValue?.characteristicWrappers.forEach{ $0.invalidate() }
         self.cbService = nil
         self.wrappedValue = nil
-        self.publisher.send(completion: .failure(.invalidated))
+        self.subject.send(completion: .failure(.invalidated))
     }
     
     
 }
 
-
-public extension ServiceProtocol{
-    var uuid: CBUUID { return Self.uuid }
-}
 
 public extension ServiceProtocol {
     var characteristicUUIDs: [CBUUID]{
@@ -118,8 +124,4 @@ public extension ServiceProtocol {
         }
     }
 
-}
-
-extension Optional: HasUUID where Wrapped: ServiceProtocol{
-    public var uuid: CBUUID { return Wrapped.self.uuid }
 }

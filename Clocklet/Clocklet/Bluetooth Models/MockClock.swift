@@ -15,11 +15,11 @@ extension Clock {
     static func mockClock() -> Clock{
         let mockClock = Clock("Mock Clocklet", .wood)
         mockClock.locationService = LocationService()
-        mockClock.locationService?.currentLocation = CurrentLocation(configured: true, lat:  53.480934, lng: -2.236963)
+        mockClock.locationService?.currentLocation = CurrentLocation(configured: false, lat:  0, lng: 0)
         
         let networkService = NetworkService()
         
-        networkService.currentNetwork = CurrentNetwork(status: .connected, connected: true, configured: true, ssid: "Fake Network", channel: 5, ip: IPv4Address("42.42.42.42"), rssi: -10)
+        networkService.currentNetwork = CurrentNetwork(status: .disconnected, connected: false, configured: false, ssid: nil, channel: 5, ip: nil, rssi: -10)
         
         networkService.availableNetworks = [
             AvailableNetwork(ssid: "One network", enctype: .wpa2psk, rssi: -30, channel: 5, bssid: "bssone"),

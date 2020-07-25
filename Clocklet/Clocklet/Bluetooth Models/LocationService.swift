@@ -21,23 +21,25 @@ class LocationService: ServiceProtocol {
     
     required init(){
         
-        self.$currentLocation.compactMap{$0?.location}
-        .flatMap{ location in
-            self.geocoderProxy.futureReversePublisher(location)
-        }
-        .replaceError(with: nil)
-        .assign(to: \.placemark, on: self)
-        .store(in: &bag)
+        $currentLocation
+            .compactMap{$0?.location}
+            .setFailureType(to: Error.self)
+            .flatMap{ location in
+                self.geocoderProxy.futureReversePublisher(location)
+            }
+            .replaceError(with: nil)
+            .assign(to: \.placemark, on: self)
+            .store(in: &bag)
         
         $currentLocation.map{
-            if let currentLocation = $0 {
-                return currentLocation.configured ? .configured : .notConfigured
-            } else {
-                return .unknown
+                if let currentLocation = $0 {
+                    return currentLocation.configured ? .configured : .notConfigured
+                } else {
+                    return .unknown
+                }
             }
-        }.replaceError(with: .unknown)
-        .assign(to: \.isConfigured, on: self)
-        .store(in: &bag)
+            .assign(to: \.isConfigured, on: self)
+            .store(in: &bag)
         
     }
     
@@ -47,9 +49,7 @@ class LocationService: ServiceProtocol {
 
     @Published var isConfigured: ConfigState = .unknown
     
-    static let uuid = CBUUID(string: "87888F3E-C1BF-4832-9823-F19C73328D30")
-    
-    @Characteristic(CBUUID(string:"C8C7FF91-531A-4306-A68A-435374CB12A9")) var currentLocation: CurrentLocation?
+    @Characteristic("C8C7FF91-531A-4306-A68A-435374CB12A9") var currentLocation: CurrentLocation?
     
     @Published var placemark: CLPlacemark?
     

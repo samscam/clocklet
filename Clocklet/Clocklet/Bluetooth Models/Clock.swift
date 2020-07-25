@@ -9,6 +9,7 @@
 import Foundation
 import CombineBluetooth
 import Combine
+import CoreBluetooth
 
 fileprivate extension Data {
 
@@ -61,7 +62,7 @@ extension ManufacturerData {
 
 }
 
-class Clock: Peripheral, Identifiable, Advertiser {
+class Clock: Peripheral, Identifiable, AdvertisementMatcher {
 
     var bag: [AnyCancellable] = []
     
@@ -104,37 +105,40 @@ class Clock: Peripheral, Identifiable, Advertiser {
     required init(uuid: UUID, name: String, connection: Connection) {
         super.init(uuid:uuid, name: name, connection: connection)
         
-        let networkServiceState = $networkService.publisher
+        // BUG HERE --- it only works on the first time you use this connection.........
+        let networkServiceState: AnyPublisher<ConfigState, Never> = $networkService
             .replaceError(with: nil)
-            .flatMap { (networkService) in
-                return networkService?.$isConfigured.eraseToAnyPublisher() ?? Just(ConfigState.unknown).eraseToAnyPublisher()
-            }
+            .compactMap { $0 }
+            .flatMap{ $0.$isConfigured }
+            .print("Net configured:")
+            .eraseToAnyPublisher()
         
-        let locationServiceState = $locationService.publisher
+        let locationServiceState: AnyPublisher<ConfigState, Never> = $locationService
             .replaceError(with: nil)
-            .flatMap { (locationService) in
-                return locationService?.$isConfigured.eraseToAnyPublisher() ?? Just(ConfigState.unknown).eraseToAnyPublisher()
-            }
+            .compactMap { $0 }
+            .flatMap{ $0.$isConfigured }
+            .print("Loc configured:")
+            .eraseToAnyPublisher()
         
         
         Publishers.CombineLatest(networkServiceState,locationServiceState)
             .map{ netConfigured, locConfigured in
                 return netConfigured && locConfigured
-            }.replaceError(with: .unknown)
+            }
+            .print("Combined configured:")
             .assign(to: \.isConfigured, on: self)
             .store(in: &bag)
         
     }
     
+    @Service("180A") var deviceInfoService: DeviceInfoService?
+    @Service("417BD398-B942-4FF1-A759-02409F17D994") var technicalService: TechnicalService?
+    @Service("68D924A1-C1B2-497B-AC16-FD1D98EDB41F") var networkService: NetworkService?
+    @Service("87888F3E-C1BF-4832-9823-F19C73328D30") var locationService: LocationService?
+    @Service("28C65464-311E-4ABF-B6A0-D03B0BAA2815") var settingsService: SettingsService?
     
-    @Service var networkService: NetworkService?
-    @Service var locationService: LocationService?
-    @Service var settingsService: SettingsService?
     
-    @Service var deviceInfoService: DeviceInfoService?
-    @Service var technicalService: TechnicalService?
-    
-    static var advertised: [InnerServiceProtocol.Type] = [NetworkService.self]
+    static var advertisedServiceUUIDs = ["68D924A1-C1B2-497B-AC16-FD1D98EDB41F"]
     
     @Published var isConfigured: ConfigState = .unknown
 }

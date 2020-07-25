@@ -3,14 +3,18 @@ import CoreBluetooth
 import Combine
 
 // PERIPHERAL
-public protocol Advertiser: InnerPeripheralProtocol{
-    static var advertised: [InnerServiceProtocol.Type] { get }
 
+public protocol AdvertisementMatcher: InnerPeripheralProtocol{
+    
+/**
+ When the central searches for devices, it will match the uuids mentioned in the incoming advertisement packets against the ones in this list.
+*/
+    static var advertisedServiceUUIDs: [String] { get }
 }
 
-public extension Advertiser where Self:InnerPeripheralProtocol{
+public extension AdvertisementMatcher where Self:InnerPeripheralProtocol{
     static var advertisedUUIDs: Set<CBUUID> {
-        return Set(Self.advertised.map{ $0.uuid })
+        return Set(Self.advertisedServiceUUIDs.map{ CBUUID(string:$0) })
     }
 }
 

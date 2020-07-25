@@ -17,16 +17,9 @@ public protocol CharacteristicWrapper: class, HasUUID {
 }
 
 
-enum CharacteristicState<Value> {
-    case unknown
-    case writing(value: Value)
-    case read(value: Value)
-}
 
 @propertyWrapper
-public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Publisher, ObservableObject {
-    
-
+public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, ObservableObject {
     
     public enum CharacteristicError: Error{
         case noCBCharacteristic
@@ -35,20 +28,13 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Publ
 
     public let uuid: CBUUID
     
-    public let subject = CurrentValueSubject<Value?,Error>(nil)
+    private let subject = CurrentValueSubject<Value?,Never>(nil)
     
-    public typealias Output = Value?
-    public typealias Failure = Error
-    
-    public func receive<S>(subscriber: S) where S : Subscriber, Characteristic.Failure == S.Failure, Characteristic.Output == S.Input {
-        subject.receive(subscriber: subscriber)
-    }
-
     public var cbCharacteristic: CBCharacteristic?
     
-    public init(wrappedValue value: Value? = nil, _ uuid: CBUUID){
+    public init(wrappedValue value: Value? = nil, _ uuid: String){
         self._value = value
-        self.uuid = uuid
+        self.uuid = CBUUID(string: uuid)
     }
     
     private var _value: Value? {
@@ -77,13 +63,22 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Publ
                     cbCharacteristic.service.peripheral.writeValue(data, for: cbCharacteristic, type: .withResponse)
                     
                 } else if (cbCharacteristic.properties.contains(.writeWithoutResponse)){
-                        cbCharacteristic.service.peripheral.writeValue(data, for: cbCharacteristic, type: .withoutResponse)
+                    cbCharacteristic.service.peripheral.writeValue(data, for: cbCharacteristic, type: .withoutResponse)
                 } else {
                     //we can't throw here... report this somehow...
                 }
                 
             }
         }
+    }
+    
+    public var projectedValue: Characteristic {
+        return self
+    }
+    
+    public func invalidate(){
+        cbCharacteristic = nil
+        wrappedValue = nil
     }
     
     // READING VALUES FROM REMOTE
@@ -111,32 +106,18 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Publ
     
     // Called internally when the local value has been written
     public func didWriteValue(error: Error?){
-//        let transaction = writeClosureFifo.removeFirst()
-//        _value = transaction.newValue // arguably shouldn't do this
-//        transaction.closure?(transaction.newValue,error)
-//
     }
-//
-//    public func setValue(_ newValue: Value?, completion: ((Value?, Error?)->())? ){
-//        guard let cbc = cbCharacteristic else {
-//            completion?(_value,CharacteristicError.noCBCharacteristic)
-//            return
-//        }
-//        let transaction = WriteTransaction(newValue: newValue, closure: completion)
-//        writeClosureFifo.append(transaction)
-//
-//        cbc.service.peripheral.writeValue(newValue.data, for: cbc, type: .withResponse)
-//    }
+    
+    
 
-    
-    
-    public var projectedValue: Characteristic {
-        return self
-    }
-    
-    public func invalidate(){
-        cbCharacteristic = nil
-        wrappedValue = nil
-        
+}
+
+
+extension Characteristic: Publisher {
+    public typealias Output = Value?
+    public typealias Failure = Never
+
+    public func receive<S>(subscriber: S) where S : Subscriber, Characteristic.Failure == S.Failure, Characteristic.Output == S.Input {
+       subject.receive(subscriber: subscriber)
     }
 }

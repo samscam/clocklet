@@ -18,15 +18,13 @@ class SettingsService: ServiceProtocol {
     required init(){
     }
     
-    static let uuid = CBUUID(string: "28C65464-311E-4ABF-B6A0-D03B0BAA2815")
+    @Characteristic("9982B160-23EF-42FF-9848-31D9FF21F490") var availableSeparatorAnimations: [String]?
     
-    @Characteristic(CBUUID(string:"9982B160-23EF-42FF-9848-31D9FF21F490")) var availableSeparatorAnimations: [String]?
-    
-    @Characteristic(CBUUID(string:"2371E298-DCE5-4E1C-9CB2-5542213CE81C")) var separatorAnimation: String?
+    @Characteristic("2371E298-DCE5-4E1C-9CB2-5542213CE81C") var separatorAnimation: String?
 
-    @Characteristic(CBUUID(string:"698D2B57-5B54-48D7-A483-1AB4660FBAF9")) var availableTimeStyles: [String]?
+    @Characteristic("698D2B57-5B54-48D7-A483-1AB4660FBAF9") var availableTimeStyles: [String]?
     
-    @Characteristic(CBUUID(string:"AE35C2DE-7D36-4699-A5CE-A0FA6A0A5483")) var timeStyle: String?
+    @Characteristic("AE35C2DE-7D36-4699-A5CE-A0FA6A0A5483") var timeStyle: String?
     
     lazy var selectedTimeStyle = Binding<String>(
         get:{ return self.timeStyle ?? "None"},

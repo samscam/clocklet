@@ -108,16 +108,6 @@ struct ClockDetailsView_Previews: PreviewProvider {
         clock.connect()
         return clock
     }()
-//    static let viewModel: ClockDetailsViewModel = {
-//        var clock = Clock("Foop",.bones)
-//
-//        clock.caseColor = .wood
-//        clock.networkService?.currentNetwork = CurrentNetwork(status: .connected, connected: true, ssid: "Fishnet", channel: 1, ip: nil, rssi: -20)
-////        clock.locationService.currentLocation = CurrentLocation(lat: 53.431808, lng: -2.218080)
-//        var viewModel = ClockDetailsViewModel(clock: clock)
-//        viewModel.connectionErrorMessage = "This all went wrong today"
-//        return viewModel
-//    }()
     
     static var previews: some View {
 
@@ -126,19 +116,7 @@ struct ClockDetailsView_Previews: PreviewProvider {
         }
         
     }
-    //        ClockDetailsView(clock: )
-    //        let clock = ClockModel(id: UUID(), serial: 5, name: "Clocklet #291", caseColor: .wood)
-    //
-    //
-    //        let currentNetwork = CurrentNetwork(status: 4, connected: true, ssid: "Broccoli", channel: 5, ip: IPv4Address("129.12.41.5"), rssi: -2)
-    //        let networkService = NetworkService()
-    //        networkService.currentNetwork = currentNetwork
-    //        networkService.availableNetworks = [
-    //        AvailableNetwork(ssid: "Broccoli", enctype: .open, rssi: -20, channel: 4, bssid:"SOMETHING"),
-    //        AvailableNetwork(ssid: "My Wifi is Nice", enctype: .open, rssi: -20, channel: 4, bssid:"mywifi")
-    //        ]
-    //        let connection = ClockConnection(clock: clock, networkService: networkService)
-    //        return ClockDetailsView(clockConnection: connection)
+
     
 }
 

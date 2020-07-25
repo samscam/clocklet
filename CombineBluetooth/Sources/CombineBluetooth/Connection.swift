@@ -18,7 +18,7 @@ public class Connection: NSObject{
     private weak var central: Central? = nil
     
     
-    public init(cbPeripheral: CBPeripheral, advertisementData: [String: Any], rssi: Int, central: Central, knownPeripheralTypes: [Advertiser.Type]){
+    public init(cbPeripheral: CBPeripheral, advertisementData: [String: Any], rssi: Int, central: Central, knownPeripheralTypes: [AdvertisementMatcher.Type]){
         
         self.cbPeripheral = cbPeripheral
         self.rssi = rssi
