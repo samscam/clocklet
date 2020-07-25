@@ -110,14 +110,12 @@ class Clock: Peripheral, Identifiable, AdvertisementMatcher {
             .replaceError(with: nil)
             .compactMap { $0 }
             .flatMap{ $0.$isConfigured }
-            .print("Net configured:")
             .eraseToAnyPublisher()
         
         let locationServiceState: AnyPublisher<ConfigState, Never> = $locationService
             .replaceError(with: nil)
             .compactMap { $0 }
             .flatMap{ $0.$isConfigured }
-            .print("Loc configured:")
             .eraseToAnyPublisher()
         
         
@@ -125,7 +123,6 @@ class Clock: Peripheral, Identifiable, AdvertisementMatcher {
             .map{ netConfigured, locConfigured in
                 return netConfigured && locConfigured
             }
-            .print("Combined configured:")
             .assign(to: \.isConfigured, on: self)
             .store(in: &bag)
         
