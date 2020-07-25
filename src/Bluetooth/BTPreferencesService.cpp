@@ -65,8 +65,8 @@ void PreferencesGlueString::onWrite(BLECharacteristic* pCharacteristic) {
 }
 
 void PreferencesGlueString::onRead(BLECharacteristic* pCharacteristic) {
-    String value = _preferences->getString(_prefsKey,_defaultValue);
     _preferences->begin("clocklet", false);
+    String value = _preferences->getString(_prefsKey,_defaultValue);
     pCharacteristic->setValue(value.c_str());
     _preferences->end();
 }
