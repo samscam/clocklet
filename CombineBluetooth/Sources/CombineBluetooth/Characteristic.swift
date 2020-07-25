@@ -4,7 +4,7 @@ import Combine
 
 // CHARACTERISTICS
 
-public protocol CharacteristicWrapper: class, HasUUID {
+internal protocol CharacteristicWrapper: class, HasUUID {
     
     /// This is called internally by the service wrapper when it reads a change of value for the characteristic
     func didUpdateValue(error: Error?)
@@ -84,7 +84,7 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Obse
     // READING VALUES FROM REMOTE
     
     // Called internally when the remote value changed
-    public func didUpdateValue(error: Error?){
+    internal func didUpdateValue(error: Error?){
         if let cbc = cbCharacteristic,
             let data = cbc.value {
             // Set the value and trigger ui updates

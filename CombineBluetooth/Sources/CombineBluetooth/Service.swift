@@ -111,13 +111,12 @@ public extension ServiceProtocol {
         return m.children.compactMap{ $0.value as? HasUUID }.map{ $0.uuid }
     }
     
-    var characteristicWrappers: [CharacteristicWrapper]{
+    internal var characteristicWrappers: [CharacteristicWrapper]{
         let m = Mirror(reflecting: self)
         return m.children.compactMap { $0.value as? CharacteristicWrapper}
     }
     
-    //
-    func characteristicWrapper(for cbCharacteristic: CBCharacteristic)->CharacteristicWrapper?{
+    internal func characteristicWrapper(for cbCharacteristic: CBCharacteristic)->CharacteristicWrapper?{
         return characteristicWrappers.first { (characteristic) -> Bool in
             return characteristic.uuid == cbCharacteristic.uuid
         }
