@@ -22,7 +22,6 @@ struct EnterPasswordView: View {
             ScrollView{
             VStack{
                 
-//                Text(self.network.ssid).font(.title).bold().lineLimit(2)
 //                ResponderTextField(isFirstResponder: textFieldActive) {
 //                    $0.borderStyle = .none
 //                    $0.placeholder = "password"
@@ -36,17 +35,11 @@ struct EnterPasswordView: View {
                     .padding()
                     .background(Color.gray)
                     .cornerRadius(10)
-                    .overlay(RoundedRectangle(cornerRadius: 10, style: .circular).stroke(Color.primary, lineWidth: 1)
+                    .overlay(RoundedRectangle(cornerRadius: 10, style: .circular).stroke(Color.secondary, lineWidth: 1)
 
                 )
                         
-                HStack{
-                    Button(action: {
-                        self.presentation.wrappedValue.dismiss()
-                    }) {
-                        Text("Cancel")
-                    }.accentColor(.red)
-                    Spacer()
+                
                     Button(action:{
                         try? self.networkService?.joinNetwork(self.network, psk: self.password)
                         self.presentation.wrappedValue.dismiss()
@@ -56,6 +49,8 @@ struct EnterPasswordView: View {
                     
                     .accentColor(.green)
                     .buttonStyle(RoundyButtonStyle())
+                    
+                
                 
             }.padding(10)
             .shadow(radius: 1)
