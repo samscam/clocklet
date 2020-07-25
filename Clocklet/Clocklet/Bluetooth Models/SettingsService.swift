@@ -14,7 +14,6 @@ import SwiftUI
 
 class SettingsService: ServiceProtocol {
     
-    
     required init(){
     }
     
@@ -26,8 +25,9 @@ class SettingsService: ServiceProtocol {
     
     @Characteristic("AE35C2DE-7D36-4699-A5CE-A0FA6A0A5483") var timeStyle: String?
     
+    
     lazy var selectedTimeStyle = Binding<String>(
-        get:{ return self.timeStyle ?? "None"},
+        get:{ return self.timeStyle ?? "None" },
         set:{ self.timeStyle = $0 }
     )
     
