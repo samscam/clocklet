@@ -77,9 +77,7 @@ struct ClockDetailsView: View {
                             Spacer()
                             Button("Reconnect") {
                                 self.clock.connect()
-                            }.accentColor(Color(.systemBackground))
-                            .padding()
-                            .background(Capsule().fill(Color.accentColor))
+                            }.buttonStyle(RoundyButtonStyle())
                         }
                         
                     }.padding().frame(maxWidth: .infinity)

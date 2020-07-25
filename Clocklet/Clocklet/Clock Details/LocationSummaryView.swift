@@ -35,23 +35,12 @@ struct LocationSummaryView: View {
                             }
                         }
                     } else {
-                        Button(action: {
-                            self.locationService.setCurrentLocation()
-                        }) {
-                            HStack{
-                                Spacer()
-                                Text("Set to current location")
-                                    .font(.headline)
-                                    .foregroundColor(.white)
-                                    .padding()
-                                Spacer()
+                        
+                        Button("Set to current location"){
+                                self.locationService.setCurrentLocation()
                             }
-                            
-                            
-                            
-                        }
-                        .background(Color.gray)
-                        .clipShape(RoundedRectangle(cornerRadius:10))
+                            .buttonStyle(RoundyButtonStyle())
+                        
                     }
                 }
                 

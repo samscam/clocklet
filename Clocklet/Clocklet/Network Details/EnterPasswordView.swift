@@ -53,14 +53,15 @@ struct EnterPasswordView: View {
                     }){
                         Text("Connect").bold()
                     }
+                    
                     .accentColor(.green)
-                }
+                    .buttonStyle(RoundyButtonStyle())
                 
             }.padding(10)
             .shadow(radius: 1)
         }.onAppear(){
             
-        }
+        }.navigationBarTitle("Join \(network.ssid)")
     }
 }
 
