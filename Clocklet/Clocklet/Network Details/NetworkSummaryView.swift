@@ -158,7 +158,6 @@ class NetworkSummaryViewModel: ObservableObject{
                 }
                 
         }.store(in: &bag)
-        //        let c = networkService.$currentNetwork.
     }
     
     
@@ -180,32 +179,18 @@ class NetworkSummaryViewModel: ObservableObject{
 //    }
 //}
 struct NetworkSummaryView: View {
-    @EnvironmentObject var networkService: NetworkService
+    @EnvironmentObject var viewModel: NetworkSummaryViewModel
     
     var body: some View {
+        
+        ConfigItemView(icon: viewModel.icon, iconColor: viewModel.color, title: viewModel.title) {
+            Group{
+                if (self.viewModel.errorMessage != nil){
+                    Text(self.viewModel.errorMessage!)
 
-            
-            networkService.currentNetwork.map{ currentNetwork in
-            
-                ConfigItemView(icon: currentNetwork.status == .connected ? currentNetwork.wifiStrengthBars : currentNetwork.status.icon , iconColor: currentNetwork.status.colour, title: "Network") {
-                
-                VStack(alignment: .leading){
-                    HStack{
-                        Text("SSID:")
-                        Text(currentNetwork.ssid ?? "Network not configured").bold()
-                    }
-                    HStack{
-                        Text("Status:")
-                        Text(currentNetwork.status.title).bold()
-                    }
-                    HStack{
-                        Text("IP Address:")
-                        Text(currentNetwork.ip?.debugDescription ?? "No ip address").bold()
-                    }
                 }
             }
         }
-        
     }
 }
 

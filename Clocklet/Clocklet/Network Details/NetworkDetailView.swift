@@ -18,7 +18,21 @@ struct NetworkDetailView: View {
         ScrollView{
             VStack{
                 
-                NetworkSummaryView()
+                NetworkSummaryView().environmentObject(NetworkSummaryViewModel(networkService))
+                networkService.currentNetwork.map{ currentNetwork in
+                    ConfigItemView(icon: Image(systemName:"waveform.path"), iconColor: nil, title: "Details") {
+                        HStack{
+                            VStack(alignment:.leading){
+                                Text("IP Address:")
+                                Text("Channel:")
+                            }
+                            VStack(alignment:.leading){
+                                Text(currentNetwork.ip?.debugDescription ?? "No ip address")
+                                Text("\(currentNetwork.channel)")
+                            }
+                        }
+                    }
+                }
                 
                 networkService.availableNetworks.map{ _ in
                     AvailableNetworksView().environmentObject(self.networkService.$availableNetworks)

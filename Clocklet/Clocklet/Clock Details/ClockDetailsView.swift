@@ -34,7 +34,7 @@ struct ClockDetailsView: View {
                     
                     clock.networkService.map{ networkService in
                         NavigationLink(destination: NetworkDetailView().environmentObject(networkService)){
-                            NetworkSummaryView().environmentObject(networkService)
+                            NetworkSummaryView().environmentObject(NetworkSummaryViewModel(networkService))
                             }.accentColor(nil)
                         
                     }
