@@ -99,7 +99,6 @@ public class Service<Value:ServiceProtocol>: ServiceWrapper, Publisher {
         wrappedValue?.characteristicWrappers.forEach{ $0.invalidate() }
         self.cbService = nil
         self.wrappedValue = nil
-        self.subject.send(completion: .failure(.invalidated))
     }
     
     
