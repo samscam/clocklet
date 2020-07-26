@@ -27,7 +27,7 @@ class SettingsService: ServiceProtocol {
     
     
     lazy var selectedTimeStyle = Binding<String>(
-        get:{ return self.timeStyle ?? "None" },
+        get:{ return self.timeStyle ?? "24 Hour" },
         set:{ self.timeStyle = $0 }
     )
     
