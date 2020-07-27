@@ -28,25 +28,46 @@ public protocol ServiceProtocol: InnerServiceProtocol, ObservableObject where Ob
 
 
 @propertyWrapper
-public class Service<Value:ServiceProtocol>: ServiceWrapper, Publisher {
+public class Service<Value:ServiceProtocol>: ServiceWrapper, Publisher, ObservableObject, InnerObservable {
 
   
     public var wrappedValue: Value? {
-        didSet {
-            self.subject.send(wrappedValue)
+        get{
+            return self._subject.value
+        }
+        set {
+            self._subject.send(newValue)
         }
     }
     
     public let uuid: CBUUID
     
-
+    private var bag = Set<AnyCancellable>()
+    private var innerBag = Set<AnyCancellable>()
+    
     public var cbService: CBService?
     
-
-    
     public init(wrappedValue value: Value? = nil, _ uuid: String){
-        self.wrappedValue = value
+        
         self.uuid = CBUUID(string: uuid)
+        
+        self.wrappedValue = value
+        
+        _subject.sink{ newValue in
+            Swift.print("New value of Service \(self) : \(newValue) -- Object will change")
+            self.objectWillChange.send()
+            self.innerBag.removeAll()
+            if let serviceValue = newValue {
+                serviceValue.innerObservables.forEach{ characteristicWrapper in
+                    characteristicWrapper.objectWillChange.sink{_ in
+                        Swift.print("Service \(self) caught ObjectWillChange from \(characteristicWrapper)")
+                        self.objectWillChange.send()
+                        Swift.print("... passing that back up to \(serviceValue)")
+                        serviceValue.objectWillChange.send()
+                    }.store(in: &self.innerBag)
+                }
+            }
+            }.store(in: &bag)
     }
     
     
@@ -55,13 +76,13 @@ public class Service<Value:ServiceProtocol>: ServiceWrapper, Publisher {
     }
     
     // Publisher conformance
-    private let subject = CurrentValueSubject<Value?,ServiceError>(nil)
+    private let _subject = CurrentValueSubject<Value?,Never>(nil)
     
     public typealias Output = Value?
-    public typealias Failure = ServiceError
+    public typealias Failure = Never
     
     public func receive<S>(subscriber: S) where S : Subscriber, Service.Failure == S.Failure, Service.Output == S.Input {
-        subject.receive(subscriber: subscriber)
+        _subject.receive(subscriber: subscriber)
     }
     
     
@@ -73,7 +94,7 @@ public class Service<Value:ServiceProtocol>: ServiceWrapper, Publisher {
         }
         
         for cbCharacteristic in cbCharacteristics {
-            wrappedValue?.objectWillChange.send()
+            
             if let characteristicWrapper = wrappedValue?.characteristicWrapper(for: cbCharacteristic) {
                 characteristicWrapper.cbCharacteristic = cbCharacteristic
             }
@@ -81,7 +102,6 @@ public class Service<Value:ServiceProtocol>: ServiceWrapper, Publisher {
     }
     
     public func didUpdateValue(for cbCharacteristic: CBCharacteristic, error: Error?){
-        wrappedValue?.objectWillChange.send()
         wrappedValue?.characteristicWrapper(for: cbCharacteristic)?.didUpdateValue(error: error)
     }
     
@@ -120,6 +140,11 @@ public extension ServiceProtocol {
         return characteristicWrappers.first { (characteristic) -> Bool in
             return characteristic.uuid == cbCharacteristic.uuid
         }
+    }
+    
+    internal var innerObservables: [InnerObservable]{
+        let m = Mirror(reflecting: self)
+        return m.children.compactMap{ $0.value as? InnerObservable }
     }
 
 }

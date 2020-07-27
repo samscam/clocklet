@@ -5,6 +5,9 @@
       location = "group:Clocklet/Clocklet.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:CombineBluetooth Playground.playground">
+   </FileRef>
+   <FileRef
       location = "group:CombineBluetooth">
    </FileRef>
 </Workspace>

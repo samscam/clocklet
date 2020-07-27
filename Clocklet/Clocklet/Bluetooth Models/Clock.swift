@@ -64,7 +64,6 @@ extension ManufacturerData {
 
 class Clock: Peripheral, Identifiable, AdvertisementMatcher {
 
-    var bag: [AnyCancellable] = []
     
     var id: UUID {
         return uuid

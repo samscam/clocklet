@@ -4,13 +4,17 @@ import Combine
 
 // CHARACTERISTICS
 
+
+
 internal protocol CharacteristicWrapper: class, HasUUID {
     
-    /// This is called internally by the service wrapper when it reads a change of value for the characteristic
+    /// This is called internally by the service wrapper when it reads a value for the characteristic
     func didUpdateValue(error: Error?)
     
     /// This is called internally by the service wrapper after a write transaction has taken place
     func didWriteValue(error: Error?)
+    
+    
     func invalidate()
     
     var cbCharacteristic: CBCharacteristic? { get set }
@@ -19,7 +23,7 @@ internal protocol CharacteristicWrapper: class, HasUUID {
 
 
 @propertyWrapper
-public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, ObservableObject {
+public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, ObservableObject, InnerObservable {
     
     public enum CharacteristicError: Error{
         case noCBCharacteristic

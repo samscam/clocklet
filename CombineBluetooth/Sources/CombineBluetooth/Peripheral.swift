@@ -45,8 +45,6 @@ extension ConnectionState: Equatable {
 
 open class Peripheral: PeripheralProtocol, ObservableObject {
     
-    
-    
     @Published public var state: ConnectionState = .disconnected(error: nil) {
         didSet{
             switch state {
@@ -64,30 +62,38 @@ open class Peripheral: PeripheralProtocol, ObservableObject {
     weak var connection: Connection?
     
     public let uuid: UUID
+    public var bag = Set<AnyCancellable>()
     
     public required init(uuid: UUID, name: String, connection: Connection){
         
         self.uuid = uuid
         self.name = name
         self.connection = connection
+        
+        findInnerObservables()
+
     }
     
     public init(uuid: UUID, name: String){
         
         self.uuid = uuid
         self.name = name
+        
+        findInnerObservables()
     }
     
     public func connect(){
         switch state {
         case .disconnected:
+            willConnect?()
             connection?.connect()
         default:
             break
         }
-        
-        
     }
+    
+    /// This is an override point for mocking
+    public var willConnect: (()->Void)?
     
     public func disconnect(){
         connection?.disconnect()
@@ -112,6 +118,7 @@ public protocol InnerPeripheralProtocol: class {
     var state: ConnectionState { get set }
     init(uuid: UUID, name: String, connection: Connection)
     var objectWillChange: ObservableObjectPublisher { get }
+    var bag:Set<AnyCancellable> { get set }
     var advertisementData: AdvertisementData? {get set}
     func didDisconnect()
 }
@@ -138,5 +145,18 @@ public extension InnerPeripheralProtocol {
             return service.uuid == cbService.uuid
         }
     }
+    
+    internal var innerObservables: [InnerObservable]{
+        let m = Mirror(reflecting: self)
+        return m.children.compactMap{ $0.value as? InnerObservable }
+    }
 
+    // To make Peripherals work as ObservableObjects, just like each @Service is @Published we cascade the objectWillChange notifications down the tree. Note that it will only see the @Services at the final level of subclassing, so you can't subclass a Peripheral twice.
+    internal func findInnerObservables(){
+        self.innerObservables.forEach { (inner) in
+            inner.objectWillChange.sink { _ in
+                self.objectWillChange.send()
+            }.store(in: &bag)
+        }
+    }
 }

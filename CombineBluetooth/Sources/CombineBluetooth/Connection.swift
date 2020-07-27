@@ -99,8 +99,6 @@ extension Connection: CBPeripheralDelegate{
         // Have we got services?
         guard let cbServices = cbPeripheral.services else { return }
         
-        self.peripheral?.objectWillChange.send()
-        
         // Map the CBServices onto our Services
         cbServices
             .forEach{
@@ -179,7 +177,6 @@ extension Connection: CBPeripheralDelegate{
     }
     
     public func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-        self.peripheral?.objectWillChange.send()
         if let service = self.peripheral?.serviceWrapper(for: characteristic.service){
             service.didUpdateValue(for: characteristic, error: error)
         }
