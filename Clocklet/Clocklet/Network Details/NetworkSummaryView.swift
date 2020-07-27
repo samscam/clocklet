@@ -81,13 +81,17 @@ class NetworkSummaryViewModel: ObservableObject{
     @Published var errorMessage: String? = nil
     @Published var icon: Image = Image(systemName:"questionmark.circle")
     @Published var color: Color = .black
-    
+    @Published var isConfigured: ConfigState = .unknown
     private var bag = [AnyCancellable]()
     
     private var networkService: NetworkService
     
     init(_ networkService: NetworkService){
         self.networkService = networkService
+        
+        networkService.$isConfigured.sink { (configState) in
+            self.isConfigured = configState
+        }.store(in: &bag)
         
         networkService
             .$currentNetwork
@@ -184,15 +188,36 @@ struct NetworkSummaryView: View {
     var body: some View {
         
         ConfigItemView(icon: viewModel.icon, iconColor: viewModel.color, title: viewModel.title) {
+            
             Group{
-                if (self.viewModel.errorMessage != nil){
-                    Text(self.viewModel.errorMessage!)
-
+                if (self.viewModel.isConfigured == ConfigState.notConfigured){
+                    Text("Configure Network").lozenge()
+                } else {
+                    if (self.viewModel.errorMessage != nil){
+                        Text(self.viewModel.errorMessage!)
+                    }
                 }
             }
         }
     }
 }
+
+struct NetworkHeaderView: View {
+    @EnvironmentObject var viewModel: NetworkSummaryViewModel
+    
+    var body: some View {
+        
+        ConfigItemView(icon: viewModel.icon, iconColor: viewModel.color, title: viewModel.title) {
+            
+            Group{
+                if (self.viewModel.errorMessage != nil){
+                    Text(self.viewModel.errorMessage!)
+                }
+            }
+        }
+    }
+}
+
 
 
 

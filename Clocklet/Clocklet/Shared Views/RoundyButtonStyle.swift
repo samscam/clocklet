@@ -20,3 +20,11 @@ struct RoundyButtonStyle: ButtonStyle {
     }
     
 }
+
+extension Text {
+    func lozenge() -> some View{
+        return self.accentColor(Color(.systemBackground))
+        .padding()
+        .background(Capsule().fill(Color.accentColor))
+    }
+}

@@ -18,7 +18,7 @@ struct NetworkDetailView: View {
         ScrollView{
             VStack{
                 
-                NetworkSummaryView().environmentObject(NetworkSummaryViewModel(networkService))
+                NetworkHeaderView().environmentObject(NetworkSummaryViewModel(networkService))
                 networkService.currentNetwork.map{ currentNetwork in
                     ConfigItemView(icon: Image(systemName:"waveform.path"), iconColor: nil, title: "Details") {
                         HStack{

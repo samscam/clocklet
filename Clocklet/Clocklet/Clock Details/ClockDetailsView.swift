@@ -35,12 +35,11 @@ struct ClockDetailsView: View {
                     clock.networkService.map{ networkService in
                         NavigationLink(destination: NetworkDetailView().environmentObject(networkService)){
                             NetworkSummaryView().environmentObject(NetworkSummaryViewModel(networkService))
-                            }.accentColor(nil)
-                        
+                        }.accentColor(nil)
                     }
                     
                     clock.locationService.map{ locationService in
-                        LocationSummaryView().environmentObject(locationService)
+                        LocationSummaryView().environmentObject(locationService).accentColor(nil)
                     }
                     
                     
@@ -69,7 +68,7 @@ struct ClockDetailsView: View {
                         
                         Text(clock.state.description).bold()
                         
-                        // Note that if-let works in xcode 12
+                        // Note that if-let works in xcode 12 - that will be nice
                         clock.state.lastErrorDescription.map{ lastError in
                             Text(lastError).lineLimit(nil).fixedSize(horizontal: false, vertical: true)
                         }

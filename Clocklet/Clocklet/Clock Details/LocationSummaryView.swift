@@ -24,13 +24,13 @@ struct LocationSummaryView: View {
                         self.locationService.placemark.map{ placemark in
                             VStack(alignment:.leading){
                             HStack{
-                                Text("Place:")
-                                Text(placemark.locality ?? "Unknown Place").bold()
+                                Text("Place:").foregroundColor(.secondary)
+                                Text(placemark.locality ?? "Unknown Place").bold().foregroundColor(.primary)
                             }
                             
                             HStack{
-                                Text("Time zone:")
-                                Text(placemark.timeZone?.identifier ?? "Unknown time zone").bold()
+                                Text("Time zone:").foregroundColor(.secondary)
+                                Text(placemark.timeZone?.identifier ?? "Unknown time zone").bold().foregroundColor(.primary)
                             }
                             }
                         }
