@@ -62,7 +62,7 @@ class ClockList: ObservableObject {
     
     func createFakeClock(){
         
-        let fakeClock = Clock.mockClock()
+        let fakeClock = MockClock()
         
         central = nil
         _cancellableClocks?.cancel()
