@@ -19,6 +19,7 @@ struct ScanningView: View{
     
     var body: some View{
         VStack{
+            if clockList.bluetoothState == .poweredOn {
             Image(systemName: self.clockList.isScanning ? "eye" : "eye.slash")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
@@ -31,6 +32,9 @@ struct ScanningView: View{
                 Text("Scanning for Clocklets").opacity(0.5)
             } else {
                 Text("Tap to scan").opacity(0.5).animation(Animation.easeInOut(duration: 0.5))
+            }
+            } else {
+                Text("Bluetooth state: \(clockList.bluetoothState.rawValue)")
             }
         }.onTapGesture {
             self.clockList.toggleScanning()
@@ -57,7 +61,7 @@ struct ClockListView: View {
                         VStack(spacing:20){
                         Text("Hello! This is the Clocklet app for configuring your Clocklet.")
                         Spacer()
-                        if clockList.clocks.count == 0 {
+//                        if clockList.clocks.count == 0 {
                             Text("I've not got a clocklet").bold().foregroundColor(Color(.systemBackground)).frame(maxWidth: .infinity)
                                     
 
@@ -75,7 +79,7 @@ struct ClockListView: View {
                             })
 
                                 
-                        }
+//                        }
                             
                         ForEach(clockList.clocks) { clock in
                             NavigationLink(destination:
@@ -98,7 +102,7 @@ struct ClockListView: View {
             }
             .navigationBarTitle(Text("Clocklet"))
             .onAppear {
-                
+                // This should go back in if/when the bug is fixed
 //                self.clockList.disconnectAllDevices()
                 self.clockList.startScanning()
             }.onDisappear(){

@@ -10,13 +10,15 @@ import Foundation
 import Combine
 import CombineBluetooth
 import SwiftUI
-
+import CoreBluetooth
 
 class ClockList: ObservableObject {
     
+    @Published var bluetoothState: CBManagerState = .unknown
     @Published var isScanning = true
     @Published var clocks: [Clock] = []
     
+    var bag = Set<AnyCancellable>()
     
     var _cancellableScanning: Cancellable?
     var _cancellableClocks: Cancellable?
@@ -26,6 +28,7 @@ class ClockList: ObservableObject {
     init(central: Central?){
         self.central = central
         self._cancellableScanning = central?.$isScanning.assign(to: \.isScanning, on: self)
+        central?.$state.assign(to: \.bluetoothState, on: self).store(in: &bag)
     }
     
     deinit{

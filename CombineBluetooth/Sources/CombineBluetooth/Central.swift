@@ -10,7 +10,7 @@ public class Central: NSObject, ObservableObject {
 
     private let _cbCentralManager: CBCentralManager
     
-    @Published var state: CBManagerState = .unknown
+    @Published public var state: CBManagerState = .unknown
     @Published var connections: [UUID:Connection] = [:]
     @Published public var isScanning: Bool = false
     
