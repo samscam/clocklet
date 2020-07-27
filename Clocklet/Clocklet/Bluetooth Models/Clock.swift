@@ -99,22 +99,27 @@ class Clock: Peripheral, Identifiable, AdvertisementMatcher {
     init(_ name: String, _ color: CaseColor = .black){
         super.init(uuid: UUID(), name: name)
         self.caseColor = color
+        monitorConfigState()
     }
     
     required init(uuid: UUID, name: String, connection: Connection) {
         super.init(uuid:uuid, name: name, connection: connection)
-        
-        // BUG HERE --- it only works on the first time you use this connection.........
+        monitorConfigState()
+    }
+    
+    func monitorConfigState(){
         let networkServiceState: AnyPublisher<ConfigState, Never> = $networkService
             .replaceError(with: nil)
             .compactMap { $0 }
             .flatMap{ $0.$isConfigured }
+            .print("Network service state")
             .eraseToAnyPublisher()
         
         let locationServiceState: AnyPublisher<ConfigState, Never> = $locationService
             .replaceError(with: nil)
             .compactMap { $0 }
             .flatMap{ $0.$isConfigured }
+            .print("Location service state")
             .eraseToAnyPublisher()
         
         
@@ -124,7 +129,6 @@ class Clock: Peripheral, Identifiable, AdvertisementMatcher {
             }
             .assign(to: \.isConfigured, on: self)
             .store(in: &bag)
-        
     }
     
     @Service("180A") var deviceInfoService: DeviceInfoService?
