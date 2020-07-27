@@ -71,6 +71,7 @@ class LocationProxy: NSObject, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let lastLocation = locations.last {
             locationSubject.send(lastLocation)
+            disable()
         }
     }
     
