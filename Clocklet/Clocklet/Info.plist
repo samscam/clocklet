@@ -15,9 +15,9 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>$(MARKETING_VERSION)</string>
+	<string>SHORT_VERSION</string>
 	<key>CFBundleVersion</key>
-	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<string>REV_COUNT</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.utilities</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -27,7 +27,7 @@
 	<key>NSLocationUsageDescription</key>
 	<string>Clocklet needs to know your location to get accurate weather reports</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>I want to know where you are</string>
+	<string>Use your iOS device location to set the location of your Clocklet</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

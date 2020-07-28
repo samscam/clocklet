@@ -32,9 +32,11 @@
 # Back in your main target, add the aggregate target to target dependencies
 # ... this is because the script needs to run before the plist gets preprocessed
 
-# In the General settings of the main target assign some variables how you want them:
+# In the Info settings of the main target assign some variables how you want them:
 # Version => SHORT_VERSION
 # Build => REV_COUNT
+
+# (note 2020 that this wasn't playing nice in the General settings)
 
 
 echo "**** VERSIONING ****"
