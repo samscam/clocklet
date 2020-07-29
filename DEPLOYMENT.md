@@ -40,3 +40,4 @@ Case colours
 3 rainbow blue-pink
 4 white
 5 galaxy black
+6 gold
