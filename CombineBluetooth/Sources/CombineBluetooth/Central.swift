@@ -24,6 +24,28 @@ public class Central: NSObject, ObservableObject {
         state = _cbCentralManager.state
     }
     
+    public func discoverPeripherals<T: PeripheralProtocol & AdvertisementMatcher>(matching peripheralType: T.Type) -> AnyPublisher<[T],Never> {
+        return discoverConnections(for: T.self)
+            .map{ $0.compactMap { $0.peripheral as? T } }
+            .eraseToAnyPublisher()
+    }
+    
+    public func discoverConnections<T: PeripheralProtocol & AdvertisementMatcher>(for peripheralType: T.Type) -> AnyPublisher<[Connection],Never> {
+        registerPeripheralType(peripheralType)
+        let cons = scan(forServices: peripheralType.advertisedUUIDs).map{ $0.filter { connection -> Bool in
+            return connection.peripheral is T
+            }}.eraseToAnyPublisher()
+        return cons
+        
+    }
+    
+    public func disconnectAllDevices(){
+        connections.forEach { (_, connection) in
+            connection.disconnect()
+        }
+    }
+    
+    
     let allCBPeripherals: CurrentValueSubject<[CBPeripheral],Error> = .init([])
     
     private func scan(forServices services: Set<CBUUID>? = nil)->AnyPublisher<[Connection],Never>{
@@ -50,21 +72,7 @@ public class Central: NSObject, ObservableObject {
         }).eraseToAnyPublisher()
     }
     
-    
-    public func discoverConnections<T: PeripheralProtocol & AdvertisementMatcher>(for peripheralType: T.Type) -> AnyPublisher<[Connection],Never> {
-        registerPeripheralType(peripheralType)
-        let cons = scan(forServices: peripheralType.advertisedUUIDs).map{ $0.filter { connection -> Bool in
-            return connection.peripheral is T
-            }}.eraseToAnyPublisher()
-        return cons
-        
-    }
-    
-    public func disconnectAllDevices(){
-        connections.forEach { (_, connection) in
-            connection.disconnect()
-        }
-    }
+
     
     private var knownPeripheralTypes: [AdvertisementMatcher.Type] = []
     

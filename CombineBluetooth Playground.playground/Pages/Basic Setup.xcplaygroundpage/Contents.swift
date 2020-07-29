@@ -3,8 +3,11 @@ import Combine
 import PlaygroundSupport
 import CombineBluetooth
 
+PlaygroundPage.current.needsIndefiniteExecution = true
 
+var bag = Set<AnyCancellable>()
 
+/// Create a model for the peripheral, composed of a bunch of services
 class ThingWithInfo: Peripheral, AdvertisementMatcher {
 
     static var advertisedServiceUUIDs: [String] = ["180A"]
@@ -13,6 +16,7 @@ class ThingWithInfo: Peripheral, AdvertisementMatcher {
 
 }
 
+/// Create models for each Service
 class DeviceInfoService: ServiceProtocol {
     required init(){}
 
@@ -23,8 +27,14 @@ class DeviceInfoService: ServiceProtocol {
 
 }
 
+
 let central = Central()
 var connectionPub = central.discoverConnections(for: ThingWithInfo.self)
+
+connectionPub.sink { (connections) in
+    print(connections)
+}.store(in: &bag)
+
 
 //
 //
