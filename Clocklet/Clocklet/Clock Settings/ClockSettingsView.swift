@@ -33,16 +33,16 @@ struct ClockSettingsView: View {
 
                 }
             }
-            settingsService.availableSeparatorAnimations.map { _ in
-                ConfigItemView(icon: Image(systemName:"rays"), title: "Blink separators") {
-                    
-                    Picker("What do you want", selection: self.settingsService.selectedAnimation){
-                        ForEach(self.settingsService.separatorAnimations) { item in
-                            Text(item)
-                        }
-                    }.pickerStyle(SegmentedPickerStyle())
-                }
-            }
+//            settingsService.availableSeparatorAnimations.map { _ in
+//                ConfigItemView(icon: Image(systemName:"rays"), title: "Blink separators") {
+//                    
+//                    Picker("What do you want", selection: self.settingsService.selectedAnimation){
+//                        ForEach(self.settingsService.separatorAnimations) { item in
+//                            Text(item)
+//                        }
+//                    }.pickerStyle(SegmentedPickerStyle())
+//                }
+//            }
         }
     }
 }
