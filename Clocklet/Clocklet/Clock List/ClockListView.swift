@@ -61,7 +61,7 @@ struct ClockListView: View {
                         VStack(spacing:20){
                         Text("Hello! This is the Clocklet app for configuring your Clocklet.")
                         Spacer()
-//                        if clockList.clocks.count == 0 {
+                        if clockList.clocks.count == 0 {
                             Text("I've not got a clocklet").bold().foregroundColor(Color(.systemBackground)).frame(maxWidth: .infinity)
                                     
 
@@ -79,7 +79,7 @@ struct ClockListView: View {
                             })
 
                                 
-//                        }
+                        }
                             
                         ForEach(clockList.clocks) { clock in
                             NavigationLink(destination:
