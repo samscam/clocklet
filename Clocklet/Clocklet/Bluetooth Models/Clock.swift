@@ -168,7 +168,7 @@ enum CaseColor: UInt16, Codable {
     case bluePink = 3
     case white = 4
     case black = 5
-    
+    case gold = 6
     
     var imageName: String {
         switch self{
@@ -178,7 +178,7 @@ enum CaseColor: UInt16, Codable {
         case .bluePink: return "r5-bluepink"
         case .white: return "r5-white"
         case .black: return "r5-black"
-        
+        case .gold: return "r5-gold"
         }
     }
 }
