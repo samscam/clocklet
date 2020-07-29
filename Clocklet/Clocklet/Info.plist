@@ -23,11 +23,19 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Clocklet uses Bluetooth to communicate with your clock</string>
+	<string>The Clocklet app uses Bluetooth to communicate with your Clocklet</string>
 	<key>NSLocationUsageDescription</key>
 	<string>Clocklet needs to know your location to get accurate weather reports</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Use your iOS device location to set the location of your Clocklet</string>
+	<string>Clocklet needs to know your location to get accurate weather reports</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Clocklet </string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Clocklet needs to know your location to get accurate weather reports</string>
+	<key>NSLocationTemporaryUsageDescriptionDictionary</key>
+	<dict/>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>The Clocklet app uses Bluetooth to communicate with your Clocklet</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
