@@ -22,9 +22,11 @@ BTTechnicalService::BTTechnicalService(BLEServer *server){
     uint32_t serial = clocklet_serial();
     sprintf(buf,"%d",serial);
     cSerialNumber->setValue(buf);
-
+    
+    char *firmwareVersionString;
+    asprintf(&firmwareVersionString,"%s (%s)",VERSION,GIT_HASH);
     cFirmwareVersion = deviceInfoService->createCharacteristic(BLEUUID((uint16_t)0x2A26), BLECharacteristic::PROPERTY_READ);
-    cFirmwareVersion->setValue(VERSION);
+    cFirmwareVersion->setValue(firmwareVersionString);
     deviceInfoService->start();
 
     // For other more custom stuff we have another service

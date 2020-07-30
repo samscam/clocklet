@@ -128,7 +128,7 @@ void setup() {
   Serial.println(" |              |   ");
   Serial.println("  --------------   \n");
 
-  Serial.printf("Firmware Version: %s\n",VERSION);
+  Serial.printf("Firmware Version: %s (%s)\n",VERSION,GIT_HASH);
 
   // Notification queues
   prefsChangedQueue = xQueueCreate(1, sizeof(bool));
