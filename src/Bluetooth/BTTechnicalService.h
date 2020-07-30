@@ -33,6 +33,7 @@ private:
     ResetHandler *resetHandler;
 
     PreferencesGlue<bool> *stagingGlue;
+    PreferencesGlue<bool> *autoUpdatesGlue;
 };
 
 

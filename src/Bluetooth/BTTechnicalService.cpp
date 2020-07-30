@@ -39,6 +39,12 @@ BTTechnicalService::BTTechnicalService(BLEServer *server){
     noQueue,
     "clocklet",false);
 
+    autoUpdatesGlue = new PreferencesGlue<bool>("3499658F-6794-4690-8728-EB96BFFD01FA",
+    "autoUpdates",
+    pservice,
+    noQueue,
+    "clocklet",true);
+
     pservice->start();
 }
 
