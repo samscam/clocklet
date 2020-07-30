@@ -158,8 +158,10 @@ extension Connection: CBPeripheralDelegate{
         
         for characteristic in characteristics {
             peripheral.setNotifyValue(true, for: characteristic)
-            print("Discovered char: ", characteristic)
+            peripheral.discoverDescriptors(for: characteristic)
             peripheral.readValue(for: characteristic)
+            
+            
         }
         
     }
@@ -177,6 +179,7 @@ extension Connection: CBPeripheralDelegate{
     }
     
     public func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
+
         if let service = self.peripheral?.serviceWrapper(for: characteristic.service){
             service.didUpdateValue(for: characteristic, error: error)
         }
@@ -187,7 +190,6 @@ extension Connection: CBPeripheralDelegate{
     }
     
     public func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
-
     }
     
     public func peripheralIsReady(toSendWriteWithoutResponse peripheral: CBPeripheral) {

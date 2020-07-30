@@ -41,7 +41,7 @@ extension Clock {
                     }.store(in: &self.bag)
                     networkService.currentNetwork = CurrentNetwork(status: .disconnected, connected: false, configured: false, ssid: nil, channel: 5, ip: nil, rssi: -10)
                     
-                    networkService.availableNetworks = [
+                    networkService.scannedNetworks = [
                         AvailableNetwork(ssid: "One network", enctype: .wpa2psk, rssi: -30, channel: 5, bssid: "bssone"),
                         AvailableNetwork(ssid: "Two network", enctype: .open, rssi: -30, channel: 5, bssid: "bsstwo"),
                         AvailableNetwork(ssid: "Three network", enctype: .wpa2psk, rssi: -80, channel: 6, bssid: "bssthree"),

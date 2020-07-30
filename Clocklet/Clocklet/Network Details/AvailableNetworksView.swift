@@ -18,15 +18,14 @@ struct AvailableNetworksView: View {
         ConfigItemView(icon: Image(systemName:"antenna.radiowaves.left.and.right"), title: "Available networks") {
             VStack(alignment: .leading, spacing: 5){
                 
-                self.networkService.availableNetworks.map{ networks in
-                    ForEach(networks){ network in
+                    ForEach(self.networkService.scannedNetworks)
+                        { network in
 
                         
                             NavigationLink(destination:EnterPasswordView(network: network, networkService: self.networkService)){
                                 AvailableNetworkView(network: network)
                             }
                         }
-                }
                 
 
 
