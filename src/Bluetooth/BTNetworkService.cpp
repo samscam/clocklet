@@ -7,12 +7,84 @@
 #include <esp_wifi.h>
 #include <esp_log.h>
 #include "Loggery.h"
+#include <BLE2902.h>
 #define TAG "BTNetworkService"
 
 #define CH_CURRENTNETWORK_UUID "BEB5483E-36E1-4688-B7F5-EA07361B26A8"
 #define CH_AVAILABLENETWORKS_UUID "AF2B36C7-0E65-457F-A8AB-B996B656CF32"
 #define CH_JOINNETWORK_UUID "DFBDE057-782C-49F8-A054-46D19B404D9F"
 
+
+NetworkScanTask::NetworkScanTask(BLECharacteristic *availableNetworks) : Task("NetworkScan", 3072,  5){
+    this->setCore(1);
+    ch_availableNetworks = availableNetworks;
+}
+
+void NetworkScanTask::run(void *data){
+    delay(3000);
+    for (;;){
+        _performWiFiScan();
+
+        ESP_LOGD("NETSCAN", "***** HIGH WATER %d", uxTaskGetStackHighWaterMark(NULL));
+        delay(10000);
+    }
+}
+
+void NetworkScanTask::_performWiFiScan(){
+    LOGMEM;
+    bool runningScan = (WiFi.scanNetworks(true,true,false) == WIFI_SCAN_RUNNING);
+    int networkCount = 0;
+
+    while (runningScan){
+        int16_t scanComplete = WiFi.scanComplete();
+        
+        if (scanComplete == WIFI_SCAN_FAILED) {
+            return;
+        }
+
+        if (scanComplete >= 0){
+            networkCount = scanComplete;
+            runningScan = false;
+        }
+
+        delay(10);
+    }
+
+
+    for (int i=0;(i<networkCount && i<MAX_NETS);i++){
+        StaticJsonDocument<512> doc;
+        NetworkInfo netInfo = {0};
+        netInfo.index = i;
+
+        WiFi.getNetworkInfo(netInfo.index,netInfo.ssid,netInfo.enctype,netInfo.rssi,netInfo.bssid,netInfo.channel);
+
+        ESP_LOGI(TAG,"Found %s (ch %d rssi %d)\n",netInfo.ssid,netInfo.channel,netInfo.rssi);
+
+        _encodeNetInfo(doc,netInfo);
+        String outputStr = "";
+        serializeJson(doc,outputStr);
+
+        uint len = outputStr.length()+1;
+        char availableJson[len];
+        outputStr.toCharArray(availableJson,len);
+        ESP_LOGI(TAG,"%s",availableJson);
+        ch_availableNetworks->setValue(availableJson);
+        ch_availableNetworks->notify(true);
+        delay(200);
+    }
+
+    LOGMEM;
+}
+
+
+void NetworkScanTask::_encodeNetInfo(JsonDocument &doc, NetworkInfo netInfo){
+    // JsonObject obj = doc.createNestedObject();
+    doc["ssid"]=netInfo.ssid;
+    doc["enctype"]=netInfo.enctype;
+    doc["channel"]=netInfo.channel;
+    doc["rssi"]=netInfo.rssi;
+    doc["bssid"]=_mac2String(netInfo.bssid);
+}
 
 // This bit is horrible - really something else should be doing the job of catching wifi status updates and distributing them around via a queue
 BTNetworkService *btNetworkServiceInstance;
@@ -57,15 +129,18 @@ BTNetworkService::BTNetworkService(BLEServer *pServer, QueueHandle_t networkChan
     ch_joinNetwork->setCallbacks(this);
 
     // BLE2902* p2902Descriptor = new BLE2902();
+    // p2902Descriptor->setIndications(true);
     // p2902Descriptor->setNotifications(true);
-    // // ch_currentNetwork->addDescriptor(p2902Descriptor);
-    // // ch_availableNetworks->addDescriptor(p2902Descriptor);
-    // ch_joinNetwork->addDescriptor(p2902Descriptor);
-    // /*
-    //     * Authorized permission to read/write descriptor to protect notify/indicate requests
-    //     */
+
     // p2902Descriptor->setAccessPermissions(ESP_GATT_PERM_READ_ENCRYPTED | ESP_GATT_PERM_WRITE_ENCRYPTED);
 
+
+    // // ch_currentNetwork->addDescriptor(p2902Descriptor);
+    // ch_availableNetworks->addDescriptor(p2902Descriptor);
+    // ch_joinNetwork->addDescriptor(p2902Descriptor);
+    /*
+        * Authorized permission to read/write descriptor to protect notify/indicate requests
+        */
 
     sv_network->start();
 
@@ -73,12 +148,19 @@ BTNetworkService::BTNetworkService(BLEServer *pServer, QueueHandle_t networkChan
 }
 
 void BTNetworkService::onConnect(){
+
+    _networkScanTask = new NetworkScanTask(ch_availableNetworks);
+    _networkScanTask->start();
+
     _wifiEvent = WiFi.onEvent(wifiEventCb);
-    _performWifiScan();
     _updateCurrentNetwork();
+
 }
 
 void BTNetworkService::onDisconnect(){
+    _networkScanTask->stop();
+    delete(_networkScanTask);
+
     WiFi.removeEvent(_wifiEvent);
 }
 
@@ -250,57 +332,10 @@ void BTNetworkService::wifiEvent(WiFiEvent_t event){
 }
 
 
-// Disaster! We are limited to 512 chars in a gatt value...
-void BTNetworkService::_performWifiScan(){
-    LOGMEM;
-    bool runningScan = (WiFi.scanNetworks(true,true,false) == WIFI_SCAN_RUNNING);
-    int networkCount = 0;
-
-    while (runningScan){
-        networkCount = WiFi.scanComplete();
-        if (networkCount >= 0){
-            runningScan = false;
-        }
-    }
-
-    StaticJsonDocument<2048> doc;
-    // DynamicJsonDocument doc(2048);
-    // JsonArray array = doc.createNestedArray();
-
-    for (int i=0;(i<networkCount && i<MAX_NETS);i++){
-        NetworkInfo netInfo = {0};
-        netInfo.index = i;
-
-        WiFi.getNetworkInfo(netInfo.index,netInfo.ssid,netInfo.enctype,netInfo.rssi,netInfo.bssid,netInfo.channel);
-        // networks.push_back(netInfo);
-        ESP_LOGD(TAG,"Found %s (ch %d rssi %d)\n",netInfo.ssid,netInfo.channel,netInfo.rssi);
-
-        _encodeNetInfo(doc,netInfo);
-    }
-    String outputStr = "";
-    serializeJson(doc,outputStr);
-
-    uint len = outputStr.length()+1;
-    char availableJson[len];
-    outputStr.toCharArray(availableJson,len);
-    ESP_LOGD(TAG,"%s",availableJson);
-    ch_availableNetworks->setValue(availableJson);
-    ch_availableNetworks->notify(true);
-    LOGMEM;
-}
 
 
-void BTNetworkService::_encodeNetInfo(JsonDocument &doc, NetworkInfo netInfo){
-    JsonObject obj = doc.createNestedObject();
-    obj["ssid"]=netInfo.ssid;
-    obj["enctype"]=netInfo.enctype;
-    obj["channel"]=netInfo.channel;
-    obj["rssi"]=netInfo.rssi;
-    obj["bssid"]=_mac2String(netInfo.bssid);
-}
 
-
-String BTNetworkService::_mac2String(uint8_t * bytes)
+String _mac2String(uint8_t * bytes)
 {
   String s;
   int len = sizeof(bytes);

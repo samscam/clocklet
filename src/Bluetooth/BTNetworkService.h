@@ -6,6 +6,8 @@
 #include <WiFi.h>
 #include <ArduinoJson.h>
 
+#include "Utilities/Task.h"
+
 #define SV_NETWORK_UUID     "68D924A1-C1B2-497B-AC16-FD1D98EDB41F"
 
 
@@ -23,6 +25,15 @@ struct NetworkInfo {
     String ssid;
 };
 
+class NetworkScanTask: public Task {
+public:
+    NetworkScanTask(BLECharacteristic *availableNetworks);
+    void run(void *data);
+private:
+    BLECharacteristic *ch_availableNetworks;
+    void _performWiFiScan();
+    void _encodeNetInfo(JsonDocument &doc, NetworkInfo netInfo);
+};
 
 class BTNetworkService: public BLECharacteristicCallbacks  {
 public:
@@ -36,7 +47,7 @@ public:
     void onDisconnect();
 
 private:
-    void _performWifiScan();
+
     void _updateCurrentNetwork();
 
     void _encodeNetInfo(JsonDocument &doc, NetworkInfo netInfo);
@@ -44,10 +55,12 @@ private:
 
     bool _shouldScan = false;
 
-    String _mac2String(uint8_t * bytes);
+    
 
     QueueHandle_t _networkChangedQueue;
     QueueHandle_t _networkStatusQueue;
+
+    NetworkScanTask *_networkScanTask;
 
     // Network provisioning
     BLEService *sv_network;
@@ -59,6 +72,6 @@ private:
     wifi_event_id_t _wifiEvent;
 };
 
-
+String _mac2String(uint8_t * bytes);
 
 void wifiEventCb(WiFiEvent_t event);
