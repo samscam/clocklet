@@ -16,7 +16,7 @@ struct ClockTechnicalView: View {
     var body: some View {
         ScrollView{
         VStack{
-            VStack{
+            VStack(alignment:.leading){
                 deviceInfoService.model.map{ model in
                     HStack{
                         Text("Model number:")
@@ -38,6 +38,8 @@ struct ClockTechnicalView: View {
                 }
 
             }
+            
+
             
             ConfigItemView(icon: Image(systemName:"flame"), iconColor: .red, title: "Reset Clocklet") {
                 VStack(spacing:20){
@@ -67,6 +69,13 @@ struct ClockTechnicalView: View {
                     Text("Factory reset will erase everything including bluetooth pairing information. You will have to go into your phone's bluetooth settings afterwards and delete the entry for the Clocklet.")
                 }
             }
+            
+            technicalService.staging.map{ _ in
+                ConfigItemView(icon: Image(systemName:"ant"), iconColor: .blue, title: "Staging mode") {
+                    Toggle("Use staging builds when updating. Might brick your Clocklet.", isOn: technicalService.stagingSelected)
+                }
+            }
+            
         }.padding()
         }
         .navigationBarTitle( Text("Technical Stuff"), displayMode:.automatic)
