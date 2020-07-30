@@ -25,6 +25,7 @@ struct ConfigItemView<Content:View>: View {
     
     var body: some View{
         VStack(alignment: .leading, spacing: 10) {
+            Spacer()
             HStack(alignment: .center,spacing:10){
                 
                 icon.resizable().scaledToFit().frame(width: 30, height: 40, alignment: .center).foregroundColor(self.iconColor ?? Color("Black-ish"))
@@ -32,6 +33,7 @@ struct ConfigItemView<Content:View>: View {
             }
             
             content().padding(.leading, 40)
+            Spacer()
         }.frame(minWidth: 0, maxWidth: .infinity,  alignment: Alignment.topLeading)
     }
 }

@@ -15,7 +15,8 @@ struct ClockTechnicalView: View {
     
     var body: some View {
         ScrollView{
-        VStack{
+        VStack(alignment:.leading){
+            Spacer()
             VStack(alignment:.leading){
                 deviceInfoService.model.map{ model in
                     HStack{
@@ -38,8 +39,8 @@ struct ClockTechnicalView: View {
                 }
 
             }
+            Spacer()
             
-
             technicalService.autoUpdates.map{ _ in
                 ConfigItemView(icon: Image(systemName:"goforward"), iconColor: .green, title: "Firmware Updates") {
                     Toggle("Update firmware automatically (checks daily or shortly after booting)", isOn: technicalService.autoUpdatesSelected)
@@ -47,7 +48,7 @@ struct ClockTechnicalView: View {
             }
             
             ConfigItemView(icon: Image(systemName:"flame"), iconColor: .red, title: "Reset Clocklet") {
-                VStack(spacing:20){
+                VStack(alignment: .leading, spacing:20){
                     Button(action:{
                         self.technicalService.reset = .reboot
                     }){
@@ -57,7 +58,7 @@ struct ClockTechnicalView: View {
                             .padding()
                             .background(Capsule().fill(Color.orange))
                     }
-                    Text("Clocklet will reboot. The app should reconnect once it has started.")
+                    Text("Clocklet will reboot. The app should reconnect once it has started.").fixedSize(horizontal: false, vertical: true)
                     
                     Spacer()
                     
@@ -71,7 +72,7 @@ struct ClockTechnicalView: View {
                             .background(Capsule().fill(Color.red))
                     }
                     
-                    Text("Factory reset will erase everything including bluetooth pairing information. You will have to go into your phone's bluetooth settings afterwards and delete the entry for the Clocklet.")
+                    Text("Factory reset will erase everything including bluetooth pairing information. You will have to go into your phone's bluetooth settings afterwards and delete the entry for the Clocklet.").fixedSize(horizontal: false, vertical: true)
                 }
             }
             
