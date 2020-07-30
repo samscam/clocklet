@@ -31,6 +31,8 @@ struct EnterPasswordView: View {
 //                
                 
                 TextField("Password", text: self.$password)
+                    .disableAutocorrection(true)
+                    .autocapitalization(.none)
                     .font(.title)
                     .padding()
                     .background(Color.gray)
