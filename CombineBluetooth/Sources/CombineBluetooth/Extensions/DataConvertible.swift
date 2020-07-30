@@ -30,16 +30,17 @@ extension Float: DataConvertible{}
 extension Bool: DataConvertible{
     
     public init?(data: Data) {
-        var value: Self = false
-        guard data.count == MemoryLayout.size(ofValue: value) else { return nil }
-        _ = withUnsafeMutableBytes(of: &value, { data.copyBytes(to: $0)} )
-        self = value
+        let byte: UInt8 = data[0]
+        self = (byte != 0)
     }
 
     public var data: Data {
-        return withUnsafeBytes(of: self) { Data($0) }
+        var data = Data(capacity: 1)
+        data.append(self ? 1 : 0)
+        return data
     }
 }
+
 
 extension String: DataConvertible{
     public init?(data: Data){
