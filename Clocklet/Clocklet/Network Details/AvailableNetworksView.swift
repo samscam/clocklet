@@ -20,6 +20,8 @@ struct AvailableNetworksView: View {
                 
                 self.networkService.availableNetworks.map{ networks in
                     ForEach(networks){ network in
+
+                        
                             NavigationLink(destination:EnterPasswordView(network: network, networkService: self.networkService)){
                                 AvailableNetworkView(network: network)
                             }
@@ -60,12 +62,21 @@ struct NetworkStatusIconView: View{
 struct AvailableNetworkView: View {
     var network: AvailableNetwork
     var body: some View {
-        HStack(alignment: .firstTextBaseline){
+        HStack(alignment: .center){
             
             
             NetworkStatusIconView(network: network)
             
             Text(network.ssid).font(.headline).bold().lineLimit(2)
+            
+            Spacer()
+            
+            if network.enctype == .open {
+                Image(systemName:"arrow.left.and.right.circle").resizable().scaledToFit().frame(width: 30, height: 40, alignment: .center)
+            } else {
+                Image(systemName:"lock.circle").resizable().scaledToFit().frame(width: 30, height: 40, alignment: .center)
+            }
+            
 //
 //                HStack {
 //                    Text("Channel:")

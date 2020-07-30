@@ -29,17 +29,18 @@ struct EnterPasswordView: View {
 //                    .cornerRadius(10)
 //                    .overlay(RoundedRectangle(cornerRadius: 10, style: .circular).stroke(Color.primary, lineWidth: 1))
 //                
-                
-                TextField("Password", text: self.$password)
-                    .disableAutocorrection(true)
-                    .autocapitalization(.none)
-                    .font(.title)
-                    .padding()
-                    .background(Color.gray)
-                    .cornerRadius(10)
-                    .overlay(RoundedRectangle(cornerRadius: 10, style: .circular).stroke(Color.secondary, lineWidth: 1)
+                if self.network.enctype != .open {
+                    TextField("Password", text: self.$password)
+                        .disableAutocorrection(true)
+                        .autocapitalization(.none)
+                        .font(.title)
+                        .padding()
+                        .background(Color.gray)
+                        .cornerRadius(10)
+                        .overlay(RoundedRectangle(cornerRadius: 10, style: .circular).stroke(Color.secondary, lineWidth: 1)
 
-                )
+                    )
+                }
                         
                 
                     Button(action:{
