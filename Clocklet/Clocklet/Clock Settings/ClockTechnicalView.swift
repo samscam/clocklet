@@ -40,6 +40,11 @@ struct ClockTechnicalView: View {
             }
             
 
+            technicalService.autoUpdates.map{ _ in
+                ConfigItemView(icon: Image(systemName:"goforward"), iconColor: .green, title: "Firmware Updates") {
+                    Toggle("Update firmware automatically (checks daily or shortly after booting)", isOn: technicalService.autoUpdatesSelected)
+                }
+            }
             
             ConfigItemView(icon: Image(systemName:"flame"), iconColor: .red, title: "Reset Clocklet") {
                 VStack(spacing:20){
