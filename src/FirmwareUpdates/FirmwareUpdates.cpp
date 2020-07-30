@@ -34,6 +34,8 @@ bool FirmwareUpdates::performUpdate(){
     Preferences preferences = Preferences();
     preferences.begin("clocklet", true);
     bool staging = preferences.getBool("staging",false);
+    preferences.end();
+
     if (checkForUpdates(staging)){
         if (updateAvailable){
             fwUpdateStatus = updating;
@@ -46,11 +48,10 @@ bool FirmwareUpdates::performUpdate(){
                 xQueueSend(_firmwareUpdateQueue, &fwUpdateStatus,(TickType_t)0 );
             }
         }
-        preferences.end();
+        
         ESP_LOGI(TAG,"Firmware update check complete");
         return true;
     } else {
-        preferences.end();
         ESP_LOGE(TAG,"Update check failed");
         return false;
     }

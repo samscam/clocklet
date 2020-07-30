@@ -32,6 +32,12 @@ BTTechnicalService::BTTechnicalService(BLEServer *server){
 
     resetHandler = new ResetHandler(pservice);
 
+    void *noQueue{ nullptr };
+    stagingGlue = new PreferencesGlue<bool>("78FEC95A-61A9-4C1C-BDA1-F79245E118C0",
+    "staging",
+    pservice,
+    noQueue,
+    "clocklet",false);
 
     pservice->start();
 }

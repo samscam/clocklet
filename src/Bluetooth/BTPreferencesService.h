@@ -4,22 +4,7 @@
 #include <BLEUtils.h>
 #include <BLEService.h>
 
-#include <Preferences.h>
-
-
-class PreferencesGlueString: public BLECharacteristicCallbacks {
-public:
-    PreferencesGlueString(const char *uuid, const char *prefsKey, BLEService *pservice,QueueHandle_t prefsChangedQueue, Preferences *preferences, const char *defaultValue);
-    void onWrite(BLECharacteristic* pCharacteristic);
-    void onRead(BLECharacteristic* pCharacteristic);
-
-private:
-    const char *_prefsKey;
-    const char *_defaultValue;
-    BLECharacteristic *_characteristic;
-    Preferences *_preferences;
-    QueueHandle_t _prefsChangedQueue;
-};
+#include "BTPreferencesGlue.h"
 
 
 class BTPreferencesService {
@@ -30,10 +15,11 @@ public:
     BTPreferencesService(BLEServer *server, QueueHandle_t prefsChangedQueue);
 
     BLECharacteristic *availableSeparatorAnimationsCharacteristic;
-    PreferencesGlueString *separatorAnimationsGlue;
+    PreferencesGlue<std::string> *separatorAnimationsGlue;
 
     BLECharacteristic *availableTimeStyles;
-    PreferencesGlueString *timeStyleGlue;
+    PreferencesGlue<std::string> *timeStyleGlue;
+
 };
 
 

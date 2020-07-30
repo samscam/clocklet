@@ -5,6 +5,8 @@
 #include <BLEService.h>
 
 
+#include "BTPreferencesGlue.h"
+
 class ResetHandler: public BLECharacteristicCallbacks {
 public:
     ResetHandler(BLEService *pService);
@@ -29,6 +31,8 @@ private:
     BLECharacteristic *cFirmwareVersion;
 
     ResetHandler *resetHandler;
+
+    PreferencesGlue<bool> *stagingGlue;
 };
 
 
