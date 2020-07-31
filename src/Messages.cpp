@@ -9,7 +9,6 @@ const char *messages[] = {
   "Obedience is mandatory",
   "Boss clock",
   "Decimalised time should be a thing",
-  "If you spill tea on me I will melt",
   "Commit Commit Commit",
   "WOOP WOOP time to rub bellies WOOP WOOP",
   "All your base are belong to us",
@@ -31,8 +30,12 @@ const char *messages[] = {
   "Everything is going to be fine",
   "Be a LERT!",
   "Clocklet wants a bagel",
-  "Clocklet wants a fucking bagel!",
-  "Not long now",
+  "Time is the most unknown of all unknown things.",
+  "Time is a measure of motion. All things in time measure all the time.",
+  "Time is irrelevant. Lunch time doubly so.",
+  "Time is eternity that sees its own implementations.",
+  "Time destroys the false opinions, but confirms judgments of nature.",
+  "C-series phenomena FTW"
 };
 
 #define numMessages (sizeof(messages)/sizeof(char *)) //array size
