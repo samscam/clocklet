@@ -56,6 +56,7 @@ void PreferencesGlue<T>::onRead(BLECharacteristic* pCharacteristic) {
 template <>  inline
 void PreferencesGlue<std::string>::onWrite(BLECharacteristic* pCharacteristic) {
     std::string value = pCharacteristic->getValue();
+    ESP_LOGI(TAG,"Preferences change: %s IS NOW %s",_prefsKey,value.c_str());
     Preferences *preferences = new Preferences();
     preferences->begin(_prefsNamespace, false);
     preferences->putString(_prefsKey, value.c_str());
@@ -83,7 +84,7 @@ void PreferencesGlue<bool>::onWrite(BLECharacteristic* pCharacteristic) {
     uint8_t *data = pCharacteristic->getData();
 
     bool value = (bool) data[0];
-    ESP_LOGE(TAG,"STAGING IS NOW ****** %d",value);
+    ESP_LOGI(TAG,"Preferences change: %s IS NOW %d",_prefsKey,value);
     Preferences *preferences = new Preferences();
     preferences->begin("clocklet", false);
     preferences->putBool(_prefsKey, value);

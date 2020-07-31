@@ -34,7 +34,13 @@ bool FirmwareUpdates::performUpdate(){
     Preferences preferences = Preferences();
     preferences.begin("clocklet", true);
     bool staging = preferences.getBool("staging",false);
+    bool enabled = preferences.getBool("autoUpdates",true);
     preferences.end();
+
+    if (!enabled){
+        ESP_LOGI(TAG,"Firmware updates are disabled");
+        return true;
+    }
 
     if (checkForUpdates(staging)){
         if (updateAvailable){
