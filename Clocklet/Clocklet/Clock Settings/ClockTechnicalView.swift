@@ -41,11 +41,7 @@ struct ClockTechnicalView: View {
             }
             Spacer()
             
-            technicalService.autoUpdates.map{ _ in
-                ConfigItemView(icon: Image(systemName:"goforward"), iconColor: .green, title: "Firmware Updates") {
-                    Toggle("Update firmware automatically (checks daily or shortly after booting)", isOn: self.technicalService.autoUpdatesSelected)
-                }
-            }
+
             
             ConfigItemView(icon: Image(systemName:"flame"), iconColor: .red, title: "Reset Clocklet") {
                 VStack(alignment: .leading, spacing:20){
@@ -73,6 +69,12 @@ struct ClockTechnicalView: View {
                     }
                     
                     Text("Factory reset will erase everything including bluetooth pairing information. You will have to go into your phone's bluetooth settings afterwards and delete the entry for the Clocklet.").fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            
+            technicalService.autoUpdates.map{ _ in
+                ConfigItemView(icon: Image(systemName:"goforward"), iconColor: .green, title: "Firmware Updates") {
+                    Toggle("Update firmware automatically (checks daily or shortly after booting)", isOn: self.technicalService.autoUpdatesSelected)
                 }
             }
             
