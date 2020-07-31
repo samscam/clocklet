@@ -22,25 +22,11 @@
 
 BlueStuff::BlueStuff(QueueHandle_t preferencesChangedQueue,
             QueueHandle_t networkChangedQueue,
-            QueueHandle_t networkStatusQueue, LocationManager *locationManager) : Task("UpdateScheduler", 5000,  5) {
-    this->setCore(1); // Run it on core one
+            QueueHandle_t networkStatusQueue, LocationManager *locationManager) {
     _preferencesChangedQueue =  preferencesChangedQueue;
     _networkChangedQueue = networkChangedQueue;
     _networkStatusQueue = networkStatusQueue;
     _locationManager = locationManager;
-}
-
-void BlueStuff::run(void *data) {
-
-    startBlueStuff();
-
-    // Wait for ever...
-    TickType_t xFrequency = pdMS_TO_TICKS(1000);
-    TickType_t xLastWakeTime = xTaskGetTickCount();
-    for (;;){
-        vTaskDelayUntil(&xLastWakeTime, xFrequency);
-    }
-
 }
 
 void BlueStuff::startBlueStuff(){

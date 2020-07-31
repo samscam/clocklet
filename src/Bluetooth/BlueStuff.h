@@ -18,14 +18,13 @@
 #include "../Location/LocationManager.h"
 
 
-class BlueStuff: public BLEServerCallbacks, public Task {
+class BlueStuff: public BLEServerCallbacks {
 
 public:
     BlueStuff(QueueHandle_t preferencesChangedQueue,
                 QueueHandle_t networkChangedQueue,
                 QueueHandle_t networkStatusQueue,
                 LocationManager *locationManager);
-    void run(void *data);
     void startBlueStuff();
     void stopBlueStuff();
 
