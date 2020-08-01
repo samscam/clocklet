@@ -39,6 +39,7 @@ extension Clock {
                             }
                         }
                     }.store(in: &self.bag)
+                    
                     networkService.currentNetwork = CurrentNetwork(status: .disconnected, connected: false, configured: false, ssid: nil, channel: 5, ip: nil, rssi: -10)
                     
                     networkService.scannedNetworks = [
@@ -57,7 +58,7 @@ extension Clock {
                      self.locationService?.currentLocation = CurrentLocation(configured: false, lat:  0, lng: 0)
                     
                     self.settingsService = SettingsService()
-                    self.settingsService?.availableTimeStyles = ["24 Hour","12 Hour","Decimal","Wonky"]
+                    self.settingsService?.availableTimeStyles = ["24 Hour","12 Hour","Decimal"]
                     self.settingsService?.timeStyle = "24 Hour"
                     self.settingsService?.availableSeparatorAnimations = ["Static","Blinky","Fade"]
                     self.settingsService?.separatorAnimation = "Fade"
