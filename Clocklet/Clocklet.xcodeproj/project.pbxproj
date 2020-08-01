@@ -136,6 +136,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		222D5AC124D5C08400D2FFB5 /* Location Details */ = {
+			isa = PBXGroup;
+			children = (
+				22551951235870240056B9CD /* LocationSummaryView.swift */,
+			);
+			path = "Location Details";
+			sourceTree = "<group>";
+		};
 		2265C29D24C0BC0A00F17506 /* Scripts */ = {
 			isa = PBXGroup;
 			children = (
@@ -173,6 +181,7 @@
 				228DF2642350703700480588 /* Clock List */,
 				229076B323646DD700074A35 /* Clock Details */,
 				22B2D0B124943B1A00D570E2 /* Clock Settings */,
+				222D5AC124D5C08400D2FFB5 /* Location Details */,
 				229076B423646E6100074A35 /* Network Details */,
 				228DF2632350702F00480588 /* Shared Views */,
 				222500CA24AE452A00B5872A /* Assets.xcassets */,
@@ -236,7 +245,6 @@
 			isa = PBXGroup;
 			children = (
 				224C5390234FAE7300A68928 /* ClockDetailsView.swift */,
-				22551951235870240056B9CD /* LocationSummaryView.swift */,
 				220DDB10236B9E3900429503 /* MapView.swift */,
 			);
 			path = "Clock Details";
