@@ -34,9 +34,8 @@ struct NetworkDetailView: View {
                     }
                 }
                 
-                networkService.availableNetworks.map{ _ in
-                    AvailableNetworksView().environmentObject(self.networkService.$availableNetworks)
-                }
+                
+                AvailableNetworksView()
             }.padding()
         }.navigationBarTitle(Text("Network Settings"), displayMode:.large)
         
