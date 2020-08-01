@@ -24,6 +24,7 @@
 		220DDB11236B9E3900429503 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220DDB10236B9E3900429503 /* MapView.swift */; };
 		222271A5232B887100508ADA /* ClockSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222271A4232B887100508ADA /* ClockSummaryView.swift */; };
 		222500CB24AE452B00B5872A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 222500CA24AE452A00B5872A /* Assets.xcassets */; };
+		222D5AC324D5C69500D2FFB5 /* LocationDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222D5AC224D5C69500D2FFB5 /* LocationDetailsView.swift */; };
 		22350E83233D359E00452BDF /* NetworkCharacteristics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22350E82233D359E00452BDF /* NetworkCharacteristics.swift */; };
 		2241E52523DD0ABB00ACE8A7 /* LocationProxyTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2241E52423DD0ABB00ACE8A7 /* LocationProxyTestView.swift */; };
 		224C538F234F6CDD00A68928 /* ClockListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224C538E234F6CDD00A68928 /* ClockListView.swift */; };
@@ -79,6 +80,7 @@
 		222271A4232B887100508ADA /* ClockSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockSummaryView.swift; sourceTree = "<group>"; };
 		222500C924AE451D00B5872A /* Clocklet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Clocklet.entitlements; sourceTree = "<group>"; };
 		222500CA24AE452A00B5872A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		222D5AC224D5C69500D2FFB5 /* LocationDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDetailsView.swift; sourceTree = "<group>"; };
 		22350E82233D359E00452BDF /* NetworkCharacteristics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkCharacteristics.swift; sourceTree = "<group>"; };
 		2241E52423DD0ABB00ACE8A7 /* LocationProxyTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProxyTestView.swift; sourceTree = "<group>"; };
 		224C538E234F6CDD00A68928 /* ClockListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockListView.swift; sourceTree = "<group>"; };
@@ -140,6 +142,7 @@
 			isa = PBXGroup;
 			children = (
 				22551951235870240056B9CD /* LocationSummaryView.swift */,
+				222D5AC224D5C69500D2FFB5 /* LocationDetailsView.swift */,
 			);
 			path = "Location Details";
 			sourceTree = "<group>";
@@ -423,6 +426,7 @@
 				229F3C68235EF82200EEA785 /* Clock.swift in Sources */,
 				222271A5232B887100508ADA /* ClockSummaryView.swift in Sources */,
 				229F3C6A235F427100EEA785 /* LocationService.swift in Sources */,
+				222D5AC324D5C69500D2FFB5 /* LocationDetailsView.swift in Sources */,
 				22BB977424C20CED0035D682 /* MockClock.swift in Sources */,
 				22350E83233D359E00452BDF /* NetworkCharacteristics.swift in Sources */,
 				2255195623587DB70056B9CD /* AvailableNetworksView.swift in Sources */,

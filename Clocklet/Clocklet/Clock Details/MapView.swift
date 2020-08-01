@@ -27,7 +27,7 @@ struct MapView: UIViewRepresentable {
 
 struct MapView_Previews: PreviewProvider {
     static var previews: some View {
-        let coord = CLLocationCoordinate2D(latitude: 34.011286, longitude: -116.166868)
+        let coord = CLLocationCoordinate2D(latitude: 53.480759, longitude: -2.242631)
         return MapView(coordinate: coord)
     }
 }

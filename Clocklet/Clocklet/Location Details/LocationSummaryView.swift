@@ -23,15 +23,15 @@ struct LocationSummaryView: View {
                     if currentLocation.configured {
                         self.locationService.placemark.map{ placemark in
                             VStack(alignment:.leading){
-                            HStack{
-                                Text("Place:").foregroundColor(.secondary)
-                                Text(placemark.locality ?? "Unknown Place").bold().foregroundColor(.primary)
-                            }
-                            
-                            HStack{
-                                Text("Time zone:").foregroundColor(.secondary)
-                                Text(placemark.timeZone?.identifier ?? "Unknown time zone").bold().foregroundColor(.primary)
-                            }
+                                HStack{
+                                    Text("Place:").foregroundColor(.secondary)
+                                    Text(placemark.locality ?? "Unknown Place").bold().foregroundColor(.primary)
+                                }
+                                
+                                HStack{
+                                    Text("Time zone:").foregroundColor(.secondary)
+                                    Text(placemark.timeZone?.identifier ?? "Unknown time zone").bold().foregroundColor(.primary)
+                                }
                             }
                         }
                     } else {
