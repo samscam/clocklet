@@ -345,7 +345,7 @@ void loop() {
   }
   if (detectTouchPeriod() > 5000){
     blueStuff = new BlueStuff(prefsChangedQueue,networkChangedQueue,networkStatusQueue,locationManager);
-    blueStuff->start();
+    blueStuff->startBlueStuff();
 
     display.setDeviceState(bluetooth);
     display.displayMessage("Bluetooth is on",good);
