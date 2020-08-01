@@ -163,10 +163,10 @@ bool FirmwareUpdates::checkForUpdates(bool useStaging) {
     size_t capacity;
 
     if (useStaging){
-        url = "https://api.github.com/repos/samscam/priscilla/releases";
+        url = "https://api.github.com/repos/samscam/clocklet/releases";
         capacity = 5*JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(5) + 5*JSON_OBJECT_SIZE(13) + 15*JSON_OBJECT_SIZE(18) + 30720; // 30k overhead
     } else {
-        url = "https://api.github.com/repos/samscam/priscilla/releases/latest";
+        url = "https://api.github.com/repos/samscam/clocklet/releases/latest";
         capacity = JSON_ARRAY_SIZE(1) + JSON_OBJECT_SIZE(13) + 3*JSON_OBJECT_SIZE(18) + 10240; // 10k overhead
     }
 
@@ -176,7 +176,7 @@ bool FirmwareUpdates::checkForUpdates(bool useStaging) {
 
     // Parse JSON object
     #if defined(CLOCKBRAIN)
-    SpiRamJsonDocument doc(capacity);
+    SpiRamJsonDocument doc(524288);
     #else
     DynamicJsonDocument doc(capacity);
     #endif
