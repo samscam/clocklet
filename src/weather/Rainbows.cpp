@@ -1,8 +1,13 @@
 #include "Rainbows.h"
+#include <esp_log.h>
+
 extern "C" {
     #include <SolTrack.h>
 }
 
+#define TAG "RAINBOWS"
+
+// The currentTime here must be UTC
 bool Rainbows::rainbowProbability(DateTime currentTime){
 
     if (!_sameDay(currentTime,_sunrise)){
@@ -64,14 +69,11 @@ void Rainbows::_calculateSunTimes(DateTime currentTimeUTC, Location currentLocat
 
     SolTrack_RiseSet(time, location, &rsPosition, &riseSet, rsAlt, useDegrees, useNorthEqualsZero);
 
-    Serial.printf("Sunrise %11.5lf\n",riseSet.riseTime);
-    
     _sunrise = _rsTimeToDateTime(currentTimeUTC,riseSet.riseTime);
     _sunset = _rsTimeToDateTime(currentTimeUTC,riseSet.setTime);
 
-    Serial.printf("Sunrise: %d:%d:%d\n",_sunrise.hour(),_sunrise.minute(),_sunrise.second());
-    Serial.printf("Sunset: %d:%d:%d\n",_sunset.hour(),_sunset.minute(),_sunset.second());
-    
+    ESP_LOGD(TAG,"Sunrise: %d:%d:%d UTC\n",_sunrise.hour(),_sunrise.minute(),_sunrise.second());
+    ESP_LOGD(TAG,"Sunset: %d:%d:%d UTC\n",_sunset.hour(),_sunset.minute(),_sunset.second());
     
     // When do we hit 42 degrees?
     rsAlt = 42.0 / R2D;
@@ -80,8 +82,8 @@ void Rainbows::_calculateSunTimes(DateTime currentTimeUTC, Location currentLocat
     _fortyTwoRise = _rsTimeToDateTime(currentTimeUTC,riseSet.riseTime);
     _fortyTwoSet = _rsTimeToDateTime(currentTimeUTC,riseSet.setTime);
 
-    Serial.printf("42 Rise: %d:%d:%d\n",_fortyTwoRise.hour(),_fortyTwoRise.minute(),_fortyTwoRise.second());
-    Serial.printf("42 Set: %d:%d:%d\n",_fortyTwoSet.hour(),_fortyTwoSet.minute(),_fortyTwoSet.second());
+    ESP_LOGD(TAG,"42 Rise: %d:%d:%d UTC\n",_fortyTwoRise.hour(),_fortyTwoRise.minute(),_fortyTwoRise.second());
+    ESP_LOGD(TAG,"42 Set: %d:%d:%d UTC\n",_fortyTwoSet.hour(),_fortyTwoSet.minute(),_fortyTwoSet.second());
     
 }
 
