@@ -39,7 +39,9 @@ struct ClockDetailsView: View {
                     }
                     
                     clock.locationService.map{ locationService in
+                        NavigationLink(destination: LocationDetailsView().environmentObject(locationService).environmentObject(clock)){
                         LocationSummaryView().environmentObject(locationService).accentColor(nil)
+                        }
                     }
                     
                     
