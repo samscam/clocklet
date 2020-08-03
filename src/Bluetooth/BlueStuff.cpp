@@ -112,12 +112,13 @@ void BlueStuff::startBlueStuff(){
     auto s = std::string(mfrdataBuffer,sizeof(mfrdataBuffer));
     scanResponseData.setManufacturerData(s);
 
-    pAdvertising->setScanResponseData(scanResponseData);
     pAdvertising->setAdvertisementData(advertisementData);
+    pAdvertising->setScanResponseData(scanResponseData);
+
 
     // Mythical settings that help with iPhone connections issue - don't seem to make any odds
-    pAdvertising->setMinPreferred(0x06);  
-    pAdvertising->setMinPreferred(0x12);
+    // pAdvertising->setMinPreferred(0x06);  
+    // pAdvertising->setMinPreferred(0x12);
     pAdvertising->setScanResponse(true);
     pAdvertising->start();
 
