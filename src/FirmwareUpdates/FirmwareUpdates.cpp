@@ -133,15 +133,9 @@ bool FirmwareUpdates::_parseGithubReleases(Stream *stream, bool useStaging){
 
 
     #if defined(CLOCKBRAIN)
-    SpiRamJsonDocument doc(524288);
+    SpiRamJsonDocument doc(512*1024);
     #else
-    size_t capacity;
-
-    if (useStaging){
-        capacity = 5*JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(5) + 5*JSON_OBJECT_SIZE(13) + 15*JSON_OBJECT_SIZE(18) + 30720; // 30k overhead
-    } else {
-        capacity = JSON_ARRAY_SIZE(1) + JSON_OBJECT_SIZE(13) + 3*JSON_OBJECT_SIZE(18) + 10240; // 10k overhead
-    }
+    size_t capacity = 64*1024;
     DynamicJsonDocument doc(capacity);
     #endif
     
