@@ -56,9 +56,9 @@ bool DarkSky::readReponseContent(Stream *stream) {
 
   // Allocate a temporary memory pool
   #if defined(CLOCKBRAIN)
-  SpiRamJsonDocument root(65536); // woo a whole 64k
+  SpiRamJsonDocument root(64*1024); // woo a whole 64k
   #else
-  DynamicJsonDocument root(30720);
+  DynamicJsonDocument root(32*1024);
   #endif
   
   auto error = deserializeJson(root,*stream);
