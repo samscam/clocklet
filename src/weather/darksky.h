@@ -6,7 +6,7 @@
 #include "Rainbows.h"
 
 #define DARKSKY_SERVER "api.darksky.net"
-#define DARKSKY_PATH "/forecast/%s/%f,%f?exclude=currently,minutely,daily,alerts,flags&units=si"
+#define DARKSKY_PATH "https://api.darksky.net/forecast/%s/%f,%f?exclude=currently,minutely,daily,alerts,flags&units=si"
 
 #define DARKSKY_HTTP_TIMEOUT 20  // max respone time from server
 #define DARKSKY_MAX_CONTENT_SIZE 16384       // max size of the HTTP response
@@ -14,13 +14,15 @@
 
 class DarkSky final : public WeatherClient {
 public:
-  DarkSky(WiFiClient &client);
+  DarkSky();
   virtual ~DarkSky() {};
   
   // Overrides
-  bool readReponseContent();
+  bool readReponseContent(Stream *stream);
   void setTimeHorizon(uint8_t hours);
   void setLocation(Location location);
+  char* constructURL();
+  const char* certificate();
 
 private:
 

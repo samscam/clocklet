@@ -1,7 +1,4 @@
-#include <WiFiClientSecure.h>
-#include <HTTPClient.h>
 #include <Update.h>
-
 #include <ArduinoJson.h>
 
 #include "FirmwareUpdates.h"
@@ -13,11 +10,39 @@
 #include "../Loggery.h"
 
 #include <Preferences.h>
+
+#include "../Utilities/HTTPnihClient.h"
+
 #include "../network.h"
 
 #define TAG "FIRMWARE";
 
 #define MAX_REDIRECT_DEPTH 5
+
+const char* digicert_ca = \
+"-----BEGIN CERTIFICATE-----\n" \
+"MIIDxTCCAq2gAwIBAgIQAqxcJmoLQJuPC3nyrkYldzANBgkqhkiG9w0BAQUFADBs\n" \
+"MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3\n" \
+"d3cuZGlnaWNlcnQuY29tMSswKQYDVQQDEyJEaWdpQ2VydCBIaWdoIEFzc3VyYW5j\n" \
+"ZSBFViBSb290IENBMB4XDTA2MTExMDAwMDAwMFoXDTMxMTExMDAwMDAwMFowbDEL\n" \
+"MAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3\n" \
+"LmRpZ2ljZXJ0LmNvbTErMCkGA1UEAxMiRGlnaUNlcnQgSGlnaCBBc3N1cmFuY2Ug\n" \
+"RVYgUm9vdCBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMbM5XPm\n" \
+"+9S75S0tMqbf5YE/yc0lSbZxKsPVlDRnogocsF9ppkCxxLeyj9CYpKlBWTrT3JTW\n" \
+"PNt0OKRKzE0lgvdKpVMSOO7zSW1xkX5jtqumX8OkhPhPYlG++MXs2ziS4wblCJEM\n" \
+"xChBVfvLWokVfnHoNb9Ncgk9vjo4UFt3MRuNs8ckRZqnrG0AFFoEt7oT61EKmEFB\n" \
+"Ik5lYYeBQVCmeVyJ3hlKV9Uu5l0cUyx+mM0aBhakaHPQNAQTXKFx01p8VdteZOE3\n" \
+"hzBWBOURtCmAEvF5OYiiAhF8J2a3iLd48soKqDirCmTCv2ZdlYTBoSUeh10aUAsg\n" \
+"EsxBu24LUTi4S8sCAwEAAaNjMGEwDgYDVR0PAQH/BAQDAgGGMA8GA1UdEwEB/wQF\n" \
+"MAMBAf8wHQYDVR0OBBYEFLE+w2kD+L9HAdSYJhoIAu9jZCvDMB8GA1UdIwQYMBaA\n" \
+"FLE+w2kD+L9HAdSYJhoIAu9jZCvDMA0GCSqGSIb3DQEBBQUAA4IBAQAcGgaX3Nec\n" \
+"nzyIZgYIVyHbIUf4KmeqvxgydkAQV8GK83rZEWWONfqe/EW1ntlMMUu4kehDLI6z\n" \
+"eM7b41N5cdblIZQB2lWHmiRk9opmzN6cN82oNLFpmyPInngiK3BD41VHMWEZ71jF\n" \
+"hS9OMPagMRYjyOfiZRYzy78aG6A9+MpeizGLYAiJLQwGXFK3xPkKmNEVX58Svnw2\n" \
+"Yzi9RKR/5CYrCsSXaQ3pjOLAEFe4yHYSkVXySGnYvCoCWw9E1CAx2/S6cCZdkGCe\n" \
+"vEsXCS+0yx5DaMkHJ8HSXPfqIbloEpw8nL+e/IBcm2PN7EeqJSdnoDfzAIJ9VNep\n" \
+"+OkuE6N36B9K\n" \
+"-----END CERTIFICATE-----";
 
 FirmwareUpdates::FirmwareUpdates(QueueHandle_t firmwareUpdateQueue) {
     _firmwareUpdateQueue = firmwareUpdateQueue;
@@ -65,84 +90,6 @@ bool FirmwareUpdates::performUpdate(){
 }
 
 
-// Pass it a url... it will perform a get, process redirects
-bool FirmwareUpdates::_getWithRedirects(HTTPClient ** httpsptr, WiFiClientSecure ** clientptr, const char* url, int depth){
-
-    if (depth > MAX_REDIRECT_DEPTH){
-        ESP_LOGE(TAG, "Maximum redirects exceeded");
-        return false;
-    }
-    
-    ESP_LOGV(TAG, "IN: httpsptr %p ... clientptr %p",httpsptr,clientptr);
-    ESP_LOGV(TAG, "deref: httpsptr %p ... clientptr %p",*httpsptr,*clientptr);
-
-    WiFiClientSecure *client = new WiFiClientSecure();
-    HTTPClient *https = new HTTPClient();
-
-    *clientptr = client;
-    *httpsptr = https;
-
-    ESP_LOGV(TAG, "BEGIN");
-
-    if (!https->begin(*client, url)) {
-        ESP_LOGE(TAG, "Could not begin HTTPS request to: %s",url);
-        if (https){ delete https; }
-        if (client){ delete client; }
-        return false;
-    }
-
-    const char * headerKeys[] = {"Location","Content-Length","Content-Type"};
-    https->collectHeaders(headerKeys,3);
-    ESP_LOGV(TAG, "Get");
-    int httpCode = https->GET();
-
-
-    // httpCode will be negative on error
-    if (httpCode < 0) {
-        ESP_LOGE(TAG, "HTTP error: %s\n-- URL: %s", https->errorToString(httpCode).c_str(), url);
-        if (https){ delete https; }
-        if (client){ delete client; }
-        return false;
-    }
-
-    ESP_LOGV(TAG, "nonNegative status");
-
-    ESP_LOGV(TAG, "Redirects");
-    // Handle redirects
-    if (httpCode >= 300 && httpCode < 400 ){
-        if (https->hasHeader("Location")) {
-            String redirectLocation = https->header("Location");
-            
-            ESP_LOGV(TAG, "Flushola");
-            https->end();
-            client->flush();
-
-    if (https){ delete https; }
-    if (client){ delete client; }
-        
-            ESP_LOGI(TAG, "Redirecting: %s", redirectLocation.c_str());
-            return _getWithRedirects(&*httpsptr, &*clientptr, redirectLocation.c_str(), depth++);
-        } else {
-            ESP_LOGE(TAG, "%d status code but no redirect location", httpCode);
-            if (https){ delete https; }
-            if (client){ delete client; }
-            return false;
-        }
-    }
-    ESP_LOGV(TAG, "TWO HUNDRED");
-    // Handle other non-200 status codes
-    if (httpCode != 200){
-        ESP_LOGE(TAG, "Bailing out due to %d status code", httpCode);
-        if (https){ delete https; }
-        if (client){ delete client; }
-
-        return false;
-    }
-
-    return true;
-
-}
-
 bool FirmwareUpdates::checkForUpdates(bool useStaging) {
     
     if (!reconnect()){
@@ -155,42 +102,56 @@ bool FirmwareUpdates::checkForUpdates(bool useStaging) {
 
     // Fetch latest release data from github
     // GET /repos/:owner/:repo/releases/latest
-    HTTPClient* https = nullptr;
-    WiFiClientSecure* client = nullptr;
-    ESP_LOGV(TAG, "About to GET! %p ... %p",https,client);
 
     const char *url;
-    size_t capacity;
-
     if (useStaging){
         url = "https://api.github.com/repos/samscam/clocklet/releases";
-        capacity = 5*JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(5) + 5*JSON_OBJECT_SIZE(13) + 15*JSON_OBJECT_SIZE(18) + 30720; // 30k overhead
     } else {
         url = "https://api.github.com/repos/samscam/clocklet/releases/latest";
-        capacity = JSON_ARRAY_SIZE(1) + JSON_OBJECT_SIZE(13) + 3*JSON_OBJECT_SIZE(18) + 10240; // 10k overhead
     }
 
-    if (!_getWithRedirects(&https, &client, url)){
-        return false;
+    HTTPnihClient nihClient = HTTPnihClient();
+    Stream* stream = nullptr;
+
+    bool parseResult = false;
+
+    int result = nihClient.get(url,NULL,&stream);
+    if (result == 200){
+        if (stream){
+            parseResult = _parseGithubReleases(stream,useStaging);
+        }
     }
 
+    return parseResult;
+}
+
+
+
+bool FirmwareUpdates::_parseGithubReleases(Stream *stream, bool useStaging){
     // Parse JSON object
+
+
+
     #if defined(CLOCKBRAIN)
     SpiRamJsonDocument doc(524288);
     #else
+    size_t capacity;
+
+    if (useStaging){
+        capacity = 5*JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(5) + 5*JSON_OBJECT_SIZE(13) + 15*JSON_OBJECT_SIZE(18) + 30720; // 30k overhead
+    } else {
+        capacity = JSON_ARRAY_SIZE(1) + JSON_OBJECT_SIZE(13) + 3*JSON_OBJECT_SIZE(18) + 10240; // 10k overhead
+    }
     DynamicJsonDocument doc(capacity);
     #endif
     
-    DeserializationError error = deserializeJson(doc, *client);
-
-    ESP_LOGV(TAG, "TRASHING");
-    if (https){ delete https; }
-    if (client){ delete client; }
+    DeserializationError error = deserializeJson(doc, *stream);
 
     if (error) {
         ESP_LOGE(TAG, "deserializeJson() failed: %s", error.c_str());
         return false;
     }
+
     ESP_LOGV(TAG, "FISHING");
 
     JsonObject rel;
@@ -286,88 +247,81 @@ bool FirmwareUpdates::checkForUpdates(bool useStaging) {
 
 bool FirmwareUpdates::startUpdate(){
     if (updateAvailable && _downloadURL){
-        return _processOTAUpdate(_downloadURL);
+        return _downloadOTAUpdate(_downloadURL);
     }
     return false;
 }
 
-bool FirmwareUpdates::_processOTAUpdate(const char * url)
+bool FirmwareUpdates::_downloadOTAUpdate(const char * url)
 {
     ESP_LOGI(TAG, "About to download from %s",url);
     
-    HTTPClient* https = nullptr;
-    WiFiClientSecure* client = nullptr;
+    HTTPnihClient nihClient = HTTPnihClient();
+    Stream* stream = nullptr;
     
-    if (!_getWithRedirects(&https, &client, url)){
+    
+    int result = nihClient.get(url,NULL,&stream);
+
+    if (result != 200) {
         return false;
+        
     }
+
+
+    HTTPClient *httpClient = nihClient.getHttpClient();
 
             
     volatile int contentLength = 0;
 
-    if (https->hasHeader("Content-Length")){
-        contentLength = atoi(https->header("Content-Length").c_str());
+    if (httpClient->hasHeader("Content-Length")){
+        contentLength = atoi(httpClient->header("Content-Length").c_str());
         ESP_LOGD(TAG, "Content length is %i",contentLength);
     } else {
         ESP_LOGE(TAG, "No content length found");
-        if (https){ delete https; }
-        if (client){ delete client; }
         return false;
     }
 
-    if (!https->hasHeader("Content-Type")){
+    if (!httpClient->hasHeader("Content-Type")){
         ESP_LOGE(TAG, "No content type found");
-        if (https){ delete https; }
-        if (client){ delete client; }
         return false;
     }
 
-    String contentType = https->header("Content-Type");
+    String contentType = httpClient->header("Content-Type");
     if (contentType != "application/octet-stream") {
-        ESP_LOGE(TAG, "Invalid content type: %s", contentType);
-        if (https){ delete https; }
-        if (client){ delete client; }
+        ESP_LOGE(TAG, "Invalid content type: %s", contentType.c_str());
         return false;
     }
-    ESP_LOGD(TAG, "Content type is %s", contentType);
+    ESP_LOGD(TAG, "Content type is %s", contentType.c_str());
 
 
     if (!Update.begin(contentLength)) {
         ESP_LOGE(TAG, "OTA could not start update - probably not enough free space");
-        if (https){ delete https; }
-        if (client){ delete client; }
         return false;
     }
 
     ESP_LOGI(TAG, "Starting Over-The-Air update. This may take some time to complete ...");
 
     disableCore0WDT();
-    size_t written = Update.writeStream(*client);
+    size_t written = Update.writeStream(*stream);
     enableCore0WDT();
 
     if (written == contentLength) {
         ESP_LOGI(TAG, "Written : %d successfully", written);
     } else {
         ESP_LOGE(TAG, "Written only : %d/%d " ,written, contentLength);
-        if (https){ delete https; }
-        if (client){ delete client; }
         return false;
     }
 
     if (!Update.end()) {
         ESP_LOGE(TAG, "An error Occurred. Error #: %d", Update.getError());
-        if (https){ delete https; }
-        if (client){ delete client; }
         return false;
     }
 
     if (!Update.isFinished()) {
         ESP_LOGE(TAG, "Something went wrong! OTA update hasn't been finished properly.");
-        if (https){ delete https; }
-        if (client){ delete client; }
         return false;
     }
 
     ESP_LOGI(TAG, "OTA update has successfully completed. Rebooting ...");
-    return true; // But this will never ever happen :)
+    return true;
 }

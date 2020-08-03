@@ -1,11 +1,11 @@
 #include "weather-client.h"
 #include <esp_log.h>
 #include "../network.h"
+#include "../Utilities/HTTPnihClient.h"
 
 #define TAG "WEATHER"
 
-WeatherClient::WeatherClient(WiFiClient &client) : UpdateJob() {
-  this->client = &client;
+WeatherClient::WeatherClient() : UpdateJob() {
   Serial.print("Setting Default Weather");
   this->horizonWeather = defaultWeather;
   this->rainbowWeather = defaultWeather;
@@ -28,89 +28,28 @@ bool WeatherClient::fetchWeather(){
       return false;
     }
 
-    if (!connect(this->server, this->ssl)) {
-        ESP_LOGE(TAG, "Failed to connect");
-        return false;
-    }
-
-    if (!sendRequest(this->server, this->resource)){
-        ESP_LOGE(TAG, "Request to server failed");
-        return false;
-    }
     
-    if (!skipResponseHeaders()) {
-        ESP_LOGE(TAG, "Failed to skip response headers");
-        disconnect();
-        return false;
+    HTTPnihClient nihClient = HTTPnihClient();
+
+    Stream *stream = nullptr;
+    char* url = constructURL();
+    int result = nihClient.get(url,certificate(),&stream);
+    free(url);
+
+    bool parseResult = false;
+    if (result == 200){
+      if (stream){
+        parseResult = readReponseContent(stream);
+      }
+    } 
+
+    if (parseResult){
+      bool change = true;
+      xQueueSend(weatherChangedQueue, &change, (TickType_t) 0);
+    } else {
+      ESP_LOGE(TAG, "Weather Parsing failed");
     }
+    return parseResult;
 
-    ESP_LOGI(TAG, "Got weather response");
-    if (readReponseContent()){
-        disconnect();
-        bool change = true;
-        xQueueSend(weatherChangedQueue, &change, (TickType_t) 0);
-        return true;
-    }
-
-    ESP_LOGE(TAG, "Weather Parsing failed");
-    return false;
 }
 
-// Open connection to the HTTP server
-bool WeatherClient::connect(char* host, bool ssl) {
-  ESP_LOGD(TAG,"Connect to: %s",host);
-  
-  bool ok;
-
-  if (ssl){
-    #if defined(ESP32)
-    ok = client -> connect(host, 443);
-    #else // ATWINC
-    ok = client -> connectSSL(host, 443);
-    #endif
-  } else {
-    ok = client -> connect(host, 80);
-  }
-  ESP_LOGD(TAG,"%s",ok ? "Connected" : "Connection Failed!");
-
-
-  return ok;
-}
-
-// Send the HTTP GET request to the server
-bool WeatherClient::sendRequest(char* host, char* resource) {
-    ESP_LOGD(TAG,"... sending request");
-    ESP_LOGD(TAG,"Host: %s",host);
-    ESP_LOGD(TAG,"Resource: %s",resource);
-    
-    // close any connection before send a new request.
-    client -> print("GET ");
-    client -> print(resource);
-    client -> println(" HTTP/1.1");
-    client -> print("Host: ");
-    client -> println(host);
-    client -> println("Connection: close");
-    client -> println("User-Agent: Clocklet");
-    client -> println();
-
-    return true;
-}
-
-
-// Skip HTTP headers so that we are at the beginning of the response's body
-bool WeatherClient::skipResponseHeaders() {
-  // HTTP headers end with an empty line
-  char endOfHeaders[] = "\r\n\r\n";
-
-  client -> setTimeout(WEATHER_HTTP_TIMEOUT);
-  bool ok = client -> find(endOfHeaders);
-
-  return ok;
-}
-
-
-// Close the connection with the HTTP server
-void WeatherClient::disconnect() {
-  ESP_LOGI(TAG, "Disconnecting from weather server");
-  client -> stop();
-}

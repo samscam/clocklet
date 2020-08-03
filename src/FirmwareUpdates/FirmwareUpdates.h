@@ -49,10 +49,9 @@ class FirmwareUpdates final: public UpdateJob {
 
 
     private:
-
-    bool _processOTAUpdate(const char* url);
+    bool _parseGithubReleases(Stream *stream, bool useStaging);
+    bool _downloadOTAUpdate(const char* url);
     char _downloadURL[2048];
-    bool _getWithRedirects(HTTPClient ** httpsptr, WiFiClientSecure ** clientptr, const char* url, int depth = 0);
     
     QueueHandle_t _firmwareUpdateQueue;
 

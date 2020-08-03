@@ -90,7 +90,7 @@ WiFiClientSecure secureClient; // << https on esp32
 // WeatherClient *weatherClient = new MetOffice(client); // << It's plain HTTP
 
 #include "weather/darksky.h"
-DarkSky weatherClient = DarkSky(secureClient);
+DarkSky weatherClient = DarkSky();
 
 
 // RAINBOWS

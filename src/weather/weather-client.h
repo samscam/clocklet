@@ -1,9 +1,10 @@
-#ifndef PRISCILLA_WEATHERCLIENT
-#define PRISCILLA_WEATHERCLIENT
+#pragma once
 
-#include <Arduino.h>
-#include "network.h"
+#include <HTTPClient.h>
+#include <WiFiClientSecure.h>
 #include <ArduinoJson.h>
+
+#include "network.h"
 #include "weather.h"
 #include "../Location/LocationSource.h"
 #include "../UpdateScheduler.h"
@@ -18,7 +19,7 @@ public:
   
   QueueHandle_t weatherChangedQueue;
 
-  WeatherClient(WiFiClient &client);
+  WeatherClient();
   virtual ~WeatherClient() {};
 
   // Conformance to UpdateJob
@@ -39,24 +40,11 @@ public:
 
   Location _currentLocation;
   
-  bool connect(char* host, bool ssl);
-  void disconnect();
+  virtual char* constructURL() { return nullptr; };
+  virtual const char* certificate() { return nullptr; };
 
-  char* server;
-  char* resource;
-  bool ssl;
-
-
-  WiFiClient *client;
-
-  bool sendRequest(char* host, char* resource);
-  bool skipResponseHeaders();
-  
-  virtual bool readReponseContent() { return false; };
+  virtual bool readReponseContent(Stream *stream) { return false; };
   
 private:
 
 };
-
-
-#endif
