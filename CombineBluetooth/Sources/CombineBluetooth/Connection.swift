@@ -157,11 +157,8 @@ extension Connection: CBPeripheralDelegate{
         }
         
         for characteristic in characteristics {
-            peripheral.setNotifyValue(true, for: characteristic)
             peripheral.discoverDescriptors(for: characteristic)
             peripheral.readValue(for: characteristic)
-            
-            
         }
         
     }

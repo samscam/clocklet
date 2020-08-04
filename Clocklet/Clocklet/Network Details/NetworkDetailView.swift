@@ -38,6 +38,15 @@ struct NetworkDetailView: View {
                 AvailableNetworksView()
             }.padding()
         }.navigationBarTitle(Text("Network Settings"), displayMode:.large)
+        .onAppear
+        {
+            
+            networkService.$availableNetworks.shouldNotify = true
+        }
+        .onDisappear{
+           
+            networkService.$availableNetworks.shouldNotify = false
+        }
         
     }
 }
