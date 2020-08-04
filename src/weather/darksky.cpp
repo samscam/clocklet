@@ -40,7 +40,7 @@ char* DarkSky::constructURL(){
 }
 
 const char* DarkSky::certificate(){
-  return amazon_ca;
+  return NULL; //amazon_ca;
 }
 
 void DarkSky::setTimeHorizon(uint8_t hours){
