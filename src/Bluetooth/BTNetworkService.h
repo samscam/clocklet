@@ -5,7 +5,7 @@
 #include <BLEService.h>
 #include <WiFi.h>
 #include <ArduinoJson.h>
-
+#include <BLE2902.h>
 #include "Utilities/Task.h"
 
 #define SV_NETWORK_UUID     "68D924A1-C1B2-497B-AC16-FD1D98EDB41F"
@@ -27,10 +27,11 @@ struct NetworkInfo {
 
 class NetworkScanTask: public Task {
 public:
-    NetworkScanTask(BLECharacteristic *availableNetworks);
+    NetworkScanTask(BLECharacteristic *availableNetworks,BLE2902 *dec_availableNetworks_2902);
     void run(void *data);
 private:
     BLECharacteristic *ch_availableNetworks;
+    BLE2902 *_dec_availableNetworks_2902;
     void _performWiFiScan();
     void _encodeNetInfo(JsonDocument &doc, NetworkInfo netInfo);
 };
@@ -66,6 +67,8 @@ private:
     BLEService *sv_network;
     BLECharacteristic *ch_currentNetwork; // returns info on current network connection
     BLECharacteristic *ch_availableNetworks; // returns list of known and available networks
+    BLE2902 *dec_availableNetworks_2902;
+
     BLECharacteristic *ch_removeNetwork; // takes an SSID of one of the known networks - removes it from the list preventing future connection
     BLECharacteristic *ch_joinNetwork; // Joins a network
 

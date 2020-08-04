@@ -7,7 +7,7 @@
 #include <esp_wifi.h>
 #include <esp_log.h>
 #include "Loggery.h"
-#include <BLE2902.h>
+
 #define TAG "BTNetworkService"
 
 #define CH_CURRENTNETWORK_UUID "BEB5483E-36E1-4688-B7F5-EA07361B26A8"
@@ -15,23 +15,30 @@
 #define CH_JOINNETWORK_UUID "DFBDE057-782C-49F8-A054-46D19B404D9F"
 
 
-NetworkScanTask::NetworkScanTask(BLECharacteristic *availableNetworks) : Task("NetworkScan", 3072,  5){
+NetworkScanTask::NetworkScanTask(BLECharacteristic *availableNetworks, BLE2902 *dec_availableNetworks_2902) : Task("NetworkScan", 3072,  5){
     this->setCore(1);
     ch_availableNetworks = availableNetworks;
+    _dec_availableNetworks_2902 = dec_availableNetworks_2902;
 }
 
 void NetworkScanTask::run(void *data){
     delay(3000);
     for (;;){
-        _performWiFiScan();
-
-        ESP_LOGD("NETSCAN", "***** HIGH WATER %d", uxTaskGetStackHighWaterMark(NULL));
-        delay(10000);
+        if (_dec_availableNetworks_2902 -> getNotifications()){
+            _performWiFiScan();
+            if ( !WiFi.isConnected() ) WiFi.begin();
+            delay(10000);
+        } else {
+            if ( !WiFi.isConnected() ) WiFi.begin();
+            delay(500);
+        }
+        
     }
 }
 
 void NetworkScanTask::_performWiFiScan(){
     LOGMEM;
+    
     bool runningScan = (WiFi.scanNetworks(true,true,false) == WIFI_SCAN_RUNNING);
     int networkCount = 0;
 
@@ -128,15 +135,12 @@ BTNetworkService::BTNetworkService(BLEServer *pServer, QueueHandle_t networkChan
     ch_joinNetwork->setAccessPermissions(ESP_GATT_PERM_WRITE_ENCRYPTED);
     ch_joinNetwork->setCallbacks(this);
 
-    // BLE2902* p2902Descriptor = new BLE2902();
-    // p2902Descriptor->setIndications(true);
-    // p2902Descriptor->setNotifications(true);
-
-    // p2902Descriptor->setAccessPermissions(ESP_GATT_PERM_READ_ENCRYPTED | ESP_GATT_PERM_WRITE_ENCRYPTED);
-
+    dec_availableNetworks_2902 = new BLE2902();
+    dec_availableNetworks_2902->setAccessPermissions(ESP_GATT_PERM_READ_ENCRYPTED | ESP_GATT_PERM_WRITE_ENCRYPTED);
+    ch_availableNetworks->addDescriptor(dec_availableNetworks_2902);
 
     // // ch_currentNetwork->addDescriptor(p2902Descriptor);
-    // ch_availableNetworks->addDescriptor(p2902Descriptor);
+    
     // ch_joinNetwork->addDescriptor(p2902Descriptor);
     /*
         * Authorized permission to read/write descriptor to protect notify/indicate requests
@@ -149,7 +153,7 @@ BTNetworkService::BTNetworkService(BLEServer *pServer, QueueHandle_t networkChan
 
 void BTNetworkService::onConnect(){
 
-    _networkScanTask = new NetworkScanTask(ch_availableNetworks);
+    _networkScanTask = new NetworkScanTask(ch_availableNetworks, dec_availableNetworks_2902);
     _networkScanTask->start();
 
     _wifiEvent = WiFi.onEvent(wifiEventCb);
