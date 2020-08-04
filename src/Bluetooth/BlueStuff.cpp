@@ -19,6 +19,7 @@
 
 #define TAG "BLUESTUFF"
 
+const char * shortName = "Clocklet";
 
 BlueStuff::BlueStuff(QueueHandle_t preferencesChangedQueue,
             QueueHandle_t networkChangedQueue,
@@ -34,19 +35,11 @@ void BlueStuff::startBlueStuff(){
 
     ESP_LOGI(TAG,"Starting BLE work!");
 
-    uint16_t hwrev = clocklet_hwrev();
-    uint16_t caseColour = clocklet_caseColour();
     uint32_t serial = clocklet_serial();
-
-    if (isnan(serial)){
-        serial = 0;
-    }
-    
-    const char * shortName = "Clocklet";
     
     LOGMEM;
 
-    char * deviceName;
+    char *deviceName;
     asprintf(&deviceName,"%s #%d",shortName,serial);
     BLEDevice::init(deviceName);
     
@@ -63,6 +56,23 @@ void BlueStuff::startBlueStuff(){
     _technicalService = new BTTechnicalService(pServer);
 
     // BLE Advertising
+
+    _setupAdvertising();
+
+    LOGMEM;
+}
+
+void BlueStuff::_setupAdvertising(){
+
+    uint16_t hwrev = clocklet_hwrev();
+    uint16_t caseColour = clocklet_caseColour();
+    uint32_t serial = clocklet_serial();
+    char *deviceName;
+    asprintf(&deviceName,"%s #%d",shortName,serial);
+
+    if (isnan(serial)){
+        serial = 0;
+    }
 
     BLEAdvertising *pAdvertising = pServer->getAdvertising();
     
@@ -100,10 +110,7 @@ void BlueStuff::startBlueStuff(){
     pAdvertising->setMaxPreferred(0x12);
     pAdvertising->setScanResponse(true);
     pAdvertising->start();
-
-    LOGMEM;
 }
-
 void BlueStuff::stopBlueStuff(){
     
 }
@@ -119,4 +126,8 @@ void BlueStuff::onConnect(BLEServer* server) {
 void BlueStuff::onDisconnect(BLEServer* server) {
     ESP_LOGI(TAG,"Bluetooth client disconnected");
     _networkService->onDisconnect();
+
+    // Advertising has a habit of getting trashed on disconnect...
+    // Force it to work...
+    _setupAdvertising();
 }

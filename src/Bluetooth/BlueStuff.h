@@ -19,14 +19,6 @@
 #include "../Utilities/Task.h"
 
 
-class PostConnectTask: public Task{
-public:
-    PostConnectTask(BLECharacteristic *ch_serviceChanged);
-    void run(void *data);
-private:
-    BLECharacteristic *_ch_serviceChanged;
-};
-
 class BlueStuff: public BLEServerCallbacks {
 
 public:
@@ -45,14 +37,10 @@ public:
 
     
 private:
-
+    void _setupAdvertising();
     bool _keepRunning = true;
     
     BLEServer *pServer;
-
-    BLEService *sv_GAS;
-    BLECharacteristic *ch_ServiceChanged;
-    PostConnectTask *_postConnectTask;
 
     BTTechnicalService* _technicalService;
 
