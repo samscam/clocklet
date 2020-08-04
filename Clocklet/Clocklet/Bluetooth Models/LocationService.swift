@@ -38,7 +38,7 @@ class LocationService: ServiceProtocol {
 
     @Published var isConfigured: ConfigState = .unknown
     
-    @Characteristic("C8C7FF91-531A-4306-A68A-435374CB12A9") var currentLocation: CurrentLocation?
+    @Characteristic("C8C7FF91-531A-4306-A68A-435374CB12A9") var currentLocation: ClockLocation?
     
     func setCurrentLocation(){
 
@@ -52,7 +52,7 @@ class LocationService: ServiceProtocol {
                let lng = placemark.location?.coordinate.longitude,
                let timeZone = placemark.timeZone?.identifier,
                let placeName = placemark.locality {
-                    self?.currentLocation = CurrentLocation(configured:true,
+                    self?.currentLocation = ClockLocation(configured:true,
                                                     lat: lat,
                                                     lng: lng,
                                                     timeZone: timeZone,
@@ -64,7 +64,7 @@ class LocationService: ServiceProtocol {
 }
 
 
-struct CurrentLocation: Codable, JSONCharacteristic, CustomStringConvertible{
+struct ClockLocation: Codable, JSONCharacteristic, CustomStringConvertible{
     let configured: Bool
     let lat: Double?
     let lng: Double?
@@ -79,7 +79,7 @@ struct CurrentLocation: Codable, JSONCharacteristic, CustomStringConvertible{
         return CLLocation(latitude: lat ?? 0, longitude: lng ?? 0)
     }
         
-    static let nullIsland: CurrentLocation = CurrentLocation(configured: false, lat: 0, lng: 0, timeZone: "UTC", placeName: "Null Island")
+    static let nullIsland: ClockLocation = ClockLocation(configured: false, lat: 0, lng: 0, timeZone: "UTC", placeName: "Null Island")
 }
 
 

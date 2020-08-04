@@ -15,9 +15,9 @@ class LocationDetailsViewModel: ObservableObject {
     
     @Published var showMap: Bool = false
     
-    @Published var currentLocation: CurrentLocation = .nullIsland
+    @Published var currentLocation: ClockLocation = .nullIsland
     
-    @Published var annotations: [CurrentLocation] = []
+    @Published var annotations: [ClockLocation] = []
     
     lazy var region = Binding<MKCoordinateRegion>(
         get:{ return MKCoordinateRegion(center: self.currentLocation.coordinate, latitudinalMeters: 5000, longitudinalMeters: 5000) },
@@ -56,11 +56,11 @@ struct PopularPlace: Identifiable, Hashable{
     let tzUTCOffset: Double
 }
 
-extension CurrentLocation {
+extension ClockLocation {
     var coordinate: CLLocationCoordinate2D { return CLLocationCoordinate2D(latitude: lat ?? 0, longitude: lng ?? 0)}
 }
 
-extension CurrentLocation: Identifiable{
+extension ClockLocation: Identifiable{
     var id: Double { return (lat ?? 0) * (lng ?? 0) }
 }
 struct LocationDetailsView: View {
