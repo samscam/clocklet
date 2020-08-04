@@ -1,3 +1,6 @@
 [submodule "lib/semverc"]
 	path = lib/semverc
 	url = git@github.com:h2non/semver.c.git
+[submodule "lib/posix_tz_db"]
+	path = lib/posix_tz_db
+	url = git@github.com:nayarsystems/posix_tz_db.git
