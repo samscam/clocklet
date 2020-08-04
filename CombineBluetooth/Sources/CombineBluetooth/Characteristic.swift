@@ -24,17 +24,20 @@ internal protocol CharacteristicWrapper: class, HasUUID {
 
 @propertyWrapper
 public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, ObservableObject, InnerObservable {
-    
-    public enum CharacteristicError: Error{
-        case noCBCharacteristic
-        case couldNotWriteValue
-    }
 
     public let uuid: CBUUID
+    public var shouldNotify: Bool = false {
+        didSet{
+            if let cbCharacteristic = cbCharacteristic{
+                cbCharacteristic.service.peripheral.setNotifyValue(shouldNotify, for: cbCharacteristic)
+            }
+        }
+    }
+    
     
     private let subject = CurrentValueSubject<Value?,Never>(nil)
     
-    public var cbCharacteristic: CBCharacteristic?
+    internal var cbCharacteristic: CBCharacteristic?
     
     public init(wrappedValue value: Value? = nil, _ uuid: String){
         self._value = value
