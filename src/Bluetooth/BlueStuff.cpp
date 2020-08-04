@@ -49,11 +49,11 @@ void BlueStuff::startBlueStuff(){
     pServer = BLEDevice::createServer();
     pServer->setCallbacks(this);
 
-    
+    _technicalService = new BTTechnicalService(pServer);
     _locationService = new BTLocationService(_locationManager,pServer);
     _networkService = new BTNetworkService(pServer, _networkChangedQueue, _networkStatusQueue);
     _preferencesService = new BTPreferencesService(pServer, _preferencesChangedQueue);
-    _technicalService = new BTTechnicalService(pServer);
+
 
     // BLE Advertising
 
