@@ -14,9 +14,9 @@ enum GeocoderExtensionError: Error{
     case noResults
 }
 
-class GeocoderProxy {
+struct GeocoderProxy {
     
-    func futureReversePublisher(_ location: CLLocation) -> AnyPublisher<CLPlacemark?, Error> {
+    static func futureReversePublisher(_ location: CLLocation) -> AnyPublisher<CLPlacemark, Error> {
         return Future { promise in
             CLGeocoder().reverseGeocodeLocation(location) { (placemarks, error) in
                 if let error = error {

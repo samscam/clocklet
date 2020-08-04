@@ -9,14 +9,44 @@
 import SwiftUI
 import CoreLocation
 import MapKit
+import Combine
 
 class LocationDetailsViewModel: ObservableObject {
+    
+    @Published var showMap: Bool = false
+    
+    @Published var currentLocation: CurrentLocation = .nullIsland
+    
+    @Published var annotations: [CurrentLocation] = []
+    
+    lazy var region = Binding<MKCoordinateRegion>(
+        get:{ return MKCoordinateRegion(center: self.currentLocation.coordinate, latitudinalMeters: 5000, longitudinalMeters: 5000) },
+        set:{ _ in }
+    )
     
     
     private var _locationService: LocationService
     
+    var bag = Set<AnyCancellable>()
+    
     init(locationService: LocationService){
         _locationService = locationService
+        _locationService.$currentLocation
+            .compactMap{ $0 }
+            .assign(to: \.currentLocation, on: self)
+            .store(in: &bag)
+        
+        $currentLocation.map{ [$0] }.assign(to: \.annotations, on: self).store(in: &bag)
+        
+        _locationService.$isConfigured
+            .map{ $0 == .configured }
+            .assign(to: \.showMap, on: self)
+            .store(in: &bag)
+        
+    }
+    
+    func setCurrentLocation(){
+        _locationService.setCurrentLocation()
     }
 }
 
@@ -35,7 +65,7 @@ extension CurrentLocation: Identifiable{
 }
 struct LocationDetailsView: View {
     
-    @EnvironmentObject var locationService: LocationService
+    @EnvironmentObject var viewModel: LocationDetailsViewModel
     @EnvironmentObject var clock: Clock
      
     static let popularLocations: [PopularPlace] = [
@@ -47,19 +77,14 @@ struct LocationDetailsView: View {
     
     @State var selectedLocation: PopularPlace?
     
-    @State var region: MKCoordinateRegion = MKCoordinateRegion(center: .init(latitude:  53.480759, longitude: -2.242631),
-                                                               span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02))
-    
-    @State var annotations: [CurrentLocation] = [CurrentLocation(configured: true, lat: 53.480759, lng: -2.242631)]
-    
     
     var body: some View {
-        VStack{
-            
+        ScrollView{
+        VStack(alignment: .leading){
+            if viewModel.showMap {
             if #available(iOS 14.0,macOS 11.0, *) {
-                Map(coordinateRegion: $region, showsUserLocation: true,
-                    annotationItems: annotations){ annotation in
-//                    MapPin(coordinate: annotation.coordinate)
+                Map(coordinateRegion: viewModel.region, interactionModes: MapInteractionModes(), showsUserLocation: true,
+                    annotationItems: viewModel.annotations){ annotation in
                     MapAnnotation(coordinate: annotation.coordinate){
                         Image(clock.caseColor.imageName).resizable()
                             .aspectRatio(contentMode: .fit).frame(width: 140, height: 60, alignment: .center)
@@ -67,24 +92,41 @@ struct LocationDetailsView: View {
                 }.frame(height: 200)
                     
             } else {
-                MapView(coordinate: region.center)
+                MapView(coordinate: viewModel.region.center.wrappedValue)
+            }
+            
+            Spacer()
+            }
+            
+            VStack(alignment:.leading){
+                HStack{
+                    Text("Place:").foregroundColor(.secondary)
+                    Text(viewModel.currentLocation.placeName ?? "Unknown Place").bold().foregroundColor(.primary)
+                }
+                
+                HStack{
+                    Text("Time zone:").foregroundColor(.secondary)
+                    Text(viewModel.currentLocation.timeZone ?? "Unknown time zone").bold().foregroundColor(.primary)
+                }
             }
             
             Spacer()
             
             Button("Set to current location"){
-                    self.locationService.setCurrentLocation()
+                    self.viewModel.setCurrentLocation()
                 }
                 .buttonStyle(RoundyButtonStyle())
+            
             Spacer()
             
             ConfigItemView(icon: Image(systemName: "globe"), title: "Popular Locations") {
                 
-                List(LocationDetailsView.popularLocations, selection: $selectedLocation) { (place) in
+                ForEach(LocationDetailsView.popularLocations) { (place) in
                     PlaceRowView(place: place)
                 }.listStyle(PlainListStyle())
             }
         }.padding()
+        }
         .navigationBarTitle( Text("Location Settings") )
     }
 }

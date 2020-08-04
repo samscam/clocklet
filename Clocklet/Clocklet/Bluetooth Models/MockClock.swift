@@ -55,7 +55,7 @@ extension Clock {
                     },
                  1.5:      {
                     self.locationService = LocationService()
-                     self.locationService?.currentLocation = CurrentLocation(configured: false, lat:  0, lng: 0)
+                    self.locationService?.currentLocation = CurrentLocation(configured: false, lat:  0, lng: 0, timeZone:"UTC", placeName:"Null Island")
                     
                     self.settingsService = SettingsService()
                     self.settingsService?.availableTimeStyles = ["24 Hour","12 Hour","Decimal"]

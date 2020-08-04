@@ -14,22 +14,11 @@ import CoreLocation
 
 class LocationService: ServiceProtocol {
     
-    private let geocoderProxy = GeocoderProxy()
     private let locationProxy = LocationProxy()
     
     var bag: [AnyCancellable] = []
     
     required init(){
-        
-        $currentLocation
-            .compactMap{$0?.location}
-            .setFailureType(to: Error.self)
-            .flatMap{ location in
-                self.geocoderProxy.futureReversePublisher(location)
-            }
-            .replaceError(with: nil)
-            .assign(to: \.placemark, on: self)
-            .store(in: &bag)
         
         $currentLocation.map{
                 if let currentLocation = $0 {
@@ -51,18 +40,26 @@ class LocationService: ServiceProtocol {
     
     @Characteristic("C8C7FF91-531A-4306-A68A-435374CB12A9") var currentLocation: CurrentLocation?
     
-    @Published var placemark: CLPlacemark?
-    
-    
     func setCurrentLocation(){
 
-        locationProxy.locationPublisher.sink(receiveCompletion: { (completion) in
-
-        }) { [weak self] (location) in
-            self?.currentLocation = CurrentLocation(configured:true,
-                                                    lat: location.coordinate.latitude,
-                                                    lng: location.coordinate.longitude)
-        }.store(in: &bag)
+        locationProxy.locationPublisher.flatMap{ location in
+            GeocoderProxy.futureReversePublisher(location)
+        }
+        .sink(receiveCompletion: { _ in
+            
+        }){ [weak self] (placemark) in
+            if let lat = placemark.location?.coordinate.latitude,
+               let lng = placemark.location?.coordinate.longitude,
+               let timeZone = placemark.timeZone?.identifier,
+               let placeName = placemark.locality {
+                    self?.currentLocation = CurrentLocation(configured:true,
+                                                    lat: lat,
+                                                    lng: lng,
+                                                    timeZone: timeZone,
+                                                    placeName: placeName)
+            }
+        }
+        .store(in: &bag)
     }
 }
 
@@ -71,8 +68,9 @@ struct CurrentLocation: Codable, JSONCharacteristic, CustomStringConvertible{
     let configured: Bool
     let lat: Double?
     let lng: Double?
+    let timeZone: String?
+    let placeName: String?
 
-    
     var description: String{
         return "\(String(lat ?? 0)),\(String(lng ?? 0))"
     }
@@ -80,6 +78,8 @@ struct CurrentLocation: Codable, JSONCharacteristic, CustomStringConvertible{
     var location: CLLocation {
         return CLLocation(latitude: lat ?? 0, longitude: lng ?? 0)
     }
-    
+        
+    static let nullIsland: CurrentLocation = CurrentLocation(configured: false, lat: 0, lng: 0, timeZone: "UTC", placeName: "Null Island")
 }
+
 
