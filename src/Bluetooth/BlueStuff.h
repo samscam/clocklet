@@ -16,7 +16,16 @@
 #include "BTTechnicalService.h"
 
 #include "../Location/LocationManager.h"
+#include "../Utilities/Task.h"
 
+
+class PostConnectTask: public Task{
+public:
+    PostConnectTask(BLECharacteristic *ch_serviceChanged);
+    void run(void *data);
+private:
+    BLECharacteristic *_ch_serviceChanged;
+};
 
 class BlueStuff: public BLEServerCallbacks {
 
@@ -34,20 +43,17 @@ public:
 
     void wifiEvent(WiFiEvent_t event);
 
-    // WiFi callbacks
-    bool isAlreadyProvisioned();
     
 private:
 
     bool _keepRunning = true;
-
-    esp_err_t _app_prov_is_provisioned(bool &provisioned);
     
     BLEServer *pServer;
 
     BLEService *sv_GAS;
     BLECharacteristic *ch_ServiceChanged;
-    
+    PostConnectTask *_postConnectTask;
+
     BTTechnicalService* _technicalService;
 
     BTPreferencesService* _preferencesService;
@@ -60,4 +66,3 @@ private:
     BTLocationService *_locationService;
     LocationManager *_locationManager;
 };
-
