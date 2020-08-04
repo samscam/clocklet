@@ -45,9 +45,25 @@ void BTLocationService::onWrite(BLECharacteristic* pCharacteristic) {
         ESP_LOGI(TAG,"Invalid longitude");
         return;
     }
+
+    const char* placeName = doc["placeName"];
+    if (!strlen(placeName) || strlen(placeName)>255) {
+        ESP_LOGI(TAG,"No place name");
+        return;
+    }
+
+    const char* timeZone = doc["timeZone"];
+    if (!strlen(timeZone) || strlen(timeZone)>63) {
+        ESP_LOGI(TAG,"No timezone");
+        return;
+    }
+
     Location newLocation = {};
     newLocation.lat = lat;
     newLocation.lng = lng;
+    strcpy(newLocation.placeName,placeName);
+    strcpy(newLocation.timeZone,timeZone);
+    
     _locationManager->setLocation(newLocation);
 
 }
@@ -56,10 +72,12 @@ void BTLocationService::onRead(BLECharacteristic* pCharacteristic) {
     
     Location location = _locationManager->getLocation();
 
-    StaticJsonDocument<80> locDoc;
+    StaticJsonDocument<500> locDoc;
     locDoc["configured"]=_locationManager->hasSavedLocation();
     locDoc["lat"]=location.lat;
     locDoc["lng"]=location.lng;
+    locDoc["placeName"] = location.placeName;
+    locDoc["timeZone"] = location.timeZone;
 
     String outputStr = "";
     serializeJson(locDoc,outputStr);

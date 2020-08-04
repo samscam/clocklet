@@ -6,15 +6,19 @@ LocationManager::LocationManager(QueueHandle_t locationChangedQueue){
     
     // Initialise with null island
     Serial.println("LocationManager constructor ******");
-    currentLocation = {0,0};
+    currentLocation = {0,0,NULL,NULL};
 
     Preferences preferences = Preferences();
     preferences.begin("clocklet", true);
 
-    double lat = preferences.getDouble("lat");
-    double lng = preferences.getDouble("lng");
+    double lat = preferences.getDouble("lat",0);
+    double lng = preferences.getDouble("lng",0);
+    String placeName = preferences.getString("placeName",String("Nowhere"));
+    String timeZone = preferences.getString("timeZone",String("UTC"));
     currentLocation.lat = lat;
     currentLocation.lng = lng;
+    strcpy(currentLocation.placeName, placeName.c_str());
+    strcpy(currentLocation.timeZone, timeZone.c_str());
 
     if (isValidLocation(currentLocation)){
         Serial.printf("Retrieved saved location: %g,%g\n",lat,lng);
@@ -44,6 +48,8 @@ bool LocationManager::setLocation(Location newLocation){
         Serial.printf("[LocationManager] Setting location to %g, %g\n",newLocation.lat, newLocation.lng);
         preferences.putDouble("lat",newLocation.lat);
         preferences.putDouble("lng",newLocation.lng);
+        preferences.putString("placeName",newLocation.placeName);
+        preferences.putString("timeZone",newLocation.timeZone);
 
         preferences.end();
 

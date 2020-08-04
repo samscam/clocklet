@@ -5,6 +5,8 @@
 struct Location {
     double lat;
     double lng;
+    char placeName[256];
+    char timeZone[64];
 
     bool operator == (const Location& rhs) const {
         return (lat == rhs.lat && lng == rhs.lng);
