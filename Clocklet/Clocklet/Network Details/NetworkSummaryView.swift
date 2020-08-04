@@ -88,6 +88,7 @@ class NetworkSummaryViewModel: ObservableObject{
     
     init(_ networkService: NetworkService){
         self.networkService = networkService
+        networkService.$currentNetwork.shouldNotify = true
         
         networkService.$isConfigured.sink { (configState) in
             self.isConfigured = configState
@@ -164,7 +165,9 @@ class NetworkSummaryViewModel: ObservableObject{
         }.store(in: &bag)
     }
     
-    
+    deinit {
+        networkService.$currentNetwork.shouldNotify = false
+    }
 }
 
 //extension CurrentNetwork {
