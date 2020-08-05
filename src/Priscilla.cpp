@@ -25,13 +25,6 @@
 
 #define TAG "PRISCILLA"
 
-// CONFIGURATION  --------------------------------------
-
-
-
-// Time zone adjust (in MINUTES from utc)
-int32_t tzAdjust = 0;
-int32_t secondaryTimeZone = 330; // Mumbai is +5:30
 
 // ----------- Display
 
@@ -211,10 +204,13 @@ void setup() {
 
 
   Location currentLocation = locationManager->getLocation();
+  weatherClient.weatherChangedQueue = weatherChangedQueue;
   rainbows.setLocation(currentLocation);
   weatherClient.setLocation(currentLocation);
   weatherClient.setTimeHorizon(12);
-  weatherClient.weatherChangedQueue = weatherChangedQueue;
+
+
+  rtc.setTimeZone(currentLocation.timeZone);
 
   // Setup DS3231
       // Initialise I2c stuff (DS3231)
@@ -306,6 +302,7 @@ void loop() {
     Location location = locationManager->getLocation();
     weatherClient.setLocation(location);
     rainbows.setLocation(location);
+    rtc.setTimeZone(location.timeZone);
   }
 
 

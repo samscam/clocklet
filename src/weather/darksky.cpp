@@ -49,6 +49,10 @@ void DarkSky::setTimeHorizon(uint8_t hours){
 
 void DarkSky::setLocation(Location location){
   _currentLocation = location;
+  horizonWeather = {};
+  rainbowWeather = {};
+  bool change = true;
+  xQueueSend(weatherChangedQueue, &change, (TickType_t) 0);
   this->setNeedsUpdate();
 }
 

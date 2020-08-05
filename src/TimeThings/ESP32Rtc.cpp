@@ -8,9 +8,12 @@
 #include "time.h"
 #include "lwip/apps/sntp.h"
 
-boolean RTC_ESP32::begin(void){
-  const char *timezone = "GMT0BST,M3.5.0/1,M10.5.0";
+#include "Zones.h"
+#include "esp_log.h"
 
+#define TAG "RTCESP32"
+
+boolean RTC_ESP32::begin(void){
   if(sntp_enabled()){
       sntp_stop();
   }
@@ -25,10 +28,26 @@ boolean RTC_ESP32::begin(void){
   sntp_setservername(2, server2);
   sntp_init();
 
-  setenv( "TZ", timezone, 1 );
-  tzset();
-
   return true;
+}
+
+void RTC_ESP32::setTimeZone(const char* newTimeZone){
+  ESP_LOGI(TAG, "Looking up %s",newTimeZone);
+  int zonesLength = sizeof(zones)/sizeof(char*);
+  const char* posixCode = nullptr;
+  int x;
+  for(x=0;x<zonesLength;x=x+2){
+    ESP_LOGV(TAG, "... Matching %s",zones[x]);
+    if (strcmp(zones[x],newTimeZone) == 0){
+      posixCode = zones[x+1];
+      break;
+    }
+  }
+  if (posixCode != nullptr){
+    ESP_LOGI(TAG, "New timezone code is %s",posixCode);
+    setenv( "TZ", posixCode, 1 );
+    tzset();
+  }
 }
 
 void RTC_ESP32::adjust(const DateTime& dt){
