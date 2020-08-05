@@ -48,6 +48,9 @@ class LocationDetailsViewModel: ObservableObject {
     func setCurrentLocation(){
         _locationService.setCurrentLocation()
     }
+    func setLocation(_ clockLocation: ClockLocation){
+        _locationService.currentLocation = clockLocation
+    }
 }
 
 struct PopularPlace: Identifiable, Hashable{
@@ -68,11 +71,11 @@ struct LocationDetailsView: View {
     @EnvironmentObject var viewModel: LocationDetailsViewModel
     @EnvironmentObject var clock: Clock
      
-    static let popularLocations: [PopularPlace] = [
-        PopularPlace(name: "New York", tzUTCOffset: -10),
-        PopularPlace(name: "London", tzUTCOffset: -10),
-        PopularPlace(name: "Paris", tzUTCOffset: 1),
-        PopularPlace(name: "Munich", tzUTCOffset: 3),
+    static let popularLocations: [ClockLocation] = [
+        ClockLocation(configured: true, lat: 40.712776, lng: -74.005974, timeZone: "America/New_York", placeName: "New York"),
+        ClockLocation(configured: true, lat: 51.507351, lng: -0.127758, timeZone: "Europe/London", placeName:"London"),
+        ClockLocation(configured: true, lat: 48.856613, lng: 2.352222, timeZone: "Europe/Paris", placeName: "Paris"),
+        ClockLocation(configured: true, lat: 48.135124, lng: 11.581981, timeZone: "Europe/Berlin", placeName: "Munich")
     ]
     
     @State var selectedLocation: PopularPlace?
@@ -132,10 +135,14 @@ struct LocationDetailsView: View {
 }
 
 struct PlaceRowView: View {
-    let place: PopularPlace
+    @EnvironmentObject var viewModel: LocationDetailsViewModel
+    let place: ClockLocation
     var body: some View {
         HStack {
-            Text(place.name)
+            Button(place.placeName ?? "Where?") {
+                self.viewModel.setLocation(place)
+            }.buttonStyle(RoundyButtonStyle()).accentColor(.purple)
+            
         }
     }
 }
