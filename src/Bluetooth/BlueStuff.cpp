@@ -28,6 +28,11 @@ BlueStuff::BlueStuff(QueueHandle_t preferencesChangedQueue,
     _networkChangedQueue = networkChangedQueue;
     _networkStatusQueue = networkStatusQueue;
     _locationManager = locationManager;
+
+        uint16_t hwrev = clocklet_hwrev();
+    uint16_t caseColour = clocklet_caseColour();
+    uint32_t serial = clocklet_serial();
+    sprintf(_deviceName,"%s #%d",shortName,serial);
 }
 
 void BlueStuff::startBlueStuff(){
@@ -39,14 +44,16 @@ void BlueStuff::startBlueStuff(){
     
     LOGMEM;
 
-    char *deviceName;
-    asprintf(&deviceName,"%s #%d",shortName,serial);
-    BLEDevice::init(deviceName);
+    BLEDevice::init(_deviceName);
     
     esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT);
     BLEDevice::setEncryptionLevel(ESP_BLE_SEC_ENCRYPT);
     
     pServer = BLEDevice::createServer();
+
+    // BLE Advertising
+    _setupAdvertising();
+
     pServer->setCallbacks(this);
 
     _technicalService = new BTTechnicalService(pServer);
@@ -55,9 +62,6 @@ void BlueStuff::startBlueStuff(){
     _preferencesService = new BTPreferencesService(pServer, _preferencesChangedQueue);
 
 
-    // BLE Advertising
-
-    _setupAdvertising();
 
     LOGMEM;
 }
@@ -67,19 +71,17 @@ void BlueStuff::_setupAdvertising(){
     uint16_t hwrev = clocklet_hwrev();
     uint16_t caseColour = clocklet_caseColour();
     uint32_t serial = clocklet_serial();
-    char *deviceName;
-    asprintf(&deviceName,"%s #%d",shortName,serial);
 
     if (isnan(serial)){
         serial = 0;
     }
 
-    BLEAdvertising *pAdvertising = pServer->getAdvertising();
+    BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
     
     BLEAdvertisementData advertisementData;
     BLEAdvertisementData scanResponseData;
 
-    scanResponseData.setName(deviceName);
+    advertisementData.setName(_deviceName);
     advertisementData.setPartialServices(BLEUUID(SV_NETWORK_UUID));
 
     char mfrdataBuffer[10];
@@ -99,7 +101,7 @@ void BlueStuff::_setupAdvertising(){
     mfrdataBuffer[9] = (serial >> 24) & 0xFF;
 
     auto s = std::string(mfrdataBuffer,sizeof(mfrdataBuffer));
-    advertisementData.setManufacturerData(s);
+    scanResponseData.setManufacturerData(s);
 
     pAdvertising->setAdvertisementData(advertisementData);
     pAdvertising->setScanResponseData(scanResponseData);
@@ -109,7 +111,7 @@ void BlueStuff::_setupAdvertising(){
     pAdvertising->setMinPreferred(0x06);  
     pAdvertising->setMaxPreferred(0x12);
     pAdvertising->setScanResponse(true);
-    pAdvertising->start();
+    BLEDevice::startAdvertising();
 }
 void BlueStuff::stopBlueStuff(){
     
@@ -126,8 +128,4 @@ void BlueStuff::onConnect(BLEServer* server) {
 void BlueStuff::onDisconnect(BLEServer* server) {
     ESP_LOGI(TAG,"Bluetooth client disconnected");
     _networkService->onDisconnect();
-
-    // Advertising has a habit of getting trashed on disconnect...
-    // Force it to work...
-    _setupAdvertising();
 }

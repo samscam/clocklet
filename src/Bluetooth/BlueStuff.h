@@ -37,6 +37,11 @@ public:
 
     
 private:
+
+
+    char _deviceName[15];
+    char _mfrData[10];
+
     void _setupAdvertising();
     bool _keepRunning = true;
     
