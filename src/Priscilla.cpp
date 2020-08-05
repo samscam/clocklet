@@ -25,7 +25,6 @@
 
 #define TAG "PRISCILLA"
 
-
 // ----------- Display
 
 #if defined(RAINBOWDISPLAY)

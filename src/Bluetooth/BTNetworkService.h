@@ -10,7 +10,6 @@
 
 #define SV_NETWORK_UUID     "68D924A1-C1B2-497B-AC16-FD1D98EDB41F"
 
-
 enum WifiConfigStatus {
     notConfigured,
     configured
@@ -55,8 +54,6 @@ private:
 
 
     bool _shouldScan = false;
-
-    
 
     QueueHandle_t _networkChangedQueue;
     QueueHandle_t _networkStatusQueue;
