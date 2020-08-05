@@ -29,7 +29,6 @@ void NetworkScanTask::run(void *data){
             if ( !WiFi.isConnected() ) WiFi.begin();
             delay(10000);
         } else {
-            if ( !WiFi.isConnected() ) WiFi.begin();
             delay(500);
         }
         
