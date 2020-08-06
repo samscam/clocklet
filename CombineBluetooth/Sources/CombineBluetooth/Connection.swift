@@ -78,7 +78,9 @@ public class Connection: NSObject{
         peripheral?.state = .disconnected(error: error)
     }
     
-    func didFailToConnect(error: Error?){}
+    func didFailToConnect(error: Error?){
+        peripheral?.state = .disconnected(error: error)
+    }
     
 }
 
