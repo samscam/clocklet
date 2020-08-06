@@ -15,22 +15,26 @@ struct ClockSummaryView: View {
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
     var body: some View {
-        
-        ZStack{
-            Image(clock.caseColor.imageName).renderingMode(.original).resizable().aspectRatio(contentMode: .fit)
-            
-            if colorScheme == .light {
-                Rectangle().foregroundColor(.clear).background(
-                    LinearGradient(gradient: Gradient(colors:[Color(hue: 0, saturation: 0, brightness: 1, opacity: 0) ,.white]), startPoint: .top, endPoint: .bottom)
-                        )
-                    .padding(.top, 100)
-            } else {
-                Rectangle().foregroundColor(.clear).background(LinearGradient(gradient: Gradient(colors:[Color(hue: 0, saturation: 0, brightness: 0, opacity: 0) ,.black]), startPoint: .top, endPoint: .bottom)).padding(.top, 100)
+        VStack{
+            Spacer()
+            ZStack{
+                Image(clock.caseColor.imageName).renderingMode(.original).resizable().aspectRatio(contentMode: .fit)
+                
+                if colorScheme == .light {
+                    Rectangle().foregroundColor(.clear).background(
+                        LinearGradient(gradient: Gradient(colors:[Color(hue: 0, saturation: 0, brightness: 1, opacity: 0) ,.white]), startPoint: .top, endPoint: .bottom)
+                            )
+                        .padding(.top, 100)
+                } else {
+                    Rectangle().foregroundColor(.clear).background(LinearGradient(gradient: Gradient(colors:[Color(hue: 0, saturation: 0, brightness: 0, opacity: 0) ,.black]), startPoint: .top, endPoint: .bottom)).padding(.top, 100)
+                }
+                Text(clock.name).font(.largeTitle).bold()
+                    .foregroundColor(.primary)
+                    .shadow(color: colorScheme == .light ? .white : .black, radius: 2, x: 0, y: 0).padding(.top, 100)
             }
-            Text(clock.name).font(.largeTitle).bold()
-                .foregroundColor(.primary)
-                .shadow(color: colorScheme == .light ? .white : .black, radius: 2, x: 0, y: 0).padding(.top, 100)
+            Spacer()
         }
+
     }
  
 }

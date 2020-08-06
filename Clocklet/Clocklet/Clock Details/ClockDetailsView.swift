@@ -14,6 +14,7 @@ import CombineBluetooth
 struct ClockDetailsView: View {
     
     @EnvironmentObject var clock: Clock
+    @State var showLocationDetails: Bool = false
     
     var body: some View {
         ScrollView{
@@ -24,13 +25,13 @@ struct ClockDetailsView: View {
                     .frame(width: nil, height: 200, alignment: .center)
                 
                 if(clock.state == .connected){
-
+                    
                     if(clock.isConfigured == .configured){
                         clock.settingsService.map{ settingsService in
                             ClockSettingsView().environmentObject(settingsService)
                         }
                     }
-
+                    
                     
                     clock.networkService.map{ networkService in
                         NavigationLink(destination: NetworkDetailView().environmentObject(networkService)){
@@ -39,9 +40,23 @@ struct ClockDetailsView: View {
                     }
                     
                     clock.locationService.map{ locationService in
-                        NavigationLink(destination: LocationDetailsView().environmentObject(LocationDetailsViewModel(locationService: locationService)).environmentObject(clock)
-                                        ){
-                        LocationSummaryView().environmentObject(locationService).accentColor(nil)
+                        Group{
+                            NavigationLink(destination:
+                                            LocationDetailsView()
+                                            .environmentObject(LocationDetailsViewModel(locationService: locationService))
+                                            .environmentObject(clock),
+                                           isActive: $showLocationDetails)
+                            {
+                                if (locationService.isConfigured == .configured){
+                                    LocationSummaryView(showLocationDetails:$showLocationDetails).environmentObject(locationService).accentColor(nil)
+                                } else {
+                                        EmptyView()
+                                }
+                                
+                            }
+                            if (locationService.isConfigured != .configured){
+                                LocationSummaryView(showLocationDetails:$showLocationDetails).environmentObject(locationService).accentColor(nil)
+                            }
                         }
                     }
                     
@@ -49,13 +64,13 @@ struct ClockDetailsView: View {
                     clock.technicalService.map{ technicalService in
                         clock.deviceInfoService.map{ deviceInfoService in
                             NavigationLink(destination:
-                            ClockTechnicalView().environmentObject(technicalService)
-                                .environmentObject(deviceInfoService)){
+                                            ClockTechnicalView().environmentObject(technicalService)
+                                            .environmentObject(deviceInfoService)){
                                 ConfigItemView(icon: Image(systemName:"wrench") ,
                                                title: "Technical stuff"){
-                                               EmptyView()
+                                    EmptyView()
                                 }
-                            }
+                                            }
                         }
                     }
                     
@@ -83,17 +98,17 @@ struct ClockDetailsView: View {
                         }
                         
                     }.padding().frame(maxWidth: .infinity)
-
+                    
                 }
             }
             .padding()
             .animation(.default)
-
+            
             
         }.navigationBarTitle( Text(clock.name), displayMode:.automatic)
         .navigationBarItems(trailing: Image(systemName:clock.state.iconSystemName).foregroundColor(clock.state.color))
         .onAppear {
-             self.clock.connect()
+            self.clock.connect()
         }
     }
 }
@@ -112,41 +127,41 @@ struct ClockDetailsView_Previews: PreviewProvider {
     }()
     
     static var previews: some View {
-
+        
         NavigationView{
             ClockDetailsView().environmentObject(clock)
         }
         
     }
-
+    
     
 }
 
 extension ConnectionState{
     var iconSystemName: String {
         switch self {
-            case .connected: return "bolt.fill"
-            case .connecting: return "bolt"
-            case .disconnected: return "bolt.slash.fill"
+        case .connected: return "bolt.fill"
+        case .connecting: return "bolt"
+        case .disconnected: return "bolt.slash.fill"
         }
     }
     
     var color: Color {
         switch self {
-            case .connected: return .green
-            case .connecting: return .orange
-            case .disconnected: return .red
+        case .connected: return .green
+        case .connecting: return .orange
+        case .disconnected: return .red
         }
     }
 }
 
 extension ConnectionState: CustomStringConvertible {
-
+    
     public var description: String {
         switch self {
-            case .connected: return "Connected"
-            case .connecting: return "Connecting"
-            case .disconnected: return "Disconnected"
+        case .connected: return "Connected"
+        case .connecting: return "Connecting"
+        case .disconnected: return "Disconnected"
         }
     }
     
