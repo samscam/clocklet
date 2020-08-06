@@ -16,26 +16,28 @@
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>SHORT_VERSION</string>
+	<key>CFBundleURLTypes</key>
+	<array/>
 	<key>CFBundleVersion</key>
 	<string>REV_COUNT</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.utilities</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>The Clocklet app uses Bluetooth to communicate with your Clocklet</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>The Clocklet app uses Bluetooth to communicate with your Clocklet</string>
-	<key>NSLocationUsageDescription</key>
-	<string>Clocklet needs to know your location to get accurate weather reports</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Clocklet needs to know your location to get accurate weather reports</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Clocklet </string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Clocklet needs to know your location to get accurate weather reports</string>
 	<key>NSLocationTemporaryUsageDescriptionDictionary</key>
 	<dict/>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>The Clocklet app uses Bluetooth to communicate with your Clocklet</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Clocklet needs to know your location to get accurate weather reports</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Clocklet needs to know your location to get accurate weather reports</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
