@@ -19,7 +19,9 @@ struct NetworkDetailView: View {
             VStack{
                 
                 NetworkHeaderView().environmentObject(NetworkSummaryViewModel(networkService))
-                networkService.currentNetwork.map{ currentNetwork in
+                
+                if let currentNetwork = networkService.currentNetwork, networkService.isConfigured == .configured {
+                    
                     ConfigItemView(icon: Image(systemName:"waveform.path"), iconColor: nil, title: "Details") {
                         HStack{
                             VStack(alignment:.leading){
