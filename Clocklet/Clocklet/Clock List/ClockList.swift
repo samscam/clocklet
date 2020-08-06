@@ -12,7 +12,12 @@ import CombineBluetooth
 import SwiftUI
 import CoreBluetooth
 
+
+
+
 class ClockList: ObservableObject {
+    
+    @Published var bluetoothStatusViewModel: BluetoothStatusViewModel?
     
     @Published var bluetoothState: CBManagerState = .unknown
     @Published var isScanning = true
@@ -29,6 +34,18 @@ class ClockList: ObservableObject {
         self.central = central
         self._cancellableScanning = central?.$isScanning.assign(to: \.isScanning, on: self)
         central?.$state.assign(to: \.bluetoothState, on: self).store(in: &bag)
+        
+        
+        $bluetoothState.map{ (state) -> BluetoothStatusViewModel? in
+            if state == .poweredOn {
+                return nil
+            }
+            
+            return BluetoothStatusViewModel(state:state)
+            
+        }.assign(to: \.bluetoothStatusViewModel, on: self)
+        .store(in: &bag)
+        
     }
     
     deinit{

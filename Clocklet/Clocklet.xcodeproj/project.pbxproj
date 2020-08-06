@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		220D1CFA24DC966800578808 /* BluetoothOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220D1CF924DC966800578808 /* BluetoothOverlayView.swift */; };
 		220DDB11236B9E3900429503 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220DDB10236B9E3900429503 /* MapView.swift */; };
 		222271A5232B887100508ADA /* ClockSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222271A4232B887100508ADA /* ClockSummaryView.swift */; };
 		222500CB24AE452B00B5872A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 222500CA24AE452A00B5872A /* Assets.xcassets */; };
@@ -76,6 +77,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		220D1CF924DC966800578808 /* BluetoothOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothOverlayView.swift; sourceTree = "<group>"; };
 		220DDB10236B9E3900429503 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		222271A4232B887100508ADA /* ClockSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockSummaryView.swift; sourceTree = "<group>"; };
 		222500C924AE451D00B5872A /* Clocklet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Clocklet.entitlements; sourceTree = "<group>"; };
@@ -240,6 +242,7 @@
 				228DF260234FDF6400480588 /* ClockList.swift */,
 				224C538E234F6CDD00A68928 /* ClockListView.swift */,
 				222271A4232B887100508ADA /* ClockSummaryView.swift */,
+				220D1CF924DC966800578808 /* BluetoothOverlayView.swift */,
 			);
 			path = "Clock List";
 			sourceTree = "<group>";
@@ -440,6 +443,7 @@
 				22B488F524C5F0220079873B /* DeviceInfoService.swift in Sources */,
 				224C538F234F6CDD00A68928 /* ClockListView.swift in Sources */,
 				224C5391234FAE7300A68928 /* ClockDetailsView.swift in Sources */,
+				220D1CFA24DC966800578808 /* BluetoothOverlayView.swift in Sources */,
 				22B2D0B324943B3500D570E2 /* ClockSettingsView.swift in Sources */,
 				22604281236E40F800710F37 /* LocationProxy.swift in Sources */,
 				220DDB11236B9E3900429503 /* MapView.swift in Sources */,
