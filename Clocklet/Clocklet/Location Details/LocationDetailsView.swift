@@ -72,53 +72,47 @@ struct LocationDetailsView: View {
     @EnvironmentObject var clock: Clock
      
     static let popularLocations: [ClockLocation] = [
-        ClockLocation(configured: true, lat: 40.712776, lng: -74.005974, timeZone: "America/New_York", placeName: "New York"),
-        ClockLocation(configured: true, lat: 51.507351, lng: -0.127758, timeZone: "Europe/London", placeName:"London"),
-        ClockLocation(configured: true, lat: 48.856613, lng: 2.352222, timeZone: "Europe/Paris", placeName: "Paris"),
-        ClockLocation(configured: true, lat: 48.135124, lng: 11.581981, timeZone: "Europe/Berlin", placeName: "Munich")
+        .manchester,.newYork,.london,.paris,.munich,.sanfrancisco,.melbourne,.chatham,.mumbai
     ]
-    
-    @State var selectedLocation: PopularPlace?
     
     
     var body: some View {
         ScrollView{
         VStack(alignment: .leading){
             if viewModel.showMap {
-            if #available(iOS 14.0,macOS 11.0, *) {
-                Map(coordinateRegion: viewModel.region, interactionModes: MapInteractionModes(), showsUserLocation: true,
-                    annotationItems: viewModel.annotations){ annotation in
-                    MapAnnotation(coordinate: annotation.coordinate){
-                        Image(clock.caseColor.imageName).resizable()
-                            .aspectRatio(contentMode: .fit).frame(width: 140, height: 60, alignment: .center)
+            
+                ZStack{
+                    if #available(iOS 14.0,macOS 11.0, *) {
+                        Map(coordinateRegion: viewModel.region, interactionModes: MapInteractionModes(), showsUserLocation: true,
+                            annotationItems: viewModel.annotations){ annotation in
+                            MapAnnotation(coordinate: annotation.coordinate){
+                                Image(clock.caseColor.imageName).resizable()
+                                    .aspectRatio(contentMode: .fit).frame(width: 140, height: 60, alignment: .center)
+                            }
+                        }.opacity(0.6).blendMode(.luminosity)
+                    } else {
+                        MapView(coordinate: viewModel.region.center.wrappedValue)
+                    }
+                    if let placeName = viewModel.currentLocation.placeName{
+                        VStack(alignment: .center){
+                        HStack(alignment:.top){
+                            Text(placeName).font(.largeTitle).fontWeight(.black).multilineTextAlignment(.center).shadow(color: Color(UIColor.systemBackground), radius:5)
+                        }.padding(5)
+                        Spacer()
+                        }.padding(5)
                     }
                 }.frame(height: 200)
-                    
-            } else {
-                MapView(coordinate: viewModel.region.center.wrappedValue)
-            }
+
             
-            Spacer()
+                Spacer()
             }
-            
-            VStack(alignment:.leading){
-                HStack{
-                    Text("Place:").foregroundColor(.secondary)
-                    Text(viewModel.currentLocation.placeName ?? "Unknown Place").bold().foregroundColor(.primary)
-                }
-                
-                HStack{
-                    Text("Time zone:").foregroundColor(.secondary)
-                    Text(viewModel.currentLocation.timeZone ?? "Unknown time zone").bold().foregroundColor(.primary)
-                }
-            }
-            
+
             Spacer()
             
             Button("Set to current location"){
                     self.viewModel.setCurrentLocation()
                 }
-                .buttonStyle(RoundyButtonStyle())
+            .buttonStyle(RoundyButtonStyle()).frame(maxWidth:.infinity)
             
             Spacer()
             
@@ -148,9 +142,18 @@ struct PlaceRowView: View {
 }
 
 struct LocationDetailsView_Previews: PreviewProvider {
+    static let viewModel: LocationDetailsViewModel = {
+        let locationService = LocationService()
+        locationService.currentLocation = .manchester
+        locationService.isConfigured = .configured
+        return LocationDetailsViewModel(locationService: locationService)
+    }()
+    static let clock: Clock = Clock("really", .gold)
+    
     static var previews: some View {
         NavigationView(){
-            LocationDetailsView()
+            LocationDetailsView().environmentObject(clock)
+                .environmentObject(viewModel)
         }
     }
 }

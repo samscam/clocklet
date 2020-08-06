@@ -12,6 +12,7 @@ import CoreLocation
 
 
 struct LocationSummaryView: View {
+    @Binding var showLocationDetails: Bool
     
     @EnvironmentObject var locationService: LocationService
     
@@ -23,14 +24,19 @@ struct LocationSummaryView: View {
                     return AnyView(EmptyView())
                 } else {
                     return AnyView(
-                        HStack(alignment:.center){
+                        VStack(alignment:.leading){
                         Button("Set to current location"){
                                 self.locationService.setCurrentLocation()
                             }
                             .buttonStyle(RoundyButtonStyle())
-                            Button("More >"){
-                                    self.locationService.setCurrentLocation()
+                            Button {
+                                self.showLocationDetails = true
+                            } label: {
+                                HStack{
+                                    Text( "Set to somewhere else" )
+                                    Image(systemName: "chevron.right").resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20)
                                 }
+                            }
                             .buttonStyle(RoundyButtonStyle()).accentColor(.green)
                     })
                     
