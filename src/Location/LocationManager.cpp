@@ -14,7 +14,7 @@ LocationManager::LocationManager(QueueHandle_t locationChangedQueue){
     double lat = preferences.getDouble("lat",0);
     double lng = preferences.getDouble("lng",0);
     String placeName = preferences.getString("placeName",String("Nowhere"));
-    String timeZone = preferences.getString("timeZone",String("UTC"));
+    String timeZone = preferences.getString("timeZone",String("Europe/London"));
     currentLocation.lat = lat;
     currentLocation.lng = lng;
     strcpy(currentLocation.placeName, placeName.c_str());
