@@ -5,7 +5,7 @@
 #define TAG "UPDATES"
 
 UpdateScheduler::UpdateScheduler():Task("UpdateScheduler", 5000,  5){
-    this->setCore(0); // Run it on core ONE
+    this->setCore(0);
 }
 
 void UpdateScheduler::run(void *data) {
