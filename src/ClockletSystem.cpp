@@ -3,6 +3,7 @@
 #include <Esp.h>
 #include <nvs_flash.h>
 #include <soc/efuse_reg.h>
+#include <Preferences.h>
 
 void clocklet_factoryReset(){
     nvs_flash_erase();
@@ -10,7 +11,11 @@ void clocklet_factoryReset(){
 }
 
 void clocklet_partialReset(){
-    // NOT IMPLEMENTED BOOOOO
+    Preferences preferences = Preferences();
+    preferences.begin("clocklet", false);
+    preferences.clear();
+    preferences.end();
+    ESP.restart();
 }
 
 void clocklet_reboot(){
