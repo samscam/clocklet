@@ -6,7 +6,7 @@ LocationManager::LocationManager(QueueHandle_t locationChangedQueue){
     
     // Initialise with null island
     Serial.println("LocationManager constructor ******");
-    currentLocation = {0,0,NULL,NULL};
+    currentLocation = {};
 
     Preferences preferences = Preferences();
     preferences.begin("clocklet", true);
