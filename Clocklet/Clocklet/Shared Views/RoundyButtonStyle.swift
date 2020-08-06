@@ -13,7 +13,7 @@ struct RoundyButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .accentColor(Color(.systemBackground))
+            .foregroundColor(.white)
             .padding()
             .background(Capsule().fill(Color.accentColor))
         
@@ -23,7 +23,7 @@ struct RoundyButtonStyle: ButtonStyle {
 
 extension Text {
     func lozenge() -> some View{
-        return self.accentColor(Color(.systemBackground))
+        return self.foregroundColor(.white)
         .padding()
         .background(Capsule().fill(Color.accentColor))
     }
