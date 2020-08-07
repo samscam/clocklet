@@ -21,22 +21,28 @@
 
 const char * shortName = "Clocklet";
 
-BlueStuff::BlueStuff(QueueHandle_t preferencesChangedQueue,
+BlueStuff::BlueStuff(QueueHandle_t bluetoothConnectedQueue,
+            QueueHandle_t preferencesChangedQueue,
             QueueHandle_t networkChangedQueue,
             QueueHandle_t networkStatusQueue, LocationManager *locationManager) {
+    _bluetoothConnectedQueue = bluetoothConnectedQueue;
     _preferencesChangedQueue =  preferencesChangedQueue;
     _networkChangedQueue = networkChangedQueue;
     _networkStatusQueue = networkStatusQueue;
     _locationManager = locationManager;
 
-        uint16_t hwrev = clocklet_hwrev();
-    uint16_t caseColour = clocklet_caseColour();
+
     uint32_t serial = clocklet_serial();
     sprintf(_deviceName,"%s #%d",shortName,serial);
 }
 
 void BlueStuff::startBlueStuff(){
     LOGMEM;
+    if (_bluetoothRunning){
+        return;
+    }
+
+    _bluetoothRunning = true;
 
     ESP_LOGI(TAG,"Starting BLE work!");
 
@@ -114,12 +120,24 @@ void BlueStuff::_setupAdvertising(){
     BLEDevice::startAdvertising();
 }
 void BlueStuff::stopBlueStuff(){
-    
+    if (!_bluetoothRunning){
+        return;
+    }
+    _bluetoothRunning = false;
+
+    delete(_technicalService);
+    delete(_locationService);
+    delete(_networkService);
+    delete(_preferencesService);
+    BLEDevice::deinit(false);
+
+
 }
 
 void BlueStuff::onConnect(BLEServer* server) {
     ESP_LOGI(TAG,"Bluetooth client connected");
-
+    bool change = true;
+    xQueueSend(_bluetoothConnectedQueue, &change, (TickType_t) 0);
     delay(500);
 
     _networkService->onConnect();
@@ -128,4 +146,6 @@ void BlueStuff::onConnect(BLEServer* server) {
 void BlueStuff::onDisconnect(BLEServer* server) {
     ESP_LOGI(TAG,"Bluetooth client disconnected");
     _networkService->onDisconnect();
+    bool change = false;
+    xQueueSend(_bluetoothConnectedQueue, &change, (TickType_t) 0);
 }

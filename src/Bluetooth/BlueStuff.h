@@ -22,7 +22,8 @@
 class BlueStuff: public BLEServerCallbacks {
 
 public:
-    BlueStuff(QueueHandle_t preferencesChangedQueue,
+    BlueStuff(QueueHandle_t bluetoothConnectedQueue,
+                QueueHandle_t preferencesChangedQueue,
                 QueueHandle_t networkChangedQueue,
                 QueueHandle_t networkStatusQueue,
                 LocationManager *locationManager);
@@ -43,8 +44,9 @@ private:
     char _mfrData[10];
 
     void _setupAdvertising();
-    bool _keepRunning = true;
+    bool _bluetoothRunning = false;
     
+    QueueHandle_t _bluetoothConnectedQueue;
     BLEServer *pServer;
 
     BTTechnicalService* _technicalService;

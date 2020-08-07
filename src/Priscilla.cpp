@@ -90,7 +90,7 @@ DarkSky weatherClient = DarkSky();
 Rainbows rainbows;
 
 // Global Notification queues
-
+QueueHandle_t bluetoothConnectedQueue;
 QueueHandle_t prefsChangedQueue;
 QueueHandle_t weatherChangedQueue;
 QueueHandle_t locationChangedQueue;
@@ -123,6 +123,7 @@ void setup() {
   Serial.printf("Firmware Version: %s (%s)\n",VERSION,GIT_HASH);
 
   // Notification queues
+  bluetoothConnectedQueue = xQueueCreate(1, sizeof(bool));
   prefsChangedQueue = xQueueCreate(1, sizeof(bool));
   weatherChangedQueue = xQueueCreate(1, sizeof(bool));
   locationChangedQueue = xQueueCreate(1, sizeof(bool));
@@ -195,9 +196,9 @@ void setup() {
 
   locationManager = new LocationManager(locationChangedQueue);
 
-
+  blueStuff = new BlueStuff(bluetoothConnectedQueue,prefsChangedQueue,networkChangedQueue,networkStatusQueue,locationManager);
+  
   #if defined(CLOCKBRAIN)
-  blueStuff = new BlueStuff(prefsChangedQueue,networkChangedQueue,networkStatusQueue,locationManager);
   blueStuff->startBlueStuff();
   #endif
 
@@ -304,6 +305,11 @@ void loop() {
     rtc.setTimeZone(location.timeZone);
   }
 
+  // Bluetooth Connected
+  bool bluetoothConnected = false;
+  if (xQueueReceive(bluetoothConnectedQueue, &bluetoothConnected, (TickType_t)0 )){
+    display.setDeviceState(bluetoothConnected ? bluetooth : ok);
+  }
 
   // ... firmware updates
   
@@ -313,6 +319,7 @@ void loop() {
     case idle:
       break;
     case updating:
+      blueStuff->stopBlueStuff();
       if (!fwUpdateStarted){
         display.displayMessage("Updating Firmware", rando);
         fwUpdateStarted = true;
@@ -325,6 +332,9 @@ void loop() {
 
       break;
     case failed:
+      #if defined(CLOCKBRAIN)
+      blueStuff->startBlueStuff();
+      #endif
       display.displayMessage("Update failed... sorry :(",bad);
       fwUpdateStatus = idle;
       break;
