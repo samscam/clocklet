@@ -69,6 +69,10 @@ void Matrix::setTime(DateTime time) {
   _time = time;
 }
 
+void Matrix::setDecimalTime(double decimalTime) {
+  _decimalTime = decimalTime;
+}
+
 void Matrix::setTimeStyle(TimeStyle timeStyle){
   _timeStyle = timeStyle;
 }
@@ -395,50 +399,50 @@ void Matrix::displayTime(const DateTime& time, Weather weather){
     addFrost();
   }
 
+  _blinkColon = BLINK_SEPARATOR ? (time.second() % 2) == 0 : true;
+
+  CRGB dotColour = CRGB::Black;
+  switch(_deviceState){
+    case ok:
+      dotColour = CRGB::Black;
+      break;
+    case weatherFail:
+      dotColour = CRGB::LightYellow;
+      break;
+    case syncFail:
+      dotColour = CRGB::Violet;
+      break;
+    case noLocation:
+      dotColour = CRGB::LimeGreen;
+      break;
+    case noNetwork:
+      dotColour = CRGB::Red;
+      break;
+    case bluetooth:
+      dotColour = CRGB::Blue;
+      break;
+  }
+
   switch(_timeStyle) {
     case twentyFourHour:
       maskTime(time);
+      setDot(_blinkColon,dotColour,8,colon);
       break;
     case twelveHour:
       maskTime(time);
+      setDot(_blinkColon,dotColour,8,colon);
+      // setDot(_blinkColon,dotColour,8,time.isPM() ? colon : point);
       break;
     case decimal:
-      double decTime = decimalise(time);
       char buf[10];
-      sprintf(buf,"%.3f",decTime);
+      sprintf(buf,"%.3f",_decimalTime);
       displayString(buf);
+      int decimalSecond = floor(_decimalTime * 10000) - (floor(_decimalTime * 1000)*10);
+      _blinkColon = BLINK_SEPARATOR ? (decimalSecond % 2) == 0 : true;
+      setDot(_blinkColon,dotColour,4,point);
       break;
     // case dateOnly:
     //   maskDate(time);
-  }
-
-
-  if (_timeStyle != decimal){
-    _blinkColon = BLINK_SEPARATOR ? (time.second() % 2) == 0 : true;
-
-    CRGB dotColour = CRGB::Black;
-    switch(_deviceState){
-      case ok:
-        dotColour = CRGB::Black;
-        break;
-      case weatherFail:
-        dotColour = CRGB::LightYellow;
-        break;
-      case syncFail:
-        dotColour = CRGB::Violet;
-        break;
-      case noLocation:
-        dotColour = CRGB::LimeGreen;
-        break;
-      case noNetwork:
-        dotColour = CRGB::Red;
-        break;
-      case bluetooth:
-        dotColour = CRGB::Blue;
-        break;
-    }
-
-    setDot(_blinkColon,dotColour);
   }
 
   if (rainChance > 0) {
@@ -584,7 +588,7 @@ void Matrix::setDigitMask(uint16_t mask, int digit){
 
 }
 
-void Matrix::setDot(bool state, CRGB colour, SeparatorStyle style){
+void Matrix::setDot(bool state, CRGB colour, uint8_t column, SeparatorStyle style){
 
   uint8_t separatorMask = style;
 
@@ -593,16 +597,16 @@ void Matrix::setDot(bool state, CRGB colour, SeparatorStyle style){
     uint8_t thisPixelVal = (uint8_t)(separatorMask << (7-y)) >> 7;
 
     if (!thisPixelVal){
-      leds[ XYsafe(8,4-y) ] = CRGB::Black;
+      leds[ XYsafe(column,4-y) ] = CRGB::Black;
     }
     if (thisPixelVal && !state){
-      leds[ XYsafe(8,4-y) ] = colour;
+      leds[ XYsafe(column,4-y) ] = colour;
     }
   }
 
     //black column after the dots
   for (int n=0;n<5;n++){
-    leds[ XYsafe(9,n) ] = CRGB::Black;
+    leds[ XYsafe(column+1,n) ] = CRGB::Black;
   }
 
 

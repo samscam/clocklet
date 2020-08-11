@@ -392,8 +392,10 @@ void loop() {
 
 
   DateTime localTime = rtc.localTime();
+  double decimalTime = rtc.decimalTime();
   display.setRainbows(rainbows.rainbowProbability(time));
   display.setTime(localTime);
+  display.setDecimalTime(decimalTime);
   display.frameLoop();
 
   sensibleDelay(1000/FPS);

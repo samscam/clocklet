@@ -72,6 +72,27 @@ DateTime RTC_ESP32::localTime(){
                    timeStruct.tm_min, timeStruct.tm_sec);
 }
 
+// Returns the local time of day in decimal representation as a double
+// 24 hours = 1.0
+double RTC_ESP32::decimalTime(){
+  timeval tv;
+  timezone tz = {0,0};
+  gettimeofday(&tv,NULL);
+  
+  tm timeStruct;
+  localtime_r(&tv.tv_sec,&timeStruct);
+
+  
+  int msSinceStartOfDay = timeStruct.tm_hour * 60 * 60 * 1000;
+  msSinceStartOfDay += timeStruct.tm_min * 60 * 1000;
+  msSinceStartOfDay += timeStruct.tm_sec * 1000;
+  msSinceStartOfDay += tv.tv_usec / 1000;
+  
+  
+  double val = msSinceStartOfDay / 8640000.0;
+  return val;
+    
+}
 /* ESP32 calibration experiment
 #include "soc/rtc.h"
 #define CALIBRATE_ONE(cali_clk) calibrate_one(cali_clk, #cali_clk)

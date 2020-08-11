@@ -61,6 +61,8 @@ public:
   // the display should update on the next frame loop
   void setTime(DateTime time);
 
+  void setDecimalTime(double decimalTime);
+
   // Set the weather
   void setWeather(Weather weather);
   
@@ -115,7 +117,7 @@ private:
   void setDigitMask(uint16_t mask, int digit);
 
 
-  void setDot(bool state, CRGB colour = CRGB::Black,SeparatorStyle style = colon );
+  void setDot(bool state, CRGB colour = CRGB::Black, uint8_t column = 8, SeparatorStyle style = colon );
   
   void advanceWindCycle(float speed);
 
@@ -142,6 +144,8 @@ private:
   CRGB* leds;
 
   DateTime _time;
+  double _decimalTime;
+  
   Weather _weather;
   DeviceState _deviceState = ok;
   

@@ -11,4 +11,6 @@ public:
     void adjust(const DateTime& dt);
     DateTime now();
     DateTime localTime();
+    double decimalTime();
+    
 };
