@@ -34,10 +34,10 @@ And burn it!
 (use --force-write-always if necessary)
 
 Case colours
-0 (unset) raw hardware
-1 fake wood
-2 translucent
-3 rainbow blue-pink
-4 white
-5 galaxy black
-6 gold
+00 (unset) raw hardware
+01 fake wood
+02 translucent
+03 rainbow blue-pink
+04 white
+05 galaxy black
+06 gold
