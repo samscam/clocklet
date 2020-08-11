@@ -238,7 +238,7 @@ void Matrix::scrollText(const char *stringy, CRGB startColour, CRGB endColour, b
   TickType_t xLastWakeTime = xTaskGetTickCount();
   const TickType_t xFrequency = pdMS_TO_TICKS(1000/FPS);
 
-  int millisPerStep = 100;
+  int millisPerStep = 75;
   ulong lastmillis = millis();
 
   while (isScrolling){
