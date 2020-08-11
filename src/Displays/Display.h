@@ -31,7 +31,8 @@ public:
   virtual void displayMessage(const char *stringy, MessageType messageType = good);
 
   // OPTIONAL:
-
+  virtual void setDecimalTime(double decimalTime) {}
+  
   // Set a secondary time for like india
   virtual void setSecondaryTime(DateTime time, const char *identifier) {}
 
