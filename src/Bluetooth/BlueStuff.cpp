@@ -87,7 +87,7 @@ void BlueStuff::_setupAdvertising(){
     BLEAdvertisementData advertisementData;
     BLEAdvertisementData scanResponseData;
 
-    advertisementData.setName(_deviceName);
+    scanResponseData.setName(_deviceName);
     advertisementData.setPartialServices(BLEUUID(SV_NETWORK_UUID));
 
     char mfrdataBuffer[10];
@@ -107,8 +107,12 @@ void BlueStuff::_setupAdvertising(){
     mfrdataBuffer[9] = (serial >> 24) & 0xFF;
 
     auto s = std::string(mfrdataBuffer,sizeof(mfrdataBuffer));
-    scanResponseData.setManufacturerData(s);
+    advertisementData.setManufacturerData(s);
+    // Manufacturer Data: 10 bytes
+    // Service uuid: 16 bytes
+    // = 26 bytes - WILL NOT CHANGE - putting those in the advertising packet
 
+    // Name: 13 bytes - will eventually get longer - putting it in the scan response
     pAdvertising->setAdvertisementData(advertisementData);
     pAdvertising->setScanResponseData(scanResponseData);
 
