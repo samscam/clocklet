@@ -6,6 +6,7 @@
 #include "Location/LocationSource.h"
 #include "Location/LocationManager.h"
 #include <WiFi.h>
+#include <esp_log.h>
 
 #include "Bluetooth/BlueStuff.h"
 
@@ -14,7 +15,6 @@
 #include "Weather/Rainbows.h"
 
 #include "Loggery.h"
-#include "TimeThings/NTP.h"
 
 #include "rom/uart.h"
 #include <soc/efuse_reg.h>
@@ -122,15 +122,6 @@ void setup() {
 
   Serial.printf("Firmware Version: %s (%s)\n",VERSION,GIT_HASH);
 
-  // Notification queues
-  bluetoothConnectedQueue = xQueueCreate(1, sizeof(bool));
-  prefsChangedQueue = xQueueCreate(1, sizeof(bool));
-  weatherChangedQueue = xQueueCreate(1, sizeof(bool));
-  locationChangedQueue = xQueueCreate(1, sizeof(bool));
-  networkChangedQueue = xQueueCreate(1, sizeof(bool));
-  networkStatusQueue =  xQueueCreate(1, sizeof(wl_status_t));
-  firmwareUpdateQueue = xQueueCreate(1, sizeof(FirmwareUpdateStatus));
-
   // Read things from eFuse
 
   uint16_t hwrev = clocklet_hwrev();
@@ -149,27 +140,27 @@ void setup() {
   String swmigrev = preferences.getString("swmigrev","0.0.0");
 
   if (swmigrev != VERSION){
-    Serial.printf("Previously running: %s\n",swmigrev.c_str());
+    ESP_LOGI(TAG,"Previously running: %s\n",swmigrev.c_str());
     preferences.putString("swmigrev",VERSION);
-    Serial.println("MIGRATED!");
+    ESP_LOGI(TAG,"MIGRATED!");
   }
-
-  String owner = preferences.getString("owner","");
-  Serial.printf("Owner: %s\n",owner.c_str());
 
   preferences.end();
 
-  Serial.println("");
   LOGMEM;
 
+  // Notification queues
+  bluetoothConnectedQueue = xQueueCreate(1, sizeof(bool));
+  prefsChangedQueue = xQueueCreate(1, sizeof(bool));
+  weatherChangedQueue = xQueueCreate(1, sizeof(bool));
+  locationChangedQueue = xQueueCreate(1, sizeof(bool));
+  networkChangedQueue = xQueueCreate(1, sizeof(bool));
+  networkStatusQueue =  xQueueCreate(1, sizeof(wl_status_t));
+  firmwareUpdateQueue = xQueueCreate(1, sizeof(FirmwareUpdateStatus));
+
+  // Analog input for light pin
   analogReadResolution(12);
   analogSetPinAttenuation(LIGHT_PIN,ADC_0db);
-
-  // Randomise the random seed - Not sure if this is random enough
-  // We don't actually need to do this if the wireless subsystems are active
-  uint16_t seed = analogRead(A0);
-  randomSeed(seed);
-  Serial.println((String)"Seed: " + seed);
 
   // seed the brightness
   for (int i = 0; i<10 ; i++){
@@ -223,7 +214,7 @@ void setup() {
   #endif
 
   if (!ds3231.begin()){
-    Serial.println("Could not connect to DS3231");
+    ESP_LOGE(TAG,"Could not connect to DS3231");
   }
 
   #endif
@@ -280,7 +271,7 @@ void loop() {
   bool prefsDidChange = false;
   xQueueReceive(prefsChangedQueue, &prefsDidChange, (TickType_t)0 );
   if (prefsDidChange){
-    Serial.println("PREFS DID CHANGE");
+    ESP_LOGI(TAG,"PREFS DID CHANGE");
     updateDisplayPreferences();
 
   }
@@ -289,7 +280,7 @@ void loop() {
   bool weatherDidChange = false;
   xQueueReceive(weatherChangedQueue, &weatherDidChange, (TickType_t)0 );
   if (weatherDidChange){
-    Serial.println("Weather did change");
+    ESP_LOGI(TAG,"Weather did change");
     display.setWeather(weatherClient.horizonWeather);
     rainbows.setWeather(weatherClient.rainbowWeather);
   }
@@ -298,7 +289,7 @@ void loop() {
   bool locationDidChange = false;
   xQueueReceive(locationChangedQueue, &locationDidChange, (TickType_t)0 );
   if (locationDidChange){
-    Serial.println("locationDidChange did change");
+    ESP_LOGI(TAG,"Location did change");
     Location location = locationManager->getLocation();
     weatherClient.setLocation(location);
     rainbows.setLocation(location);
@@ -381,8 +372,9 @@ void loop() {
 
 
   if (millis() > lastRandomMessageTime + nextMessageDelay){
-    Serial.println("Random message");
+    
     const char *message = randoMessage();
+    ESP_LOGD(TAG,"Random message %s",message);
     display.displayMessage(message, rainbow);
     display.displayMessage(message, rainbow);
 
@@ -504,26 +496,25 @@ void espSleep(int milliseconds){
   #if defined(TIME_GPS)
   rtc.sleep();
   #endif
-  Serial.println("SLEEP");
   uart_tx_wait_idle(0);
   uint64_t microseconds = milliseconds * 1000;
 
   esp_err_t err = esp_sleep_enable_timer_wakeup( microseconds );
   if (err == ESP_ERR_INVALID_ARG){
-    Serial.println("Sleep timer wakeup invalid");
+    ESP_LOGE(TAG,"Sleep timer wakeup invalid");
     return;
   }
   err = esp_light_sleep_start();
 
   if (err == ESP_ERR_INVALID_STATE){
-    Serial.println("Trying to sleep: Invalid state error");
+    ESP_LOGE(TAG,"Trying to sleep: Invalid state error");
   }
-  Serial.println("AWAKE");
+  ESP_LOGI(TAG,"AWAKE");
 }
 
 void espShutdown(){
   // display.setStatusMessage("LOW BATTERY");
-  // Serial.println("LOW BATTERY shutting down");
+  // ESP_LOGI(TAG,"LOW BATTERY shutting down");
   // esp_deep_sleep_start();
 }
 #endif

@@ -122,8 +122,6 @@ void RGBDigit::scrollText(const char *stringy, CRGB colour){
 }
 
 void RGBDigit::scrollText(const char *stringy, CRGB startColour, CRGB endColour) {
-  Serial.println(stringy);
-
   char charbuffer[DIGIT_COUNT] = { 0 };
   int origLen = strlen(stringy);
   int extendedLen = origLen + DIGIT_COUNT;
@@ -564,8 +562,6 @@ void RGBDigit::addFrost(){
   // We want the bottom row and the next one up...
 
   for (int d = 0; d < NUM_DIGITS; d++){
-    // Serial.println((d*8) + 3);
-
     frostLayer[ (d*8) + 3 ] = CHSV(0,0,200);
     frostLayer[ (d*8) + 2 ] = CHSV(0,0,90);
     frostLayer[ (d*8) + 4 ] = CHSV(0,0,90);

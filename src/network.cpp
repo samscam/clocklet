@@ -1,9 +1,11 @@
 #include "network.h"
 #include "Secrets/Credentials.h"
+#include <esp_log.h>
 #include <esp_wifi.h>
 #include <esp_wifi_types.h>
 // MARK: NETWORK STUFF --------------------------------------
 
+#define TAG "Network"
 
 uint32_t lastConnectAttempt = 0;
 bool wifiStopped = false;
@@ -28,39 +30,16 @@ bool waitForWifi(uint32_t milliseconds){
     wl_status_t status = WiFi.status();
     if (status != lastStatus){
       lastStatus = status;
+      ESP_LOGI(TAG,"Network status changed to: %s",wl_status_toString(status));
 
-      switch (status) {
-        case WL_NO_SHIELD:
-          Serial.println("WL_NO_SHIELD");
-          break;
-        case WL_IDLE_STATUS:
-          Serial.println("WL_IDLE_STATUS");
-          break;
-        case WL_NO_SSID_AVAIL:
-          Serial.println("WL_NO_SSID_AVAIL");
-          break;
-        case WL_SCAN_COMPLETED:
-          Serial.println("WL_SCAN_COMPLETED");
-          break;
-        case WL_CONNECTED:
-          Serial.println("WL_CONNECTED");
-          printWiFiStatus();
-          return true;
-          break;
-        case WL_CONNECT_FAILED:
-          Serial.println("WL_CONNECT_FAILED");
-          break;
-        case WL_CONNECTION_LOST:
-          Serial.println("WL_CONNECTION_LOST");
-          break;
-        case WL_DISCONNECTED:
-          Serial.println("WL_DISCONNECTED");
-          break;
+      if (status == WL_CONNECTED){
+        return true;
       }
+      
     }
     vTaskDelay(10);
   }
-  Serial.println("Wifi timeout");
+  ESP_LOGI(TAG,"Wifi timeout");
   return false;
 }
 
@@ -72,17 +51,43 @@ void stopWifi(){
 
 void printWiFiStatus() {
   // print the SSID of the network you're attached to:
-  Serial.print("SSID: ");
-  Serial.println(WiFi.SSID());
+  ESP_LOGI(TAG,"SSID: %s",WiFi.SSID());
 
   // print your WiFi shield's IP address:
   IPAddress ip = WiFi.localIP();
-  Serial.print("IP Address: ");
-  Serial.println(ip);
+  ESP_LOGI(TAG,"IP Address: %s",ip);
 
   // print the received signal strength:
   long rssi = WiFi.RSSI();
-  Serial.print("signal strength (RSSI):");
-  Serial.print(rssi);
-  Serial.println(" dBm");
+  ESP_LOGI(TAG,"signal strength (RSSI): %l dBm",rssi);
+
+}
+
+const char* wl_status_toString(wl_status_t status){
+  switch (status) {
+    case WL_NO_SHIELD:
+      return "WL_NO_SHIELD";
+      break;
+    case WL_IDLE_STATUS:
+      return "WL_IDLE_STATUS";
+      break;
+    case WL_NO_SSID_AVAIL:
+      return "WL_NO_SSID_AVAIL";
+      break;
+    case WL_SCAN_COMPLETED:
+      return "WL_SCAN_COMPLETED";
+      break;
+    case WL_CONNECTED:
+      return "WL_CONNECTED";
+      break;
+    case WL_CONNECT_FAILED:
+      return "WL_CONNECT_FAILED";
+      break;
+    case WL_CONNECTION_LOST:
+      return "WL_CONNECTION_LOST";
+      break;
+    case WL_DISCONNECTED:
+      return "WL_DISCONNECTED";
+      break;
+  }
 }

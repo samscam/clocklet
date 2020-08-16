@@ -1,11 +1,12 @@
 #include "LocationManager.h"
 #include <Preferences.h>
 
+#define TAG "LOCMAN"
+
 LocationManager::LocationManager(QueueHandle_t locationChangedQueue){
     _locationChangedQueue = locationChangedQueue;
     
     // Initialise with null island
-    Serial.println("LocationManager constructor ******");
     currentLocation = {};
 
     Preferences preferences = Preferences();
@@ -21,9 +22,9 @@ LocationManager::LocationManager(QueueHandle_t locationChangedQueue){
     strcpy(currentLocation.timeZone, timeZone.c_str());
 
     if (isValidLocation(currentLocation)){
-        Serial.printf("Retrieved saved location: %g,%g\n",lat,lng);
+        ESP_LOGI(TAG,"Retrieved saved location: %g,%g\n",lat,lng);
     } else {
-        Serial.println("No location set, welcome to Null Island!");
+        ESP_LOGE(TAG,"No location set, welcome to Null Island!");
     }
 
     preferences.end();
@@ -45,7 +46,7 @@ bool LocationManager::setLocation(Location newLocation){
 
     Preferences preferences = Preferences();
     if (preferences.begin("clocklet", false)) {
-        Serial.printf("[LocationManager] Setting location to %g, %g\n",newLocation.lat, newLocation.lng);
+        ESP_LOGI(TAG,"[LocationManager] Setting location to %g, %g",newLocation.lat, newLocation.lng);
         preferences.putDouble("lat",newLocation.lat);
         preferences.putDouble("lng",newLocation.lng);
         preferences.putString("placeName",newLocation.placeName);
@@ -58,7 +59,7 @@ bool LocationManager::setLocation(Location newLocation){
         return true;
 
     } else {
-        Serial.println("[LocationManager] Couldn't start preferences for some reason");
+        ESP_LOGE(TAG,"[LocationManager] Couldn't start preferences for some reason");
         return false;
     }
 

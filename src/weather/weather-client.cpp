@@ -6,7 +6,7 @@
 #define TAG "WEATHER"
 
 WeatherClient::WeatherClient() : UpdateJob() {
-  Serial.print("Setting Default Weather");
+  ESP_LOGD(TAG,"Setting Default Weather");
   this->horizonWeather = defaultWeather;
   this->rainbowWeather = defaultWeather;
 };

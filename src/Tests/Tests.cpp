@@ -60,7 +60,6 @@ void runFast(Display *display){
 //     //     FastLED.show();
 //     //     FastLED.delay(1000/FPS);
 //     //   }
-//     //   Serial.println(speed);
 //     // }
 // /*
 //     for (int16_t chance = 0; chance < 255; chance = chance + 16){
@@ -72,7 +71,6 @@ void runFast(Display *display){
 //         FastLED.show();
 //         FastLED.delay(1000/FPS);
 //       }
-//       Serial.println(chance);
 //     }
 //
 //     for (int16_t chance = 0; chance < 255; chance = chance + 16){

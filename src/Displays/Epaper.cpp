@@ -41,13 +41,11 @@ boolean EpaperDisplay::setup() {
 void EpaperDisplay::setTime(DateTime time) {
   this->time = time;
   // Turn the time into a string
-  // time_string = ;
   time_string[0] = time.hour() / 10 + '0';
   time_string[1] = time.hour() % 10 + '0';
   time_string[3] = time.minute() / 10 + '0';
   time_string[4] = time.minute() % 10 + '0';
 
-  Serial.println((String)"*** TIME: " + time.hour() + ":" + time.minute() + ":" + time.second());
   needsDisplay = true;
 }
 
@@ -62,7 +60,6 @@ void EpaperDisplay::setSecondaryTime(DateTime time, const char *identifier) {
 
   secondary_identifier = identifier;
 
-  Serial.println(secondary_time_string);
   needsDisplay = true;
 }
 
@@ -70,14 +67,12 @@ void EpaperDisplay::setSecondaryTime(DateTime time, const char *identifier) {
 // Implementation is optional
 void EpaperDisplay::setWeather(Weather weather) {
   weather_string = weather.summary;
-  Serial.println((String)"*** WEATHER: " + weather_string);
   needsDisplay = true;
   pageString(weather.summary);
 }
 
 // Show a message - but what kind of message?
 void EpaperDisplay::displayMessage(const char *stringy, MessageType messageType){
-  Serial.println((String)"*** MESSAGE: " + stringy);
   pageString(stringy);
 }
 
@@ -324,7 +319,6 @@ void EpaperDisplay::scrollString(const char *string){
   while (scrollpos < display.width() + tbw + 20){
       x = display.width() - scrollpos;
 
-      //Serial.println((String)"*** coords: " + x + "," + y + "--" + " tbw " + tbw + " tbh: " + tbh);
       do
       {
 
