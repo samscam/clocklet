@@ -4,6 +4,9 @@
 2) Burn efuses (including serial number)
 3) Apply profile to CP2012N (with Simplicity Studio)
 4) Flash the firmware
+5) Get the time set in the DS3231
+6) Erase to defaults
+
 
 ## Clockbrain efuse map
 
