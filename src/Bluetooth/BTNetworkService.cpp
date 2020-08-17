@@ -186,9 +186,13 @@ void BTNetworkService::onWrite(BLECharacteristic* pCharacteristic) {
         ESP_LOGI(TAG,"Invalid ssid length");
         return;
     }
+    uint8_t  enctype = doc["enctype"];
 
-    // If we have no psk... let's see if it's an open network...
-    if (doc["psk"].isNull()){
+    
+    // If it's an open network...
+    if (enctype == 0){
+        WiFi.disconnect();
+        delay(1000);
         WiFi.begin(ssid);
         return;
     }
