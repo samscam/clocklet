@@ -203,9 +203,6 @@ void BTNetworkService::onWrite(BLECharacteristic* pCharacteristic) {
         return;
     }
 
-    // Stop any in-progress scans...
-    _shouldScan = false;
-
     // Attempt to connect to the new network !!!!
     WiFi.disconnect();
     delay(1000);

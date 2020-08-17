@@ -52,9 +52,6 @@ private:
 
     void _encodeNetInfo(JsonDocument &doc, NetworkInfo netInfo);
 
-
-    bool _shouldScan = false;
-
     QueueHandle_t _networkChangedQueue;
     QueueHandle_t _networkStatusQueue;
 
