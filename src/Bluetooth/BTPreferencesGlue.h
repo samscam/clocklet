@@ -43,6 +43,7 @@ PreferencesGlue<T>::PreferencesGlue(const char *uuid, const char *prefsKey, BLES
     _characteristic->setCallbacks(this);
 }
 
+
 template <class T>  inline
 void PreferencesGlue<T>::onWrite(BLECharacteristic* pCharacteristic) {
     ESP_LOGE(TAG,"Unimplemented Bluetooth Preferences Glue");
@@ -78,6 +79,7 @@ void PreferencesGlue<std::string>::onRead(BLECharacteristic* pCharacteristic) {
     delete(preferences);
 }
 
+// BOOL
 
 template <>  inline
 void PreferencesGlue<bool>::onWrite(BLECharacteristic* pCharacteristic) {
@@ -109,3 +111,35 @@ void PreferencesGlue<bool>::onRead(BLECharacteristic* pCharacteristic) {
     delete(preferences);
 
 }
+
+// UINT8
+
+template <>  inline
+void PreferencesGlue<uint8_t>::onWrite(BLECharacteristic* pCharacteristic) {
+    uint8_t *data = pCharacteristic->getData();
+
+    uint8_t value = data[0];
+    ESP_LOGI(TAG,"Preferences change: %s IS NOW %d",_prefsKey,value);
+    Preferences *preferences = new Preferences();
+    preferences->begin("clocklet", false);
+    preferences->putUChar(_prefsKey, value);
+    preferences->end();
+    delete(preferences);
+
+    bool change = true;
+    if (_prefsChangedQueue){
+        xQueueSend(_prefsChangedQueue, &change, (TickType_t) 0);
+    }
+}
+
+template <> inline
+void PreferencesGlue<uint8_t>::onRead(BLECharacteristic* pCharacteristic) {
+    Preferences *preferences = new Preferences();
+    preferences->begin("clocklet", false);
+    uint8_t prefsValue = preferences->getUChar(_prefsKey,_defaultValue);
+    uint8_t data[1] = {prefsValue};
+    pCharacteristic->setValue(data,1);
+    preferences->end();
+    delete(preferences);
+}
+
