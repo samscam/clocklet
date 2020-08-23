@@ -9,7 +9,7 @@ public protocol DataConvertible{
     var data: Data { get }
 }
 
-public extension DataConvertible where Self: ExpressibleByIntegerLiteral{
+public extension DataConvertible where Self: Numeric{
 
     init?(data: Data) {
         var value: Self = 0
@@ -26,10 +26,13 @@ public extension DataConvertible where Self: ExpressibleByIntegerLiteral{
 extension Int: DataConvertible{}
 extension Double: DataConvertible{}
 extension Float: DataConvertible{}
+extension UInt8: DataConvertible{}
+
 
 extension Bool: DataConvertible{
     
     public init?(data: Data) {
+        guard data.count == 1 else { return nil }
         let byte: UInt8 = data[0]
         self = (byte != 0)
     }
