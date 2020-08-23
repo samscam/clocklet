@@ -20,7 +20,7 @@ public:
     BLECharacteristic *availableTimeStyles;
     PreferencesGlue<std::string> *timeStyleGlue;
 
-    PreferencesGlue<uint8_t> *brightnessGlue;
+    PreferencesGlue<float_t> *brightnessGlue;
     
 };
 

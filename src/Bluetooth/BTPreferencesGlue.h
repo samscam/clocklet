@@ -143,3 +143,42 @@ void PreferencesGlue<uint8_t>::onRead(BLECharacteristic* pCharacteristic) {
     delete(preferences);
 }
 
+template <>  inline
+void PreferencesGlue<float_t>::onWrite(BLECharacteristic* pCharacteristic) {
+    size_t size = sizeof(float_t);
+    uint8_t *data = pCharacteristic->getData();
+    if ( sizeof(data) < size ){
+        ESP_LOGE(TAG,"No enough data for %s",_prefsKey);
+        return;
+    }
+
+    float_t value;
+    memcpy(&value,data,size);
+
+    // ESP_LOGI(TAG,"Preferences change: %s IS NOW %g",_prefsKey,value);
+    Preferences *preferences = new Preferences();
+    preferences->begin("clocklet", false);
+    preferences->putFloat(_prefsKey, value);
+    preferences->end();
+    delete(preferences);
+
+    bool change = true;
+    if (_prefsChangedQueue){
+        xQueueSend(_prefsChangedQueue, &change, (TickType_t) 0);
+    }
+}
+
+template <> inline
+void PreferencesGlue<float_t>::onRead(BLECharacteristic* pCharacteristic) {
+    Preferences *preferences = new Preferences();
+    size_t size = sizeof(float_t);
+    preferences->begin("clocklet", false);
+    float_t prefsValue = preferences->getFloat(_prefsKey,_defaultValue);
+    uint8_t data[size];
+    memcpy(data, (uint8_t*) (&prefsValue), size );
+    
+    pCharacteristic->setValue(data,size);
+    preferences->end();
+    delete(preferences);
+}
+
