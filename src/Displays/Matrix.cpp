@@ -786,16 +786,43 @@ void Matrix::addRain( fract8 chanceOfRain, CRGB colour)
 // Snow
 
 void Matrix::addSnow( fract8 chanceOfSnow ) {
-  // for(int i = 0; i < NUM_LEDS; i++) {
-  //   rainLayer[i].nscale8_video(252);
-  // }
-  // if( random8() < chanceOfSnow) {
-  //   int segnum = random8(NUM_LEDS);
-  //   rainLayer[ segnum ] = CRGB::White;
-  // }
-  // nscale8_video(leds, NUM_LEDS, 255 - chanceOfSnow);
+  uint8_t framesPerDrop = 12;
+  // Fade down previous drops
+  nscale8(rainLayer,NUM_LEDS,200);
+  
+  // Shift the drops down one row
+  if (rainFrame > framesPerDrop){
+    rainFrame = 0;
+    for (int row=ROWS-1;row>0;row--){
+      for (int col=0;col<COLUMNS;col++){
+        rainDrops[row][col]=rainDrops[row-1][col];
+      }
+    }
 
-  // for(int i = 0; i < NUM_LEDS; i++) { leds[i] += rainLayer[i] ; }
+    // Populate the top row with new raindrops
+    for (int col=0;col<COLUMNS;col++){
+      rainDrops[0][col] = random8() < chanceOfSnow/4;
+    }
+  }
+
+  rainFrame++;
+  // Render the leading droplets into the layer
+  for (int col=0;col<COLUMNS;col++){
+    for (int row=0;row<ROWS;row++){
+      if (rainDrops[row][col]){
+        rainLayer[ XY(col,row) ] = CRGB::White;
+      }
+    }
+  }
+  
+  // Fade the background colours on the main layer down
+  nscale8_video(leds, NUM_LEDS, 255 - (chanceOfSnow * 0.2));
+
+  // And composite on the raindrops
+  for(int i = 0; i < NUM_LEDS; i++) {
+    leds[i].nscale8(255-(rainLayer[i].b * 0.6));
+    leds[i] += rainLayer[i] ; 
+  }
 }
 
 // Frost
