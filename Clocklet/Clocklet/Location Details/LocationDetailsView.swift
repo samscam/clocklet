@@ -72,7 +72,7 @@ struct LocationDetailsView: View {
     @EnvironmentObject var clock: Clock
      
     static let popularLocations: [ClockLocation] = [
-        .manchester,.newYork,.london,.paris,.munich,.sanfrancisco,.melbourne,.chatham,.mumbai
+        .manchester,.newYork,.london,.paris,.munich,.sanfrancisco,.melbourne,.chatham,.mumbai,.helipark
     ]
     
     
