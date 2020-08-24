@@ -62,7 +62,7 @@ class NetworkService: ServiceProtocol {
     
     @Characteristic("DFBDE057-782C-49F8-A054-46D19B404D9F") var joinNetwork: JoinNetwork?
     
-    func joinNetwork(_ network: AvailableNetwork, psk: String? = nil) throws {
+    func joinNetwork(_ network: AvailableNetwork, psk: String? = nil) {
         joinNetwork = JoinNetwork(ssid: network.ssid, psk: psk, enctype: network.enctype)
     }
     

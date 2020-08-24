@@ -44,7 +44,8 @@ struct EnterPasswordView: View {
                         
                 
                     Button(action:{
-                        try? self.networkService?.joinNetwork(self.network, psk: self.password)
+                        self.networkService?.joinNetwork(self.network, psk: self.password)
+
                         self.presentation.wrappedValue.dismiss()
                     }){
                         Text("Connect").bold()
