@@ -45,8 +45,6 @@ void BlueStuff::startBlueStuff(){
     _bluetoothRunning = true;
 
     ESP_LOGI(TAG,"Starting BLE work!");
-
-    uint32_t serial = clocklet_serial();
     
     LOGMEM;
 
