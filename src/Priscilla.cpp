@@ -260,6 +260,7 @@ bool didDisplay = false;
 
 FirmwareUpdateStatus fwUpdateStatus = idle;
 bool fwUpdateStarted = false;
+bool bluetoothConnected = false;
 
 void loop() {
   
@@ -297,9 +298,10 @@ void loop() {
   }
 
   // Bluetooth Connected
-  bool bluetoothConnected = false;
-  if (xQueueReceive(bluetoothConnectedQueue, &bluetoothConnected, (TickType_t)0 )){
-    display.setDeviceState(bluetoothConnected ? bluetooth : ok);
+  bool bluetoothDidConnect = false;
+  if (xQueueReceive(bluetoothConnectedQueue, &bluetoothDidConnect, (TickType_t)0 )){
+    bluetoothConnected = bluetoothDidConnect;
+    display.setDeviceState(bluetoothDidConnect ? bluetooth : ok);
   }
 
   // ... firmware updates
@@ -367,22 +369,21 @@ void loop() {
     rtc.loop(); //<< needed on the GPS rtc to wake it :/
   #endif
 
-  // This should always be UTC
-  DateTime time = rtc.now();
+  if (!bluetoothConnected){
+    if (millis() > lastRandomMessageTime + nextMessageDelay){
+      
+      const char *message = randoMessage();
+      ESP_LOGD(TAG,"Random message %s",message);
+      display.displayMessage(message, rainbow);
+      display.displayMessage(message, rainbow);
 
-
-  if (millis() > lastRandomMessageTime + nextMessageDelay){
-    
-    const char *message = randoMessage();
-    ESP_LOGD(TAG,"Random message %s",message);
-    display.displayMessage(message, rainbow);
-    display.displayMessage(message, rainbow);
-
-    lastRandomMessageTime = millis();
-    nextMessageDelay = 1000 * 60 * random(5,59);
+      lastRandomMessageTime = millis();
+      nextMessageDelay = 1000 * 60 * random(5,59);
+    }
   }
 
 
+  DateTime time = rtc.now();
   DateTime localTime = rtc.localTime();
   double decimalTime = rtc.decimalTime();
   display.setRainbows(rainbows.rainbowProbability(time));
