@@ -176,7 +176,7 @@ void setup() {
 
 
   // Uncomment to run various display tests:
-  // displayTests(display);  
+  // displayTests(&display);  
 
   // DISPLAY A GREETING
   display.displayMessage("CLOCKLET",rainbow);
