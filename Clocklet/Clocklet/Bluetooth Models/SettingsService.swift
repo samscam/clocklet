@@ -14,7 +14,10 @@ import SwiftUI
 
 class SettingsService: ServiceProtocol {
     
+    var bag = Set<AnyCancellable>()
+    
     required init(){
+        subj.throttle(for: 0.05, scheduler: RunLoop.main, latest: true).map{ $0 as Float? }.assign(to: \.brightness, on: self).store(in: &bag)
     }
     
     @Characteristic("9982B160-23EF-42FF-9848-31D9FF21F490") var availableSeparatorAnimations: [String]?
@@ -24,6 +27,21 @@ class SettingsService: ServiceProtocol {
     @Characteristic("698D2B57-5B54-48D7-A483-1AB4660FBAF9") var availableTimeStyles: [String]?
     
     @Characteristic("AE35C2DE-7D36-4699-A5CE-A0FA6A0A5483") var timeStyle: String?
+    
+    @Characteristic("8612F6ED-AA92-45A7-8B46-166F600BC53D") var brightness: Float?
+    @Characteristic("A56AE45C-EB82-4182-9B9C-C91F509C91D5") var autoBrightness: Bool?
+    
+    let subj = PassthroughSubject<Float,Never>()
+    
+    lazy var selectedBrightness = Binding<Float>(
+        get:{ return self.brightness ?? 0.5 },
+        set:{ self.subj.send($0) }
+    )
+    
+    lazy var b_autoBrightness = Binding<Bool>(
+        get:{ return self.autoBrightness ?? false },
+        set:{ self.autoBrightness = $0 }
+    )
     
     
     lazy var selectedTimeStyle = Binding<String>(

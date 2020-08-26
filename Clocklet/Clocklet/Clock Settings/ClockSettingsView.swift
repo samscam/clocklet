@@ -22,15 +22,23 @@ struct ClockSettingsView: View {
     
     var body: some View {
         VStack{
+            settingsService.brightness.map { _ in
+                ConfigItemView(icon: Image(systemName:"sun.max"), title: "Brightness") {
+                    VStack{
+                        Slider(value: self.settingsService.selectedBrightness, in: 0...1)
+//                        Toggle("Adjust automatically", isOn: settingsService.b_autoBrightness)
+                    }
+                }
+            }
             settingsService.timeStyle.map { _ in
                 ConfigItemView(icon: Image(systemName:"24.circle"), title: "Time Style") {
                     
-                        Picker("What do you want", selection: self.settingsService.selectedTimeStyle){
+                    
+                    Picker("What do you want", selection: self.settingsService.selectedTimeStyle){
                         ForEach(self.settingsService.timeStyles){ timeStyle in
-                            Text(timeStyle)
+                                Text(timeStyle)
                         }
                     }.pickerStyle(SegmentedPickerStyle())
-
                 }
             }
 //            settingsService.availableSeparatorAnimations.map { _ in
@@ -43,6 +51,7 @@ struct ClockSettingsView: View {
 //                    }.pickerStyle(SegmentedPickerStyle())
 //                }
 //            }
+            
         }
     }
 }
