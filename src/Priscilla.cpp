@@ -262,9 +262,9 @@ FirmwareUpdateStatus fwUpdateStatus = idle;
 bool fwUpdateStarted = false;
 bool bluetoothConnected = false;
 
+float_t brightnessAdjust = 1;
+
 void loop() {
-  
-  display.setBrightness(currentBrightness());
 
   // ---- MONITOR QUEUES -----
 
@@ -272,10 +272,11 @@ void loop() {
   bool prefsDidChange = false;
   xQueueReceive(prefsChangedQueue, &prefsDidChange, (TickType_t)0 );
   if (prefsDidChange){
-    ESP_LOGI(TAG,"PREFS DID CHANGE");
+    ESP_LOGD(TAG,"PREFS DID CHANGE");
     updateDisplayPreferences();
-
   }
+  
+  display.setBrightness(currentBrightness());
 
   // ... weather
   bool weatherDidChange = false;
@@ -401,7 +402,7 @@ void updateDisplayPreferences(){
   preferences.begin("clocklet", false);
   
   String timeStyleString = preferences.getString("time_style");
-  ESP_LOGI(TAG,"NEW TIME STYLE***** %s",timeStyleString);
+  ESP_LOGD(TAG,"NEW TIME STYLE***** %s",timeStyleString);
   if (timeStyleString == "24 Hour"){
     display.setTimeStyle(twentyFourHour);
   } else if (timeStyleString == "12 Hour"){
@@ -409,6 +410,8 @@ void updateDisplayPreferences(){
   } else if (timeStyleString == "Decimal"){
     display.setTimeStyle(decimal);
   }
+
+  brightnessAdjust = preferences.getFloat("brightness",0.5);
 
   preferences.end();
 
@@ -443,6 +446,10 @@ float currentBrightness(){
   #if defined(CLOCKBRAIN) // actually this should be the display type
   lightReading = lightReading * 10.0f; // Boost the level somewhat
   #endif
+
+  lightReading += brightnessAdjust ;
+  lightReading = lightReading * (brightnessAdjust * 2);
+
   lightReading = lightReading > 1.0f ? 1.0f : lightReading;
 
   return lightReading;
