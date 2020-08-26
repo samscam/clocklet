@@ -71,6 +71,8 @@ void BlueStuff::startBlueStuff(){
 }
 
 void BlueStuff::_setupAdvertising(){
+    
+    BLEAdvertisementData _advertisementData;
 
     uint16_t hwrev = clocklet_hwrev();
     uint16_t caseColour = clocklet_caseColour();
@@ -82,11 +84,7 @@ void BlueStuff::_setupAdvertising(){
 
     BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
     
-    BLEAdvertisementData advertisementData;
-    BLEAdvertisementData scanResponseData;
-
-    scanResponseData.setName(_deviceName);
-    advertisementData.setPartialServices(BLEUUID(SV_NETWORK_UUID));
+    _advertisementData.setPartialServices(BLEUUID(SV_NETWORK_UUID));
 
     char mfrdataBuffer[10];
 
@@ -105,21 +103,18 @@ void BlueStuff::_setupAdvertising(){
     mfrdataBuffer[9] = (serial >> 24) & 0xFF;
 
     auto s = std::string(mfrdataBuffer,sizeof(mfrdataBuffer));
-    advertisementData.setManufacturerData(s);
+    _advertisementData.setManufacturerData(s);
     // Manufacturer Data: 10 bytes
     // Service uuid: 16 bytes
-    // = 26 bytes - WILL NOT CHANGE - putting those in the advertising packet
-
-    // Name: 13 bytes - will eventually get longer - putting it in the scan response
-    pAdvertising->setAdvertisementData(advertisementData);
-    pAdvertising->setScanResponseData(scanResponseData);
-
+    // = 26 bytes - WILL NOT CHANGE
 
     // Mythical settings that help with iPhone connections issue - don't seem to make any odds
     pAdvertising->setMinPreferred(0x06);  
     pAdvertising->setMaxPreferred(0x12);
-    pAdvertising->setScanResponse(true);
-    BLEDevice::startAdvertising();
+
+    pAdvertising->setAdvertisementData(_advertisementData);
+
+    pAdvertising->start();
 }
 void BlueStuff::stopBlueStuff(){
     if (!_bluetoothRunning){
