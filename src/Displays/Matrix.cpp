@@ -37,7 +37,7 @@ Matrix::Matrix() : Display() {
 
 
 boolean Matrix::setup() {
-  FastLED.addLeds<LED_TYPE,DATA_PIN,CLOCK_PIN,COLOR_ORDER >(leds, NUM_LEDS);//.setCorrection(TypicalLEDStrip);
+  FastLED.addLeds<LED_TYPE,DATA_PIN,CLOCK_PIN,COLOR_ORDER >(leds, NUM_LEDS).setCorrection(0xE9A9FF);
   temperaturePalette = temperatureGPalette;
   initRain();
   regenerateHeatPalette(0.0,0.0);
@@ -114,26 +114,30 @@ void Matrix::setDeviceState(DeviceState newState){
 }
 
 void Matrix::graphicsTest(){
-  setBrightness(0.2);
+  setBrightness(1);
   
   // // Red
   fill_solid(leds, NUM_LEDS, CRGB::Red);
   // displayString("Red");
   FastLED.show();
-  delay(2000);
+  delay(500);
 
   // // Green
   fill_solid(leds, NUM_LEDS, CRGB::Green);
   // displayString("Green");
   FastLED.show();
-  delay(2000);
+  delay(500);
 
   // // Blue
   fill_solid(leds, NUM_LEDS, CRGB::Blue);
   // displayString("Blue");
   FastLED.show();
-  delay(2000 );
+  delay(500);
 
+  fill_solid(leds, NUM_LEDS, CRGB::White);
+  // displayString("Blue");
+  FastLED.show();
+  delay(5000);
 
   // SETUP FAKE FRAMERATE
   TickType_t xLastWakeTime = xTaskGetTickCount();
@@ -143,14 +147,14 @@ void Matrix::graphicsTest(){
 
   ulong startMillis = millis();
   uint8_t position = 0;
-  while (millis()-startMillis < 10000){
+  while (millis()-startMillis < 3000){
     fill_matrix_radial_rainbow(leds,COLUMNS,ROWS,8,30,position,30);
     position++;
     FastLED.show();
     vTaskDelayUntil(&xLastWakeTime, xFrequency);
 
   }
-
+/*
   xFrequency = pdMS_TO_TICKS(1000/10);
   // Temperature gradients
   for (float f = -10; f<41; f+=0.1){
@@ -191,7 +195,7 @@ void Matrix::graphicsTest(){
     FastLED.show();
     vTaskDelayUntil(&xLastWakeTime, xFrequency);
   }
-
+*/
 }
 
 // PRIVATE
