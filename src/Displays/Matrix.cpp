@@ -39,7 +39,6 @@ Matrix::Matrix() : Display() {
 boolean Matrix::setup() {
   FastLED.addLeds<LED_TYPE,DATA_PIN,CLOCK_PIN,COLOR_ORDER >(leds, NUM_LEDS).setCorrection(0xE9A9FF);
   temperaturePalette = temperatureGPalette;
-  initRain();
   regenerateHeatPalette(0.0,0.0);
 
   return true;
@@ -729,21 +728,6 @@ void Matrix::fillDigits_gradient(CRGB startColour, CRGB endColour, uint16_t star
 }
 
 // Rain (also sleet)
-
-/// Creates the mapping in `allvsegs` to the vertical segments in `leds`
-/// This only needs to be done once on initialisation of the class
-void Matrix::initRain(){
-  // int s = 0;
-
-  // for (int digit = 0; digit < NUM_DIGITS ; digit++) {
-  //   for (int vseg = 0 ; vseg < 4 ; vseg++){
-  //     int digStep = DIGIT_SEGS * digit;
-  //     int val = vsegs[vseg] + digStep;
-  //     allvsegs[s] = val;
-  //     s++;
-  //   }
-  // }
-}
 
 void Matrix::addRain( fract8 chanceOfRain, CRGB colour)
 {

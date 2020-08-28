@@ -127,7 +127,6 @@ private:
 
   void regenerateHeatPalette(float minTemp, float maxTemp);
 
-  void initRain();
   void addRain( fract8 chanceOfRain, CRGB colour);
   void addSnow( fract8 chanceOfSnow );
   void addLightening();
