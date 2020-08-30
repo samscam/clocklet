@@ -17,13 +17,9 @@ class LocationDetailsViewModel: ObservableObject {
     
     @Published var currentLocation: ClockLocation = .nullIsland
     
+    @Published var region: MKCoordinateRegion?
+    
     @Published var annotations: [ClockLocation] = []
-    
-    lazy var region = Binding<MKCoordinateRegion>(
-        get:{ return MKCoordinateRegion(center: self.currentLocation.coordinate, latitudinalMeters: 5000, longitudinalMeters: 5000) },
-        set:{ _ in }
-    )
-    
     
     private var _locationService: LocationService
     
@@ -37,6 +33,11 @@ class LocationDetailsViewModel: ObservableObject {
             .store(in: &bag)
         
         $currentLocation.map{ [$0] }.assign(to: \.annotations, on: self).store(in: &bag)
+        
+        $currentLocation.map{ currentLocation in
+            MKCoordinateRegion(center: currentLocation.coordinate, latitudinalMeters: 5000, longitudinalMeters: 5000) }
+            .assign(to: \.region, on: self)
+            .store(in: &bag)
         
         _locationService.$isConfigured
             .map{ $0 == .configured }
@@ -82,18 +83,20 @@ struct LocationDetailsView: View {
             if viewModel.showMap {
             
                 ZStack{
-                    if #available(iOS 14.0,macOS 11.0, *) {
-                        Map(coordinateRegion: viewModel.region, interactionModes: MapInteractionModes(), showsUserLocation: true,
-                            annotationItems: viewModel.annotations){ annotation in
-                            MapAnnotation(coordinate: annotation.coordinate){
-                                Image(clock.caseColor.imageName).resizable()
-                                    .aspectRatio(contentMode: .fit).frame(width: 140, height: 60, alignment: .center)
-                            }
-                        }.opacity(0.6).blendMode(.luminosity)
-                    } else {
-                        MapView(coordinate: viewModel.region.center.wrappedValue)
-                    }
-                    if let placeName = viewModel.currentLocation.placeName{
+                    
+                    // Old style still working better than new style - test it the old way for now.
+//                    if #available(iOS 14.0,macOS 11.0, *) {
+//                        Map(coordinateRegion: viewModel.region, interactionModes: MapInteractionModes(), showsUserLocation: true,
+//                            annotationItems: viewModel.annotations){ annotation in
+//                            MapAnnotation(coordinate: annotation.coordinate){
+//                                Image(clock.caseColor.imageName).resizable()
+//                                    .aspectRatio(contentMode: .fit).frame(width: 140, height: 60, alignment: .center)
+//                            }
+//                        }.opacity(0.6).blendMode(.luminosity)
+//                    } else {
+                    MapView(coordinate: viewModel.currentLocation.coordinate)
+//                    }
+                    viewModel.currentLocation.placeName.map{ placeName in
                         VStack(alignment: .center){
                         HStack(alignment:.top){
                             Text(placeName).font(.largeTitle).fontWeight(.black).multilineTextAlignment(.center).shadow(color: Color(UIColor.systemBackground), radius:5)
@@ -134,7 +137,7 @@ struct PlaceRowView: View {
     var body: some View {
         HStack {
             Button(place.placeName ?? "Where?") {
-                self.viewModel.setLocation(place)
+                self.viewModel.setLocation(self.place)
             }.buttonStyle(RoundyButtonStyle()).accentColor(.purple)
             
         }
