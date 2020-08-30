@@ -25,20 +25,22 @@ struct LocationSummaryView: View {
                 } else {
                     return AnyView(
                         VStack(alignment:.leading){
-                        Button("Set to current location"){
+                            Button("Set to current location"){
                                 self.locationService.setCurrentLocation()
                             }
                             .buttonStyle(RoundyButtonStyle())
-                            Button {
+                            
+                            Button( action: {
                                 self.showLocationDetails = true
-                            } label: {
+                            }, label: {
                                 HStack{
                                     Text( "Set to somewhere else" )
                                     Image(systemName: "chevron.right").resizable().aspectRatio(contentMode: .fit).frame(width: 20, height: 20)
                                 }
-                            }
+                            })
                             .buttonStyle(RoundyButtonStyle()).accentColor(.green)
-                    })
+                        }
+                    )
                     
                 }
             
@@ -47,17 +49,3 @@ struct LocationSummaryView: View {
         }
     }
 }
-
-//struct LocationSummaryView_Previews: PreviewProvider {
-//    static var locationService = LocationService()
-//    static let viewModel = LocationSummaryViewModel(locationService)
-//
-//    static var previews: some View {
-//        locationService.currentLocation = CurrentLocation(lat: 0, lng: 0)
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-//            locationService.currentLocation = CurrentLocation(lat: 53.431808, lng: -2.218080)
-//        }
-//        return LocationSummaryView()
-//    }
-//}
-//
