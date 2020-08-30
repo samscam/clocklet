@@ -27,6 +27,17 @@ struct ClockDetailsView: View {
                 if(clock.state == .connected){
                     
                     if(clock.isConfigured == .configured){
+                        
+                        if let settingsService = clock.settingsService,
+                           let firmwareVersion = clock.deviceInfoService?.firmwareVersion,
+                           settingsService.brightness == nil{
+                            if firmwareVersion.contains("1.0.2") {
+                                Text("Switch Bluetooth off and on again in Settings to see Brightness setting!")
+                            } else if firmwareVersion.contains("1.0.1") {
+                                Text("Update your Clocklet's firmware for new exciting stuff!")
+                            }
+                        }
+                        
                         clock.settingsService.map{ settingsService in
                             ClockSettingsView().environmentObject(settingsService)
                         }
