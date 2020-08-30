@@ -22,11 +22,12 @@ struct ClockSettingsView: View {
     
     var body: some View {
         VStack{
+            
             settingsService.brightness.map { _ in
                 ConfigItemView(icon: Image(systemName:"sun.max"), title: "Brightness") {
                     VStack{
                         Slider(value: self.settingsService.selectedBrightness, in: 0...1)
-//                        Toggle("Adjust automatically", isOn: settingsService.b_autoBrightness)
+                        Toggle("Adjust automatically", isOn: settingsService.b_autoBrightness)
                     }
                 }
             }
@@ -51,6 +52,7 @@ struct ClockSettingsView: View {
 //                    }.pickerStyle(SegmentedPickerStyle())
 //                }
 //            }
+
             
         }
     }

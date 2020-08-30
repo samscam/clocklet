@@ -39,7 +39,7 @@ class SettingsService: ServiceProtocol {
     )
     
     lazy var b_autoBrightness = Binding<Bool>(
-        get:{ return self.autoBrightness ?? false },
+        get:{ return self.autoBrightness ?? true },
         set:{ self.autoBrightness = $0 }
     )
     
