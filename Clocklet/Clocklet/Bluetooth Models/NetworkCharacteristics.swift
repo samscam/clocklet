@@ -36,10 +36,25 @@ struct CurrentNetwork: Network, Codable, JSONCharacteristic {
     let rssi: Int
 }
 
+
 struct JoinNetwork: Codable, JSONCharacteristic {
+    
     let ssid: String
     let psk: String?
     let enctype: AuthMode
+    let wps: Bool
+    
+    init(ssid: String, psk: String? = nil, enctype: AuthMode, wps: Bool = false) {
+        switch enctype {
+        case .open:
+            self.psk = nil
+        default:
+            self.psk = psk
+        }
+        self.ssid = ssid
+        self.enctype = enctype
+        self.wps = wps
+    }
 }
 
 enum WifiStatus: Int, Codable, CaseIterable, Identifiable {
