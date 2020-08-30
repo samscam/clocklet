@@ -135,8 +135,7 @@ bool FirmwareUpdates::_parseGithubReleases(Stream *stream, bool useStaging){
     #if defined(CLOCKBRAIN)
     SpiRamJsonDocument doc(512*1024);
     #else
-    size_t capacity = 64*1024;
-    DynamicJsonDocument doc(capacity);
+    DynamicJsonDocument doc(64*1024);
     #endif
     
     DeserializationError error = deserializeJson(doc, *stream);
