@@ -263,6 +263,7 @@ bool fwUpdateStarted = false;
 bool bluetoothConnected = false;
 
 float_t brightnessAdjust = 1;
+bool autoBrightness = true;
 
 void loop() {
 
@@ -412,6 +413,7 @@ void updateDisplayPreferences(){
   }
 
   brightnessAdjust = preferences.getFloat("brightness",0.5);
+  autoBrightness = preferences.getBool("autoBrightness",true);
 
   preferences.end();
 
@@ -431,6 +433,10 @@ uint16_t readings[readingWindow] = {1024};
 int readingIndex = 0;
 
 float currentBrightness(){
+  if (!autoBrightness){
+    return brightnessAdjust;
+  }
+
   readings[readingIndex] = analogRead(LIGHT_PIN);
   readingIndex++;
   if (readingIndex == readingWindow) { readingIndex = 0; }
@@ -447,9 +453,8 @@ float currentBrightness(){
   lightReading = lightReading * 10.0f; // Boost the level somewhat
   #endif
 
-  lightReading += brightnessAdjust ;
-  lightReading = lightReading * (brightnessAdjust * 2);
-
+  lightReading = (lightReading + (brightnessAdjust / 3)) * (brightnessAdjust * 2);
+  
   lightReading = lightReading > 1.0f ? 1.0f : lightReading;
 
   return lightReading;

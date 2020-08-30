@@ -44,6 +44,13 @@ BTPreferencesService::BTPreferencesService(BLEServer *server, QueueHandle_t pref
         "clocklet",
         0.5f);
     
+    autoBrightnessGlue = new PreferencesGlue<bool>("A56AE45C-EB82-4182-9B9C-C91F509C91D5",
+        "autoBrightness",
+        pservice,
+        prefsChangedQueue,
+        "clocklet",
+        true);
+
     pservice->start();
 }
 

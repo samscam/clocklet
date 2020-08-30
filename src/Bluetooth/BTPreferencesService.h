@@ -21,7 +21,7 @@ public:
     PreferencesGlue<std::string> *timeStyleGlue;
 
     PreferencesGlue<float_t> *brightnessGlue;
-    
+    PreferencesGlue<bool> *autoBrightnessGlue;
 };
 
 
