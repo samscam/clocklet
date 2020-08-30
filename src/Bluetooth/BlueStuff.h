@@ -60,4 +60,5 @@ private:
 
     BTLocationService *_locationService;
     LocationManager *_locationManager;
+    BLEAdvertisementData _advertisementData;
 };

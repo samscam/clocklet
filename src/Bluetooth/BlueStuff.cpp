@@ -72,7 +72,7 @@ void BlueStuff::startBlueStuff(){
 
 void BlueStuff::_setupAdvertising(){
     
-    BLEAdvertisementData _advertisementData;
+    
 
     uint16_t hwrev = clocklet_hwrev();
     uint16_t caseColour = clocklet_caseColour();
@@ -83,8 +83,9 @@ void BlueStuff::_setupAdvertising(){
     }
 
     BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
-    
-    _advertisementData.setPartialServices(BLEUUID(SV_NETWORK_UUID));
+    pAdvertising->addServiceUUID(BLEUUID(SV_NETWORK_UUID));
+
+    // _advertisementData.setPartialServices(BLEUUID(SV_NETWORK_UUID));
 
     char mfrdataBuffer[10];
 
@@ -112,7 +113,7 @@ void BlueStuff::_setupAdvertising(){
     pAdvertising->setMinPreferred(0x06);  
     pAdvertising->setMaxPreferred(0x12);
 
-    pAdvertising->setAdvertisementData(_advertisementData);
+    pAdvertising->setScanResponseData(_advertisementData);
 
     pAdvertising->start();
 }
