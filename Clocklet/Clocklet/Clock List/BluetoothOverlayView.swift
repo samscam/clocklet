@@ -21,7 +21,6 @@ struct BluetoothOverlayView: View{
     
     var body: some View{
         ZStack{
-//            Color(white: 1, opacity: 0)
             VStack(alignment: .center){
                 bluetoothStatus.image
                     .renderingMode(.template)
@@ -32,10 +31,10 @@ struct BluetoothOverlayView: View{
                     .frame(width: 150, height: 150, alignment: .center)
                 
                 Text(bluetoothStatus.message).bold().multilineTextAlignment(.center).padding()
-                
                 if let buttonText = bluetoothStatus.buttonText, let closure = bluetoothStatus.buttonClosure {
                     Button(buttonText, action: closure).buttonStyle(RoundyButtonStyle())
                 }
+
             }.padding()
             .frame(maxWidth:.infinity)
             .background(Color(UIColor.systemBackground).opacity(0.6))
