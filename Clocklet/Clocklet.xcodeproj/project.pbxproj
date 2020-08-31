@@ -23,6 +23,8 @@
 /* Begin PBXBuildFile section */
 		220D1CFA24DC966800578808 /* BluetoothOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220D1CF924DC966800578808 /* BluetoothOverlayView.swift */; };
 		220DDB11236B9E3900429503 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220DDB10236B9E3900429503 /* MapView.swift */; };
+		2214DCE024FD763100BFA51C /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2214DCDF24FD763100BFA51C /* MapKit.framework */; };
+		2214DCE224FD763E00BFA51C /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2214DCE124FD763E00BFA51C /* CoreLocation.framework */; };
 		222271A5232B887100508ADA /* ClockSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222271A4232B887100508ADA /* ClockSummaryView.swift */; };
 		222500CB24AE452B00B5872A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 222500CA24AE452A00B5872A /* Assets.xcassets */; };
 		222D5AC324D5C69500D2FFB5 /* LocationDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222D5AC224D5C69500D2FFB5 /* LocationDetailsView.swift */; };
@@ -79,6 +81,8 @@
 /* Begin PBXFileReference section */
 		220D1CF924DC966800578808 /* BluetoothOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothOverlayView.swift; sourceTree = "<group>"; };
 		220DDB10236B9E3900429503 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
+		2214DCDF24FD763100BFA51C /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk/System/iOSSupport/System/Library/Frameworks/MapKit.framework; sourceTree = DEVELOPER_DIR; };
+		2214DCE124FD763E00BFA51C /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk/System/Library/Frameworks/CoreLocation.framework; sourceTree = DEVELOPER_DIR; };
 		222271A4232B887100508ADA /* ClockSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockSummaryView.swift; sourceTree = "<group>"; };
 		222500C924AE451D00B5872A /* Clocklet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Clocklet.entitlements; sourceTree = "<group>"; };
 		222500CA24AE452A00B5872A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -125,7 +129,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2214DCE224FD763E00BFA51C /* CoreLocation.framework in Frameworks */,
 				22836ED722862AAC0020B46F /* CoreBluetooth.framework in Frameworks */,
+				2214DCE024FD763100BFA51C /* MapKit.framework in Frameworks */,
 				229AD7BA236CE745006BEB07 /* CombineBluetooth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -208,6 +214,8 @@
 		22836ED522862AAB0020B46F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2214DCE124FD763E00BFA51C /* CoreLocation.framework */,
+				2214DCDF24FD763100BFA51C /* MapKit.framework */,
 				22836ED622862AAC0020B46F /* CoreBluetooth.framework */,
 			);
 			name = Frameworks;
