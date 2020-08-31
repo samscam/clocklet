@@ -34,14 +34,25 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Obse
         }
     }
     
+    private var bag = Set<AnyCancellable>()
     
     private let subject = CurrentValueSubject<Value?,Never>(nil)
+    
+    private let _sendQueue = PassthroughSubject<Value,Never>()
     
     internal var cbCharacteristic: CBCharacteristic?
     
     public init(wrappedValue value: Value? = nil, _ uuid: String){
         self._value = value
         self.uuid = CBUUID(string: uuid)
+        
+        // Throttling here for the benefit of sliders - so if values are changed rapidly they aren't sent too fast
+        _sendQueue
+            .throttle(for: 0.1, scheduler: RunLoop.main, latest: true)
+            .sink { (value) in
+                self.writeValueToPeipheral(value: value)
+            }.store(in: &bag)
+        
     }
     
     private var _value: Value? {
@@ -58,24 +69,29 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Obse
             return _value
         }
         set{
-            
             _value = newValue
-            
-            if let cbCharacteristic = self.cbCharacteristic,
-                let data = _value?.data {
-                
-                // check if we can actually write to this characteristic...
-                if (cbCharacteristic.properties.contains(.write)){
-                    // these can crash if disconnected :(
-                    cbCharacteristic.service.peripheral.writeValue(data, for: cbCharacteristic, type: .withResponse)
-                    
-                } else if (cbCharacteristic.properties.contains(.writeWithoutResponse)){
-                    cbCharacteristic.service.peripheral.writeValue(data, for: cbCharacteristic, type: .withoutResponse)
-                } else {
-                    //we can't throw here... report this somehow...
-                }
-                
+            if let newValue = newValue {
+                _sendQueue.send(newValue)
             }
+        }
+    }
+    
+    private func writeValueToPeipheral(value: Value){
+        if let cbCharacteristic = self.cbCharacteristic{
+            
+            let data = value.data
+            
+            // check if we can actually write to this characteristic...
+            if (cbCharacteristic.properties.contains(.write)){
+                // these can crash if disconnected :(
+                cbCharacteristic.service.peripheral.writeValue(data, for: cbCharacteristic, type: .withResponse)
+                
+            } else if (cbCharacteristic.properties.contains(.writeWithoutResponse)){
+                cbCharacteristic.service.peripheral.writeValue(data, for: cbCharacteristic, type: .withoutResponse)
+            } else {
+                //we can't throw here... report this somehow...
+            }
+            
         }
     }
     
@@ -101,15 +117,6 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Obse
         }
     }
     
-    
-    // WRITING VALUES TO REMOTE
-    
-    struct WriteTransaction{
-        let newValue: Value?
-        let closure: ((Value?,Error?)->())?
-    }
-    
-    var writeClosureFifo: [WriteTransaction] = []
     
     // Called internally when the local value has been written
     public func didWriteValue(error: Error?){
