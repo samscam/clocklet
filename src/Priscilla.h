@@ -26,7 +26,6 @@
 #endif
 
 
-
 // Function declarations
 
 void updateDisplayPreferences();
