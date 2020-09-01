@@ -37,7 +37,13 @@ struct ClockTechnicalView: View {
                         Text(firmwareVersion).bold()
                     }
                 }
-
+                if let versionString = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
+                   let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {
+                    HStack{
+                        Text("App version:")
+                        Text("\(versionString) (\(buildNumber))").bold()
+                    }
+                }
             }
             Spacer()
             
