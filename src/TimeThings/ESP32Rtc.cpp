@@ -76,7 +76,6 @@ DateTime RTC_ESP32::localTime(){
 // 24 hours = 1.0
 double RTC_ESP32::decimalTime(){
   timeval tv;
-  timezone tz = {0,0};
   gettimeofday(&tv,NULL);
   
   tm timeStruct;
