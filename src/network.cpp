@@ -90,4 +90,5 @@ const char* wl_status_toString(wl_status_t status){
       return "WL_DISCONNECTED";
       break;
   }
+  return "UNKNOWN STATUS";
 }
