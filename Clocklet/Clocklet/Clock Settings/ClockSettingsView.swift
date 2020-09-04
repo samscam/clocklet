@@ -25,7 +25,7 @@ struct ClockSettingsView: View {
 
         
         VStack{
-            if settingsService.brightness != nil {
+            if settingsService.brightness != nil && settingsService.autoBrightness != nil {
                 ConfigItemView(icon: Image(systemName:"sun.max"), title: "Brightness") {
                     VStack{
                         Slider(value: settingsService.b_brightness, in: 0...1)
