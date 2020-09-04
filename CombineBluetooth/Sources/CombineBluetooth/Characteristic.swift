@@ -28,9 +28,7 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Obse
     public let uuid: CBUUID
     public var shouldNotify: Bool = false {
         didSet{
-            if let cbCharacteristic = cbCharacteristic{
-                cbCharacteristic.service.peripheral.setNotifyValue(shouldNotify, for: cbCharacteristic)
-            }
+            updateNotifyState()
         }
     }
     
@@ -40,7 +38,17 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Obse
     
     private let _sendQueue = PassthroughSubject<Value,Never>()
     
-    internal var cbCharacteristic: CBCharacteristic?
+    internal var cbCharacteristic: CBCharacteristic? {
+        didSet{
+            updateNotifyState()
+        }
+    }
+    
+    private func updateNotifyState(){
+        if let cbCharacteristic = cbCharacteristic{
+            cbCharacteristic.service.peripheral.setNotifyValue(shouldNotify, for: cbCharacteristic)
+        }
+    }
     
     public init(wrappedValue value: Value? = nil, _ uuid: String){
         self._value = value
