@@ -66,7 +66,7 @@ bool LocationManager::setLocation(Location newLocation){
 
 }
 
-bool isValidLocation(Location location){
+bool LocationManager::isValidLocation(Location location){
     if (location){
         return true;
     } else {
