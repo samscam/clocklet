@@ -1,4 +1,5 @@
 #include "Priscilla.h"
+
 #include "Tests/Tests.h"
 #include "settings.h"
 #include "Messages.h"
@@ -37,10 +38,10 @@ RGBDigit display = RGBDigit();
 #include "Displays/Matrix.h"
 Matrix display = Matrix();
 
-// #elif defined(EPAPER)
+#elif defined(EPAPER)
 
-// #include "Displays/Epaper.h"
-// Display *display = new EpaperDisplay();
+#include "Displays/Epaper.h"
+Display *display = new EpaperDisplay();
 
 #endif
 
@@ -75,11 +76,8 @@ LocationManager *locationManager;
 
 // ---------- WEATHER CLIENT
 
-WiFiClientSecure secureClient; // << https on esp32
-// WiFiClient client; // <<  plain http, and https on atmelwinc
-
-// #include "weather/met-office.h"
-// WeatherClient *weatherClient = new MetOffice(client); // << It's plain HTTP
+// // #include "weather/met-office.h"
+// // WeatherClient *weatherClient = new MetOffice(client); // << It's plain HTTP
 
 #include "weather/darksky.h"
 DarkSky weatherClient = DarkSky();
@@ -158,6 +156,7 @@ void setup() {
   networkStatusQueue =  xQueueCreate(1, sizeof(wl_status_t));
   firmwareUpdateQueue = xQueueCreate(1, sizeof(FirmwareUpdateStatus));
 
+
   // Analog input for light pin
   analogReadResolution(12);
   analogSetPinAttenuation(LIGHT_PIN,ADC_0db);
@@ -188,10 +187,7 @@ void setup() {
   locationManager = new LocationManager(locationChangedQueue);
 
   blueStuff = new BlueStuff(bluetoothConnectedQueue,prefsChangedQueue,networkChangedQueue,networkStatusQueue,locationManager);
-  
-  #if defined(CLOCKBRAIN)
   blueStuff->startBlueStuff();
-  #endif
 
 
   Location currentLocation = locationManager->getLocation();
@@ -204,7 +200,7 @@ void setup() {
   rtc.setTimeZone(currentLocation.timeZone);
 
   // Setup DS3231
-      // Initialise I2c stuff (DS3231)
+  // Initialise I2c stuff (DS3231)
   #if defined(TIME_DS3231)
 
   #if defined(CLOCKBRAIN)
@@ -218,6 +214,8 @@ void setup() {
   }
 
   #endif
+
+
   TimeSync *timeSync = new TimeSync(&ds3231, &rtc); // << deliberately leaking these here - should really go smart pointers
   timeSync->performUpdate();
 
@@ -267,6 +265,7 @@ bool autoBrightness = true;
 
 void loop() {
 
+  
   // ---- MONITOR QUEUES -----
 
   // ... preferences
@@ -327,9 +326,7 @@ void loop() {
 
       break;
     case failed:
-      #if defined(CLOCKBRAIN)
       blueStuff->startBlueStuff();
-      #endif
       display.displayMessage("Update failed... sorry :(",bad);
       fwUpdateStatus = idle;
       break;
@@ -339,19 +336,18 @@ void loop() {
       break;
   }
 
-  #if defined(FEATHER)
+  #if defined(TOUCH_SENSOR)
   // Check for touches... (This doesn't work on the clockbrain ... but it doesn't need to work!)
-  if (detectTouchPeriod() > 500){
+  long touchPeriod = detectTouchPeriod();
+  if ( touchPeriod > 500 && touchPeriod < 10000){
     display.displayMessage("That tickles",rando);
   }
-  if (detectTouchPeriod() > 5000){
-    blueStuff->startBlueStuff();
-    display.displayMessage("Bluetooth is on",good);
-  }
-  if (detectTouchPeriod() > 10000){
+  touchPeriod = detectTouchPeriod();
+  if (touchPeriod > 10000 && touchPeriod < 15000){
     display.displayMessage("Keep holding for restart",bad);
   }
-  if (detectTouchPeriod() > 15000){
+  touchPeriod = detectTouchPeriod();
+  if (touchPeriod > 15000){
     ESP.restart();
   }
   #endif
@@ -395,7 +391,7 @@ void loop() {
 
   sensibleDelay(1000/FPS);
 
-
+  
 }
 
 void updateDisplayPreferences(){
@@ -416,7 +412,6 @@ void updateDisplayPreferences(){
   autoBrightness = preferences.getBool("autoBrightness",true);
 
   preferences.end();
-
 }
 
 void sensibleDelay(int milliseconds){
