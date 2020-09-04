@@ -1,34 +1,31 @@
 #pragma once
 
-#include <BLEDevice.h>
-#include <BLEUtils.h>
-#include <BLEService.h>
-
+#include <NimBLEDevice.h>
 
 #include "BTPreferencesGlue.h"
 
-class ResetHandler: public BLECharacteristicCallbacks {
+class ResetHandler: public NimBLECharacteristicCallbacks {
 public:
-    ResetHandler(BLEService *pService);
-    void onWrite(BLECharacteristic* pCharacteristic);
+    ResetHandler(NimBLEService *pService);
+    void onWrite(NimBLECharacteristic* pCharacteristic);
 private:
-    BLECharacteristic *_characteristic;
+    NimBLECharacteristic *_characteristic;
 };
 
 
 
 class BTTechnicalService {
 public:
-    BTTechnicalService(BLEServer *server);
+    BTTechnicalService(NimBLEServer *server);
 
 private:
-    BLEService *deviceInfoService;
-    BLEService *pservice;
+    NimBLEService *deviceInfoService;
+    NimBLEService *pservice;
 
-    BLECharacteristic *cManufacturerName;
-    BLECharacteristic *cModelNumber;
-    BLECharacteristic *cSerialNumber;
-    BLECharacteristic *cFirmwareVersion;
+    NimBLECharacteristic *cManufacturerName;
+    NimBLECharacteristic *cModelNumber;
+    NimBLECharacteristic *cSerialNumber;
+    NimBLECharacteristic *cFirmwareVersion;
 
     ResetHandler *resetHandler;
 

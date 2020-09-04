@@ -1,10 +1,9 @@
 
 #include "BlueStuff.h"
-#include "esp_bt_device.h"
+
 
 #include <Preferences.h>
 
-#include "BLE2902.h"
 #include <WiFi.h>
 #include <esp_wifi.h>
 #include <nvs_flash.h>
@@ -20,6 +19,8 @@
 #define TAG "BLUESTUFF"
 
 const char * shortName = "Clocklet";
+
+
 
 BlueStuff::BlueStuff(QueueHandle_t bluetoothConnectedQueue,
             QueueHandle_t preferencesChangedQueue,
@@ -48,15 +49,12 @@ void BlueStuff::startBlueStuff(){
     
     LOGMEM;
 
-    BLEDevice::init(_deviceName);
+    NimBLEDevice::init(_deviceName);
     
-    esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT);
-    BLEDevice::setEncryptionLevel(ESP_BLE_SEC_ENCRYPT);
-    
-    pServer = BLEDevice::createServer();
+    NimBLEDevice::setSecurityIOCap(BLE_HS_IO_NO_INPUT_OUTPUT);
+    NimBLEDevice::setSecurityAuth(BLE_SM_PAIR_AUTHREQ_BOND | BLE_SM_PAIR_AUTHREQ_MITM | BLE_SM_PAIR_AUTHREQ_SC);
 
-    // BLE Advertising
-    _setupAdvertising();
+    pServer = NimBLEDevice::createServer();
 
     pServer->setCallbacks(this);
 
@@ -65,13 +63,15 @@ void BlueStuff::startBlueStuff(){
     _networkService = new BTNetworkService(pServer, _networkChangedQueue, _networkStatusQueue);
     _preferencesService = new BTPreferencesService(pServer, _preferencesChangedQueue);
 
-
+    // BLE Advertising
+    _setupAdvertising();
+    
+    pServer->start();
 
     LOGMEM;
 }
 
 void BlueStuff::_setupAdvertising(){
-    
     
 
     uint16_t hwrev = clocklet_hwrev();
@@ -82,10 +82,11 @@ void BlueStuff::_setupAdvertising(){
         serial = 0;
     }
 
-    BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
-    pAdvertising->addServiceUUID(BLEUUID(SV_NETWORK_UUID));
+    NimBLEAdvertising *pAdvertising = NimBLEDevice::getAdvertising();
+    // pAdvertising->addServiceUUID(SV_NETWORK_UUID);
 
-    // _advertisementData.setPartialServices(BLEUUID(SV_NETWORK_UUID));
+    // MAIN ADVERTISING PACKET
+    _advertisementData.setPartialServices(BLEUUID(SV_NETWORK_UUID));
 
     char mfrdataBuffer[10];
 
@@ -103,17 +104,17 @@ void BlueStuff::_setupAdvertising(){
     mfrdataBuffer[8] = (serial >> 16) & 0xFF;
     mfrdataBuffer[9] = (serial >> 24) & 0xFF;
 
-    auto s = std::string(mfrdataBuffer,sizeof(mfrdataBuffer));
-    _advertisementData.setManufacturerData(s);
+    _mfrdataString = std::string(mfrdataBuffer,sizeof(mfrdataBuffer));
+    _advertisementData.setManufacturerData(_mfrdataString);
+    
+    pAdvertising->setAdvertisementData(_advertisementData);
     // Manufacturer Data: 10 bytes
     // Service uuid: 16 bytes
     // = 26 bytes - WILL NOT CHANGE
 
-    // Mythical settings that help with iPhone connections issue - don't seem to make any odds
-    pAdvertising->setMinPreferred(0x06);  
-    pAdvertising->setMaxPreferred(0x12);
-
-    pAdvertising->setScanResponseData(_advertisementData);
+    // SCAN RESPONSE PACKET
+    _scanResponseData.setName(_deviceName);
+    pAdvertising->setScanResponseData(_scanResponseData);
 
     pAdvertising->start();
 }
@@ -129,21 +130,18 @@ void BlueStuff::stopBlueStuff(){
     delete(_preferencesService);
     BLEDevice::deinit(false);
 
-
 }
 
-void BlueStuff::onConnect(BLEServer* server) {
+void BlueStuff::onConnect(NimBLEServer* server) {
     ESP_LOGI(TAG,"Bluetooth client connected");
     bool change = true;
     xQueueSend(_bluetoothConnectedQueue, &change, (TickType_t) 0);
-    delay(500);
-
-    _networkService->onConnect();
 }
 
-void BlueStuff::onDisconnect(BLEServer* server) {
+void BlueStuff::onDisconnect(NimBLEServer* server) {
     ESP_LOGI(TAG,"Bluetooth client disconnected");
-    _networkService->onDisconnect();
     bool change = false;
     xQueueSend(_bluetoothConnectedQueue, &change, (TickType_t) 0);
 }
+
+

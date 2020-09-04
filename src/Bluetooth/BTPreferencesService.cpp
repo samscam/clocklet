@@ -2,7 +2,7 @@
 
 #define TAG "BT-PREFS"
 
-BTPreferencesService::BTPreferencesService(BLEServer *server, QueueHandle_t prefsChangedQueue){
+BTPreferencesService::BTPreferencesService(NimBLEServer *server, QueueHandle_t prefsChangedQueue){
 
     pservice = server->createService("28C65464-311E-4ABF-B6A0-D03B0BAA2815");
 
@@ -10,10 +10,9 @@ BTPreferencesService::BTPreferencesService(BLEServer *server, QueueHandle_t pref
     // JSON fragment
     availableSeparatorAnimationsCharacteristic = pservice->createCharacteristic(
         "9982B160-23EF-42FF-9848-31D9FF21F490",
-        BLECharacteristic::PROPERTY_READ);
-    availableSeparatorAnimationsCharacteristic->setAccessPermissions(ESP_GATT_PERM_READ_ENCRYPTED);
+        NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC);
 
-    availableSeparatorAnimationsCharacteristic->setValue("[\"None\",\"Blink\",\"Fade\"]");
+    availableSeparatorAnimationsCharacteristic->setValue(std::string("[\"None\",\"Blink\",\"Fade\"]"));
 
 
     separatorAnimationsGlue = new PreferencesGlue<std::string>("2371E298-DCE5-4E1C-9CB2-5542213CE81C",
@@ -26,9 +25,8 @@ BTPreferencesService::BTPreferencesService(BLEServer *server, QueueHandle_t pref
 
     availableTimeStyles = pservice->createCharacteristic(
         "698D2B57-5B54-48D7-A483-1AB4660FBAF9",
-        BLECharacteristic::PROPERTY_READ);
-    availableTimeStyles->setAccessPermissions(ESP_GATT_PERM_READ_ENCRYPTED);
-    availableTimeStyles->setValue("[\"24 Hour\",\"12 Hour\",\"Decimal\"]");
+        NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC);
+    availableTimeStyles->setValue(std::string("[\"24 Hour\",\"12 Hour\",\"Decimal\"]"));
 
     timeStyleGlue = new PreferencesGlue<std::string>("AE35C2DE-7D36-4699-A5CE-A0FA6A0A5483",
         "time_style",

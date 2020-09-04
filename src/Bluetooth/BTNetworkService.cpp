@@ -15,23 +15,16 @@
 #define CH_JOINNETWORK_UUID "DFBDE057-782C-49F8-A054-46D19B404D9F"
 
 
-NetworkScanTask::NetworkScanTask(BLECharacteristic *availableNetworks, BLE2902 *dec_availableNetworks_2902) : Task("NetworkScan", 3072,  5){
-    this->setCore(1);
+NetworkScanTask::NetworkScanTask(BLECharacteristic *availableNetworks) : Task("NetworkScan", 3072,  5){
+    this->setCore(0);
     ch_availableNetworks = availableNetworks;
-    _dec_availableNetworks_2902 = dec_availableNetworks_2902;
 }
 
 void NetworkScanTask::run(void *data){
-    delay(3000);
+
     for (;;){
-        if (_dec_availableNetworks_2902 -> getNotifications()){
-            _performWiFiScan();
-            if ( !WiFi.isConnected() ) WiFi.begin();
-            delay(10000);
-        } else {
-            delay(500);
-        }
-        
+        _performWiFiScan();
+        delay(2000);
     }
 }
 
@@ -76,7 +69,7 @@ void NetworkScanTask::_performWiFiScan(){
         ESP_LOGI(TAG,"%s",availableJson);
         ch_availableNetworks->setValue(availableJson);
         ch_availableNetworks->notify(true);
-        delay(200);
+        delay(20);
     }
 
     LOGMEM;
@@ -116,61 +109,32 @@ BTNetworkService::BTNetworkService(BLEServer *pServer, QueueHandle_t networkChan
 
     ch_currentNetwork = sv_network->createCharacteristic(
                                             CH_CURRENTNETWORK_UUID,
-                                            BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY | BLECharacteristic::PROPERTY_INDICATE
+                                            NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC | NIMBLE_PROPERTY::NOTIFY
                                         );
-    ch_currentNetwork->setAccessPermissions(ESP_GATT_PERM_READ_ENCRYPTED);
+    _updateCurrentNetwork();
+    ch_currentNetwork->setCallbacks(this);
 
     ch_availableNetworks = sv_network->createCharacteristic(
                                             CH_AVAILABLENETWORKS_UUID,
-                                            BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY | BLECharacteristic::PROPERTY_INDICATE
+                                            NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC | NIMBLE_PROPERTY::NOTIFY | NIMBLE_PROPERTY::INDICATE
                                         );
-    ch_availableNetworks->setAccessPermissions(ESP_GATT_PERM_READ_ENCRYPTED);
-
+    ch_availableNetworks->setCallbacks(this);
 
     ch_joinNetwork = sv_network->createCharacteristic(
                                             CH_JOINNETWORK_UUID,
-                                            BLECharacteristic::PROPERTY_WRITE
+                                            NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::WRITE_ENC
                                         );
-    ch_joinNetwork->setAccessPermissions(ESP_GATT_PERM_WRITE_ENCRYPTED);
     ch_joinNetwork->setCallbacks(this);
 
-    dec_availableNetworks_2902 = new BLE2902();
-    dec_availableNetworks_2902->setAccessPermissions(ESP_GATT_PERM_READ_ENCRYPTED | ESP_GATT_PERM_WRITE_ENCRYPTED);
-    ch_availableNetworks->addDescriptor(dec_availableNetworks_2902);
-
-    // // ch_currentNetwork->addDescriptor(p2902Descriptor);
-    
-    // ch_joinNetwork->addDescriptor(p2902Descriptor);
-    /*
-        * Authorized permission to read/write descriptor to protect notify/indicate requests
-        */
-
     sv_network->start();
-
-
-}
-
-void BTNetworkService::onConnect(){
-
-    _networkScanTask = new NetworkScanTask(ch_availableNetworks, dec_availableNetworks_2902);
-    _networkScanTask->start();
-
-    _wifiEvent = WiFi.onEvent(wifiEventCb);
-    _updateCurrentNetwork();
-
-}
-
-void BTNetworkService::onDisconnect(){
-    _networkScanTask->stop();
-    delete(_networkScanTask);
-
-    WiFi.removeEvent(_wifiEvent);
 }
 
 
 void BTNetworkService::onWrite(BLECharacteristic* pCharacteristic) {
 
-
+    if (pCharacteristic != ch_joinNetwork){
+        return;
+    }
 
     LOGMEM;
     std::string msg = pCharacteristic->getValue();
@@ -214,6 +178,28 @@ void BTNetworkService::onWrite(BLECharacteristic* pCharacteristic) {
 
 }
 
+void BTNetworkService::onSubscribe(NimBLECharacteristic* pCharacteristic, ble_gap_conn_desc* desc, uint16_t subValue){
+    if (pCharacteristic == ch_availableNetworks){
+        if (subValue > 0){
+            _networkScanTask = new NetworkScanTask(ch_availableNetworks);
+            _networkScanTask->start();
+        }
+        if (subValue == 0){
+            _networkScanTask->stop();
+            delete(_networkScanTask);
+        }
+    }
+
+    if (pCharacteristic == ch_currentNetwork){
+        if (subValue > 0){
+            _wifiEvent = WiFi.onEvent(wifiEventCb);
+            _updateCurrentNetwork();
+        }
+        if (subValue == 0){
+            WiFi.removeEvent(_wifiEvent);
+        }
+    }
+}
 
 void BTNetworkService::_updateCurrentNetwork(){
     

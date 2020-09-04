@@ -4,28 +4,31 @@
 
 #define TAG "BTTechnicalService"
 
-BTTechnicalService::BTTechnicalService(BLEServer *server){
+BTTechnicalService::BTTechnicalService(NimBLEServer *server){
 
     // For stuff that fits in the device info service
     deviceInfoService = server->createService(BLEUUID((uint16_t)0x180a));
 
-    cManufacturerName = deviceInfoService->createCharacteristic(BLEUUID((uint16_t)0x2A29), BLECharacteristic::PROPERTY_READ);
+    cManufacturerName = deviceInfoService->createCharacteristic(BLEUUID((uint16_t)0x2A29), NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC);
     cManufacturerName->setValue("Spotlight Kid Ltd");
 
-    cModelNumber = deviceInfoService->createCharacteristic(BLEUUID((uint16_t)0x2A24), BLECharacteristic::PROPERTY_READ);
+    cModelNumber = deviceInfoService->createCharacteristic(BLEUUID((uint16_t)0x2A24), NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC);
     uint16_t hwrev = clocklet_hwrev();
     char buf[11];
     sprintf(buf,"%d",hwrev);
-    cModelNumber->setValue(buf);
+    std::string modelNumber = std::string(buf);
+    cModelNumber->setValue(modelNumber);
 
-    cSerialNumber = deviceInfoService->createCharacteristic(BLEUUID((uint16_t)0x2A25), BLECharacteristic::PROPERTY_READ);
+    cSerialNumber = deviceInfoService->createCharacteristic(BLEUUID((uint16_t)0x2A25), NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC);
     uint32_t serial = clocklet_serial();
     sprintf(buf,"%d",serial);
-    cSerialNumber->setValue(buf);
+    std::string serialNumber = std::string(buf);
+    cSerialNumber->setValue(serialNumber);
     
-    char *firmwareVersionString;
-    asprintf(&firmwareVersionString,"%s (%s)",VERSION,GIT_HASH);
-    cFirmwareVersion = deviceInfoService->createCharacteristic(BLEUUID((uint16_t)0x2A26), BLECharacteristic::PROPERTY_READ);
+    char *cFirmwareVersionString;
+    asprintf(&cFirmwareVersionString,"%s (%s)",VERSION,GIT_HASH);
+    cFirmwareVersion = deviceInfoService->createCharacteristic(BLEUUID((uint16_t)0x2A26), NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC);
+    std::string firmwareVersionString = std::string(cFirmwareVersionString);
     cFirmwareVersion->setValue(firmwareVersionString);
     deviceInfoService->start();
 
@@ -52,12 +55,11 @@ BTTechnicalService::BTTechnicalService(BLEServer *server){
 
 
 
-ResetHandler::ResetHandler(BLEService *pService){
+ResetHandler::ResetHandler(NimBLEService *pService){
     _characteristic = pService->createCharacteristic(
         "DD3FB44B-A925-4FC3-8047-77B1B6028B25",
-        BLECharacteristic::PROPERTY_WRITE);
+        NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::WRITE_ENC);
 
-    _characteristic->setAccessPermissions(ESP_GATT_PERM_WRITE_ENCRYPTED);
     _characteristic->setCallbacks(this);
 }
 
@@ -66,10 +68,9 @@ enum ResetType {
     nothing, reboot, partialReset, factoryReset
 };
 
-void ResetHandler::onWrite(BLECharacteristic* pCharacteristic) {
-    uint8_t *value = pCharacteristic->getData();
-    ESP_LOGI(TAG,"Reset handler triggered: %d",value[0]);
-    ResetType resetType = (ResetType)value[0];
+void ResetHandler::onWrite(NimBLECharacteristic* pCharacteristic) {
+    ResetType resetType = pCharacteristic->getValue<ResetType>();
+    ESP_LOGI(TAG,"Reset handler triggered: %d",resetType);
     switch (resetType) {
         case reboot:
             clocklet_reboot();

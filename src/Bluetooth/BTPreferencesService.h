@@ -1,23 +1,21 @@
 #pragma once
 
-#include <BLEDevice.h>
-#include <BLEUtils.h>
-#include <BLEService.h>
+#include <NimBLEDevice.h>
 
 #include "BTPreferencesGlue.h"
 
 
 class BTPreferencesService {
 public:
-    BLEService *pservice;
+    BTPreferencesService(NimBLEServer *server, QueueHandle_t prefsChangedQueue);
 
+private:
+    NimBLEService *pservice;
 
-    BTPreferencesService(BLEServer *server, QueueHandle_t prefsChangedQueue);
-
-    BLECharacteristic *availableSeparatorAnimationsCharacteristic;
+    NimBLECharacteristic *availableSeparatorAnimationsCharacteristic;
     PreferencesGlue<std::string> *separatorAnimationsGlue;
 
-    BLECharacteristic *availableTimeStyles;
+    NimBLECharacteristic *availableTimeStyles;
     PreferencesGlue<std::string> *timeStyleGlue;
 
     PreferencesGlue<float_t> *brightnessGlue;

@@ -10,23 +10,24 @@
 
 #define TAG "BTLocationService"
 
-BTLocationService::BTLocationService(LocationManager *locationManager, BLEServer *pServer){
+BTLocationService::BTLocationService(LocationManager *locationManager, NimBLEServer *pServer){
     _locationManager = locationManager;
     ESP_LOGI(TAG, "Starting location service %s",SV_LOCATION_UUID);
     _sv_location= pServer->createService(SV_LOCATION_UUID);
 
     _ch_currentLocation = _sv_location->createCharacteristic(
                                             CH_CURRENTLOCATION_UUID,
-                                            BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_NOTIFY | BLECharacteristic::PROPERTY_INDICATE
+                                            NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC | 
+                                            NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::WRITE_ENC |
+                                            NIMBLE_PROPERTY::NOTIFY | NIMBLE_PROPERTY::INDICATE
                                         );
-    _ch_currentLocation->setAccessPermissions(ESP_GATT_PERM_READ_ENCRYPTED | ESP_GATT_PERM_WRITE_ENCRYPTED);
 
     _ch_currentLocation->setCallbacks(this);
 
     _sv_location->start();
 }
 
-void BTLocationService::onWrite(BLECharacteristic* pCharacteristic) {
+void BTLocationService::onWrite(NimBLECharacteristic* pCharacteristic) {
     LOGMEM;
     std::string msg = pCharacteristic->getValue();
     ESP_LOGI(TAG,"BLE Location Characteristic Write: %s\n", msg.c_str());
@@ -68,7 +69,7 @@ void BTLocationService::onWrite(BLECharacteristic* pCharacteristic) {
 
 }
 
-void BTLocationService::onRead(BLECharacteristic* pCharacteristic) {
+void BTLocationService::onRead(NimBLECharacteristic* pCharacteristic) {
     
     Location location = _locationManager->getLocation();
 

@@ -1,16 +1,14 @@
 #pragma once
 
-#include <BLEDevice.h>
-#include <BLEUtils.h>
-#include <BLEServer.h>
+#include <NimBLEDevice.h>
 
 #include "../Location/LocationManager.h"
 
-class BTLocationService: public BLECharacteristicCallbacks {
+class BTLocationService: public NimBLECharacteristicCallbacks {
 public:
     BTLocationService(LocationManager *locationManager, BLEServer *pServer);
-    void onWrite(BLECharacteristic* pCharacteristic);
-    void onRead(BLECharacteristic* pCharacteristic);
+    void onWrite(NimBLECharacteristic* pCharacteristic);
+    void onRead(NimBLECharacteristic* pCharacteristic);
 
 private:
     BLEService *_sv_location;

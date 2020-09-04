@@ -1,8 +1,6 @@
 #pragma once
 
-#include <BLEDevice.h>
-#include <BLEUtils.h>
-#include <BLEServer.h>
+#include <NimBLEDevice.h>
 #include <vector>
 
 #include <WiFi.h>
@@ -19,7 +17,7 @@
 #include "../Utilities/Task.h"
 
 
-class BlueStuff: public BLEServerCallbacks {
+class BlueStuff: public NimBLEServerCallbacks {
 
 public:
     BlueStuff(QueueHandle_t bluetoothConnectedQueue,
@@ -31,8 +29,8 @@ public:
     void stopBlueStuff();
 
     // BLE callbacks
-    void onConnect(BLEServer* server);
-    void onDisconnect(BLEServer* server);
+    void onConnect(NimBLEServer* server);
+    void onDisconnect(NimBLEServer* server);
 
     void wifiEvent(WiFiEvent_t event);
 
@@ -47,7 +45,7 @@ private:
     bool _bluetoothRunning = false;
     
     QueueHandle_t _bluetoothConnectedQueue;
-    BLEServer *pServer;
+    NimBLEServer *pServer;
 
     BTTechnicalService* _technicalService;
 
@@ -61,4 +59,6 @@ private:
     BTLocationService *_locationService;
     LocationManager *_locationManager;
     BLEAdvertisementData _advertisementData;
+    BLEAdvertisementData _scanResponseData;
+    std::string _mfrdataString;
 };

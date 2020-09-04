@@ -1,14 +1,12 @@
 #pragma once
 
-#include <BLEDevice.h>
-#include <BLEUtils.h>
-#include <BLEService.h>
+#include <NimBLEDevice.h>
 
 #include <Preferences.h>
 
 
 template <class T>
-class PreferencesGlue: public BLECharacteristicCallbacks {
+class PreferencesGlue: public NimBLECharacteristicCallbacks {
 public:
     PreferencesGlue(const char *uuid,
         const char *prefsKey,
@@ -16,15 +14,17 @@ public:
         QueueHandle_t prefsChangedQueue,
         const char *prefsNamespace,
         T defaultValue);
+    ~PreferencesGlue();
 
-    void onWrite(BLECharacteristic* pCharacteristic);
-    void onRead(BLECharacteristic* pCharacteristic);
+    void onWrite(NimBLECharacteristic* pCharacteristic);
+    void onRead(NimBLECharacteristic* pCharacteristic);
 
 private:
+    Preferences *preferences;
     const char* _prefsNamespace;
     const char *_prefsKey;
     T _defaultValue;
-    BLECharacteristic *_characteristic;
+    NimBLECharacteristic *_characteristic;
     QueueHandle_t _prefsChangedQueue;
 };
 
@@ -35,34 +35,38 @@ PreferencesGlue<T>::PreferencesGlue(const char *uuid, const char *prefsKey, BLES
     _prefsNamespace = prefsNamespace;
     _prefsChangedQueue = prefsChangedQueue;
     _defaultValue = defaultValue;
-
+    preferences = new Preferences();
     _characteristic = pservice->createCharacteristic(
         uuid,
-        BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
-    _characteristic->setAccessPermissions(ESP_GATT_PERM_READ_ENCRYPTED | ESP_GATT_PERM_WRITE_ENCRYPTED);
+        NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC | NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::WRITE_ENC);
     _characteristic->setCallbacks(this);
 }
 
+template <class T> inline
+PreferencesGlue<T>::~PreferencesGlue(){
+
+    delete(preferences);
+}
 
 template <class T>  inline
-void PreferencesGlue<T>::onWrite(BLECharacteristic* pCharacteristic) {
+void PreferencesGlue<T>::onWrite(NimBLECharacteristic* pCharacteristic) {
     ESP_LOGE(TAG,"Unimplemented Bluetooth Preferences Glue");
 }
 
 template <class T> inline
-void PreferencesGlue<T>::onRead(BLECharacteristic* pCharacteristic) {
+void PreferencesGlue<T>::onRead(NimBLECharacteristic* pCharacteristic) {
     ESP_LOGE(TAG,"Unimplemented Bluetooth Preferences Glue");
 }
 
 template <>  inline
-void PreferencesGlue<std::string>::onWrite(BLECharacteristic* pCharacteristic) {
-    std::string value = pCharacteristic->getValue();
+void PreferencesGlue<std::string>::onWrite(NimBLECharacteristic* pCharacteristic) {
+    String value = String(pCharacteristic->getValue().c_str());
     ESP_LOGI(TAG,"Preferences change: %s IS NOW %s",_prefsKey,value.c_str());
-    Preferences *preferences = new Preferences();
+
     preferences->begin(_prefsNamespace, false);
-    preferences->putString(_prefsKey, value.c_str());
+    preferences->putString(_prefsKey, value);
     preferences->end();
-    delete(preferences);
+
     bool change = true;
     if (_prefsChangedQueue){
         xQueueSend(_prefsChangedQueue, &change, (TickType_t) 0);
@@ -70,28 +74,26 @@ void PreferencesGlue<std::string>::onWrite(BLECharacteristic* pCharacteristic) {
 }
 
 template <> inline
-void PreferencesGlue<std::string>::onRead(BLECharacteristic* pCharacteristic) {
-    Preferences *preferences = new Preferences();
+void PreferencesGlue<std::string>::onRead(NimBLECharacteristic* pCharacteristic) {
+
     preferences->begin(_prefsNamespace, false);
     String value = preferences->getString(_prefsKey,_defaultValue.c_str());
-    pCharacteristic->setValue(value.c_str());
+    std::string sValue = std::string(value.c_str());
+    ESP_LOGI(TAG,"Preferences: %s IS \"%s\"",_prefsKey,sValue.c_str());
+    pCharacteristic->setValue(sValue);
     preferences->end();
-    delete(preferences);
 }
 
 // BOOL
 
 template <>  inline
-void PreferencesGlue<bool>::onWrite(BLECharacteristic* pCharacteristic) {
-    uint8_t *data = pCharacteristic->getData();
-
-    bool value = (bool) data[0];
+void PreferencesGlue<bool>::onWrite(NimBLECharacteristic* pCharacteristic) {
+    bool value = pCharacteristic->getValue<bool>();
     ESP_LOGI(TAG,"Preferences change: %s IS NOW %d",_prefsKey,value);
-    Preferences *preferences = new Preferences();
+    
     preferences->begin("clocklet", false);
     preferences->putBool(_prefsKey, value);
     preferences->end();
-    delete(preferences);
 
     bool change = true;
     if (_prefsChangedQueue){
@@ -100,31 +102,29 @@ void PreferencesGlue<bool>::onWrite(BLECharacteristic* pCharacteristic) {
 }
 
 template <> inline
-void PreferencesGlue<bool>::onRead(BLECharacteristic* pCharacteristic) {
-    Preferences *preferences = new Preferences();
+void PreferencesGlue<bool>::onRead(NimBLECharacteristic* pCharacteristic) {
     preferences->begin("clocklet", false);
     bool prefsValue = preferences->getBool(_prefsKey,_defaultValue);
     uint8_t data[1];
     data[0] = prefsValue;
     pCharacteristic->setValue(data,1);
     preferences->end();
-    delete(preferences);
-
+    ESP_LOGI(TAG,"Preferences bool read: %s IS %d",_prefsKey,prefsValue);
+    
 }
 
 // UINT8
 
 template <>  inline
-void PreferencesGlue<uint8_t>::onWrite(BLECharacteristic* pCharacteristic) {
-    uint8_t *data = pCharacteristic->getData();
+void PreferencesGlue<uint8_t>::onWrite(NimBLECharacteristic* pCharacteristic) {
+    uint8_t value = pCharacteristic->getValue<uint8_t>();
 
-    uint8_t value = data[0];
     ESP_LOGI(TAG,"Preferences change: %s IS NOW %d",_prefsKey,value);
-    Preferences *preferences = new Preferences();
+
     preferences->begin("clocklet", false);
     preferences->putUChar(_prefsKey, value);
     preferences->end();
-    delete(preferences);
+    
 
     bool change = true;
     if (_prefsChangedQueue){
@@ -133,34 +133,25 @@ void PreferencesGlue<uint8_t>::onWrite(BLECharacteristic* pCharacteristic) {
 }
 
 template <> inline
-void PreferencesGlue<uint8_t>::onRead(BLECharacteristic* pCharacteristic) {
-    Preferences *preferences = new Preferences();
+void PreferencesGlue<uint8_t>::onRead(NimBLECharacteristic* pCharacteristic) {
+
     preferences->begin("clocklet", false);
     uint8_t prefsValue = preferences->getUChar(_prefsKey,_defaultValue);
     uint8_t data[1] = {prefsValue};
     pCharacteristic->setValue(data,1);
     preferences->end();
-    delete(preferences);
 }
 
 template <>  inline
-void PreferencesGlue<float_t>::onWrite(BLECharacteristic* pCharacteristic) {
-    size_t size = sizeof(float_t);
-    uint8_t *data = pCharacteristic->getData();
-    if ( sizeof(data) < size ){
-        ESP_LOGE(TAG,"No enough data for %s",_prefsKey);
-        return;
-    }
+void PreferencesGlue<float_t>::onWrite(NimBLECharacteristic* pCharacteristic) {
 
-    float_t value;
-    memcpy(&value,data,size);
+    float_t value = pCharacteristic->getValue<float_t>();
 
     // ESP_LOGI(TAG,"Preferences change: %s IS NOW %g",_prefsKey,value);
-    Preferences *preferences = new Preferences();
+
     preferences->begin("clocklet", false);
     preferences->putFloat(_prefsKey, value);
     preferences->end();
-    delete(preferences);
 
     bool change = true;
     if (_prefsChangedQueue){
@@ -169,16 +160,13 @@ void PreferencesGlue<float_t>::onWrite(BLECharacteristic* pCharacteristic) {
 }
 
 template <> inline
-void PreferencesGlue<float_t>::onRead(BLECharacteristic* pCharacteristic) {
-    Preferences *preferences = new Preferences();
+void PreferencesGlue<float_t>::onRead(NimBLECharacteristic* pCharacteristic) {
     size_t size = sizeof(float_t);
     preferences->begin("clocklet", false);
     float_t prefsValue = preferences->getFloat(_prefsKey,_defaultValue);
     uint8_t data[size];
     memcpy(data, (uint8_t*) (&prefsValue), size );
-    
     pCharacteristic->setValue(data,size);
     preferences->end();
-    delete(preferences);
 }
 

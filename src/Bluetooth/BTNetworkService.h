@@ -1,11 +1,8 @@
 #pragma once
 
-#include <BLEDevice.h>
-#include <BLEUtils.h>
-#include <BLEService.h>
+#include <NimBLEDevice.h>
 #include <WiFi.h>
 #include <ArduinoJson.h>
-#include <BLE2902.h>
 #include "Utilities/Task.h"
 
 #define SV_NETWORK_UUID     "68D924A1-C1B2-497B-AC16-FD1D98EDB41F"
@@ -26,26 +23,23 @@ struct NetworkInfo {
 
 class NetworkScanTask: public Task {
 public:
-    NetworkScanTask(BLECharacteristic *availableNetworks,BLE2902 *dec_availableNetworks_2902);
+    NetworkScanTask(NimBLECharacteristic *availableNetworks);
     void run(void *data);
 private:
-    BLECharacteristic *ch_availableNetworks;
-    BLE2902 *_dec_availableNetworks_2902;
+    NimBLECharacteristic *ch_availableNetworks;
     void _performWiFiScan();
     void _encodeNetInfo(JsonDocument &doc, NetworkInfo netInfo);
 };
 
-class BTNetworkService: public BLECharacteristicCallbacks  {
+class BTNetworkService: public NimBLECharacteristicCallbacks  {
 public:
-    BTNetworkService(BLEServer *server, QueueHandle_t networkChangedQueue, QueueHandle_t networkStatusQueue);
+    BTNetworkService(NimBLEServer *server, QueueHandle_t networkChangedQueue, QueueHandle_t networkStatusQueue);
     ~BTNetworkService() {};
 
     void wifiEvent(WiFiEvent_t event);
-    void onWrite(BLECharacteristic* pCharacteristic);
+    void onWrite(NimBLECharacteristic* pCharacteristic);
 
-    void onConnect();
-    void onDisconnect();
-
+    void onSubscribe(NimBLECharacteristic* pCharacteristic, ble_gap_conn_desc* desc, uint16_t subValue);
 private:
 
     void _updateCurrentNetwork();
@@ -58,13 +52,12 @@ private:
     NetworkScanTask *_networkScanTask;
 
     // Network provisioning
-    BLEService *sv_network;
-    BLECharacteristic *ch_currentNetwork; // returns info on current network connection
-    BLECharacteristic *ch_availableNetworks; // returns list of known and available networks
-    BLE2902 *dec_availableNetworks_2902;
+    NimBLEService *sv_network;
+    NimBLECharacteristic *ch_currentNetwork; // returns info on current network connection
+    NimBLECharacteristic *ch_availableNetworks; // returns list of known and available networks
 
-    BLECharacteristic *ch_removeNetwork; // takes an SSID of one of the known networks - removes it from the list preventing future connection
-    BLECharacteristic *ch_joinNetwork; // Joins a network
+    NimBLECharacteristic *ch_removeNetwork; // takes an SSID of one of the known networks - removes it from the list preventing future connection
+    NimBLECharacteristic *ch_joinNetwork; // Joins a network
 
     wifi_event_id_t _wifiEvent;
 };
