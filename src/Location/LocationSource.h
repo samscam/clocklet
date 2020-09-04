@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include <math.h>
 
 struct Location {
@@ -13,7 +14,7 @@ struct Location {
     }
 
     explicit operator bool(){
-        if (isnan(lat) || isnan(lng)){
+        if ( std::isnan(lat) || std::isnan(lng)){
             return false;
         }
         if (lat == 0 && lng == 0){
