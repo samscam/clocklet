@@ -1,9 +1,12 @@
-[submodule "lib/semverc"]
-	path = lib/semverc
-	url = git@github.com:h2non/semver.c.git
-[submodule "lib/posix_tz_db"]
-	path = lib/posix_tz_db
-	url = git@github.com:nayarsystems/posix_tz_db.git
-[submodule "lib/nimble-arduino"]
-	path = lib/nimble-arduino
+[submodule "Embedded/lib/nimble-arduino"]
+	path = Embedded/lib/nimble-arduino
 	url = https://github.com/h2zero/NimBLE-Arduino.git
+[submodule "Embedded/lib/posix_tz_db"]
+	path = Embedded/lib/posix_tz_db
+	url = https://github.com/nayarsystems/posix_tz_db.git
+[submodule "Embedded/lib/semverc"]
+	path = Embedded/lib/semverc
+	url = https://github.com/h2non/semver.c.git
+[submodule "Embedded/lib/soltrack"]
+	path = Embedded/lib/soltrack
+	url = https://github.com/astronomy/SolTrack.git
