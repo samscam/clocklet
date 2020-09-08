@@ -45,8 +45,11 @@ It's all a work in progress.
 
 ## Client App (iOS)
 
-Contains an experimental library for gluing CoreBluetooth to Combine and SwiftUI via PropertyWrappers called "CombineBluetooth". This may get spun out into a separate project in the future - but for ease of development right now it's in here.
+*Requires Xcode 12 (beta)*
 To build, open via the workspace rather than the Xcode Project.
+
+Contains an experimental library for gluing CoreBluetooth to Combine and SwiftUI via PropertyWrappers called "CombineBluetooth". This may get spun out into a separate project in the future - but for ease of development right now it's in here.
+
 
 ## To follow
 
