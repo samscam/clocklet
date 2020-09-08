@@ -433,8 +433,8 @@ void Matrix::displayTime(const DateTime& time, Weather weather){
       break;
     case twelveHour:
       maskTime(time);
-      setDot(_blinkColon,dotColour,8,colon);
-      // setDot(_blinkColon,dotColour,8,time.isPM() ? colon : point);
+      // setDot(_blinkColon,dotColour,8,colon);
+      setDot(_blinkColon,dotColour,8,time.isPM() ? colon : point);
       break;
     case decimal:
       char buf[10];
@@ -444,8 +444,6 @@ void Matrix::displayTime(const DateTime& time, Weather weather){
       _blinkColon = BLINK_SEPARATOR ? (decimalSecond % 2) == 0 : true;
       setDot(_blinkColon,dotColour,4,point);
       break;
-    // case dateOnly:
-    //   maskDate(time);
   }
 
   if (rainChance > 0) {

@@ -38,7 +38,7 @@ PreferencesGlue<T>::PreferencesGlue(const char *uuid, const char *prefsKey, BLES
     preferences = new Preferences();
     _characteristic = pservice->createCharacteristic(
         uuid,
-        NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC | NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::WRITE_ENC);
+        NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC |  NIMBLE_PROPERTY::WRITE_NR | NIMBLE_PROPERTY::WRITE_ENC);
     _characteristic->setCallbacks(this);
 }
 

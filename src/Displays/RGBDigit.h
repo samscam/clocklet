@@ -54,6 +54,10 @@ public:
   // Set the weather
   void setWeather(Weather weather);
   
+  void setDeviceState(DeviceState state);
+  void setTimeStyle(TimeStyle timeStyle);
+  void setDecimalTime(double decimalTime);
+
   void displayTemperatures();
 
   // Show a message - but what kind of message?
@@ -69,7 +73,6 @@ public:
   CRGB colourFromTemperature(float temperature);
   void setDigits(int number, CRGB colour = CRGB::White);
 
-  void setDeviceState(DeviceState state);
 
 private:
 
@@ -115,8 +118,11 @@ private:
   uint8_t _brightness;
   CRGB leds[NUM_LEDS];
   DateTime _time;
+  double _decimalTime;
+  
   Weather _weather;
   DeviceState _deviceState = ok;
+  TimeStyle _timeStyle = twentyFourHour;
 
   bool rainbows = false;
 

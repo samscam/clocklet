@@ -23,7 +23,6 @@ DEFINE_GRADIENT_PALETTE (temperatureGPalette) {
 };
 
 
-
 RGBDigit::RGBDigit() : Display() {
 
 
@@ -44,11 +43,27 @@ void RGBDigit::frameLoop() {
   displayTime(_time,_weather);
 }
 
+/* SETTERS */
+
 void RGBDigit::setWeather(Weather weather) {
   _weather = weather;
   
   regenerateHeatPalette(_weather.minTmp,_weather.maxTmp);
 }
+
+void RGBDigit::setDecimalTime(double decimalTime) {
+  _decimalTime = decimalTime;
+}
+
+void RGBDigit::setTimeStyle(TimeStyle timeStyle){
+  _timeStyle = timeStyle;
+}
+
+void RGBDigit::setTime(DateTime time) {
+  _time = time;
+}
+
+/* HIGH LEVEL DISPLAY METHODS */
 
 void RGBDigit::displayTemperatures(){
   const char * message = "Currently";
@@ -59,9 +74,6 @@ void RGBDigit::displayTemperatures(){
   FastLED.delay(4000);
 }
 
-void RGBDigit::setTime(DateTime time) {
-  _time = time;
-}
 
 void RGBDigit::displayMessage(const char *stringy, MessageType messageType = good) {
   switch (messageType){
@@ -161,7 +173,7 @@ void RGBDigit::displayTime(const DateTime& time, Weather weather){
 
   if (rainbows){
     // Fill the digits entirely with rainbows
-    fillDigits_rainbow(false);
+    fillDigits_rainbow(true);
   } else {
     // Or heat colours
     fillDigits_heat();
@@ -200,11 +212,9 @@ void RGBDigit::displayTime(const DateTime& time, Weather weather){
     addLightening();
   }
 
-  maskTime(time);
+  _blinkColon = BLINK_SEPARATOR ? (time.second() % 2) == 0 : true;
 
-  _blinkColon = (time.second() % 2) == 0;
-
-  CRGB dotColour;
+  CRGB dotColour = CRGB::White;
   switch(_deviceState){
     case ok:
       dotColour = CRGB::White;
@@ -226,7 +236,28 @@ void RGBDigit::displayTime(const DateTime& time, Weather weather){
       break;
   }
 
-  setDot(_blinkColon,1,dotColour);
+  switch(_timeStyle) {
+    case twentyFourHour:
+      maskTime(time);
+      setDot(_blinkColon,1,dotColour);
+      break;
+    case twelveHour:
+      maskTime(time);
+      setDot(_blinkColon,1,dotColour);
+      break;
+    case decimal:
+      char buf[10];
+      sprintf(buf,"%.3f",_decimalTime);
+      setDigit(buf[0],0);
+      setDigit(buf[2],1);
+      setDigit(buf[3],2);
+      setDigit(buf[4],3);
+      int decimalSecond = floor(_decimalTime * 10000) - (floor(_decimalTime * 1000)*10);
+      _blinkColon = BLINK_SEPARATOR ? (decimalSecond % 2) == 0 : true;
+      setDot(_blinkColon,0,dotColour);
+      break;
+  }
+
 
   FastLED.show();
 
@@ -235,7 +266,16 @@ void RGBDigit::displayTime(const DateTime& time, Weather weather){
 void RGBDigit::maskTime(const DateTime& time){
   int digit[4];
 
-  int h = time.hour();
+  int h;
+  if (_timeStyle == twelveHour){
+    h = time.hour() % 12 ;
+    if (h == 0) {
+      h = 12;
+    }
+  } else {
+    h = time.hour() ;
+  }
+
   digit[0] = h/10;                      // left digit
   digit[1] = h - (h/10)*10;             // right digit
 

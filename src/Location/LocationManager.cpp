@@ -46,7 +46,8 @@ bool LocationManager::setLocation(Location newLocation){
 
     Preferences preferences = Preferences();
     if (preferences.begin("clocklet", false)) {
-        ESP_LOGI(TAG,"[LocationManager] Setting location to %g, %g",newLocation.lat, newLocation.lng);
+        // VV Oddly, uncommenting this makes it crash on changing location... WHY?
+        // ESP_LOGI(TAG,"[LocationManager] Setting location to %f, %f",newLocation.lat, newLocation.lng);
         preferences.putDouble("lat",newLocation.lat);
         preferences.putDouble("lng",newLocation.lng);
         preferences.putString("placeName",newLocation.placeName);

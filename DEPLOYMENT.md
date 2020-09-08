@@ -32,7 +32,7 @@ V        V
 
 And burn it!
 
-~/esp/esp-idf-3.2.2/components/esptool_py/esptool/espefuse.py --port /dev/tty.SLAB_USBtoUART burn_block_data --offset 24 BLK3 efuse.bin
+~/.platformio/packages/tool-esptoolpy/espefuse.py --port /dev/tty.SLAB_USBtoUART burn_block_data --offset 24 BLK3 efuse.bin
 
 (use --force-write-always if necessary)
 
@@ -44,3 +44,4 @@ Case colours
 04 white
 05 galaxy black
 06 gold
+07 tequilla sunrise
