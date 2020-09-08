@@ -25,4 +25,5 @@ private:
     void _calculateSunTimes(DateTime currentTimeUTC, ClockLocation currentLocation);
     DateTime _rsTimeToDateTime(DateTime base, double rsTime);
     bool _sameDay(DateTime lhs, DateTime rhs);
+    DateTime _startOfDay(DateTime time);
 };

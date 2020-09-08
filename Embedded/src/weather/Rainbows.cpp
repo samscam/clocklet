@@ -14,12 +14,40 @@ bool Rainbows::rainbowProbability(DateTime currentTime){
         _calculateSunTimes(currentTime, _location);
     }
 
-    if (currentTime < _sunrise || currentTime > _sunset){
+    if (_sunrise == _startOfDay(currentTime)){
+        // We are in a polar region... oh dear...
         return false;
     }
-    if (currentTime > _fortyTwoRise && currentTime < _fortyTwoSet){
-        return false;
+
+    if ( _sunrise < _sunset){
+        // Normal places...
+        if (currentTime < _sunrise || currentTime > _sunset){
+            return false; // it is night time
+        }
+
+    } else {
+        // Places on the other side of the world
+        if (currentTime > _sunset && currentTime < _sunrise){
+            return false; // it is night time
+        }
     }
+
+    if (_fortyTwoRise != _startOfDay(currentTime)){ // The sun gets over 42 degrees
+        if (_fortyTwoRise < _fortyTwoSet){
+            // Normal places...
+            if (currentTime > _fortyTwoRise && currentTime < _fortyTwoSet){
+                return false; // The sun is too high
+            }
+        } else {
+            if (currentTime < _fortyTwoSet || currentTime > _fortyTwoRise){
+                return false; // The sun is too high
+            }
+        }
+    }
+
+
+    return true; // Force rainbows, ignoring actual weather FOR TEST
+
     if (_weather.cloudCover < 0.8 && _weather.cloudCover > 0.2 && _weather.precipChance >= 0.2 ){
         return true;
     }
@@ -73,18 +101,27 @@ void Rainbows::_calculateSunTimes(DateTime currentTimeUTC, ClockLocation current
     _sunrise = _rsTimeToDateTime(currentTimeUTC,riseSet.riseTime);
     _sunset = _rsTimeToDateTime(currentTimeUTC,riseSet.setTime);
 
-    ESP_LOGD(TAG,"Sunrise: %d:%d:%d UTC\n",_sunrise.hour(),_sunrise.minute(),_sunrise.second());
-    ESP_LOGD(TAG,"Sunset: %d:%d:%d UTC\n",_sunset.hour(),_sunset.minute(),_sunset.second());
+    char timeBuf[20];
+    strcpy(timeBuf,"YYYY-MM-DD hh:mm:ss");
+    ESP_LOGD(TAG,"Sunrise: %s UTC ... %f",_sunrise.toString(timeBuf), riseSet.riseTime);
+
+
+    strcpy(timeBuf,"YYYY-MM-DD hh:mm:ss");
+    ESP_LOGD(TAG,"Sunset: %s UTC ... %f",_sunset.toString(timeBuf),riseSet.setTime);
     
     // When do we hit 42 degrees?
     rsAlt = 42.0 / R2D;
     SolTrack_RiseSet(time, location, &rsPosition, &riseSet, rsAlt, useDegrees, useNorthEqualsZero);
 
+
     _fortyTwoRise = _rsTimeToDateTime(currentTimeUTC,riseSet.riseTime);
     _fortyTwoSet = _rsTimeToDateTime(currentTimeUTC,riseSet.setTime);
 
-    ESP_LOGD(TAG,"42 Rise: %d:%d:%d UTC\n",_fortyTwoRise.hour(),_fortyTwoRise.minute(),_fortyTwoRise.second());
-    ESP_LOGD(TAG,"42 Set: %d:%d:%d UTC\n",_fortyTwoSet.hour(),_fortyTwoSet.minute(),_fortyTwoSet.second());
+    strcpy(timeBuf,"YYYY-MM-DD hh:mm:ss");
+    ESP_LOGD(TAG,"42 Rise: %s UTC ... %f",_fortyTwoRise.toString(timeBuf),riseSet.riseTime);
+
+    strcpy(timeBuf,"YYYY-MM-DD hh:mm:ss");
+    ESP_LOGD(TAG,"42 Set: %s UTC ... %f",_fortyTwoSet.toString(timeBuf),riseSet.setTime);
     
 }
 
@@ -95,4 +132,8 @@ bool Rainbows::_sameDay(DateTime lhs, DateTime rhs){
         return true;
     }
     return false;
+}
+
+DateTime Rainbows::_startOfDay(DateTime time){
+    return DateTime(time.year(),time.month(),time.day(),0,0,0);
 }
