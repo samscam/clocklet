@@ -65,7 +65,7 @@ extension ClockLocation {
 }
 
 extension ClockLocation: Identifiable{
-    var id: Double { return (lat ?? 0) * (lng ?? 0) }
+    var id: String { return placeName ?? "Nowhere" }
 }
 struct LocationDetailsView: View {
     
@@ -73,7 +73,7 @@ struct LocationDetailsView: View {
     @EnvironmentObject var clock: Clock
      
     static let popularLocations: [ClockLocation] = [
-        .manchester,.newYork,.london,.paris,.munich,.sanfrancisco,.melbourne,.chatham,.mumbai,.helipark
+        .manchester,.newYork,.london,.paris,.munich,.sanfrancisco,.melbourne,.chatham,.mumbai,.helipark,.northPole,.southPole,.nullIsland
     ]
     
     
