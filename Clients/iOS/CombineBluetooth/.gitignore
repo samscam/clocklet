@@ -1,19 +1,8 @@
-# General
-.DS_Store
-
-# Platformio
-.pioenvs
-.piolibdeps
-.clang_complete
-.gcc-flags.json
-*.sublime-workspace
-.vscode
-.pio
-
-
 # Xcode
 #
 # gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
+
+.DS_Store
 
 ## Build generated
 build/
@@ -74,5 +63,5 @@ Carthage/Build
 
 fastlane/report.xml
 fastlane/screenshots
-Distribution/Archives
+/Distribution/Archives
 *.pyc
