@@ -47,7 +47,7 @@ void DarkSky::setTimeHorizon(uint8_t hours){
   _timeHorizon = hours;
 }
 
-void DarkSky::setLocation(Location location){
+void DarkSky::setLocation(ClockLocation location){
   _currentLocation = location;
   horizonWeather = {};
   rainbowWeather = {};

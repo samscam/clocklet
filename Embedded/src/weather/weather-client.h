@@ -35,10 +35,10 @@ public:
   Weather rainbowWeather;
 
   // Setters - subclasses can override
-  virtual void setLocation(Location location) {};
+  virtual void setLocation(ClockLocation location) {};
   virtual void setTimeHorizon(uint8_t hours) {};
 
-  Location _currentLocation;
+  ClockLocation _currentLocation;
   
   virtual char* constructURL() { return nullptr; };
   virtual const char* certificate() { return nullptr; };

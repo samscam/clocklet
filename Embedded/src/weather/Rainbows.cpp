@@ -27,7 +27,7 @@ bool Rainbows::rainbowProbability(DateTime currentTime){
 
 }
 
-void Rainbows::setLocation(Location location){
+void Rainbows::setLocation(ClockLocation location){
     _location = location;
 }
 
@@ -49,14 +49,14 @@ DateTime Rainbows::_rsTimeToDateTime(DateTime base, double rsTime){
 }
 
 /// Calculates the rise and set times for the day
-void Rainbows::_calculateSunTimes(DateTime currentTimeUTC, Location currentLocation){
+void Rainbows::_calculateSunTimes(DateTime currentTimeUTC, ClockLocation currentLocation){
 
     struct Time time;
     time.year = currentTimeUTC.year();
     time.month = currentTimeUTC.month();
     time.day = currentTimeUTC.day();
     
-    struct STLocation location;
+    struct Location location;
     location.longitude = currentLocation.lng;
     location.latitude = currentLocation.lat;
     

@@ -190,7 +190,7 @@ void setup() {
   blueStuff->startBlueStuff();
 
 
-  Location currentLocation = locationManager->getLocation();
+  ClockLocation currentLocation = locationManager->getLocation();
   weatherClient.weatherChangedQueue = weatherChangedQueue;
   rainbows.setLocation(currentLocation);
   weatherClient.setLocation(currentLocation);
@@ -292,7 +292,7 @@ void loop() {
   xQueueReceive(locationChangedQueue, &locationDidChange, (TickType_t)0 );
   if (locationDidChange){
     ESP_LOGI(TAG,"Location did change");
-    Location location = locationManager->getLocation();
+    ClockLocation location = locationManager->getLocation();
     weatherClient.setLocation(location);
     rainbows.setLocation(location);
     rtc.setTimeZone(location.timeZone);

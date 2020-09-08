@@ -3,13 +3,13 @@
 #include <cmath>
 #include <math.h>
 
-struct Location {
+struct ClockLocation {
     double lat;
     double lng;
     char placeName[256];
     char timeZone[64];
 
-    bool operator == (const Location& rhs) const {
+    bool operator == (const ClockLocation& rhs) const {
         return (lat == rhs.lat && lng == rhs.lng);
     }
 
@@ -34,5 +34,5 @@ struct Location {
 
 class LocationSource {
     public:
-    virtual Location getLocation();
+    virtual ClockLocation getLocation();
 };

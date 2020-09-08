@@ -59,7 +59,7 @@ void BTLocationService::onWrite(NimBLECharacteristic* pCharacteristic) {
         return;
     }
 
-    Location newLocation = {};
+    ClockLocation newLocation = {};
     newLocation.lat = lat;
     newLocation.lng = lng;
     strcpy(newLocation.placeName,placeName);
@@ -71,7 +71,7 @@ void BTLocationService::onWrite(NimBLECharacteristic* pCharacteristic) {
 
 void BTLocationService::onRead(NimBLECharacteristic* pCharacteristic) {
     
-    Location location = _locationManager->getLocation();
+    ClockLocation location = _locationManager->getLocation();
 
     StaticJsonDocument<500> locDoc;
     locDoc["configured"]=_locationManager->hasSavedLocation();

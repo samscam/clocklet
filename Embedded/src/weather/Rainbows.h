@@ -9,7 +9,7 @@ public:
     
     bool rainbowProbability(DateTime currentTimeUTC);
 
-    void setLocation(Location location);
+    void setLocation(ClockLocation location);
     void setWeather(Weather weather);
     
     
@@ -19,10 +19,10 @@ private:
     DateTime _fortyTwoSet;
     DateTime _sunset;
 
-    Location _location;
+    ClockLocation _location;
     Weather _weather;
     
-    void _calculateSunTimes(DateTime currentTimeUTC, Location currentLocation);
+    void _calculateSunTimes(DateTime currentTimeUTC, ClockLocation currentLocation);
     DateTime _rsTimeToDateTime(DateTime base, double rsTime);
     bool _sameDay(DateTime lhs, DateTime rhs);
 };

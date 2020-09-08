@@ -21,7 +21,7 @@ public:
   // Overrides
   bool readReponseContent(Stream *stream);
   void setTimeHorizon(uint8_t hours);
-  void setLocation(Location location);
+  void setLocation(ClockLocation location);
   char* constructURL();
   const char* certificate();
 

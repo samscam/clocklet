@@ -9,11 +9,11 @@ class LocationManager: public LocationSource {
     LocationManager(QueueHandle_t locationChangedQueue);
 
     bool hasSavedLocation();
-    Location getLocation();
-    bool setLocation(Location location);
+    ClockLocation getLocation();
+    bool setLocation(ClockLocation location);
 
     private:
-    bool isValidLocation(Location location);
-    Location currentLocation;
+    bool isValidLocation(ClockLocation location);
+    ClockLocation currentLocation;
     QueueHandle_t _locationChangedQueue;
 };

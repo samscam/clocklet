@@ -34,11 +34,11 @@ bool LocationManager::hasSavedLocation(){
     return isValidLocation(currentLocation);
 }
 
-Location LocationManager::getLocation(){
+ClockLocation LocationManager::getLocation(){
     return currentLocation;
 }
 
-bool LocationManager::setLocation(Location newLocation){
+bool LocationManager::setLocation(ClockLocation newLocation){
     if (!newLocation){
         return false;
     }
@@ -67,7 +67,7 @@ bool LocationManager::setLocation(Location newLocation){
 
 }
 
-bool LocationManager::isValidLocation(Location location){
+bool LocationManager::isValidLocation(ClockLocation location){
     if (location){
         return true;
     } else {
