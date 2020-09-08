@@ -51,6 +51,7 @@ class NetworkService: ServiceProtocol {
                     
             }
             .assign(to: \.scannedNetworks, on: self).store(in: &bag)
+
     }
     
     @Published var isConfigured: ConfigState = .unknown

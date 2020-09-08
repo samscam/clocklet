@@ -58,6 +58,7 @@
 		22B488F524C5F0220079873B /* DeviceInfoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B488F424C5F0220079873B /* DeviceInfoService.swift */; };
 		22BB977424C20CED0035D682 /* MockClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BB977324C20CED0035D682 /* MockClock.swift */; };
 		22DC8A6A24CBAD7300DF0551 /* RoundyButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22DC8A6924CBAD7300DF0551 /* RoundyButtonStyle.swift */; };
+		22DEF6552504267500149B8A /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22DEF6542504267500149B8A /* Utils.swift */; };
 		22E2D9BA233A971000B4FCFD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E2D9B9233A970F00B4FCFD /* SceneDelegate.swift */; };
 /* End PBXBuildFile section */
 
@@ -121,6 +122,7 @@
 		22BB977324C20CED0035D682 /* MockClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockClock.swift; sourceTree = "<group>"; };
 		22BE0A3F235DE4EA00EB8780 /* Clock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clock.swift; sourceTree = "<group>"; };
 		22DC8A6924CBAD7300DF0551 /* RoundyButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundyButtonStyle.swift; sourceTree = "<group>"; };
+		22DEF6542504267500149B8A /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		22E2D9B9233A970F00B4FCFD /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -228,6 +230,7 @@
 				22E2D9B9233A970F00B4FCFD /* SceneDelegate.swift */,
 				22604280236E40F800710F37 /* LocationProxy.swift */,
 				22A034E1248DA52800FA7370 /* GeocoderProxy.swift */,
+				22DEF6542504267500149B8A /* Utils.swift */,
 			);
 			path = Business;
 			sourceTree = "<group>";
@@ -450,6 +453,7 @@
 				22A034E2248DA52800FA7370 /* GeocoderProxy.swift in Sources */,
 				22B488F524C5F0220079873B /* DeviceInfoService.swift in Sources */,
 				224C538F234F6CDD00A68928 /* ClockListView.swift in Sources */,
+				22DEF6552504267500149B8A /* Utils.swift in Sources */,
 				224C5391234FAE7300A68928 /* ClockDetailsView.swift in Sources */,
 				220D1CFA24DC966800578808 /* BluetoothOverlayView.swift in Sources */,
 				22B2D0B324943B3500D570E2 /* ClockSettingsView.swift in Sources */,

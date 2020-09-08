@@ -18,7 +18,7 @@ struct ClockSummaryView: View {
         VStack{
             Spacer()
             ZStack{
-                Image(clock.caseColor.imageName).renderingMode(.original).resizable().aspectRatio(contentMode: .fit)
+                Image(uiImage:clock.caseImage).renderingMode(.original).resizable().aspectRatio(contentMode: .fit)
                 
                 if colorScheme == .light {
                     Rectangle().foregroundColor(.clear).background(

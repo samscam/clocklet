@@ -10,6 +10,7 @@ import Foundation
 import CombineBluetooth
 import Combine
 import CoreBluetooth
+import UIKit
 
 fileprivate extension Data {
 
@@ -37,7 +38,7 @@ extension ManufacturerData {
         }
     }
     
-    var caseColor: CaseColor {
+    var caseColor: Clock.CaseColor {
         get{
             guard let residual = residual,
                 residual.count >= 6 else {
@@ -45,7 +46,7 @@ extension ManufacturerData {
             }
             
             let ccNumber: UInt16 = residual[4..<6].to(UInt16.self) ?? 0
-            return CaseColor(rawValue:ccNumber) ?? .bones
+            return Clock.CaseColor(rawValue:ccNumber) ?? .bones
 
         }
     }
@@ -79,7 +80,6 @@ class Clock: Peripheral, Identifiable, AdvertisementMatcher {
             }
             
             if let advertisedCaseColour = advertisementData?.manufacturerData?.caseColor {
-
                 return advertisedCaseColour
             }
             
@@ -141,44 +141,38 @@ class Clock: Peripheral, Identifiable, AdvertisementMatcher {
     static var advertisedServiceUUIDs = ["68D924A1-C1B2-497B-AC16-FD1D98EDB41F"]
     
     @Published var isConfigured: ConfigState = .unknown
-}
 
-enum ConfigState: String {
-    case unknown
-    case notConfigured
-    case configured
-    
-    static func &&(lhs: ConfigState, rhs: ConfigState)->ConfigState{
-        switch (lhs, rhs){
-        case (.unknown,_), (_,.unknown):
-            return .unknown
-        case (.notConfigured,_), (_,.notConfigured):
-            return .notConfigured
-        case (.configured, .configured):
-            return .configured
+
+    enum CaseColor: UInt16, Codable, CustomStringConvertible {
+
+        case bones = 0
+        case wood = 1
+        case translucent = 2
+        case bluePink = 3
+        case white = 4
+        case black = 5
+        case gold = 6
+        case tequilla = 7
+        
+        var description: String {
+            switch self {
+            case .bones: return "bones"
+            case .wood: return "wood"
+            case .translucent: return "translucent"
+            case .bluePink: return "bluepink"
+            case .white: return "white"
+            case .black: return "black"
+            case .gold: return "gold"
+            case .tequilla: return "tequilla"
+            }
         }
+        
     }
-}
 
-
-enum CaseColor: UInt16, Codable {
-    case bones = 0
-    case wood = 1
-    case translucent = 2
-    case bluePink = 3
-    case white = 4
-    case black = 5
-    case gold = 6
-    
-    var imageName: String {
-        switch self{
-        case .bones: return "r0-bones"
-        case .wood: return "r5-wood"
-        case .translucent: return "r5-translucent"
-        case .bluePink: return "r5-bluepink"
-        case .white: return "r5-white"
-        case .black: return "r5-black"
-        case .gold: return "r5-gold"
-        }
+    var caseImage: UIImage {
+        let hwRev = advertisementData?.manufacturerData?.hwRev ?? 0
+        let imageName = "r\(hwRev)-\(caseColor)"
+        return UIImage(named:imageName) ?? UIImage(named:"r0-bones")!
     }
+
 }

@@ -19,7 +19,7 @@ struct ClockDetailsView: View {
     var body: some View {
         ScrollView{
             VStack(){
-                Image(clock.caseColor.imageName)
+                Image(uiImage:clock.caseImage)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: nil, height: 200, alignment: .center)
@@ -96,11 +96,12 @@ struct ClockDetailsView: View {
                             .animation(Animation.easeInOut(duration: 1).repeatForever())
                         
                         Text(clock.state.description).bold()
-                        
+                        Spacer()
                         // Note that if-let works in xcode 12 - that will be nice
                         clock.state.lastErrorDescription.map{ lastError in
                             Text(lastError).lineLimit(nil).fixedSize(horizontal: false, vertical: true)
                         }
+                        
                         if clock.state == .disconnected() {
                             Spacer()
                             Button("Reconnect") {

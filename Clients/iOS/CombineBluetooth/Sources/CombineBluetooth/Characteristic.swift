@@ -56,7 +56,7 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Obse
         
         // Throttling here for the benefit of sliders - so if values are changed rapidly they aren't sent too fast
         _sendQueue
-            .throttle(for: 0.1, scheduler: RunLoop.main, latest: true)
+            .throttle(for: 0.05, scheduler: RunLoop.main, latest: true)
             .sink { (value) in
                 self.writeValueToPeipheral(value: value)
             }.store(in: &bag)
