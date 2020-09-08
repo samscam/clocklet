@@ -1,4 +1,4 @@
-#include "Priscilla.h"
+#include "main.h"
 
 #include "Tests/Tests.h"
 #include "settings.h"
