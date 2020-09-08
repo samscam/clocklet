@@ -29,6 +29,7 @@ bool Rainbows::rainbowProbability(DateTime currentTime){
 
 void Rainbows::setLocation(ClockLocation location){
     _location = location;
+    _sunrise = DateTime(); // reset on change of location
 }
 
 void Rainbows::setWeather(Weather weather){
