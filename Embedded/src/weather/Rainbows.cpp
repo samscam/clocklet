@@ -48,9 +48,6 @@ bool Rainbows::rainbowProbability(DateTime currentTime){
         }
     }
 
-
-    return true; // Force rainbows, ignoring actual weather FOR TEST
-
     if (_weather.cloudCover < 0.8 && _weather.cloudCover > 0.2 && _weather.precipChance >= 0.2 ){
         return true;
     }
