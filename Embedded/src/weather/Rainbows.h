@@ -19,6 +19,10 @@ private:
     DateTime _fortyTwoSet;
     DateTime _sunset;
 
+    bool _circumPolar = false;
+    bool _circumPolarWinter = false;
+    bool _goesOver42 = false;
+
     ClockLocation _location;
     Weather _weather;
     

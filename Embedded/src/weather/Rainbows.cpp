@@ -14,25 +14,28 @@ bool Rainbows::rainbowProbability(DateTime currentTime){
         _calculateSunTimes(currentTime, _location);
     }
 
-    if (_sunrise == _startOfDay(currentTime)){
-        // We are in a polar region... oh dear...
-        return false;
-    }
-
-    if ( _sunrise < _sunset){
-        // Normal places...
-        if (currentTime < _sunrise || currentTime > _sunset){
-            return false; // it is night time
-        }
-
+    if (_circumPolar){
+        if (_circumPolarWinter){
+            return false; // the sun never rises
+        } // otherwise, the sun never sets
+        
     } else {
-        // Places on the other side of the world
-        if (currentTime > _sunset && currentTime < _sunrise){
-            return false; // it is night time
+        // Normal places with a sunrise and sunset
+        if ( _sunrise < _sunset){
+            // Normal places...
+            if (currentTime < _sunrise || currentTime > _sunset){
+                return false; // it is night time
+            }
+
+        } else {
+            // Places on the other side of the world
+            if (currentTime > _sunset && currentTime < _sunrise){
+                return false; // it is night time
+            }
         }
     }
 
-    if (_fortyTwoRise != _startOfDay(currentTime)){ // The sun gets over 42 degrees
+    if (_goesOver42){ // The sun gets over 42 degrees
         if (_fortyTwoRise < _fortyTwoSet){
             // Normal places...
             if (currentTime > _fortyTwoRise && currentTime < _fortyTwoSet){
@@ -78,6 +81,7 @@ DateTime Rainbows::_rsTimeToDateTime(DateTime base, double rsTime){
 }
 
 /// Calculates the rise and set times for the day
+/// This should be called once per UTC day for a given location
 void Rainbows::_calculateSunTimes(DateTime currentTimeUTC, ClockLocation currentLocation){
 
     struct Time time;
@@ -98,6 +102,13 @@ void Rainbows::_calculateSunTimes(DateTime currentTimeUTC, ClockLocation current
 
     SolTrack_RiseSet(time, location, &rsPosition, &riseSet, rsAlt, useDegrees, useNorthEqualsZero);
 
+    if (riseSet.riseTime <= 0.0 && riseSet.setTime <= 0.0){
+        _circumPolar = true;
+        _circumPolarWinter = (riseSet.transitAltitude <= 0.0);
+        ESP_LOGD(TAG,"CircumPolar - winter=%d",_circumPolarWinter);
+    } else {
+        _circumPolar = false;
+    }
     _sunrise = _rsTimeToDateTime(currentTimeUTC,riseSet.riseTime);
     _sunset = _rsTimeToDateTime(currentTimeUTC,riseSet.setTime);
 
@@ -113,6 +124,13 @@ void Rainbows::_calculateSunTimes(DateTime currentTimeUTC, ClockLocation current
     rsAlt = 42.0 / R2D;
     SolTrack_RiseSet(time, location, &rsPosition, &riseSet, rsAlt, useDegrees, useNorthEqualsZero);
 
+    if (riseSet.riseTime <= 0.0 && riseSet.setTime <= 0.0){
+        ESP_LOGD(TAG,"Sun never goes over 42 degrees");
+        _goesOver42 = false;
+    } else {
+        ESP_LOGD(TAG,"Sun does go over 42 degrees");
+        _goesOver42 = true;
+    }
 
     _fortyTwoRise = _rsTimeToDateTime(currentTimeUTC,riseSet.riseTime);
     _fortyTwoSet = _rsTimeToDateTime(currentTimeUTC,riseSet.setTime);

@@ -90,8 +90,8 @@ struct ClockLocation: Codable, JSONCharacteristic, CustomStringConvertible{
     static let helipark = ClockLocation(configured: true, lat: 43.51, lng: 170.9, timeZone: "Pacific/Auckland", placeName: "Helipark New Zealand")
     static let chatham = ClockLocation(configured: true, lat: -43.911720, lng: -176.506340, timeZone: "Pacific/Chatham", placeName: "Chatham Island")
     static let mumbai = ClockLocation(configured: true, lat: 19.076090, lng: 72.877426, timeZone: "Asia/Kolkata", placeName: "Mumbai")
-    static let northPole = ClockLocation(configured: true, lat: 90.0, lng: 0, timeZone: "UTC", placeName: "North Pole")
-    static let southPole = ClockLocation(configured: true, lat: -90.0, lng: 0, timeZone: "UTC", placeName: "South Pole")
+    static let northPole = ClockLocation(configured: true, lat: 85.05, lng: 0, timeZone: "UTC", placeName: "North Pole")
+    static let southPole = ClockLocation(configured: true, lat: -85.05, lng: 0, timeZone: "UTC", placeName: "South Pole")
 }
 
 
