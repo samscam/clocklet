@@ -25,3 +25,16 @@ enum ConfigState: String {
         }
     }
 }
+
+/// This is a (hopefully legit) hack for working out if we are in a debug build
+/// Based on:
+/// https://blog.wadetregaskis.com/if-debug-in-swift/
+
+func inDebugBuilds<T>(_ code: () -> T) -> T? {
+    var isDebug = false
+    assert({ isDebug=true; return true }())
+    if (isDebug){
+        return code()
+    }
+    return nil
+}

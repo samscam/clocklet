@@ -83,12 +83,14 @@ struct ClockTechnicalView: View {
                     Toggle("Update firmware automatically (checks daily or shortly after booting)", isOn: self.technicalService.autoUpdatesSelected)
                 }
             }
-            
-            technicalService.staging.map{ _ in
-                ConfigItemView(icon: Image(systemName:"ant"), iconColor: .blue, title: "Staging mode") {
-                    Toggle("Use staging builds when updating. Might brick your Clocklet.", isOn: self.technicalService.stagingSelected)
+            inDebugBuilds {
+                technicalService.staging.map{ _ in
+                    ConfigItemView(icon: Image(systemName:"ant"), iconColor: .blue, title: "Staging mode") {
+                        Toggle("Use staging builds when updating. Might brick your Clocklet.", isOn: self.technicalService.stagingSelected)
+                    }
                 }
             }
+
             
         }.padding()
         }
