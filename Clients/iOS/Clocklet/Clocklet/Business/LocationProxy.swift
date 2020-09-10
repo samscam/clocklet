@@ -30,9 +30,9 @@ class LocationProxy: NSObject, CLLocationManagerDelegate {
     private let locationSubject = PassthroughSubject<CLLocation, Error>()
     
     lazy var locationPublisher: AnyPublisher<CLLocation, Error> = {
-        // prob weak self this
         return locationSubject.handleEvents(receiveSubscription: { [weak self] _ in
             print("Starting updates")
+            self?.enable()
             self?.locationManager.startUpdatingLocation()
         }, receiveCompletion: { [weak self] _ in
             print("Completion - stopping updates")
@@ -47,7 +47,7 @@ class LocationProxy: NSObject, CLLocationManagerDelegate {
         super.init()
         locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
         locationManager.delegate = self
-        enable()
+        
     }
     
     deinit{
