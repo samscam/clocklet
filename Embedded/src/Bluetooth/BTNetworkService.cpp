@@ -263,7 +263,7 @@ void BTNetworkService::wifiEvent(WiFiEvent_t event){
             ESP_LOGD(TAG,"Authentication mode of access point has changed");
             break;
         case SYSTEM_EVENT_STA_GOT_IP:
-            ESP_LOGD(TAG,"Obtained IP address: %s",WiFi.localIP().toString());
+            ESP_LOGD(TAG,"Obtained IP address: %s",WiFi.localIP().toString().c_str());
             break;
         case SYSTEM_EVENT_STA_LOST_IP:
             ESP_LOGD(TAG,"Lost IP address and IP address is reset to 0");
