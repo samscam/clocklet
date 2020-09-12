@@ -31,7 +31,7 @@ void NetworkScanTask::run(void *data){
 void NetworkScanTask::_performWiFiScan(){
     LOGMEM;
     
-    bool runningScan = (WiFi.scanNetworks(true,true,false) == WIFI_SCAN_RUNNING);
+    bool runningScan = (WiFi.scanNetworks(true,false,true) == WIFI_SCAN_RUNNING);
     int networkCount = 0;
 
     while (runningScan){
