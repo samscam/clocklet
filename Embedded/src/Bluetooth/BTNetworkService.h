@@ -49,7 +49,7 @@ private:
     QueueHandle_t _networkChangedQueue;
     QueueHandle_t _networkStatusQueue;
 
-    NetworkScanTask *_networkScanTask;
+    NetworkScanTask *_networkScanTask = nullptr;
 
     // Network provisioning
     NimBLEService *sv_network;
@@ -59,7 +59,7 @@ private:
     NimBLECharacteristic *ch_removeNetwork; // takes an SSID of one of the known networks - removes it from the list preventing future connection
     NimBLECharacteristic *ch_joinNetwork; // Joins a network
 
-    wifi_event_id_t _wifiEvent;
+    wifi_event_id_t _wifiEvent = 0;
 };
 
 String _mac2String(uint8_t * bytes);

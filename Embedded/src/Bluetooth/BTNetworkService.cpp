@@ -171,6 +171,7 @@ void BTNetworkService::onWrite(BLECharacteristic* pCharacteristic) {
 
     // Attempt to connect to the new network !!!!
     WiFi.disconnect();
+
     delay(1000);
     WiFi.begin(ssid,psk);
 
@@ -178,23 +179,29 @@ void BTNetworkService::onWrite(BLECharacteristic* pCharacteristic) {
 
 void BTNetworkService::onSubscribe(NimBLECharacteristic* pCharacteristic, ble_gap_conn_desc* desc, uint16_t subValue){
     if (pCharacteristic == ch_availableNetworks){
-        if (subValue > 0){
+        if (subValue > 0 && !_networkScanTask){
+            ESP_LOGI(TAG,"Subscibing to availableNetworks");
             _networkScanTask = new NetworkScanTask(ch_availableNetworks);
             _networkScanTask->start();
         }
-        if (subValue == 0){
+        if (subValue == 0 && _networkScanTask){
+            ESP_LOGI(TAG,"Unsubscribing to availableNetworks");
             _networkScanTask->stop();
             delete(_networkScanTask);
+            _networkScanTask = nullptr;
         }
     }
 
     if (pCharacteristic == ch_currentNetwork){
-        if (subValue > 0){
+        if (subValue > 0 && !_wifiEvent){
+            ESP_LOGI(TAG,"Subscibing to wifiEvent");
             _wifiEvent = WiFi.onEvent(wifiEventCb);
             _updateCurrentNetwork();
         }
-        if (subValue == 0){
+        if (subValue == 0 && _wifiEvent){
+            ESP_LOGI(TAG,"Unsubscribing to wifiEvent");
             WiFi.removeEvent(_wifiEvent);
+            _wifiEvent = 0;
         }
     }
 }
