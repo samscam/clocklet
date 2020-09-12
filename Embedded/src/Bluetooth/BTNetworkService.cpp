@@ -15,7 +15,7 @@
 #define CH_JOINNETWORK_UUID "DFBDE057-782C-49F8-A054-46D19B404D9F"
 
 
-NetworkScanTask::NetworkScanTask(BLECharacteristic *availableNetworks) : Task("NetworkScan", 3072,  5){
+NetworkScanTask::NetworkScanTask(BLECharacteristic *availableNetworks) : Task("NetworkScan", 10000,  5){
     this->setCore(0);
     ch_availableNetworks = availableNetworks;
 }
