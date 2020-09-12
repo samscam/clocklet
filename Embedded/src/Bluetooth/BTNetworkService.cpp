@@ -57,7 +57,7 @@ void NetworkScanTask::_performWiFiScan(){
 
         WiFi.getNetworkInfo(netInfo.index,netInfo.ssid,netInfo.enctype,netInfo.rssi,netInfo.bssid,netInfo.channel);
 
-        ESP_LOGI(TAG,"Found %s (ch %d rssi %d)\n",netInfo.ssid,netInfo.channel,netInfo.rssi);
+        ESP_LOGI(TAG,"Found %s (ch %d rssi %d)\n",netInfo.ssid.c_str(),netInfo.channel,netInfo.rssi);
 
         _encodeNetInfo(doc,netInfo);
         String outputStr = "";
