@@ -60,14 +60,11 @@ void NetworkScanTask::_performWiFiScan(){
         ESP_LOGI(TAG,"Found %s (ch %d rssi %d)\n",netInfo.ssid.c_str(),netInfo.channel,netInfo.rssi);
 
         _encodeNetInfo(doc,netInfo);
-        String outputStr = "";
-        serializeJson(doc,outputStr);
+        char buffer[512];
+        size_t len = serializeJson(doc,buffer,512);
 
-        uint len = outputStr.length()+1;
-        char availableJson[len];
-        outputStr.toCharArray(availableJson,len);
-        ESP_LOGI(TAG,"%s",availableJson);
-        ch_availableNetworks->setValue(availableJson);
+        // ESP_LOGI(TAG,"%s",buffer);
+        ch_availableNetworks->setValue((uint8_t*)&buffer,len);
         ch_availableNetworks->notify(true);
         delay(20);
     }
