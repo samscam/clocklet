@@ -46,7 +46,7 @@ To build the the firmware:
 * Build and upload (platformio should download the dependencies if it hasn't done so already)
 * Note that API keys are encrypted with gitcrypt
 
-### Seeing the logs (without installing anything much)
+## Seeing the logs (without installing anything much)
 
 You can connect to the clocklet's serial port from a computer with various tools (like screen, miniterm or putty) and see the Clocklet logging.
 
@@ -58,7 +58,7 @@ Then open it up in your tool of choice:
 `screen /dev/cu.SLAB_USBtoUART 115200`
 `miniterm.py /dev/cu.SLAB_USBtoUART 115200`
 
-### Manually updating firmware (with minimal installing)
+## Manually updating firmware (with minimal installing)
 
 1) Install `esptool`
 
