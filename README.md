@@ -35,13 +35,43 @@ It's all a work in progress.
 
 ## Firmware
 
-* Clone the repo including submodules
-* Install platformio and your editor of choice.
+To build the the firmware:
+
+* Clone the repo **including submodules**
+* Install platformio and your editor of choice - I'm using vscode.
 * Open up the firmware from the `Embedded` directory
-* Pick the *correct environment* for the device you want to build for (by setting it in the first line of `platformio.ini` or by invoking tasks for the specific environment in the editor/cli)
-* Adjust the default settings in `settings.h` including API keys
+* Pick the *correct environment* for the device you want to build for (by setting it in the first line of `platformio.ini` or by invoking tasks for the specific environment in the editor/cli) this will probably be `clockbrain`
 * Plug the device in to your machine over USB
+* Check that the device is available to your system... on MacOS it's normally `/dev/cu.SLAB_USBtoUART`
 * Build and upload (platformio should download the dependencies if it hasn't done so already)
+* Note that API keys are encrypted with gitcrypt
+
+### Seeing the logs (without installing anything)
+
+You can connect to the clocklet's serial port with various tools (like screen, or putty) and see the Clocklet logging.
+
+The important thing to note is that the baud rate of the serial connection is `115200`.
+
+`screen /dev/cu.SLAB_USBtoUART 115200`
+
+
+### Manually updating firmware (with some installing)
+
+You'll need to install `esptool`
+On the mac this can be done with homebrew: `brew install esptool`
+
+Download the bin file of the firmware image you want from the releases section on here.
+
+Erase the flash (including settings)
+`esptool.py -b 115200 -p /dev/cu.SLAB_USBtoUART erase_region 0x9000 0xFF7000`
+
+Flash the new firmware image:
+
+`esptool.py -b 115200 -p /dev/cu.SLAB_USBtoUART write_flash 0x10000 firmware.bin`
+
+While we are here you can also use esptool to just erase settings (equivalent of doing a factory reset from the app):
+`esptool.py -b 115200 -p /dev/cu.SLAB_USBtoUART erase_region 0x9000 0x5000`
+
 
 ## Client App (iOS)
 
