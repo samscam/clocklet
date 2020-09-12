@@ -100,7 +100,7 @@ BTNetworkService::BTNetworkService(BLEServer *pServer, QueueHandle_t networkChan
 
     btNetworkServiceInstance = this;
 
-
+    _networkScanTask = new NetworkScanTask(ch_availableNetworks);
 
     ESP_LOGI(TAG, "Starting network service %s",SV_NETWORK_UUID);
     sv_network = pServer->createService(SV_NETWORK_UUID);
@@ -179,16 +179,13 @@ void BTNetworkService::onWrite(BLECharacteristic* pCharacteristic) {
 
 void BTNetworkService::onSubscribe(NimBLECharacteristic* pCharacteristic, ble_gap_conn_desc* desc, uint16_t subValue){
     if (pCharacteristic == ch_availableNetworks){
-        if (subValue > 0 && !_networkScanTask){
+        if (subValue > 0){
             ESP_LOGI(TAG,"Subscibing to availableNetworks");
-            _networkScanTask = new NetworkScanTask(ch_availableNetworks);
             _networkScanTask->start();
         }
-        if (subValue == 0 && _networkScanTask){
+        if (subValue == 0){
             ESP_LOGI(TAG,"Unsubscribing to availableNetworks");
             _networkScanTask->stop();
-            delete(_networkScanTask);
-            _networkScanTask = nullptr;
         }
     }
 
