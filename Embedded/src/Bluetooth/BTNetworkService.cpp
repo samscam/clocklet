@@ -36,8 +36,9 @@ void NetworkScanTask::_performWiFiScan(){
 
     while (runningScan){
         int16_t scanComplete = WiFi.scanComplete();
-        
+
         if (scanComplete == WIFI_SCAN_FAILED) {
+            ESP_LOGD(TAG,"SCAN FAILED");
             return;
         }
 
@@ -45,8 +46,8 @@ void NetworkScanTask::_performWiFiScan(){
             networkCount = scanComplete;
             runningScan = false;
         }
-
-        delay(10);
+        delay(100);
+        
     }
 
 
