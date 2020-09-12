@@ -46,31 +46,37 @@ To build the the firmware:
 * Build and upload (platformio should download the dependencies if it hasn't done so already)
 * Note that API keys are encrypted with gitcrypt
 
-### Seeing the logs (without installing anything)
+### Seeing the logs (without installing anything much)
 
-You can connect to the clocklet's serial port with various tools (like screen, or putty) and see the Clocklet logging.
+You can connect to the clocklet's serial port from a computer with various tools (like screen, miniterm or putty) and see the Clocklet logging.
 
 The important thing to note is that the baud rate of the serial connection is `115200`.
 
+The Clocklet serial port on Mac and Linux will generally be available as `/dev/cu.SLAB_USBtoUART` - you can do an `ls /dev/cu.*` before and after plugging it in to eliminate possibilities.
+
+Then open it up in your tool of choice:
 `screen /dev/cu.SLAB_USBtoUART 115200`
+`miniterm.py /dev/cu.SLAB_USBtoUART 115200`
 
+### Manually updating firmware (with minimal installing)
 
-### Manually updating firmware (with some installing)
+1) Install `esptool`
 
-You'll need to install `esptool`
-On the mac this can be done with homebrew: `brew install esptool`
+On MacOS this can be done with homebrew: `brew install esptool`
+On Linuxes it's probably available from `apt-get install esptool` or whatever package manager you're using.
 
-Download the bin file of the firmware image you want from the releases section on here.
+2) Download the bin file of the firmware image you want from the releases section on here.
 
-Erase the flash (including settings)
+3) Erase the flash (including settings)
 `esptool.py -b 115200 -p /dev/cu.SLAB_USBtoUART erase_region 0x9000 0xFF7000`
 
-Flash the new firmware image:
+4) Flash the new firmware image:
 
-`esptool.py -b 115200 -p /dev/cu.SLAB_USBtoUART write_flash 0x10000 firmware.bin`
+`esptool.py -b 115200 -p /dev/cu.SLAB_USBtoUART write_flash 0x10000 clockbrain.bin`
 
-While we are here you can also use esptool to just erase settings (equivalent of doing a factory reset from the app):
+While we are here you can also use esptool to just erase settings (equivalent of doing a factory reset from the app): 
 `esptool.py -b 115200 -p /dev/cu.SLAB_USBtoUART erase_region 0x9000 0x5000`
+
 
 
 ## Client App (iOS)
