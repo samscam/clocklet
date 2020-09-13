@@ -64,15 +64,13 @@ void NetworkScanTask::_performWiFiScan(){
         char buffer[512];
         size_t len = serializeJson(doc,buffer,512);
 
-        // ESP_LOGI(TAG,"%s",buffer);
-        ch_availableNetworks->setValue((uint8_t*)&buffer,len);
+        ch_availableNetworks->setValue((uint8_t*)buffer,len);
         ch_availableNetworks->notify(true);
         delay(20);
     }
 
     LOGMEM;
 }
-
 
 void NetworkScanTask::_encodeNetInfo(JsonDocument &doc, NetworkInfo netInfo){
     // JsonObject obj = doc.createNestedObject();
@@ -100,7 +98,6 @@ BTNetworkService::BTNetworkService(BLEServer *pServer, QueueHandle_t networkChan
 
     btNetworkServiceInstance = this;
 
-    _networkScanTask = new NetworkScanTask(ch_availableNetworks);
 
     ESP_LOGI(TAG, "Starting network service %s",SV_NETWORK_UUID);
     sv_network = pServer->createService(SV_NETWORK_UUID);
@@ -125,6 +122,9 @@ BTNetworkService::BTNetworkService(BLEServer *pServer, QueueHandle_t networkChan
     ch_joinNetwork->setCallbacks(this);
 
     sv_network->start();
+
+    _networkScanTask = new NetworkScanTask(ch_availableNetworks);
+
 }
 
 
