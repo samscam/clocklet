@@ -29,13 +29,16 @@ const char *messages[] = {
   "Make it so",
   "Everything is going to be fine",
   "Be a LERT!",
+  "I am six people",
   "Clocklet wants a bagel",
+  "Clocklet wants a fucking bagel",
   "Time is the most unknown of all unknown things.",
-  "Time is a measure of motion. All things in time measure all the time.",
+  "Time is a measure of motion.",
+  "All things in time measure all the time.",
   "Time is irrelevant. Lunch time doubly so.",
   "Time is eternity that sees its own implementations.",
-  "Time destroys the false opinions, but confirms judgments of nature.",
-  "C-series phenomena FTW"
+  "Time destroys false opinions",
+  "C-series phenomena FTW",
 };
 
 #define numMessages (sizeof(messages)/sizeof(char *)) //array size
