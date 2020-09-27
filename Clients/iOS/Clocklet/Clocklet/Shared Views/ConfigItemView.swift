@@ -16,7 +16,7 @@ struct ConfigItemView<Content:View>: View {
     var content: (()->Content)
     
     
-    init(icon: Image, iconColor: Color? = nil, title: String, content: @escaping (()->Content)){
+    init(icon: Image, iconColor: Color? = nil, title: String, @ViewBuilder content: @escaping (()->Content)){
         self.icon = icon
         self.iconColor = iconColor
         self.title = title
