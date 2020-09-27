@@ -13,6 +13,8 @@ struct ClockTechnicalView: View {
     @EnvironmentObject var technicalService: TechnicalService
     @EnvironmentObject var deviceInfoService: DeviceInfoService
     
+    @State private var showingResetAlert = false
+    
     var body: some View {
         ScrollView{
         VStack(alignment:.leading){
@@ -66,13 +68,20 @@ struct ClockTechnicalView: View {
                     Spacer()
                     
                     Button(action:{
-                        self.technicalService.reset = .factoryReset;
+                        self.showingResetAlert = true
                     }){
                         Text("Factory Reset")
                             .accentColor(Color(.systemBackground))
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(Capsule().fill(Color.red))
+                    }.alert(isPresented: $showingResetAlert) { () -> Alert in
+                        Alert(title: Text("Are you sure you want to do a factory reset?"), primaryButton: Alert.Button.destructive(Text("Yes. Nuke from orbit!")){
+                            self.technicalService.reset = .factoryReset
+                            self.showingResetAlert = false
+                        }, secondaryButton: Alert.Button.cancel({
+                            self.showingResetAlert = false
+                        }))
                     }
                     
                     Text("Factory reset will erase everything including bluetooth pairing information. You will have to go into your phone's bluetooth settings afterwards and delete the entry for the Clocklet.").fixedSize(horizontal: false, vertical: true)
