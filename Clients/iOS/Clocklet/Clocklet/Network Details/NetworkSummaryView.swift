@@ -145,8 +145,7 @@ class NetworkSummaryViewModel: ObservableObject{
                 case .noSSID:
                     self.color = .red
                     self.icon = Image(systemName:"wifi.exclamationmark")
-                    self.title = "Network unavailable"
-                    self.errorMessage = nil
+                    self.errorMessage = "Network unavailable"
                 case .noShield:
                     self.color = .red
                     self.icon = Image(systemName:"wifi.slash")
@@ -170,21 +169,7 @@ class NetworkSummaryViewModel: ObservableObject{
     }
 }
 
-//extension CurrentNetwork {
-//    var title: String {
-//        if self.connected && self.ssid != "" {
-//            return self.ssid
-//        }
-//        return "Not connected"
-//    }
-//
-//    var icon: String {
-//        switch connected {
-//        case true: return "wifi"
-//        case false: return "wifi.slash"
-//        }
-//    }
-//}
+
 struct NetworkSummaryView: View {
     @EnvironmentObject var viewModel: NetworkSummaryViewModel
     
@@ -197,7 +182,7 @@ struct NetworkSummaryView: View {
                     Text("Configure Network").lozenge()
                 } else {
                     if (self.viewModel.errorMessage != nil){
-                        Text(self.viewModel.errorMessage!)
+                        Text(self.viewModel.errorMessage!).foregroundColor(viewModel.color)
                     }
                 }
             }
@@ -225,7 +210,6 @@ struct NetworkHeaderView: View {
 
 
 struct NetworkSummaryView_Previews: PreviewProvider {
-    
     
     
     static var previews: some View {

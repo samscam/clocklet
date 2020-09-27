@@ -37,7 +37,7 @@ struct ClockDetailsView: View {
                     clock.networkService.map{ networkService in
                         NavigationLink(destination: NetworkDetailView().environmentObject(networkService)){
                             NetworkSummaryView().environmentObject(NetworkSummaryViewModel(networkService))
-                        }.accentColor(nil)
+                        }.buttonStyle(PlainButtonStyle())
                     }
                     
                     clock.locationService.map{ locationService in
@@ -49,14 +49,14 @@ struct ClockDetailsView: View {
                                            isActive: $showLocationDetails)
                             {
                                 if (locationService.isConfigured == .configured){
-                                    LocationSummaryView(showLocationDetails:$showLocationDetails).environmentObject(locationService).accentColor(nil)
+                                    LocationSummaryView(showLocationDetails:$showLocationDetails).environmentObject(locationService)
                                 } else {
                                         EmptyView()
                                 }
                                 
-                            }
+                            }.buttonStyle(PlainButtonStyle())
                             if (locationService.isConfigured != .configured){
-                                LocationSummaryView(showLocationDetails:$showLocationDetails).environmentObject(locationService).accentColor(nil)
+                                LocationSummaryView(showLocationDetails:$showLocationDetails).environmentObject(locationService)
                             }
                         }
                     }
@@ -71,7 +71,7 @@ struct ClockDetailsView: View {
                                                title: "Technical stuff"){
                                     EmptyView()
                                 }
-                                            }
+                            }.buttonStyle(PlainButtonStyle())
                         }
                     }
                     
