@@ -18,16 +18,21 @@ struct AvailableNetworksView: View {
         ConfigItemView(icon: Image(systemName:"antenna.radiowaves.left.and.right"), title: "Available networks") {
             VStack(alignment: .leading, spacing: 5){
                 
+
                     ForEach(self.networkService.scannedNetworks)
                         { network in
 
                         
                             NavigationLink(destination:EnterPasswordView(network: network, networkService: self.networkService)){
                                 AvailableNetworkView(network: network)
-                            }
+                            }.buttonStyle(PlainButtonStyle())
                         }
+                Divider()
                 
-
+                NavigationLink(destination: EnterPasswordView( networkService: self.networkService)){
+                    Text("Other network...").italic().padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
+                }.buttonStyle(PlainButtonStyle())
+                
 
             }
 
@@ -76,21 +81,11 @@ struct AvailableNetworkView: View {
                 Image(systemName:"lock.circle").resizable().scaledToFit().frame(width: 30, height: 40, alignment: .center)
             }
             
-//
-//                HStack {
-//                    Text("Channel:")
-//                    Text(String(network.channel)).bold()
-//                    Spacer()
-//                    Text("Signal:")
-//                    Text(String(network.rssi)).bold()
-//                    Spacer()
-//                    Text("Security:")
-//                    Text(String(network.enctype.description)).bold()
-//
-//                    }.font(.caption)
-            
+
+
         }.padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
     }
+        
 }
 
 struct AvailableNetworkView_Previews: PreviewProvider {

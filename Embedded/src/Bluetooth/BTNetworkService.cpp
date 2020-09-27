@@ -148,8 +148,9 @@ void BTNetworkService::onWrite(BLECharacteristic* pCharacteristic) {
         ESP_LOGI(TAG,"Invalid ssid length");
         return;
     }
+    
     uint8_t  enctype = doc["enctype"];
-
+    // Note: if the enctype is 255 we are trying to join something with unknown security
     
     // If it's an open network...
     if (enctype == 0){

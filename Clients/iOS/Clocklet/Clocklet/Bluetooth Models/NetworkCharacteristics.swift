@@ -106,6 +106,7 @@ enum AuthMode: Int, Codable, CustomStringConvertible {
         case .wpa2psk: return "WPA2"
         case .wpawpa2psk: return "WPA / WPA2"
         case .wpa2enterprise: return "WPA2 Enterprise"
+        case .unknown: return "Unknown security"
         }
     }
     
@@ -115,4 +116,5 @@ enum AuthMode: Int, Codable, CustomStringConvertible {
     case wpa2psk
     case wpawpa2psk
     case wpa2enterprise
+    case unknown = 255
 }

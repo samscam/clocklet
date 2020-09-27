@@ -67,5 +67,13 @@ class NetworkService: ServiceProtocol {
         joinNetwork = JoinNetwork(ssid: network.ssid, psk: psk, enctype: network.enctype)
     }
     
+    /// For manual network joining
+    func joinNetwork(_ ssid: String, psk: String? = nil) {
+        if let psk = psk, psk != "" {
+            joinNetwork = JoinNetwork(ssid: ssid, psk: psk, enctype: .unknown)
+        } else {
+            joinNetwork = JoinNetwork(ssid: ssid, enctype: .open)
+        }
+    }
     
 }

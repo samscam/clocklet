@@ -12,9 +12,10 @@ struct EnterPasswordView: View {
     
     @Environment(\.presentationMode) var presentation
     
-    let network: AvailableNetwork
+    var network: AvailableNetwork? = nil
     let networkService: NetworkService?
     
+    @State private var networkSSID: String = ""
     @State private var password: String = ""
     @State private var textFieldActive = true
     
@@ -22,14 +23,20 @@ struct EnterPasswordView: View {
             ScrollView{
             VStack{
                 
-//                ResponderTextField(isFirstResponder: textFieldActive) {
-//                    $0.borderStyle = .none
-//                    $0.placeholder = "password"
-//                }.padding()
-//                    .cornerRadius(10)
-//                    .overlay(RoundedRectangle(cornerRadius: 10, style: .circular).stroke(Color.primary, lineWidth: 1))
-//                
-                if self.network.enctype != .open {
+                if (network == nil){
+                    TextField("Network SSID", text: self.$networkSSID)
+                        .disableAutocorrection(true)
+                        .autocapitalization(.none)
+                        .font(.title)
+                        .padding()
+                        .background(Color.gray)
+                        .cornerRadius(10)
+                        .overlay(RoundedRectangle(cornerRadius: 10, style: .circular).stroke(Color.secondary, lineWidth: 1)
+
+                    )
+                }
+
+                if self.network?.enctype != .open {
                     TextField("Password", text: self.$password)
                         .disableAutocorrection(true)
                         .autocapitalization(.none)
@@ -44,8 +51,13 @@ struct EnterPasswordView: View {
                         
                 
                     Button(action:{
-                        self.networkService?.joinNetwork(self.network, psk: self.password)
-
+                        if let network = self.network {
+                            self.networkService?.joinNetwork(network, psk: self.password)
+                        
+                        } else {
+                            self.networkService?.joinNetwork(self.networkSSID, psk: self.password)
+                        }
+                        
                         self.presentation.wrappedValue.dismiss()
                     }){
                         Text("Connect").bold()
@@ -60,7 +72,7 @@ struct EnterPasswordView: View {
             .shadow(radius: 1)
         }.onAppear(){
             
-        }.navigationBarTitle("Join \(network.ssid)")
+        }.navigationBarTitle("Join \(network?.ssid ?? "other network")")
     }
 }
 
