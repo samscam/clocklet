@@ -18,25 +18,26 @@ struct ClockTechnicalView: View {
         VStack(alignment:.leading){
             Spacer()
             VStack(alignment:.leading){
-                deviceInfoService.model.map{ model in
+                if let model = deviceInfoService.model {
                     HStack{
                         Text("Model number:")
                         Text(model).bold()
                     }
                 }
-                deviceInfoService.serialNumber.map{ serialNumber in
+                
+                if let serialNumber = deviceInfoService.serialNumber {
                     HStack{
                         Text("Serial number:")
                         Text(serialNumber).bold()
                     }
                 }
                 
-                deviceInfoService.firmwareVersion.map{ firmwareVersion in
-                    HStack{
+                if let firmwareVersion = deviceInfoService.firmwareVersion {                    HStack{
                         Text("Firmware version:")
                         Text(firmwareVersion).bold()
                     }
                 }
+                
                 if let versionString = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
                    let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {
                     HStack{
