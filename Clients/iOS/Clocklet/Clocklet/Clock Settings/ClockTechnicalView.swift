@@ -77,9 +77,11 @@ struct ClockTechnicalView: View {
                             .padding()
                             .background(Capsule().fill(Color.red))
                     }.alert(isPresented: $showingResetAlert) { () -> Alert in
-                        Alert(title: Text("Are you sure you want to do a factory reset?"), primaryButton: Alert.Button.destructive(Text("Yes. Nuke from orbit!")){
-                            self.technicalService.reset = .factoryReset
-                        }, secondaryButton: Alert.Button.cancel())
+                        Alert(title: Text("Are you sure you want to do a factory reset?"),
+                              primaryButton: Alert.Button.destructive(Text("Yes. Nuke from orbit!")){
+                                                self.technicalService.reset = .factoryReset
+                                            },
+                              secondaryButton: Alert.Button.cancel())
                     }
                     
                     Text("Factory reset will erase everything including bluetooth pairing information. You will have to go into your phone's bluetooth settings afterwards and delete the entry for the Clocklet.").fixedSize(horizontal: false, vertical: true)
