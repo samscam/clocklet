@@ -43,11 +43,11 @@ struct NetworkDetailView: View {
         .onAppear
         {
             
-            networkService.$availableNetworks.shouldNotify = true
+//            networkService.$availableNetworks.shouldNotify = true
         }
         .onDisappear{
            
-            networkService.$availableNetworks.shouldNotify = false
+//            networkService.$availableNetworks.shouldNotify = false
         }
         
     }
