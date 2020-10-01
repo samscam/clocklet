@@ -18,9 +18,7 @@ struct AvailableNetworksView: View {
         ConfigItemView(icon: Image(systemName:"antenna.radiowaves.left.and.right"), title: "Available networks") {
             VStack(alignment: .leading, spacing: 5){
                 
-                Text("SPECIAL BOB VERSION").bold()
-                Text("Network scanning is disabled... put it in manually! VV").fixedSize(horizontal: false, vertical: true)
-                
+
                     ForEach(self.networkService.scannedNetworks)
                         { network in
 
