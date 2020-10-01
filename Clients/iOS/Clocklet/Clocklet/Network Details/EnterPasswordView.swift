@@ -29,7 +29,7 @@ struct EnterPasswordView: View {
                         .autocapitalization(.none)
                         .font(.title)
                         .padding()
-                        .background(Color.gray)
+                        .background(Color(white: 0.8, opacity: 0.1))
                         .cornerRadius(10)
                         .overlay(RoundedRectangle(cornerRadius: 10, style: .circular).stroke(Color.secondary, lineWidth: 1)
 
@@ -42,7 +42,7 @@ struct EnterPasswordView: View {
                         .autocapitalization(.none)
                         .font(.title)
                         .padding()
-                        .background(Color.gray)
+                        .background(Color(white: 0.8, opacity: 0.1))
                         .cornerRadius(10)
                         .overlay(RoundedRectangle(cornerRadius: 10, style: .circular).stroke(Color.secondary, lineWidth: 1)
 
