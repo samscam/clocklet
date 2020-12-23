@@ -32,7 +32,7 @@ V        V
 
 And burn it!
 
-~/.platformio/packages/tool-esptoolpy/espefuse.py --port /dev/tty.SLAB_USBtoUART burn_block_data --offset 24 BLK3 efuse.bin
+~/.platformio/packages/tool-esptoolpy/espefuse.py --port /dev/tty.usbserial-114440 burn_block_data --offset 24 BLK3 efuse.bin
 
 (use --force-write-always if necessary)
 
