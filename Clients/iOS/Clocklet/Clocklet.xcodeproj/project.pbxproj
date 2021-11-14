@@ -652,6 +652,7 @@
 				DEVELOPMENT_TEAM = 9M28MQ9SZC;
 				INFOPLIST_FILE = "$(SRCROOT)/Clocklet/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -660,8 +661,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = uk.co.spotlightkid.clocklet;
 				PRODUCT_NAME = Clocklet;
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
 		};
@@ -675,6 +677,7 @@
 				DEVELOPMENT_TEAM = 9M28MQ9SZC;
 				INFOPLIST_FILE = "$(SRCROOT)/Clocklet/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -683,8 +686,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = uk.co.spotlightkid.clocklet;
 				PRODUCT_NAME = Clocklet;
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Release;
 		};
