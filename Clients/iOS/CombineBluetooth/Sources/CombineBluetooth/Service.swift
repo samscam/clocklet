@@ -18,7 +18,7 @@ internal protocol ServiceWrapper: HasUUID {
     func didInvalidate()
 }
 
-public protocol InnerServiceProtocol: class {
+public protocol InnerServiceProtocol: AnyObject {
     init()
 }
 

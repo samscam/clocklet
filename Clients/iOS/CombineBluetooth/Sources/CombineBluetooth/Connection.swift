@@ -166,7 +166,7 @@ extension Connection: CBPeripheralDelegate{
     }
     
     public func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
-        if let serviceWrapper = self.peripheral?.serviceWrapper(for:characteristic.service) {
+        if let service = characteristic.service, let serviceWrapper = self.peripheral?.serviceWrapper(for:service) {
             serviceWrapper.didWriteValue(for:characteristic, error: error)
         }
         
@@ -179,8 +179,8 @@ extension Connection: CBPeripheralDelegate{
     
     public func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
 
-        if let service = self.peripheral?.serviceWrapper(for: characteristic.service){
-            service.didUpdateValue(for: characteristic, error: error)
+        if let service = characteristic.service, let serviceWrapper = self.peripheral?.serviceWrapper(for: service){
+            serviceWrapper.didUpdateValue(for: characteristic, error: error)
         }
     }
     

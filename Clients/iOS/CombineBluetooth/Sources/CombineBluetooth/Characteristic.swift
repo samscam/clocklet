@@ -6,7 +6,7 @@ import Combine
 
 
 
-internal protocol CharacteristicWrapper: class, HasUUID {
+internal protocol CharacteristicWrapper: AnyObject, HasUUID {
     
     /// This is called internally by the service wrapper when it reads a value for the characteristic
     func didUpdateValue(error: Error?)
@@ -46,7 +46,7 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Obse
     
     private func updateNotifyState(){
         if let cbCharacteristic = cbCharacteristic{
-            cbCharacteristic.service.peripheral.setNotifyValue(shouldNotify, for: cbCharacteristic)
+            cbCharacteristic.service?.peripheral?.setNotifyValue(shouldNotify, for: cbCharacteristic)
         }
     }
     
@@ -92,10 +92,10 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Obse
             // check if we can actually write to this characteristic...
             if (cbCharacteristic.properties.contains(.write)){
                 // these can crash if disconnected :(
-                cbCharacteristic.service.peripheral.writeValue(data, for: cbCharacteristic, type: .withResponse)
+                cbCharacteristic.service?.peripheral?.writeValue(data, for: cbCharacteristic, type: .withResponse)
                 
             } else if (cbCharacteristic.properties.contains(.writeWithoutResponse)){
-                cbCharacteristic.service.peripheral.writeValue(data, for: cbCharacteristic, type: .withoutResponse)
+                cbCharacteristic.service?.peripheral?.writeValue(data, for: cbCharacteristic, type: .withoutResponse)
             } else {
                 //we can't throw here... report this somehow...
             }

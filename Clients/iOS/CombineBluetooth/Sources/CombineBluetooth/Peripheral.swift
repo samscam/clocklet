@@ -12,7 +12,7 @@ public protocol AdvertisementMatcher: InnerPeripheralProtocol{
     static var advertisedServiceUUIDs: [String] { get }
 }
 
-public extension AdvertisementMatcher where Self:InnerPeripheralProtocol{
+public extension AdvertisementMatcher {
     static var advertisedUUIDs: Set<CBUUID> {
         return Set(Self.advertisedServiceUUIDs.map{ CBUUID(string:$0) })
     }
@@ -112,7 +112,7 @@ open class Peripheral: PeripheralProtocol, ObservableObject {
 
 public protocol PeripheralProtocol: ObservableObject, InnerPeripheralProtocol {}
 
-public protocol InnerPeripheralProtocol: class {
+public protocol InnerPeripheralProtocol: AnyObject {
     var uuid: UUID { get }
     var name: String { get set }
     var state: ConnectionState { get set }
