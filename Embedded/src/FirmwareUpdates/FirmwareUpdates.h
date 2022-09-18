@@ -52,7 +52,8 @@ class FirmwareUpdates final: public UpdateJob {
     bool _parseGithubReleases(Stream *stream, bool useStaging);
     bool _downloadOTAUpdate(const char* url);
     char _downloadURL[2048];
-    
+    const char* _certificate();
+
     QueueHandle_t _firmwareUpdateQueue;
 
 };

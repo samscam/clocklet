@@ -28,13 +28,13 @@ int HTTPnihClient::get(const char *url, const char *certificate, Stream **stream
         ESP_LOGE(TAG, "Maximum redirects exceeded");
         return HTTPNIH_TOO_MANY_REDIRECTS;
     }
-    
+
     if (certificate != NULL){
         _wifiClient->setCACert(certificate);
     } else {
         _wifiClient->setCACert(NULL);
     }
-
+    
     ESP_LOGV(TAG, "BEGIN");
 
     if (!_httpClient->begin(*_wifiClient, url)) {

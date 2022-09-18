@@ -115,7 +115,7 @@ bool FirmwareUpdates::checkForUpdates(bool useStaging) {
 
     bool parseResult = false;
 
-    int result = nihClient.get(url,NULL,&stream);
+    int result = nihClient.get(url,_certificate(),&stream);
     if (result == 200){
         if (stream){
             parseResult = _parseGithubReleases(stream,useStaging);
@@ -317,4 +317,8 @@ bool FirmwareUpdates::_downloadOTAUpdate(const char * url)
 
     ESP_LOGI(TAG, "OTA update has successfully completed. Rebooting ...");
     return true;
+}
+
+const char* FirmwareUpdates::_certificate(){
+  return digicert_ca;
 }
