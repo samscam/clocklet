@@ -88,7 +88,9 @@ echo "Short version: $shortVersion"
 echo "Bumps since last tag: $bumps"
 echo "Revision count: $revCount"
 
-cd "$PROJECT_TEMP_DIR"
+cd "$BUILT_PRODUCTS_DIR"
+
+pwd
 
 echo "#define GIT_HASH $gitHash" > revision.prefix
 echo "#define BUMPS $bumps" >> revision.prefix
