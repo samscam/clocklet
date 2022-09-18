@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -100,6 +100,7 @@
 		22604280236E40F800710F37 /* LocationProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProxy.swift; sourceTree = "<group>"; };
 		2265C29E24C0BC2500F17506 /* autoversioning.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = autoversioning.sh; sourceTree = "<group>"; };
 		227CC3052367925D00D7770D /* PropertiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertiesView.swift; sourceTree = "<group>"; };
+		2282626527B5AF2300134065 /* CombineBluetooth */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = CombineBluetooth; path = ../CombineBluetooth; sourceTree = "<group>"; };
 		22836EB0228629750020B46F /* Clocklet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clocklet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22836EB3228629750020B46F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		22836EBD2286297C0020B46F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -165,9 +166,18 @@
 			path = Scripts;
 			sourceTree = "<group>";
 		};
+		2282626427B5AF2300134065 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				2282626527B5AF2300134065 /* CombineBluetooth */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
 		22836EA7228629750020B46F = {
 			isa = PBXGroup;
 			children = (
+				2282626427B5AF2300134065 /* Packages */,
 				22836EB2228629750020B46F /* Clocklet */,
 				22836EC72286297C0020B46F /* ClockletTests */,
 				2265C29D24C0BC0A00F17506 /* Scripts */,
@@ -408,6 +418,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		2265C2AA24C0BE8300F17506 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
