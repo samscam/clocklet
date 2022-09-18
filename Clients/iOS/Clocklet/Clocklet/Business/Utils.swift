@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+import SwiftUI
 
 enum ConfigState: String {
     case unknown
@@ -37,4 +37,12 @@ func inDebugBuilds<T>(_ code: () -> T) -> T? {
         return code()
     }
     return nil
+}
+
+/// function for de-optionalising bindings
+public func ??<T>(lhs: Binding<Optional<T>>, rhs: T) -> Binding<T> {
+    Binding(
+        get: { lhs.wrappedValue ?? rhs },
+        set: { lhs.wrappedValue = $0 }
+    )
 }

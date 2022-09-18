@@ -90,13 +90,13 @@ struct ClockTechnicalView: View {
             
             technicalService.autoUpdates.map{ _ in
                 ConfigItemView(icon: Image(systemName:"goforward"), iconColor: .green, title: "Firmware Updates") {
-                    Toggle("Update firmware automatically (checks daily or shortly after booting)", isOn: self.technicalService.autoUpdatesSelected)
+                    Toggle("Update firmware automatically (checks daily or shortly after booting)", isOn: $technicalService.autoUpdates ?? true)
                 }
             }
             inDebugBuilds {
                 technicalService.staging.map{ _ in
                     ConfigItemView(icon: Image(systemName:"ant"), iconColor: .blue, title: "Staging mode") {
-                        Toggle("Use staging builds when updating. Might brick your Clocklet.", isOn: self.technicalService.stagingSelected)
+                        Toggle("Use staging builds when updating. Might brick your Clocklet.", isOn: $technicalService.staging ?? false)
                     }
                 }
             }

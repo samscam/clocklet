@@ -28,16 +28,17 @@ struct ClockSettingsView: View {
             if settingsService.brightness != nil && settingsService.autoBrightness != nil {
                 ConfigItemView(icon: Image(systemName:"sun.max"), title: "Brightness") {
                     VStack{
-                        Slider(value: settingsService.b_brightness, in: 0...1)
-                        Toggle("Adjust automatically", isOn: settingsService.b_autoBrightness)
+                        Slider(value: $settingsService.brightness ?? 0.5, in: 0...1)
+                        Toggle("Adjust automatically", isOn: $settingsService.autoBrightness ?? false)
                     }
                 }
             }
-            settingsService.timeStyle.map { _ in
+            
+            if settingsService.timeStyle != nil {
                 ConfigItemView(icon: Image(systemName:"24.circle"), title: "Time Style") {
                     
                     
-                    Picker("What do you want", selection: settingsService.b_timeStyle){
+                    Picker("What do you want", selection: $settingsService.timeStyle ?? "24 Hour"){
                         ForEach(self.settingsService.timeStyles){ timeStyle in
                                 Text(timeStyle)
                         }
@@ -61,3 +62,4 @@ struct ClockSettingsView: View {
         }
     }
 }
+

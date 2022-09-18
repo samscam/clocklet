@@ -28,29 +28,6 @@ class SettingsService: ServiceProtocol {
     @Characteristic("8612F6ED-AA92-45A7-8B46-166F600BC53D") var brightness: Float?
     @Characteristic("A56AE45C-EB82-4182-9B9C-C91F509C91D5") var autoBrightness: Bool?
     
-    
-    // Bindings for purposes of swiftui
-    
-    lazy var b_brightness = Binding<Float>(
-        get:{ return self.brightness ?? 0.5 },
-        set:{ self.brightness = $0 }
-    )
-    
-    lazy var b_autoBrightness = Binding<Bool>(
-        get:{ return self.autoBrightness ?? true },
-        set:{ self.autoBrightness = $0 }
-    )
-    
-    
-    lazy var b_timeStyle = Binding<String>(
-        get:{ return self.timeStyle ?? "24 Hour" },
-        set:{ self.timeStyle = $0 }
-    )
-    
-    lazy var b_separatorAnimation = Binding<String>(
-        get:{ return self.separatorAnimation ?? "Blink"},
-        set:{ self.separatorAnimation = $0 }
-    )
 }
 
 extension SettingsService {
