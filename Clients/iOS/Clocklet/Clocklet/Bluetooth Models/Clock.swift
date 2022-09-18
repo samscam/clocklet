@@ -90,6 +90,25 @@ class Clock: Peripheral, Identifiable, AdvertisementMatcher {
         }
     }
     
+    private var _hwRev: UInt16?
+    var hwRev: UInt16 {
+        
+        get{
+            if let storedHwRev = _hwRev {
+                return storedHwRev
+            }
+            
+            if let advertisedHwRev = advertisementData?.manufacturerData?.hwRev {
+                return advertisedHwRev
+            }
+            
+            return 0
+        }
+        set {
+            _hwRev = newValue
+        }
+    }
+    
     var serial: UInt32 {
         get{
             return advertisementData?.manufacturerData?.serial ?? 0
@@ -170,7 +189,7 @@ class Clock: Peripheral, Identifiable, AdvertisementMatcher {
     }
 
     var caseImage: UIImage {
-        let hwRev = advertisementData?.manufacturerData?.hwRev ?? 0
+        
         let imageName = "r\(hwRev)-\(caseColor)"
         return UIImage(named:imageName) ?? UIImage(named:"r0-bones")!
     }
