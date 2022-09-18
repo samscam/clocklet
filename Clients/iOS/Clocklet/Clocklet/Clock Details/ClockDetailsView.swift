@@ -23,16 +23,14 @@ struct ClockDetailsView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: nil, height: 200, alignment: .center)
-                
-                if(clock.state == .connected){
-                    
+                switch clock.state {
+                case .connected:
                     if(clock.isConfigured == .configured){
                         
                         clock.settingsService.map{ settingsService in
                             ClockSettingsView().environmentObject(settingsService)
                         }
                     }
-                    
                     
                     clock.networkService.map{ networkService in
                         NavigationLink(destination: NetworkDetailView().environmentObject(networkService)){
@@ -74,34 +72,33 @@ struct ClockDetailsView: View {
                             }.buttonStyle(PlainButtonStyle())
                         }
                     }
-                    
-                } else {
-                    VStack(alignment:.center){
+                case .connecting:
+                    VStack{
                         Image(systemName:clock.state.iconSystemName)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(width: 100, height: 100, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                            .frame(width: 100, height: 100, alignment: .leading)
                             .foregroundColor(clock.state.color)
                             .scaleEffect(clock.state == .connecting ? 0.8 : 1)
                             .animation(Animation.easeInOut(duration: 1).repeatForever())
-                        
+
                         Text(clock.state.description).bold()
                         Spacer()
-                        // Note that if-let works in xcode 12 - that will be nice
-                        clock.state.lastErrorDescription.map{ lastError in
-                            Text(lastError).lineLimit(nil).fixedSize(horizontal: false, vertical: true)
+                        if let lastErrorDescription = clock.state.lastErrorDescription {
+                            Text(lastErrorDescription).lineLimit(nil).fixedSize(horizontal: false, vertical: true)
                         }
-                        
-                        if clock.state == .disconnected() {
-                            Spacer()
-                            Button("Reconnect") {
-                                self.clock.connect()
-                            }.buttonStyle(RoundyButtonStyle())
-                        }
-                        
                     }.padding().frame(maxWidth: .infinity)
-                    
+
+                case .disconnected(let error):
+                    if let error = error {
+                        Text(error.localizedDescription).lineLimit(nil).fixedSize(horizontal: false, vertical: true)
+                        Spacer()
+                    }
+                    Button("Reconnect") {
+                        self.clock.connect()
+                    }.buttonStyle(RoundyButtonStyle())
                 }
+
             }
             .padding()
             .animation(.default)
@@ -123,16 +120,28 @@ extension ContentSizeCategory{
 
 struct ClockDetailsView_Previews: PreviewProvider {
     static let clock: Clock = {
-        let clock = Clock("Foop",.bones)
-        clock.connect()
+        let clock = Clock("Foop",.tequilla)
+        clock.hwRev = 5
+        return clock
+    }()
+    
+    static let connectedClock: Clock = {
+        let clock = Clock("Foop",.gold)
+        clock.state = .connected
+        clock.hwRev = 5
         return clock
     }()
     
     static var previews: some View {
-        
-        NavigationView{
-            ClockDetailsView().environmentObject(clock)
+        Group{
+            NavigationView{
+                ClockDetailsView().environmentObject(clock)
+            }
+            NavigationView{
+                ClockDetailsView().environmentObject(connectedClock)
+            }
         }
+
         
     }
     
