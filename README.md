@@ -7,13 +7,14 @@ See also [clocklet.co.uk](https://clocklet.co.uk)
 This project is the firmware and client apps for clocks made by @samscam including:
 
 ### Clocklet
-* 17x5 SK9822 LED Matrix display
+* Custom 17x5 SK9822 LED Matrix display
 * Timekeeping: ESP32 (DS3231 as backup)
 * Synchronisation: NTP
 * Microcontroller: ESP32 Wrover on custom "Clockbrain" board
+* Weather source: Darksky (expect this to be changed very soon)
 
 ### Old Clocklet / Clocky
-Earlier prototypes used RGBDigit (WS2812B) 7 segment display and Adafruit Feather Huzzah32
+Earlier prototypes used RGBDigit (WS2812B) 7-segment display and Adafruit Feather Huzzah32. These run a bit glitchy.
 
 ### Mrs Clockety
 * Display: Waveshare epaper 2.9inch https://www.waveshare.com/2.9inch-e-paper-module.htm
@@ -67,10 +68,12 @@ On Linuxes it's probably available from `apt-get install esptool` or whatever pa
 
 2) Download the bin file of the firmware image you want from the releases section on here.
 
-3) Erase the flash (including settings)
+3) Plug in the Clocklet and figure out which port it is on - probably something like `/dev/cu.SLAB_USBtoUART` (that's what we'll use here but replace with whatever it is on your system)
+
+4) Erase the flash (including settings)
 `esptool.py -b 115200 -p /dev/cu.SLAB_USBtoUART erase_region 0x9000 0xFF7000`
 
-4) Flash the new firmware image:
+5) Flash the new firmware image:
 
 `esptool.py -b 115200 -p /dev/cu.SLAB_USBtoUART write_flash 0x10000 clockbrain.bin`
 
@@ -81,7 +84,7 @@ While we are here you can also use esptool to just erase settings (equivalent of
 
 ## Client App (iOS)
 
-*Requires Xcode 12 (beta)*
+*Requires Xcode 14*
 To build, open via the workspace rather than the Xcode Project.
 
 Contains an experimental library for gluing CoreBluetooth to Combine and SwiftUI via PropertyWrappers called "CombineBluetooth". This may get spun out into a separate project in the future - but for ease of development right now it's in here.
