@@ -22,6 +22,7 @@
 
 /* Begin PBXBuildFile section */
 		220D1CFA24DC966800578808 /* BluetoothOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220D1CF924DC966800578808 /* BluetoothOverlayView.swift */; };
+		220DDB11236B9E3900429503 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220DDB10236B9E3900429503 /* MapView.swift */; };
 		2214DCE024FD763100BFA51C /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2214DCDF24FD763100BFA51C /* MapKit.framework */; };
 		2214DCE224FD763E00BFA51C /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2214DCE124FD763E00BFA51C /* CoreLocation.framework */; };
 		222271A5232B887100508ADA /* ClockSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222271A4232B887100508ADA /* ClockSummaryView.swift */; };
@@ -80,6 +81,7 @@
 
 /* Begin PBXFileReference section */
 		220D1CF924DC966800578808 /* BluetoothOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothOverlayView.swift; sourceTree = "<group>"; };
+		220DDB10236B9E3900429503 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		2214DCDF24FD763100BFA51C /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk/System/iOSSupport/System/Library/Frameworks/MapKit.framework; sourceTree = DEVELOPER_DIR; };
 		2214DCE124FD763E00BFA51C /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk/System/Library/Frameworks/CoreLocation.framework; sourceTree = DEVELOPER_DIR; };
 		222271A4232B887100508ADA /* ClockSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockSummaryView.swift; sourceTree = "<group>"; };
@@ -270,6 +272,7 @@
 			isa = PBXGroup;
 			children = (
 				224C5390234FAE7300A68928 /* ClockDetailsView.swift */,
+				220DDB10236B9E3900429503 /* MapView.swift */,
 			);
 			path = "Clock Details";
 			sourceTree = "<group>";
@@ -467,6 +470,7 @@
 				220D1CFA24DC966800578808 /* BluetoothOverlayView.swift in Sources */,
 				22B2D0B324943B3500D570E2 /* ClockSettingsView.swift in Sources */,
 				22604281236E40F800710F37 /* LocationProxy.swift in Sources */,
+				220DDB11236B9E3900429503 /* MapView.swift in Sources */,
 				228A1C8E2462BB6C00033937 /* SettingsService.swift in Sources */,
 				22A0AE042351492F00D04338 /* NetworkService.swift in Sources */,
 				22E2D9BA233A971000B4FCFD /* SceneDelegate.swift in Sources */,
