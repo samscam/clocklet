@@ -32,13 +32,13 @@ struct ClockDetailsView: View {
                         }
                     }
                     
-                    clock.networkService.map{ networkService in
+                    if let networkService = clock.networkService {
                         NavigationLink(destination: NetworkDetailView().environmentObject(networkService)){
                             NetworkSummaryView().environmentObject(NetworkSummaryViewModel(networkService))
                         }.buttonStyle(PlainButtonStyle())
                     }
                     
-                    clock.locationService.map{ locationService in
+                    if let locationService = clock.locationService {
                         Group{
                             NavigationLink(destination:
                                             LocationDetailsView()
@@ -60,17 +60,16 @@ struct ClockDetailsView: View {
                     }
                     
                     
-                    clock.technicalService.map{ technicalService in
-                        clock.deviceInfoService.map{ deviceInfoService in
-                            NavigationLink(destination:
-                                            ClockTechnicalView().environmentObject(technicalService)
-                                            .environmentObject(deviceInfoService)){
-                                ConfigItemView(icon: Image(systemName:"wrench") ,
-                                               title: "Technical stuff"){
-                                    EmptyView()
-                                }
-                            }.buttonStyle(PlainButtonStyle())
-                        }
+                    if let technicalService = clock.technicalService,
+                       let deviceInfoService = clock.deviceInfoService {
+                        NavigationLink(destination:
+                                        ClockTechnicalView().environmentObject(technicalService)
+                                        .environmentObject(deviceInfoService)){
+                            ConfigItemView(icon: Image(systemName:"wrench") ,
+                                           title: "Technical stuff"){
+                                EmptyView()
+                            }
+                        }.buttonStyle(PlainButtonStyle())
                     }
                 case .connecting:
                     VStack{
