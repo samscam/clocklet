@@ -46,25 +46,6 @@ struct ClockSummaryView_Previews: PreviewProvider {
     static var previews: some View {
         ClockSummaryView()
             .environmentObject(clock)
-//            .background(Color.black)
-            .previewLayout(.sizeThatFits)
-            .colorScheme(.dark)
-//            .environment(\.colorScheme, .dark)
+        
     }
 }
-//        let clock = Clock("Clocklet #002",.wood)
-//        clock.caseColor = .wood
-//        let vm = ClockSummaryViewModel(clock: clock)
-//        return Group {
-//            ClockSummaryView(viewModel: vm ).background(Color.black).previewLayout(.sizeThatFits).colorScheme(.dark)
-//            ClockSummaryView(viewModel: vm ).previewLayout(.sizeThatFits).colorScheme(.light)
-//        }
-//    }
-//}
-
-//                    VStack {
-            //            Image(self.clock.caseColor.imageName).resizable().aspectRatio(contentMode: .fit)
-            //            Image("esp32feather")
-//                        Text(self.clock.name).font(.largeTitle)
-//                        Text("#" + self.clock.serial)
-//                    }
