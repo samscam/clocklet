@@ -81,14 +81,12 @@ struct ClockDetailsView: View {
                     }
                 case .connecting:
                     VStack{
-                        Image(systemName:clock.state.iconSystemName)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 100, height: 100, alignment: .leading)
-                            .foregroundColor(clock.state.color)
-                            .scaleEffect(clock.state == .connecting ? 0.8 : 1)
-                            .animation(Animation.easeInOut(duration: 1).repeatForever())
-
+                            Image(systemName:clock.state.iconSystemName)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 100, height: 100, alignment: .leading)
+                                .foregroundColor(clock.state.color)
+                                .scaleEffect(clock.state == .connecting ? 0.8 : 1)
                         Text(clock.state.description).bold()
                         Spacer()
                         if let lastErrorDescription = clock.state.lastErrorDescription {
@@ -108,7 +106,6 @@ struct ClockDetailsView: View {
 
             }
             .padding()
-            .animation(.default)
             
             
         }.navigationBarTitle( Text(clock.name), displayMode:.automatic)
