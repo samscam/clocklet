@@ -128,6 +128,20 @@ struct ClockDetailsView_Previews: PreviewProvider {
         let clock = Clock("Foop",.gold)
         clock.state = .connected
         clock.hwRev = 5
+        clock.isConfigured = .configured
+        clock.settingsService = SettingsService()
+
+        clock.settingsService?.brightness = 0.5
+        clock.settingsService?.autoBrightness = false
+        
+        clock.settingsService?.availableTimeStyles = ["fish","thingy"]
+        clock.settingsService?.timeStyle = "fish"
+        
+        clock.technicalService = TechnicalService()
+        clock.deviceInfoService = DeviceInfoService()
+        clock.locationService = LocationService()
+        clock.locationService?.isConfigured = .notConfigured
+        
         return clock
     }()
     

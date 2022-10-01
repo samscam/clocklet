@@ -15,34 +15,6 @@ import CoreBluetooth
 
 
 
-struct ScanningView: View{
-    @EnvironmentObject var clockList: ClockList
-    @Environment(\.colorScheme) var colorScheme: ColorScheme
-    
-    
-    var body: some View{
-        VStack{
-            if clockList.bluetoothState == .poweredOn {
-                Image(systemName: self.clockList.isScanning ? "eye" : "eye.slash")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 40 , height: 50, alignment: .center)
-                    .scaleEffect(self.clockList.isScanning ? 2 : 1)
-                    .opacity(self.clockList.isScanning ? 1.0 : 0.5)
-                    .animation(Animation.spring())
-                
-                if self.clockList.isScanning {
-                    Text("Looking for Clocklets").opacity(0.5)
-                } else {
-                    Text("Find more Clocklets").opacity(0.5).animation(Animation.easeInOut(duration: 0.5))
-                }
-            }
-        }.onTapGesture {
-            self.clockList.toggleScanning()
-        }
-        
-    }
-}
 
 struct ClockListView: View {
     @EnvironmentObject var clockList: ClockList
@@ -56,8 +28,6 @@ struct ClockListView: View {
                     VStack{
                         ScrollView{
                             VStack(spacing:20){
-                                Text("Hello! This is the Clocklet app for configuring your Clocklet.")
-                                Spacer()
                                 VStack{
                                     ForEach(clockList.clocks) { clock in
                                         NavigationLink(destination:
@@ -103,36 +73,61 @@ struct ClockListView: View {
     
 }
 
+struct ScanningView: View{
+    @EnvironmentObject var clockList: ClockList
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
+    
+    
+    var body: some View{
+        VStack{
+            if clockList.bluetoothState == .poweredOn {
+                Image(systemName: self.clockList.isScanning ? "eye" : "eye.slash")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 40 , height: 50, alignment: .center)
+                    .scaleEffect(self.clockList.isScanning ? 2 : 1)
+                    .opacity(self.clockList.isScanning ? 1.0 : 0.5)
+                    .animation(Animation.spring())
+                
+                if self.clockList.isScanning {
+                    Text("Looking for Clocklets").opacity(0.5)
+                } else {
+                    Text("Find more Clocklets").opacity(0.5).animation(Animation.easeInOut(duration: 0.5))
+                }
+            }
+        }.onTapGesture {
+            self.clockList.toggleScanning()
+        }
+        
+    }
+}
+
 
 struct ClockListView_Previews: PreviewProvider {
     
     
     static let clockList: ClockList = {
         let clockList = ClockList(central:nil)
-        clockList.bluetoothState = .unauthorized
+        clockList.bluetoothState = .poweredOn
         clockList.isScanning = false
         clockList.clocks = [
-            Clock("Clocklet #5", .black),
-            Clock("Clocklet #6", .bluePink),
-            Clock("Clocklet #7", .wood),
-            Clock("Clocklet #8", .bones),
         ]
         
-        //        DispatchQueue.main.asyncAfter(deadline: .now()+1) {
-        //            clockList.isScanning = true
-        //        }
-        //        DispatchQueue.main.asyncAfter(deadline: .now()+2) {
-        //            clockList.clocks.append(Clock("Clocklet #5", .black))
-        //        }
-        //        DispatchQueue.main.asyncAfter(deadline: .now()+4) {
-        //            clockList.clocks.append(Clock("Clocklet #6", .translucent))
-        //        }
-        //        DispatchQueue.main.asyncAfter(deadline: .now()+6) {
-        //            clockList.clocks.append(Clock("Clocklet #6", .bluePink))
-        //        }
-        //        DispatchQueue.main.asyncAfter(deadline: .now()+7) {
-        //            clockList.isScanning = false
-        //        }
+        DispatchQueue.main.asyncAfter(deadline: .now()+1) {
+            clockList.isScanning = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now()+2) {
+            clockList.clocks.append(Clock("Blackie", .black))
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now()+4) {
+            clockList.clocks.append(Clock("Clockola", .translucent))
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now()+6) {
+            clockList.clocks.append(Clock("Boingy", .bluePink))
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now()+7) {
+            clockList.isScanning = false
+        }
         return clockList
     }()
     
