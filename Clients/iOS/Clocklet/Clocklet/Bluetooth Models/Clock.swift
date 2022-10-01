@@ -102,7 +102,7 @@ class Clock: Peripheral, Identifiable, AdvertisementMatcher {
                 return advertisedHwRev
             }
             
-            return 0
+            return 5
         }
         set {
             _hwRev = newValue
