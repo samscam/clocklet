@@ -25,9 +25,17 @@ struct ClockDetailsView: View {
                     .frame(width: nil, height: 200, alignment: .center)
                 switch clock.state {
                 case .connected:
-                    if(clock.isConfigured == .configured){
+                    
+                    switch clock.isConfigured {
                         
-                        clock.settingsService.map{ settingsService in
+                    case .unknown:
+                        EmptyView()
+                        
+                    case .notConfigured:
+                        Text("Set up your clocklet...")
+                        
+                    case .configured:
+                        if let settingsService = clock.settingsService {
                             ClockSettingsView().environmentObject(settingsService)
                         }
                     }
