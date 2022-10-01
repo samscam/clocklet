@@ -46,8 +46,11 @@ extension Network{
     
     var wifiStrengthBars: Image {
         if #available(iOS 16, *) {
-            let strength: Double = (Double(self.rssi) + 100.0) / 100.0
+            
+            // roughly scale rssi to the SFSymbols image variable boundaries
+            let strength: Double =  min(max((Double(self.rssi) + 90) * 0.03,0.0),1.0)
             return Image(systemName: "wifi", variableValue: strength)
+            
          } else {
             if (self.rssi >= -60) {
                 return Image(uiImage: UIImage(systemName:"wifi")!.withRenderingMode(.alwaysTemplate))
@@ -84,26 +87,46 @@ struct AvailableNetworkView: View {
             
             Text(network.ssid).font(.headline).bold().lineLimit(2)
             
+            Text("\(network.rssi)")
             Spacer()
             
-            if network.enctype == .open {
-                Image(systemName:"arrow.left.and.right.circle").resizable().scaledToFit().frame(width: 30, height: 40, alignment: .center)
-            } else {
-                Image(systemName:"lock.circle").resizable().scaledToFit().frame(width: 30, height: 40, alignment: .center)
-            }
+            encryptionIcon(enctype: network.enctype).resizable().scaledToFit().frame(width: 30, height: 40, alignment: .center)
             
-
-
         }.padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+            .contentShape(Rectangle())
     }
-        
+    
+    func encryptionIcon(enctype: AuthMode) -> Image{
+        let image: Image
+        switch enctype {
+        case .open:
+            image = Image(systemName:"arrow.left.and.right.circle")
+        case .unknown:
+            image = Image(systemName:"questionmark.circle")
+        case .wep, .wpa2enterprise, .wpa2psk, .wpapsk, .wpawpa2psk:
+            image = Image(systemName:"lock.circle")
+        }
+        return image
+    }
 }
 
-struct AvailableNetworkView_Previews: PreviewProvider {
+struct AvailableNetworksView_Previews: PreviewProvider {
+    
+    static let popover = false
+    static var fakeNetworkService: NetworkService {
+        let networkService = NetworkService()
+        
+        let network1 = AvailableNetwork(ssid: "Whyfly? Taketrain!", enctype: .open, rssi: -93, channel: 4, bssid:"whyfly")
+        let network2 = AvailableNetwork(ssid: "Pretty wi for a fi guy", enctype: .wep, rssi: -85, channel: 4, bssid:"prettywi")
+        let network3 = AvailableNetwork(ssid: "Broccoli", enctype: .unknown, rssi: -73, channel: 4, bssid:"brocc")
+        
+        let network5 = AvailableNetwork(ssid: "Pretty wi for a fi guy", enctype: .wep, rssi: -63, channel: 4, bssid:"wowoow")
+        networkService.scannedNetworks = [network1,network2,network3,network5]
+        
+        return networkService
+    }
+    
     static var previews: some View {
-        let network = AvailableNetwork(ssid: "Broccoli", enctype: .open, rssi: -80, channel: 4, bssid:"SOMETHING")
-        return Group {
-            AvailableNetworkView(network: network).previewLayout(.sizeThatFits)
-        }
+        AvailableNetworksView().environmentObject(fakeNetworkService)
     }
 }
