@@ -29,6 +29,7 @@
 		222500CB24AE452B00B5872A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 222500CA24AE452A00B5872A /* Assets.xcassets */; };
 		222D5AC324D5C69500D2FFB5 /* LocationDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222D5AC224D5C69500D2FFB5 /* LocationDetailsView.swift */; };
 		22350E83233D359E00452BDF /* NetworkCharacteristics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22350E82233D359E00452BDF /* NetworkCharacteristics.swift */; };
+		2236E4D528E8F35600B45171 /* LocationDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2236E4D428E8F35600B45171 /* LocationDetailsViewModel.swift */; };
 		2241E52523DD0ABB00ACE8A7 /* LocationProxyTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2241E52423DD0ABB00ACE8A7 /* LocationProxyTestView.swift */; };
 		224C538F234F6CDD00A68928 /* ClockListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224C538E234F6CDD00A68928 /* ClockListView.swift */; };
 		224C5391234FAE7300A68928 /* ClockDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224C5390234FAE7300A68928 /* ClockDetailsView.swift */; };
@@ -89,6 +90,7 @@
 		222500CA24AE452A00B5872A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		222D5AC224D5C69500D2FFB5 /* LocationDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDetailsView.swift; sourceTree = "<group>"; };
 		22350E82233D359E00452BDF /* NetworkCharacteristics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkCharacteristics.swift; sourceTree = "<group>"; };
+		2236E4D428E8F35600B45171 /* LocationDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDetailsViewModel.swift; sourceTree = "<group>"; };
 		2241E52423DD0ABB00ACE8A7 /* LocationProxyTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProxyTestView.swift; sourceTree = "<group>"; };
 		224C538E234F6CDD00A68928 /* ClockListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockListView.swift; sourceTree = "<group>"; };
 		224C5390234FAE7300A68928 /* ClockDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockDetailsView.swift; sourceTree = "<group>"; };
@@ -154,6 +156,8 @@
 			children = (
 				22551951235870240056B9CD /* LocationSummaryView.swift */,
 				222D5AC224D5C69500D2FFB5 /* LocationDetailsView.swift */,
+				2236E4D428E8F35600B45171 /* LocationDetailsViewModel.swift */,
+				220DDB10236B9E3900429503 /* MapView.swift */,
 			);
 			path = "Location Details";
 			sourceTree = "<group>";
@@ -272,7 +276,6 @@
 			isa = PBXGroup;
 			children = (
 				224C5390234FAE7300A68928 /* ClockDetailsView.swift */,
-				220DDB10236B9E3900429503 /* MapView.swift */,
 			);
 			path = "Clock Details";
 			sourceTree = "<group>";
@@ -361,7 +364,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1120;
-				LastUpgradeCheck = 1200;
+				LastUpgradeCheck = 1400;
 				ORGANIZATIONNAME = "Spotlight Kid Ltd";
 				TargetAttributes = {
 					2265C2A024C0BC6000F17506 = {
@@ -458,6 +461,7 @@
 				2255195623587DB70056B9CD /* AvailableNetworksView.swift in Sources */,
 				227CC3062367925D00D7770D /* PropertiesView.swift in Sources */,
 				2255195823588AF50056B9CD /* NetworkDetailView.swift in Sources */,
+				2236E4D528E8F35600B45171 /* LocationDetailsViewModel.swift in Sources */,
 				22836EB4228629750020B46F /* AppDelegate.swift in Sources */,
 				228DF261234FDF6400480588 /* ClockList.swift in Sources */,
 				22585259235694A0005C9696 /* ConfigItemView.swift in Sources */,
@@ -580,7 +584,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
