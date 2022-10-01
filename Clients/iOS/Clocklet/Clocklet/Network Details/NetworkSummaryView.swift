@@ -175,7 +175,11 @@ struct NetworkSummaryView: View {
     
     var body: some View {
         
-        ConfigItemView(icon: viewModel.icon, iconColor: viewModel.color, title: viewModel.title) {
+        ConfigItemView(
+            icon: viewModel.icon,
+            iconColor: viewModel.color,
+            title: viewModel.title,
+            disclosure: true) {
             
             Group{
                 if (self.viewModel.isConfigured == ConfigState.notConfigured){

@@ -13,14 +13,16 @@ struct ConfigItemView<Content:View>: View {
     var icon: Image
     var iconColor: Color?
     var title: String
+    var disclosure: Bool
     var content: (()->Content)
     
     
-    init(icon: Image, iconColor: Color? = nil, title: String, @ViewBuilder content: @escaping (()->Content)){
+    init(icon: Image, iconColor: Color? = nil, title: String, disclosure: Bool = false, @ViewBuilder content: @escaping (()->Content)){
         self.icon = icon
         self.iconColor = iconColor
         self.title = title
         self.content = content
+        self.disclosure = disclosure
     }
     
     var body: some View{
@@ -30,11 +32,16 @@ struct ConfigItemView<Content:View>: View {
                 
                 icon.resizable().scaledToFit().frame(width: 30, height: 40, alignment: .center).foregroundColor(self.iconColor ?? Color("Black-ish"))
                 Text(title).font(.title).bold().lineLimit(4).foregroundColor(Color("Black-ish"))
-            }
+                Spacer()
+                if (disclosure){
+                    Image(systemName: "chevron.right")
+                }
+            }.frame(maxWidth: .infinity)
             
             content().padding(.leading, 40)
-            Spacer()
+            
         }.frame(minWidth: 0, maxWidth: .infinity,  alignment: Alignment.topLeading)
+        .contentShape(Rectangle())
     }
 }
 
@@ -42,7 +49,7 @@ struct ConfigItemView<Content:View>: View {
 struct ConfigItemView_Previews: PreviewProvider {
     static var previews: some View {
         Group{
-            ConfigItemView(icon: Image(systemName: "link.circle.fill"), title: "Hello"){EmptyView()}.previewLayout(.sizeThatFits)
+            ConfigItemView(icon: Image(systemName: "link.circle.fill"), title: "Hello"){EmptyView()}
             
             ConfigItemView(icon: Image(systemName: "trash.fill"), title: "Throw it away"){
                 Text("""
@@ -50,12 +57,13 @@ Nullam quis risus eget urna mollis ornare vel eu leo. Etiam porta sem malesuada 
 
 Maecenas faucibus mollis interdum. Cras mattis consectetur purus sit amet fermentum. Nullam id dolor id nibh ultricies vehicula ut id elit. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Curabitur blandit tempus porttitor. Etiam porta sem malesuada magna mollis euismod. Vestibulum id ligula porta felis euismod semper.
 """)
-            }.previewLayout(.sizeThatFits)
+            }
             
             ConfigItemView(icon: Image(systemName: "smiley"), title: "Hello"){
                 Text("I love you")
-            }.previewLayout(.sizeThatFits).environment(\.colorScheme, .dark)
+            }
             
-        }
+        }.previewLayout(.sizeThatFits)
+        
     }
 }

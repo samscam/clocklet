@@ -17,13 +17,17 @@ struct LocationSummaryView: View {
     @EnvironmentObject var locationService: LocationService
     
     var body: some View {
-        ConfigItemView(icon: Image(systemName:"location"), title:
-                        self.locationService.isConfigured == .configured ? self.locationService.currentLocation?.placeName  ?? "Location" : "Location") {
-            self.locationService.currentLocation.map{ currentLocation -> AnyView in
-                if currentLocation.configured {
-                    return AnyView(EmptyView())
-                } else {
-                    return AnyView(
+        ConfigItemView(
+            icon: Image(systemName:"location"),
+            title:
+                self.locationService.isConfigured == .configured ? self.locationService.currentLocation?.placeName  ?? "Location" : "Location",
+            disclosure: true) {
+                if let currentLocation = locationService.currentLocation {
+                    
+                    if currentLocation.configured {
+                        EmptyView()
+                    } else {
+                       
                         VStack(alignment:.leading){
                             Button("Set to current location"){
                                 self.locationService.setCurrentLocation()
@@ -31,7 +35,7 @@ struct LocationSummaryView: View {
                             .buttonStyle(RoundyButtonStyle())
                             
                             Button( action: {
-                                self.showLocationDetails = true
+                                showLocationDetails = true
                             }, label: {
                                 HStack{
                                     Text( "Set to somewhere else" )
@@ -40,12 +44,11 @@ struct LocationSummaryView: View {
                             })
                             .buttonStyle(RoundyButtonStyle()).accentColor(.green)
                         }
-                    )
+                        
+                    }
+                    
                     
                 }
-            
-
             }
-        }
     }
 }

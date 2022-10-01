@@ -66,7 +66,7 @@ struct ClockDetailsView: View {
                                         ClockTechnicalView().environmentObject(technicalService)
                                         .environmentObject(deviceInfoService)){
                             ConfigItemView(icon: Image(systemName:"wrench") ,
-                                           title: "Technical stuff"){
+                                           title: "Technical stuff", disclosure: true){
                                 EmptyView()
                             }
                         }.buttonStyle(PlainButtonStyle())
