@@ -84,18 +84,14 @@ struct LocationDetailsView: View {
             
                 ZStack{
                     
-                    // Old style still working better than new style - test it the old way for now.
-//                    if #available(iOS 14.0,macOS 11.0, *) {
-//                        Map(coordinateRegion: viewModel.region, interactionModes: MapInteractionModes(), showsUserLocation: true,
-//                            annotationItems: viewModel.annotations){ annotation in
-//                            MapAnnotation(coordinate: annotation.coordinate){
-//                                Image(clock.caseColor.imageName).resizable()
-//                                    .aspectRatio(contentMode: .fit).frame(width: 140, height: 60, alignment: .center)
-//                            }
-//                        }.opacity(0.6).blendMode(.luminosity)
-//                    } else {
-                    MapView(coordinate: viewModel.currentLocation.coordinate)
-//                    }
+                    Map(coordinateRegion: $viewModel.region ?? MKCoordinateRegion(), interactionModes: MapInteractionModes(), showsUserLocation: true,
+                        annotationItems: viewModel.annotations){ annotation in
+                        MapAnnotation(coordinate: annotation.coordinate){
+                            Image(uiImage: clock.caseImage).resizable()
+                                .aspectRatio(contentMode: .fit).frame(width: 140, height: 60, alignment: .center)
+                        }
+                    }
+
                     viewModel.currentLocation.placeName.map{ placeName in
                         VStack(alignment: .center){
                         HStack(alignment:.top){
@@ -105,6 +101,7 @@ struct LocationDetailsView: View {
                         }.padding(5)
                     }
                 }.frame(height: 200)
+                    .cornerRadius(20)
 
             
                 Spacer()
