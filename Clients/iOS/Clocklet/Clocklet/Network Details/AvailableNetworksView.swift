@@ -42,13 +42,20 @@ struct AvailableNetworksView: View {
 }
 
 extension Network{
+    
+    
     var wifiStrengthBars: Image {
-        if (self.rssi >= -60) {
-            return Image(uiImage: UIImage(systemName:"wifi")!.withRenderingMode(.alwaysTemplate))
-        } else if (self.rssi >= -80) {
-            return Image(uiImage: UIImage(named:"wifi.2bars")!.withRenderingMode(.alwaysTemplate))
-        } else {
-            return Image(uiImage: UIImage(named:"wifi.1bar")!.withRenderingMode(.alwaysTemplate))
+        if #available(iOS 16, *) {
+            let strength: Double = (Double(self.rssi) + 100.0) / 100.0
+            return Image(systemName: "wifi", variableValue: strength)
+         } else {
+            if (self.rssi >= -60) {
+                return Image(uiImage: UIImage(systemName:"wifi")!.withRenderingMode(.alwaysTemplate))
+            } else if (self.rssi >= -80) {
+                return Image(uiImage: UIImage(named:"wifi.2bars")!.withRenderingMode(.alwaysTemplate))
+            } else {
+                return Image(uiImage: UIImage(named:"wifi.1bar")!.withRenderingMode(.alwaysTemplate))
+            }
         }
     }
 }
@@ -56,9 +63,13 @@ extension Network{
 struct NetworkStatusIconView: View{
     let network:  Network
     var body: some View{
-        ZStack(alignment:.bottom){
-            Image(uiImage: UIImage(systemName:"wifi")!.withRenderingMode(.alwaysTemplate)).opacity(0.2)
+        if #available(iOS 16, *) {
             network.wifiStrengthBars.foregroundColor(.green)
+        } else {
+            ZStack(alignment:.bottom){
+                Image(uiImage: UIImage(systemName:"wifi")!.withRenderingMode(.alwaysTemplate)).opacity(0.2)
+                network.wifiStrengthBars.foregroundColor(.green)
+            }
         }
     }
 }
@@ -92,7 +103,6 @@ struct AvailableNetworkView_Previews: PreviewProvider {
     static var previews: some View {
         let network = AvailableNetwork(ssid: "Broccoli", enctype: .open, rssi: -80, channel: 4, bssid:"SOMETHING")
         return Group {
-            AvailableNetworkView(network: network).previewLayout(.sizeThatFits)
             AvailableNetworkView(network: network).previewLayout(.sizeThatFits)
         }
     }
