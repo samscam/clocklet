@@ -81,23 +81,21 @@ struct ScanningView: View{
     var body: some View{
         VStack{
             if clockList.bluetoothState == .poweredOn {
-                Image(systemName: self.clockList.isScanning ? "eye" : "eye.slash")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 40 , height: 50, alignment: .center)
-                    .scaleEffect(self.clockList.isScanning ? 2 : 1)
-                    .opacity(self.clockList.isScanning ? 1.0 : 0.5)
-                    .animation(Animation.spring())
+                    Image(systemName: clockList.isScanning ? "eye" : "eye.slash")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 40 , height: 50, alignment: .center)
+                        .scaleEffect(clockList.isScanning ? 2 : 1)
+                        .opacity(clockList.isScanning ? 1.0 : 0.5)
+                        .animation(.spring(response: 1,dampingFraction: 0.3, blendDuration: 0), value: clockList.isScanning)
                 
-                if self.clockList.isScanning {
-                    Text("Looking for Clocklets").opacity(0.5)
-                } else {
-                    Text("Find more Clocklets").opacity(0.5).animation(Animation.easeInOut(duration: 0.5))
+                if clockList.isScanning {
+                    Text("Looking for Clocklets")
                 }
             }
         }.onTapGesture {
             self.clockList.toggleScanning()
-        }
+        }.animation(.easeInOut, value: clockList.isScanning)
         
     }
 }
