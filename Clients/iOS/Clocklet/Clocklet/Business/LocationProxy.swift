@@ -20,7 +20,7 @@ class LocationProxy: NSObject, CLLocationManagerDelegate {
     
     let locationManager = CLLocationManager()
     
-    private let authSubject = CurrentValueSubject<CLAuthorizationStatus, Never>(CLLocationManager.authorizationStatus())
+    private let authSubject: CurrentValueSubject<CLAuthorizationStatus, Never>
     
     lazy var authPublisher: AnyPublisher<CLAuthorizationStatus, Never> = {
        return authSubject
@@ -44,8 +44,10 @@ class LocationProxy: NSObject, CLLocationManagerDelegate {
     }()
 
     override init(){
-        super.init()
+        
         locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
+        authSubject = CurrentValueSubject<CLAuthorizationStatus,Never>(locationManager.authorizationStatus)
+        super.init()
         locationManager.delegate = self
         
     }
@@ -55,7 +57,7 @@ class LocationProxy: NSObject, CLLocationManagerDelegate {
     }
     
     func enable(){
-        switch CLLocationManager.authorizationStatus() {
+        switch locationManager.authorizationStatus {
         case .authorizedAlways, .authorizedWhenInUse:
             locationManager.requestLocation()
         case .notDetermined:
