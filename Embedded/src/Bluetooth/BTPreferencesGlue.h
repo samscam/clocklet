@@ -4,7 +4,7 @@
 
 #include <Preferences.h>
 
-#define TAG "GLUE"
+#define TAG_GLUE "GLUE"
 
 template <class T>
 class PreferencesGlue: public NimBLECharacteristicCallbacks {
@@ -51,18 +51,18 @@ PreferencesGlue<T>::~PreferencesGlue(){
 
 template <class T>  inline
 void PreferencesGlue<T>::onWrite(NimBLECharacteristic* pCharacteristic) {
-    ESP_LOGE(TAG,"Unimplemented Bluetooth Preferences Glue");
+    ESP_LOGE(TAG_GLUE,"Unimplemented Bluetooth Preferences Glue");
 }
 
 template <class T> inline
 void PreferencesGlue<T>::onRead(NimBLECharacteristic* pCharacteristic) {
-    ESP_LOGE(TAG,"Unimplemented Bluetooth Preferences Glue");
+    ESP_LOGE(TAG_GLUE,"Unimplemented Bluetooth Preferences Glue");
 }
 
 template <>  inline
 void PreferencesGlue<std::string>::onWrite(NimBLECharacteristic* pCharacteristic) {
     String value = String(pCharacteristic->getValue().c_str());
-    ESP_LOGI(TAG,"Preferences change: %s IS NOW %s",_prefsKey,value.c_str());
+    ESP_LOGI(TAG_GLUE,"Preferences change: %s IS NOW %s",_prefsKey,value.c_str());
 
     preferences->begin(_prefsNamespace, false);
     preferences->putString(_prefsKey, value);
@@ -80,7 +80,7 @@ void PreferencesGlue<std::string>::onRead(NimBLECharacteristic* pCharacteristic)
     preferences->begin(_prefsNamespace, false);
     String value = preferences->getString(_prefsKey,_defaultValue.c_str());
     std::string sValue = std::string(value.c_str());
-    ESP_LOGI(TAG,"Preferences: %s IS \"%s\"",_prefsKey,sValue.c_str());
+    ESP_LOGI(TAG_GLUE,"Preferences: %s IS \"%s\"",_prefsKey,sValue.c_str());
     pCharacteristic->setValue(sValue);
     preferences->end();
 }
@@ -90,7 +90,7 @@ void PreferencesGlue<std::string>::onRead(NimBLECharacteristic* pCharacteristic)
 template <>  inline
 void PreferencesGlue<bool>::onWrite(NimBLECharacteristic* pCharacteristic) {
     bool value = pCharacteristic->getValue<bool>();
-    ESP_LOGI(TAG,"Preferences change: %s IS NOW %d",_prefsKey,value);
+    ESP_LOGI(TAG_GLUE,"Preferences change: %s IS NOW %d",_prefsKey,value);
     
     preferences->begin("clocklet", false);
     preferences->putBool(_prefsKey, value);
@@ -110,7 +110,7 @@ void PreferencesGlue<bool>::onRead(NimBLECharacteristic* pCharacteristic) {
     data[0] = prefsValue;
     pCharacteristic->setValue(data,1);
     preferences->end();
-    ESP_LOGI(TAG,"Preferences bool read: %s IS %d",_prefsKey,prefsValue);
+    ESP_LOGI(TAG_GLUE,"Preferences bool read: %s IS %d",_prefsKey,prefsValue);
     
 }
 
@@ -120,7 +120,7 @@ template <>  inline
 void PreferencesGlue<uint8_t>::onWrite(NimBLECharacteristic* pCharacteristic) {
     uint8_t value = pCharacteristic->getValue<uint8_t>();
 
-    ESP_LOGI(TAG,"Preferences change: %s IS NOW %d",_prefsKey,value);
+    ESP_LOGI(TAG_GLUE,"Preferences change: %s IS NOW %d",_prefsKey,value);
 
     preferences->begin("clocklet", false);
     preferences->putUChar(_prefsKey, value);
@@ -148,7 +148,7 @@ void PreferencesGlue<float_t>::onWrite(NimBLECharacteristic* pCharacteristic) {
 
     float_t value = pCharacteristic->getValue<float_t>();
 
-    // ESP_LOGI(TAG,"Preferences change: %s IS NOW %g",_prefsKey,value);
+    // ESP_LOGI(TAG_GLUE,"Preferences change: %s IS NOW %g",_prefsKey,value);
 
     preferences->begin("clocklet", false);
     preferences->putFloat(_prefsKey, value);
