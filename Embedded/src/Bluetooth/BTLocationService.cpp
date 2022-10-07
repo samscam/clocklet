@@ -82,11 +82,11 @@ void BTLocationService::onRead(NimBLECharacteristic* pCharacteristic) {
 
     String outputStr = "";
     serializeJson(locDoc,outputStr);
-    uint len = outputStr.length()+1;
-    char json[len];
-    outputStr.toCharArray(json,len);
+    size_t len = outputStr.length()+1;
+    uint8_t json[len];
+    outputStr.getBytes(json,len);
     ESP_LOGD(TAG,"%s",json);
 
-    pCharacteristic->setValue(json);
+    pCharacteristic->setValue(json,len);
 
 }

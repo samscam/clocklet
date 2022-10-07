@@ -229,10 +229,10 @@ void BTNetworkService::_updateCurrentNetwork(){
     String outputStr = "";
     serializeJson(doc,outputStr);
     uint len = outputStr.length()+1;
-    char json[len];
-    outputStr.toCharArray(json,len);
+    uint8_t json[len];
+    outputStr.getBytes(json,len);
 
-    ch_currentNetwork->setValue(json);
+    ch_currentNetwork->setValue(json,len);
     ch_currentNetwork->notify(true);
 }
 
