@@ -1,6 +1,3 @@
-[submodule "Embedded/lib/nimble-arduino"]
-	path = Embedded/lib/nimble-arduino
-	url = https://github.com/h2zero/NimBLE-Arduino.git
 [submodule "Embedded/lib/posix_tz_db"]
 	path = Embedded/lib/posix_tz_db
 	url = https://github.com/nayarsystems/posix_tz_db.git
