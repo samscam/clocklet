@@ -4,6 +4,7 @@
 
 #include <Preferences.h>
 
+#define TAG "GLUE"
 
 template <class T>
 class PreferencesGlue: public NimBLECharacteristicCallbacks {

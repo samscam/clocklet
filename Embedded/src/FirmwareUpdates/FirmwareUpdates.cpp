@@ -15,7 +15,7 @@
 
 #include "../network.h"
 
-#define TAG "FIRMWARE";
+#define TAG "FIRMWARE"
 
 #define MAX_REDIRECT_DEPTH 5
 

@@ -211,7 +211,7 @@ void BTNetworkService::_updateCurrentNetwork(){
     bool configured = false;
 
     wifi_config_t wifi_cfg;
-    if (esp_wifi_get_config(ESP_IF_WIFI_STA, &wifi_cfg) == ESP_OK) {
+    if (esp_wifi_get_config(WIFI_IF_STA, &wifi_cfg) == ESP_OK) {
         const char *ssid = (const char *) wifi_cfg.sta.ssid;
         if (strlen(ssid)) {
             configured = true;
