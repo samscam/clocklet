@@ -79,9 +79,11 @@ LocationManager *locationManager;
 // // #include "weather/met-office.h"
 // // WeatherClient *weatherClient = new MetOffice(client); // << It's plain HTTP
 
-#include "weather/darksky.h"
-DarkSky weatherClient = DarkSky();
+// #include "weather/darksky.h"
+// DarkSky weatherClient = DarkSky();
 
+#include "weather/openweathermap.h"
+OpenWeatherMap weatherClient = OpenWeatherMap();
 
 // RAINBOWS
 
