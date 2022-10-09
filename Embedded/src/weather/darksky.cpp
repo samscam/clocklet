@@ -36,6 +36,7 @@ DarkSky::DarkSky() : WeatherClient() {
 
 char* DarkSky::constructURL(){
   char *buffer;
+  buffer = (char *) malloc(sizeof(char)*2048);
   asprintf(&buffer,DARKSKY_PATH,DARKSKY_APIKEY,_currentLocation.lat,_currentLocation.lng);
   return buffer;
 }
