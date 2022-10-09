@@ -1,5 +1,4 @@
-#ifndef PRISCILLA_DARKSKY
-#define PRISCILLA_DARKSKY
+#pragma once
 
 #include "weather-client.h"
 #include "../Secrets/APIKeys.h"
@@ -10,8 +9,6 @@
 
 #define DARKSKY_HTTP_TIMEOUT 20  // max respone time from server
 #define DARKSKY_MAX_CONTENT_SIZE 16384       // max size of the HTTP response
-
-char* stristr(const char* haystack, const char* needle);
 
 class DarkSky final : public WeatherClient {
 public:
@@ -31,6 +28,3 @@ private:
   uint8_t _timeHorizon;
 
 };
-
-
-#endif
