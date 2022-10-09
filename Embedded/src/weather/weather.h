@@ -2,7 +2,7 @@
 
 
 enum PrecipType {
-	Rain, Snow, Sleet
+	Rain, Snow, Sleet, Drizzle
 };
 
 struct Weather {
