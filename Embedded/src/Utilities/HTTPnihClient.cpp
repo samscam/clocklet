@@ -4,12 +4,21 @@
 #define TAG "HTTPNIH"
 #define MAX_REDIRECT_DEPTH 10
 
+extern const uint8_t rootca_crt_bundle_start[] asm("_binary_data_cert_x509_crt_bundle_bin_start");
+
 HTTPnihClient::HTTPnihClient(){
+    ESP_LOGV(TAG,"Starting HTTPnihClient");
     _httpClient = new HTTPClient();
+    _httpClient->setFollowRedirects(HTTPC_STRICT_FOLLOW_REDIRECTS);
+    _httpClient->setRedirectLimit(MAX_REDIRECT_DEPTH);
     _wifiClient = new WiFiClientSecure();
+    _wifiClient->setCACertBundle(rootca_crt_bundle_start);
+
+
 }
 
 HTTPnihClient::~HTTPnihClient(){
+    ESP_LOGV(TAG,"Removing HTTPnihClient");
     delete _httpClient;
     delete _wifiClient;
 }
@@ -31,8 +40,6 @@ int HTTPnihClient::get(const char *url, const char *certificate, Stream **stream
 
     if (certificate != NULL){
         _wifiClient->setCACert(certificate);
-    } else {
-        _wifiClient->setCACert(NULL);
     }
     
     ESP_LOGV(TAG, "BEGIN");
