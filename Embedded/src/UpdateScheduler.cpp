@@ -4,7 +4,7 @@
 
 #define TAG "UPDATES"
 
-UpdateScheduler::UpdateScheduler():Task("UpdateScheduler", 5000,  5){
+UpdateScheduler::UpdateScheduler():Task("UpdateScheduler", 20480,  5){
     this->setCore(0);
 }
 
@@ -52,7 +52,7 @@ void UpdateJob::update(int64_t startTime){
         retryCount = 0;
         return;
     }
-    
+    LOGMEM;
     // The update failed - try again - backoff at 10 seconds per retry
     retryCount++;
     nextUpdateTime = startTime + timeS_TO_MicroS(retryCount * 10);
