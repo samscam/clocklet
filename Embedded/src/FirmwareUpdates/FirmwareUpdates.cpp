@@ -158,16 +158,18 @@ bool FirmwareUpdates::_parseGithubReleases(Stream *stream, bool useStaging){
 
     // Compare that to the local version
     // Bail unless an update is needed
-    int comparison = semver_compare(local,latest);
-    if (comparison == 0) {
-        ESP_LOGI(TAG, "Local firmware is up to date");
-        return true;
-    } else if (comparison > 0) {
-        ESP_LOGI(TAG, "Local firmware is newer than latest - must be developing");
-        return true;
-    } else {
-        ESP_LOGI(TAG, "Latest is newer. Firmware update will be triggered");
-    }
+    #ifndef TEST_FORCE_UPDATE
+        int comparison = semver_compare(local,latest);
+        if (comparison == 0) {
+            ESP_LOGI(TAG, "Local firmware is up to date");
+            return true;
+        } else if (comparison > 0) {
+            ESP_LOGI(TAG, "Local firmware is newer than latest - must be developing");
+            return true;
+        } else {
+            ESP_LOGI(TAG, "Latest is newer. Firmware update will be triggered");
+        }
+    #endif
 
     // Fish out the binary url
     if (rel["assets"][0].isNull()){
