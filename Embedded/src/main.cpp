@@ -13,7 +13,7 @@
 
 #include "FirmwareUpdates/FirmwareUpdates.h"
 #include <Preferences.h>
-#include "Weather/Rainbows.h"
+
 
 #include "Loggery.h"
 
@@ -67,6 +67,11 @@ RTC_GPS gpsRTC = RTC_GPS();
 RTC_DS3231 ds3231 = RTC_DS3231();
 #endif
 
+// TimeSync
+TimeSync *timeSync;
+
+// Location
+
 #if defined(LOCATION_GPS)
 LocationSource locationSource = rtc;
 #else
@@ -83,11 +88,14 @@ LocationManager *locationManager;
 // DarkSky weatherClient = DarkSky();
 
 #include "weather/openweathermap.h"
-OpenWeatherMap weatherClient = OpenWeatherMap();
+OpenWeatherMap *weatherClient;
 
 // RAINBOWS
-
+#include "Weather/Rainbows.h"
 Rainbows rainbows;
+
+
+
 
 // Global Notification queues
 QueueHandle_t bluetoothConnectedQueue;
@@ -97,6 +105,10 @@ QueueHandle_t locationChangedQueue;
 QueueHandle_t networkChangedQueue;
 QueueHandle_t networkStatusQueue;
 QueueHandle_t firmwareUpdateQueue;
+
+// Firmware updater
+FirmwareUpdates *firmwareUpdates;
+
 
 UpdateScheduler updateScheduler = UpdateScheduler();
 
@@ -186,6 +198,7 @@ void setup() {
 
   WiFi.begin();
 
+
   locationManager = new LocationManager(locationChangedQueue);
 
   blueStuff = new BlueStuff(bluetoothConnectedQueue,prefsChangedQueue,networkChangedQueue,networkStatusQueue,locationManager);
@@ -193,11 +206,15 @@ void setup() {
 
 
   ClockLocation currentLocation = locationManager->getLocation();
-  weatherClient.weatherChangedQueue = weatherChangedQueue;
-  rainbows.setLocation(currentLocation);
-  weatherClient.setLocation(currentLocation);
-  weatherClient.setTimeHorizon(12);
 
+  weatherClient = new OpenWeatherMap();
+  weatherClient->weatherChangedQueue = weatherChangedQueue;
+
+  weatherClient->setLocation(currentLocation);
+  weatherClient->setTimeHorizon(12);
+  updateScheduler.addJob(weatherClient,hourly);
+
+  rainbows.setLocation(currentLocation);
 
   rtc.setTimeZone(currentLocation.timeZone);
 
@@ -218,19 +235,18 @@ void setup() {
   #endif
 
 
-  TimeSync *timeSync = new TimeSync(&ds3231, &rtc); // << deliberately leaking these here - should really go smart pointers
+  timeSync = new TimeSync(&ds3231, &rtc); // << deliberately leaking these here - should really go smart pointers
   timeSync->performUpdate();
+  updateScheduler.addJob(timeSync,hourly);
 
   // Start the internal RTC and NTP sync
   rtc.begin();
 
-  FirmwareUpdates *firmwareUpdates = new FirmwareUpdates(firmwareUpdateQueue);
+  // Firmware updatedr
+  firmwareUpdates = new FirmwareUpdates(firmwareUpdateQueue);
+  updateScheduler.addJob(firmwareUpdates,daily);
 
   // Start Update Scheduler
-  updateScheduler.addJob(&weatherClient,hourly);
-  updateScheduler.addJob(firmwareUpdates,daily);
-  updateScheduler.addJob(timeSync,hourly);
-
   updateScheduler.start();
 
 }
@@ -285,8 +301,8 @@ void loop() {
   xQueueReceive(weatherChangedQueue, &weatherDidChange, (TickType_t)0 );
   if (weatherDidChange){
     ESP_LOGI(TAG,"Weather did change");
-    display.setWeather(weatherClient.horizonWeather);
-    rainbows.setWeather(weatherClient.rainbowWeather);
+    display.setWeather(weatherClient->horizonWeather);
+    rainbows.setWeather(weatherClient->rainbowWeather);
   }
 
   // ... location
@@ -295,7 +311,7 @@ void loop() {
   if (locationDidChange){
     ESP_LOGI(TAG,"Location did change");
     ClockLocation location = locationManager->getLocation();
-    weatherClient.setLocation(location);
+    weatherClient->setLocation(location);
     rainbows.setLocation(location);
     rtc.setTimeZone(location.timeZone);
   }
