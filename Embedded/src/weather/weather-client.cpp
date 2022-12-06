@@ -1,15 +1,24 @@
 #include "weather-client.h"
 #include <esp_log.h>
 #include "../network.h"
-#include "../Utilities/HTTPnihClient.h"
+
 
 #define TAG "WEATHER"
 
+
+
 WeatherClient::WeatherClient() : UpdateJob() {
+
   ESP_LOGD(TAG,"Setting Default Weather");
   this->horizonWeather = defaultWeather;
   this->rainbowWeather = defaultWeather;
+
 };
+
+WeatherClient::~WeatherClient(){
+  ESP_LOGD(TAG,"Deallocating WeatherClient");
+  // delete nihClient;
+}
 
 bool WeatherClient::performUpdate(){
     return fetchWeather();

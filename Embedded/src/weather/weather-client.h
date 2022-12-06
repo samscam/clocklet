@@ -1,11 +1,10 @@
 #pragma once
 
-#include <HTTPClient.h>
-#include <WiFiClientSecure.h>
 #include <ArduinoJson.h>
 
 #include "network.h"
 #include "weather.h"
+#include "../Utilities/HTTPnihClient.h"
 #include "../Location/LocationSource.h"
 #include "../UpdateScheduler.h"
 
@@ -20,7 +19,7 @@ public:
   QueueHandle_t weatherChangedQueue;
 
   WeatherClient();
-  virtual ~WeatherClient() {};
+  ~WeatherClient();
 
   // Conformance to UpdateJob
   virtual bool performUpdate();
@@ -46,5 +45,6 @@ public:
   virtual bool readReponseContent(Stream *stream) { return false; };
   
 private:
+
 
 };
