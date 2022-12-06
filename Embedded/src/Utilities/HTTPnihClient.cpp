@@ -61,31 +61,13 @@ int HTTPnihClient::get(const char *url, const char *certificate, Stream **stream
         return httpCode;
     }
 
-    ESP_LOGV(TAG, "nonNegative status");
-
-    ESP_LOGV(TAG, "Redirects");
-    // Handle redirects
-    if (httpCode >= 300 && httpCode < 400 ){
-        if (_httpClient->hasHeader("Location")) {
-            String redirectLocation = _httpClient->header("Location");
-            _httpClient->end();
-            delete _wifiClient;
-            _wifiClient = new WiFiClientSecure();
-            ESP_LOGI(TAG, "Redirecting %d: %s",httpCode, redirectLocation.c_str());
-            return get(redirectLocation.c_str(), certificate, &*stream, depth++);
-        } else {
-            ESP_LOGE(TAG, "%d status code but no redirect location", httpCode);
-
-            return HTTPNIH_NO_REDIRECT_DESTINATION;
-        }
-    }
-    ESP_LOGV(TAG, "TWO HUNDRED");
     // Handle other non-200 status codes
     if (httpCode != 200){
         ESP_LOGE(TAG, "Bailing out due to %d status code", httpCode);
         return httpCode;
     }
 
+    ESP_LOGV(TAG, "TWO HUNDRED");
     *stream = _wifiClient;
     return 200;
 
