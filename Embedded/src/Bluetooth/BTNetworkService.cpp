@@ -52,7 +52,7 @@ void NetworkScanTask::_performWiFiScan(){
 
 
     for (int i=0;(i<networkCount && i<MAX_NETS);i++){
-        StaticJsonDocument<512> doc;
+        StaticJsonDocument<1024> doc;
         NetworkInfo netInfo = {0};
         netInfo.index = i;
 
@@ -61,8 +61,8 @@ void NetworkScanTask::_performWiFiScan(){
         ESP_LOGI(TAG,"Found %s (ch %d rssi %d)\n",netInfo.ssid.c_str(),netInfo.channel,netInfo.rssi);
 
         _encodeNetInfo(doc,netInfo);
-        char buffer[512];
-        size_t len = serializeJson(doc,buffer,512);
+        char buffer[1024];
+        size_t len = serializeJson(doc,buffer,1024);
 
         ch_availableNetworks->setValue((uint8_t*)buffer,len);
         ch_availableNetworks->notify(true);
