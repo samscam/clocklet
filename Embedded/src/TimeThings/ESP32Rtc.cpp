@@ -37,7 +37,6 @@ void RTC_ESP32::setTimeZone(const char* newTimeZone){
   const char* posixCode = nullptr;
   int x;
   for(x=0;x<zonesLength;x=x+2){
-    ESP_LOGV(TAG, "... Matching %s",zones[x]);
     if (strcmp(zones[x],newTimeZone) == 0){
       posixCode = zones[x+1];
       break;
