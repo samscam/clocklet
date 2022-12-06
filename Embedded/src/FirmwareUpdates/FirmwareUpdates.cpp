@@ -31,18 +31,20 @@ bool FirmwareUpdates::performUpdate(){
     
     FirmwareUpdateStatus fwUpdateStatus = idle;
 
-    Preferences preferences = Preferences();
-    preferences.begin("clocklet", true);
-    bool staging = preferences.getBool("staging",false);
-    bool enabled = preferences.getBool("autoUpdates",true);
-    preferences.end();
+    Preferences *preferences = new Preferences();
+    preferences->begin("clocklet", true);
+    bool staging = preferences->getBool("staging",false);
+    bool enabled = preferences->getBool("autoUpdates",true);
+    preferences->end();
+    delete preferences;
 
     if (!enabled){
         ESP_LOGI(TAG,"Firmware updates are disabled");
         return true;
     }
 
-    if (checkForUpdates(staging)){        if (updateAvailable){
+    if (checkForUpdates(staging)){
+        if (updateAvailable){
             fwUpdateStatus = updating;
             xQueueSend(_firmwareUpdateQueue, &fwUpdateStatus,(TickType_t)0 );
             if (startUpdate()){
@@ -105,6 +107,7 @@ bool FirmwareUpdates::checkForUpdates(bool useStaging) {
 
 bool FirmwareUpdates::_parseGithubReleases(Stream *stream, bool useStaging){
     // Parse JSON object
+
 
 
     #if defined(CLOCKBRAIN)
