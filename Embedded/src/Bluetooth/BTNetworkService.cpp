@@ -226,13 +226,10 @@ void BTNetworkService::_updateCurrentNetwork(){
     doc["ip"]=WiFi.localIP().toString();
     doc["rssi"]=WiFi.RSSI();
 
-    String outputStr = "";
-    serializeJson(doc,outputStr);
-    uint len = outputStr.length()+1;
-    uint8_t json[len];
-    outputStr.getBytes(json,len);
 
-    ch_currentNetwork->setValue(json,len);
+    std::string outputStr;
+    serializeJson(doc,outputStr);
+    ch_currentNetwork->setValue(outputStr);
     ch_currentNetwork->notify(true);
 }
 

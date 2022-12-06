@@ -80,13 +80,8 @@ void BTLocationService::onRead(NimBLECharacteristic* pCharacteristic) {
     locDoc["placeName"] = location.placeName;
     locDoc["timeZone"] = location.timeZone;
 
-    String outputStr = "";
+    std::string outputStr;
     serializeJson(locDoc,outputStr);
-    size_t len = outputStr.length()+1;
-    uint8_t json[len];
-    outputStr.getBytes(json,len);
-    ESP_LOGD(TAG,"%s",json);
-
-    pCharacteristic->setValue(json,len);
+    pCharacteristic->setValue(outputStr);
 
 }
