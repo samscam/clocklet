@@ -69,7 +69,7 @@ Weather OpenWeatherMap::_parseWeatherBlock(JsonObject block){
   Weather result = defaultWeather;
 
   result.type = block["weather"]["id"];
-  result.summary = block["weather"]["description"];
+  // result.summary = block["weather"]["description"];
 
 
   result.precipChance = block["pop"];
