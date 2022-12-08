@@ -48,11 +48,12 @@ struct LocationDetailsView: View {
             }
 
             Spacer()
-            
-            Button("Set to current location"){
-                    self.viewModel.setCurrentLocation()
-                }
-            .buttonStyle(RoundyButtonStyle()).frame(maxWidth:.infinity)
+            Button {
+                viewModel.setCurrentLocation()
+            } label: {
+                Text("Set to current location").frame(maxWidth:.infinity)
+            }.buttonStyle(RoundyButtonStyle())
+
             
             Spacer()
             

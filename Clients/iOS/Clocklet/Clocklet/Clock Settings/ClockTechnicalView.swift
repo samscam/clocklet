@@ -60,10 +60,7 @@ struct ClockTechnicalView: View {
                     }){
                         Text("Reboot")
                             .accentColor(Color(.systemBackground))
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Capsule().fill(Color.orange))
-                    }
+                    }.buttonStyle(RoundyButtonStyle()).accentColor(.orange)
                     Text("Clocklet will reboot. The app should reconnect once it has started.").fixedSize(horizontal: false, vertical: true)
                     
                     Spacer()
@@ -82,7 +79,7 @@ struct ClockTechnicalView: View {
                                                 self.technicalService.reset = .factoryReset
                                             },
                               secondaryButton: Alert.Button.cancel())
-                    }
+                    }.buttonStyle(RoundyButtonStyle()).accentColor(.red)
                     
                     Text("Factory reset will erase everything including bluetooth pairing information. You will have to go into your phone's bluetooth settings afterwards and delete the entry for the Clocklet.").fixedSize(horizontal: false, vertical: true)
                 }

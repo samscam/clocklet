@@ -13,9 +13,17 @@ struct RoundyButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .font(.headline)
+            .frame(maxWidth:.infinity)
             .foregroundColor(.white)
             .padding()
-            .background(Capsule().fill(Color.accentColor))
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color.accentColor)
+                    .shadow(color: .primary.opacity(0.33), radius: configuration.isPressed ? 1.5 : 2)
+            )
+            .scaleEffect(configuration.isPressed ? 0.95 : 1)
+            .animation(.easeIn(duration: 0.1), value: configuration.isPressed)
         
     }
     
