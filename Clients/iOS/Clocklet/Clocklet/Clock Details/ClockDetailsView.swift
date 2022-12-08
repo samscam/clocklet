@@ -96,16 +96,11 @@ struct ClockDetailsView: View {
                                     
                                 }
                         Text(clock.state.description).bold()
-                        Spacer()
-                        if let lastErrorDescription = clock.state.lastErrorDescription {
-                            Text(lastErrorDescription).lineLimit(nil).fixedSize(horizontal: false, vertical: true)
-                        }
                     }.padding().frame(maxWidth: .infinity)
 
                 case .disconnected(let error):
                     if let error = error {
-                        Text(error.localizedDescription).lineLimit(nil).fixedSize(horizontal: false, vertical: true)
-                        Spacer()
+                        ErrorView(error: error)
                     }
                     Button("Reconnect") {
                         self.clock.connect()
@@ -124,6 +119,28 @@ struct ClockDetailsView: View {
     }
 }
 
+struct ErrorView: View {
+    let error: Error
+    var body: some View {
+        HStack(spacing:10){
+            Image(systemName: "exclamationmark.triangle").resizable().scaledToFit().frame(maxWidth:50)
+            Text(error.localizedDescription)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth:.infinity)
+                
+        }.padding()
+            .background(
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(Color.init(hue: 0.12, saturation: 0.6, brightness: 1))
+                    
+            )
+            .padding()
+        
+        Spacer(minLength:30)
+    }
+}
+
 extension ContentSizeCategory{
     static func allCases() -> [ContentSizeCategory]{
         return self.allCases
@@ -131,9 +148,16 @@ extension ContentSizeCategory{
 }
 
 struct ClockDetailsView_Previews: PreviewProvider {
+    enum RandomError: Error{
+        case random
+        var localizedDescription: String { return "Some random error" }
+        
+    }
+
     static let clock: Clock = {
         let clock = Clock("Foop",.tequilla)
         clock.hwRev = 5
+        clock.state = .disconnected(error: RandomError.random)
         return clock
     }()
     
@@ -199,15 +223,6 @@ extension ConnectionState: CustomStringConvertible {
         case .connected: return "Connected"
         case .connecting: return "Connecting"
         case .disconnected: return "Disconnected"
-        }
-    }
-    
-    public var lastErrorDescription: String? {
-        switch self {
-        case .connected, .connecting:
-            return nil
-        case .disconnected(let error):
-            return error?.localizedDescription
         }
     }
 }
