@@ -37,7 +37,7 @@ struct AvailableNetworksView: View {
             }
 
         }
-
+        
     }
 }
 
@@ -87,7 +87,6 @@ struct AvailableNetworkView: View {
             
             Text(network.ssid).font(.headline).bold().lineLimit(2)
             
-            Text("\(network.rssi)")
             Spacer()
             
             encryptionIcon(enctype: network.enctype).resizable().scaledToFit().frame(width: 30, height: 40, alignment: .center)
@@ -127,6 +126,8 @@ struct AvailableNetworksView_Previews: PreviewProvider {
     }
     
     static var previews: some View {
-        AvailableNetworksView().environmentObject(fakeNetworkService)
+        VStack{
+            AvailableNetworksView().environmentObject(fakeNetworkService)
+        }
     }
 }
