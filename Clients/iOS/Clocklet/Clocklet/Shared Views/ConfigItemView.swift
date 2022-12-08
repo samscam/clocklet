@@ -30,7 +30,11 @@ struct ConfigItemView<Content:View>: View {
             Spacer()
             HStack(alignment: .center,spacing:10){
                 
-                icon.resizable().scaledToFit().frame(maxWidth: 40, alignment: .center).foregroundColor(self.iconColor ?? Color("Black-ish"))
+                icon
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 40, height: 40, alignment: .center)
+                    .foregroundColor(self.iconColor ?? Color("Black-ish"))
                 Text(title).font(.title).bold().lineLimit(4).foregroundColor(Color("Black-ish"))
                 Spacer()
                 if (disclosure){
