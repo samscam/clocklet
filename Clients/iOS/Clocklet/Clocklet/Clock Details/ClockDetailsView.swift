@@ -15,6 +15,7 @@ struct ClockDetailsView: View {
     
     @EnvironmentObject var clock: Clock
     @State var showLocationDetails: Bool = false
+    @State var animating: Bool = false
     
     var body: some View {
         ScrollView{
@@ -84,9 +85,16 @@ struct ClockDetailsView: View {
                             Image(systemName:clock.state.iconSystemName)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
-                                .frame(width: 100, height: 100, alignment: .leading)
+                                .frame(width: 200, height: 200, alignment: .center)
                                 .foregroundColor(clock.state.color)
-                                .scaleEffect(clock.state == .connecting ? 0.8 : 1)
+                                .scaleEffect(animating ? 0.5 : 1)
+                                .task{
+                                    withAnimation(.linear(duration: 0.5)
+                                        .repeatForever(autoreverses: true)) {
+                                            animating.toggle()
+                                    }
+                                    
+                                }
                         Text(clock.state.description).bold()
                         Spacer()
                         if let lastErrorDescription = clock.state.lastErrorDescription {
