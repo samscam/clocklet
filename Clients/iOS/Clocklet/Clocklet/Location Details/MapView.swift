@@ -19,6 +19,11 @@ struct MapView: UIViewRepresentable {
     func updateUIView(_ uiView: MKMapView, context: Context) {
         uiView.isScrollEnabled = false
         uiView.isZoomEnabled = false
+        if #available(iOS 16.0, *) {
+            uiView.preferredConfiguration = MKStandardMapConfiguration(emphasisStyle: .muted)
+        } else {
+            // Fallback on earlier versions
+        }
         let span = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
        let region = MKCoordinateRegion(center: coordinate, span: span)
         uiView.setRegion(region, animated: true)

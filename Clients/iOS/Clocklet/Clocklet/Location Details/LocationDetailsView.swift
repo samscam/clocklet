@@ -15,7 +15,6 @@ import Combine
 struct LocationDetailsView: View {
     
     @EnvironmentObject var viewModel: LocationDetailsViewModel
-    @EnvironmentObject var clock: Clock
      
     static let popularLocations: [ClockLocation] = [
         .manchester,.newYork,.london,.paris,.munich,.sanfrancisco,.melbourne,.chatham,.mumbai,.helipark,.northPole,.southPole,.nullIsland
@@ -29,9 +28,14 @@ struct LocationDetailsView: View {
             
                 ZStack{
                     
-                    // Some flip-flop here - tried using SwiftUI's Map - but it produces nasty runtime errors
-                    MapView(coordinate: viewModel.currentLocation.coordinate)
+                    // Some flip-flop here - tried using SwiftUI's Map - but it produces runtime errors
                     
+//                    Map(coordinateRegion: $viewModel.region ?? MKCoordinateRegion(), interactionModes: MapInteractionModes(), showsUserLocation: true)
+//                        .opacity(1.0)
+                        
+
+                    MapView(coordinate: viewModel.currentLocation.coordinate)
+
                     viewModel.currentLocation.placeName.map{ placeName in
                         VStack(alignment: .center){
                         HStack(alignment:.top){
@@ -42,6 +46,8 @@ struct LocationDetailsView: View {
                     }
                 }.frame(height: 200)
                     .cornerRadius(20)
+                    .shadow(radius: 3)
+                    .blendMode(.luminosity)
 
             
                 Spacer()
@@ -57,11 +63,10 @@ struct LocationDetailsView: View {
             
             Spacer()
             
-            ConfigItemView(icon: Image(systemName: "globe"), title: "Popular Locations") {
-                
+            ConfigItemView(icon: Image(systemName: "globe"), title: "Exciting Locations") {
                 ForEach(LocationDetailsView.popularLocations) { (place) in
                     PlaceRowView(place: place)
-                }.listStyle(PlainListStyle())
+                }
             }
         }.padding()
         }
@@ -73,12 +78,10 @@ struct PlaceRowView: View {
     @EnvironmentObject var viewModel: LocationDetailsViewModel
     let place: ClockLocation
     var body: some View {
-        HStack {
             Button(place.placeName ?? "Where?") {
-                self.viewModel.setLocation(self.place)
+                viewModel.setLocation(self.place)
             }.buttonStyle(RoundyButtonStyle()).accentColor(.purple)
             
-        }
     }
 }
 

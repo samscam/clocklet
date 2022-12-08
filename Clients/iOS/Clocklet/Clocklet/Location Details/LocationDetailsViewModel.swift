@@ -36,7 +36,7 @@ class LocationDetailsViewModel: ObservableObject {
         $currentLocation.map{ [$0] }.assign(to: \.annotations, on: self).store(in: &bag)
         
         $currentLocation.map{ currentLocation in
-            MKCoordinateRegion(center: currentLocation.coordinate, latitudinalMeters: 5000, longitudinalMeters: 5000) }
+            MKCoordinateRegion(center: currentLocation.coordinate, latitudinalMeters: 3000, longitudinalMeters: 3000) }
             .assign(to: \.region, on: self)
             .store(in: &bag)
         
@@ -62,7 +62,10 @@ struct PopularPlace: Identifiable, Hashable{
 }
 
 extension ClockLocation {
-    var coordinate: CLLocationCoordinate2D { return CLLocationCoordinate2D(latitude: lat ?? 0, longitude: lng ?? 0)}
+    var coordinate: CLLocationCoordinate2D {
+        get {CLLocationCoordinate2D(latitude: lat ?? 0, longitude: lng ?? 0)}
+        set {}
+    }
 }
 
 extension ClockLocation: Identifiable{
