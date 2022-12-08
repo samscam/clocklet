@@ -19,6 +19,7 @@ struct ClockTechnicalView: View {
         ScrollView{
         VStack(alignment:.leading){
             Spacer()
+            
             VStack(alignment:.leading){
                 if let model = deviceInfoService.model {
                     HStack{
@@ -70,9 +71,7 @@ struct ClockTechnicalView: View {
                     }){
                         Text("Factory Reset")
                             .accentColor(Color(.systemBackground))
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Capsule().fill(Color.red))
+                            
                     }.alert(isPresented: $showingResetAlert) { () -> Alert in
                         Alert(title: Text("Are you sure you want to do a factory reset?"),
                               primaryButton: Alert.Button.destructive(Text("Yes. Nuke from orbit!")){
@@ -105,3 +104,27 @@ struct ClockTechnicalView: View {
     }
 }
 
+
+struct ClockTechnicalView_Previews: PreviewProvider {
+    
+    static let technicalService: TechnicalService = {
+        let technicalService = TechnicalService()
+        technicalService.autoUpdates = false
+        return technicalService
+    }()
+    
+    static let deviceInfoService: DeviceInfoService = {
+        let deviceInfo = DeviceInfoService()
+        deviceInfo.firmwareVersion = "1.2.3"
+        deviceInfo.serialNumber = "42"
+        deviceInfo.model = "12345"
+        return deviceInfo
+    }()
+    
+    static var previews: some View {
+        ClockTechnicalView()
+            .environmentObject(technicalService)
+            .environmentObject(deviceInfoService)
+        
+    }
+}
