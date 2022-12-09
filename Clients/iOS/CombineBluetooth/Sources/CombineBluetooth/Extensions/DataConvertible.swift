@@ -67,6 +67,7 @@ extension RawRepresentable where Self:DataConvertible, RawValue: DataConvertible
     }
 }
 
+// Can't remember why this is commented out but it's interesting!
 //extension Optional: DataConvertible where Wrapped: DataConvertible{
 //    public init?(data: Data) {
 //        if let w = Wrapped.init(data: data){
@@ -91,8 +92,6 @@ public extension DataConvertible where Self: JSONCharacteristic {
     init?(data: Data){
         let decoder = JSONDecoder()
         do {
-            print("Decoding JSON:")
-            print(String(data: data, encoding: .utf8) ?? "No data")
             self = try decoder.decode(Self.self, from: data)
         } catch {
             print(error)
