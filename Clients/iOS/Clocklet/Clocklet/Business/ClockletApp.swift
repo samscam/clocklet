@@ -11,7 +11,7 @@ import CombineBluetooth
 
 @main
 struct ClockletApp: App{
-    let clockList = ClockList(central:Central())
+    let clockList = ClockListViewModel(central:Central())
     
     var body: some Scene {
         WindowGroup{ ClockListView().environmentObject(clockList)

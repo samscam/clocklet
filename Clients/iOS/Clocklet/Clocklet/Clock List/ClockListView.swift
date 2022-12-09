@@ -17,7 +17,7 @@ import CoreBluetooth
 
 
 struct ClockListView: View {
-    @EnvironmentObject var clockList: ClockList
+    @EnvironmentObject var clockList: ClockListViewModel
     @State var blurMainView: Bool = false
     
     
@@ -74,7 +74,7 @@ struct ClockListView: View {
 }
 
 struct ScanningView: View{
-    @EnvironmentObject var clockList: ClockList
+    @EnvironmentObject var clockList: ClockListViewModel
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
     
@@ -104,8 +104,8 @@ struct ScanningView: View{
 struct ClockListView_Previews: PreviewProvider {
     
     
-    static let clockList: ClockList = {
-        let clockList = ClockList(central:nil)
+    static let clockList: ClockListViewModel = {
+        let clockList = ClockListViewModel(central:nil)
         clockList.bluetoothState = .poweredOn
         clockList.isScanning = false
         clockList.clocks = [

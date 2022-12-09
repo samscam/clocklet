@@ -15,7 +15,7 @@ import CoreBluetooth
 
 
 
-class ClockList: ObservableObject {
+class ClockListViewModel: ObservableObject {
     
     @Published var bluetoothStatusViewModel: BluetoothStatusViewModel?
     
@@ -49,7 +49,7 @@ class ClockList: ObservableObject {
     }
     
     deinit{
-        print("ClockListViewmodel deinit")
+        print("ClockListViewModel deinit")
     }
     
     func startScanning(){
