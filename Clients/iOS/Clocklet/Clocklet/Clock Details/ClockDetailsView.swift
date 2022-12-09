@@ -33,7 +33,7 @@ struct ClockDetailsView: View {
                         Text("Fetching details...").font(.largeTitle)
                     case .notConfigured:
                         
-                        ClockConfigurator().environmentObject(clock)
+                        ClockConfiguratorView().environmentObject(clock)
                         
                         
                     case .configured:

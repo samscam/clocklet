@@ -1,5 +1,5 @@
 //
-//  ClockConfigurator.swift
+//  ClockConfiguratorView.swift
 //  Clocklet
 //
 //  Created by Sam Easterby-Smith on 08/12/2022.
@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct ClockConfigurator: View {
+struct ClockConfiguratorView: View {
     @EnvironmentObject var clock: Clock
     
     var body: some View {
@@ -46,6 +46,6 @@ struct ClockConfigurator: View {
 
 struct ClockConfigurator_Previews: PreviewProvider {
     static var previews: some View {
-        ClockConfigurator().environmentObject(Clock("What?"))
+        ClockConfiguratorView().environmentObject(Clock("What?"))
     }
 }
