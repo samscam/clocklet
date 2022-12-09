@@ -663,7 +663,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = uk.co.spotlightkid.clocklet;
 				PRODUCT_NAME = Clocklet;
 				SUPPORTS_MACCATALYST = YES;
@@ -689,7 +688,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = uk.co.spotlightkid.clocklet;
 				PRODUCT_NAME = Clocklet;
 				SUPPORTS_MACCATALYST = YES;
