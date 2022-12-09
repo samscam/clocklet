@@ -81,7 +81,7 @@ bool FirmwareUpdates::checkForUpdates(bool useStaging) {
 
     const char *url;
     if (useStaging){
-        url = "https://api.github.com/repos/samscam/clocklet/releases";
+        url = "https://api.github.com/repos/samscam/clocklet/releases?page=1&per_page=1";
     } else {
         url = "https://api.github.com/repos/samscam/clocklet/releases/latest";
     }
