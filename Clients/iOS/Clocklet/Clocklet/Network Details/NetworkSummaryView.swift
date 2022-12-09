@@ -182,11 +182,11 @@ struct NetworkSummaryView: View {
             disclosure: true) {
             
             Group{
-                if (self.viewModel.isConfigured == ConfigState.notConfigured){
+                if (viewModel.isConfigured == ConfigState.notConfigured){
                     Text("Configure Network").lozenge()
                 } else {
-                    if (self.viewModel.errorMessage != nil){
-                        Text(self.viewModel.errorMessage!).foregroundColor(viewModel.color)
+                    if (viewModel.errorMessage != nil){
+                        Text(viewModel.errorMessage!).foregroundColor(viewModel.color)
                     }
                 }
             }

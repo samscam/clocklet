@@ -28,7 +28,7 @@ struct ConfigItemView<Content:View>: View {
     var body: some View{
         VStack(alignment: .leading, spacing: 10) {
             Spacer()
-            HStack(alignment: .center,spacing:10){
+            HStack(alignment: .center ,spacing:10){
                 
                 icon
                     .resizable()

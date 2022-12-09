@@ -46,7 +46,7 @@ struct ClockListView: View {
                     }
                     .onAppear {
                         print("Clocklist onAppear")
-                        // self.clockList.disconnectAllDevices()
+                        self.clockList.disconnectAllDevices()
                         self.clockList.startScanning()
                     }.onDisappear(){
                         print("Clocklist onDisappear")
