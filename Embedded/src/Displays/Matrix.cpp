@@ -811,7 +811,7 @@ void Matrix::addRain( fract8 chanceOfRain, CRGB colour)
   for (int col=0;col<COLUMNS;col++){
     for (int row=0;row<ROWS;row++){
       if (rainDrops[row][col]){
-        rainLayer[ XY(col,row) ] = colour;
+        rainLayer[ XYsafe(col,row) ] = colour;
       }
     }
   }
@@ -853,7 +853,7 @@ void Matrix::addSnow( fract8 chanceOfSnow ) {
   for (int col=0;col<COLUMNS;col++){
     for (int row=0;row<ROWS;row++){
       if (rainDrops[row][col]){
-        rainLayer[ XY(col,row) ] = CRGB::White;
+        rainLayer[ XYsafe(col,row) ] = CRGB::White;
       }
     }
   }
