@@ -68,13 +68,14 @@ bool OpenWeatherMap::readReponseContent(Stream *stream) {
 Weather OpenWeatherMap::_parseWeatherBlock(JsonObject block){
   Weather result = defaultWeather;
 
-  result.type = block["weather"]["id"];
+  result.type = block["weather"][0]["id"];
   // result.summary = block["weather"]["description"];
 
 
   result.precipChance = block["pop"];
 
-  result.precipIntensity = block["rain"]["1h"]; // or snow
+  
+  result.precipIntensity = max(block["rain"]["1h"],block["snow"]["1h"]);
   result.precipType = Rain;
 
   // THUNDER!!
