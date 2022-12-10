@@ -74,8 +74,10 @@ Weather OpenWeatherMap::_parseWeatherBlock(JsonObject block){
 
   result.precipChance = block["pop"];
 
-  
-  result.precipIntensity = max(block["rain"]["1h"],block["snow"]["1h"]);
+  float rainIntensity = block["rain"]["1h"];
+  float snowIntensity = block["snow"]["1h"];
+
+  result.precipIntensity = max(rainIntensity,snowIntensity);
   result.precipType = Rain;
 
   // THUNDER!!
