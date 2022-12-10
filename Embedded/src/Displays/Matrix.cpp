@@ -115,19 +115,19 @@ void Matrix::setDeviceState(DeviceState newState){
 void Matrix::graphicsTest(){
   setBrightness(1);
   
-  // // Red
+  // Red
   fill_solid(leds, NUM_LEDS, CRGB::Red);
   // displayString("Red");
   FastLED.show();
   delay(500);
 
-  // // Green
+  // Green
   fill_solid(leds, NUM_LEDS, CRGB::Green);
   // displayString("Green");
   FastLED.show();
   delay(500);
 
-  // // Blue
+  // Blue
   fill_solid(leds, NUM_LEDS, CRGB::Blue);
   // displayString("Blue");
   FastLED.show();
@@ -142,7 +142,7 @@ void Matrix::graphicsTest(){
   TickType_t xLastWakeTime = xTaskGetTickCount();
   TickType_t xFrequency = pdMS_TO_TICKS(1000/FPS);
 
-  // // Rainbow
+  // Rainbow
 
   ulong startMillis = millis();
   uint8_t position = 0;
@@ -153,8 +153,7 @@ void Matrix::graphicsTest(){
     vTaskDelayUntil(&xLastWakeTime, xFrequency);
 
   }
-/*
-  xFrequency = pdMS_TO_TICKS(1000/10);
+
   // Temperature gradients
   for (float f = -10; f<41; f+=0.1){
       CRGB colour = colourFromTemperature((float)f);
@@ -163,8 +162,7 @@ void Matrix::graphicsTest(){
       vTaskDelayUntil(&xLastWakeTime, xFrequency);
   }
 
-  // Rain
-
+  // Heatwave
   xFrequency = pdMS_TO_TICKS(1000/FPS);
   CRGBPalette256 pal;
   
@@ -180,8 +178,8 @@ void Matrix::graphicsTest(){
     vTaskDelayUntil(&xLastWakeTime, xFrequency);
   }
 
-  // RAIN
-  fract8 rate = 50;
+  // Rainbow RAIN
+  fract8 rate = 0;
   bool done = false;
   uint8_t hue = 0;
   startMillis = millis();
@@ -193,8 +191,37 @@ void Matrix::graphicsTest(){
 
     FastLED.show();
     vTaskDelayUntil(&xLastWakeTime, xFrequency);
+    rate++;
   }
-*/
+
+  // Drizzle
+  rate = 0;
+  startMillis = millis();
+  while (millis()-startMillis < 20000){
+    fill_solid(leds, NUM_LEDS, CRGB::Black);
+
+    addDrizzle(rate,CRGB::Blue);
+    hue++;
+
+    FastLED.show();
+    vTaskDelayUntil(&xLastWakeTime, xFrequency);
+    rate++;
+  }
+
+
+  // Snow
+  startMillis = millis();
+  rate = 0;
+  while (millis()-startMillis < 10000){
+    fill_solid(leds, NUM_LEDS, CRGB::Black);
+
+    addSnow(rate);
+    hue++;
+
+    FastLED.show();
+    vTaskDelayUntil(&xLastWakeTime, xFrequency);
+    rate++;
+  }
 }
 
 // PRIVATE

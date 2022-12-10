@@ -8,19 +8,9 @@ void runTests(){
 }
 
 void displayTests(Display *display){
-    while(1){
-        display->graphicsTest();
-    }
-    
-
- 
-
-    // display->displayMessage("Clocklet wants a bagel", rando);
-    // delay(1000);
-    // display->displayMessage("CLOCKLET WANTS A FUCKING BAGEL", rando);
-
+    display->displayMessage("Test time!", rando);
+    display->graphicsTest();
     runFast(display);
-    
 }
 
 
