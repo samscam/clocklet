@@ -129,6 +129,8 @@ private:
 
   void addRain( fract8 chanceOfRain, CRGB colour);
   void addSnow( fract8 chanceOfSnow );
+  void addDrizzle( fract8 drizzleIntensity, CRGB colour);
+  
   void addLightening();
   void addFrost();
 

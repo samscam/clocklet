@@ -447,17 +447,17 @@ void Matrix::displayTime(const DateTime& time, Weather weather){
 
   if (rainChance > 0) {
     switch (weather.precipType) {
-      case Snow:
-        addSnow(rainChance);
-        break;
       case Drizzle:
-        addRain(rainChance, CRGB::Blue);
+        addDrizzle(rainChance, CRGB::Blue);
         break;
       case Rain:
         addRain(rainChance, CRGB::Blue);
         break;
       case Sleet:
         addRain(rainChance, CRGB::Gray);
+        break;
+      case Snow:
+        addSnow(rainChance);
         break;
     }
   }
@@ -726,6 +726,33 @@ void Matrix::fillDigits_gradient(CRGB startColour, CRGB endColour, uint16_t star
   fill_gradient_RGB(leds , 0,  startColour, NUM_LEDS, endColour);
 
 }
+
+// Drizzle
+
+void Matrix::addDrizzle( fract8 drizzleIntensity, CRGB colour)
+{
+  // Fade down previous drops
+  nscale8(rainLayer,NUM_LEDS,180);
+  
+  rainFrame++;
+  // Render the leading droplets into the layer
+  for (int col=0;col<COLUMNS;col++){
+    for (int row=0;row<ROWS;row++){
+      if (random8() < (drizzleIntensity * 0.05 ))
+        rainLayer[ XYsafe(col,row) ] = colour;
+    }
+  }
+  
+  // Fade the background colours on the main layer down
+  nscale8_video(leds, NUM_LEDS, 255 - (drizzleIntensity * 0.2));
+
+  // And composite on the raindrops
+  for(int i = 0; i < NUM_LEDS; i++) {
+    leds[i].nscale8(255-(rainLayer[i].b * 0.6));
+    leds[i] += rainLayer[i] ; 
+  }
+}
+
 
 // Rain (also sleet)
 
