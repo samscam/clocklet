@@ -888,8 +888,10 @@ void Matrix::addFrost(){
 // Lightening
 
 void Matrix::addLightening(){
+  
+  fill_solid(lighteningLayer, NUM_LEDS, CRGB::Black);
   for(int i = 0; i < NUM_LEDS; i++) {
-    lighteningLayer[i].nscale8(210);
+    lighteningLayer[i].nscale8(120);
   }
   if(random8() == 1) {
     fill_solid(lighteningLayer, NUM_LEDS, CRGB::White);
