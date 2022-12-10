@@ -17,7 +17,7 @@
 
 #include "Loggery.h"
 
-#include "rom/uart.h"
+#include <rom/uart.h>
 #include <soc/efuse_reg.h>
 
 #include "TimeThings/TimeSync.h"
@@ -35,7 +35,7 @@ RGBDigit display = RGBDigit();
 
 #elif defined(MATRIX)
 
-#include "Displays/Matrix.h"
+#include "Displays/Matrix/Matrix.h"
 Matrix display = Matrix();
 
 #elif defined(EPAPER)

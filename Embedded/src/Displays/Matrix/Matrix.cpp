@@ -1,10 +1,10 @@
 #if defined(MATRIX)
 
 #include "Matrix.h"
-#include <Fonts/MatrixFont.h>
-#include "../settings.h"
+#include "Fonts/MatrixFont.h"
+#include "settings.h"
 #include "MatrixUtils.h"
-#include "../TimeThings/TimeUtils.h"
+#include "TimeThings/TimeUtils.h"
 
 #include <esp_log.h>
 #define TAG "MATRIX"
