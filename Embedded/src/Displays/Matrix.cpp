@@ -425,9 +425,7 @@ void Matrix::displayTime(const DateTime& time, Weather weather){
   fract8 rainChance = (precip * 255) / 80.0;
 
 
-  if (minTmp <= 0.0f){
-    addFrost();
-  }
+
 
   _blinkColon = BLINK_SEPARATOR ? (time.second() % 2) == 0 : true;
 
@@ -489,6 +487,9 @@ void Matrix::displayTime(const DateTime& time, Weather weather){
     }
   }
 
+  if (minTmp <= 0.0f){
+    addFrost();
+  }
 
   if (weather.thunder){
     addLightening();
@@ -870,19 +871,18 @@ void Matrix::addSnow( fract8 chanceOfSnow ) {
 // Frost
 
 void Matrix::addFrost(){
-  // CRGB frostLayer[NUM_LEDS];
-  // fill_solid(frostLayer, NUM_LEDS, CRGB::Black);
-  // // We want the bottom row and the next one up...
+  CRGB frostLayer[NUM_LEDS];
+  fill_solid(frostLayer, NUM_LEDS, CRGB::Black);
+  // We want the bottom row and the next one up...
 
-  // for (int d = 0; d < NUM_DIGITS; d++){
-  //   // ESP_LOGI(TAG,((d*8) + 3);
+  for (int col=0;col<COLUMNS;col++){
+    frostLayer[ XYsafe(col,4) ] = CHSV(0,0,60);
+    frostLayer[ XYsafe(col,3)] = CHSV(0,0,30);
+  }
 
-  //   frostLayer[ (d*8) + 3 ] = CHSV(0,0,200);
-  //   frostLayer[ (d*8) + 2 ] = CHSV(0,0,90);
-  //   frostLayer[ (d*8) + 4 ] = CHSV(0,0,90);
-  // }
-
-  // for(int i = 0; i < NUM_LEDS; i++) { leds[i] += frostLayer[i] ; }
+  for(int i = 0; i < NUM_LEDS; i++) { 
+    leds[i] += frostLayer[i] ; 
+  }
 }
 
 // Lightening
