@@ -38,7 +38,7 @@ struct ClockSettingsView: View {
                 ConfigItemView(icon: Image(systemName:"24.circle"), title: "Time Style") {
                     
                     
-                    Picker("What do you want", selection: $settingsService.timeStyle ?? "24 Hour"){
+                    Picker("Time Style", selection: $settingsService.timeStyle ?? "24 Hour"){
                         ForEach(self.settingsService.timeStyles){ timeStyle in
                                 Text(timeStyle)
                         }

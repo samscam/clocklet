@@ -23,6 +23,7 @@ internal protocol CharacteristicWrapper: AnyObject, HasUUID {
 
 
 @propertyWrapper
+@dynamicMemberLookup
 public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, ObservableObject, InnerObservable {
 
     public let uuid: CBUUID
@@ -38,13 +39,22 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Obse
     
     private let _sendQueue = PassthroughSubject<Value,Never>()
     
-    internal var cbCharacteristic: CBCharacteristic? {
+    internal weak var cbCharacteristic: CBCharacteristic? {
         didSet{
             updateNotifyState()
         }
     }
     
+    public subscript<T>(dynamicMember keyPath: KeyPath<Value?, T>) -> T {
+        wrappedValue[keyPath: keyPath]
+    }
+    public subscript<T>(dynamicMember keyPath: WritableKeyPath<Value?, T>) -> T {
+        get { wrappedValue[keyPath: keyPath] }
+        set { wrappedValue[keyPath: keyPath] = newValue }
+    }
+    
     private func updateNotifyState(){
+        
         if let cbCharacteristic = cbCharacteristic{
             cbCharacteristic.service?.peripheral?.setNotifyValue(shouldNotify, for: cbCharacteristic)
         }
@@ -56,7 +66,7 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Obse
         
         // Throttling here for the benefit of sliders - so if values are changed rapidly they aren't sent too fast
         _sendQueue
-            .throttle(for: 0.05, scheduler: RunLoop.main, latest: true)
+            .throttle(for: 0.1, scheduler: RunLoop.main, latest: true)
             .sink { (value) in
                 self.writeValueToPeipheral(value: value)
             }.store(in: &bag)
@@ -84,22 +94,26 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Obse
         }
     }
     
-    private func writeValueToPeipheral(value: Value){
-        if let cbCharacteristic = self.cbCharacteristic{
+    private func writeValueToPeipheral(value: Value) {
+        
+        guard let cbCharacteristic = self.cbCharacteristic else {
+            return
+        }
             
-            let data = value.data
-            
-            // check if we can actually write to this characteristic...
-            if (cbCharacteristic.properties.contains(.write)){
-                // these can crash if disconnected :(
-                cbCharacteristic.service?.peripheral?.writeValue(data, for: cbCharacteristic, type: .withResponse)
-                
-            } else if (cbCharacteristic.properties.contains(.writeWithoutResponse)){
-                cbCharacteristic.service?.peripheral?.writeValue(data, for: cbCharacteristic, type: .withoutResponse)
-            } else {
-                //we can't throw here... report this somehow...
-            }
-            
+        let data = value.data
+        guard data.count <= 512 else {
+            print("Characteristic data for \(self.uuid) is too long: \(data.count) bytes")
+            return
+        }
+        
+        // check if we can actually write to this characteristic...
+        if (cbCharacteristic.properties.contains(.write)){
+            // these can crash if disconnected :(
+            cbCharacteristic.service?.peripheral?.writeValue(data, for: cbCharacteristic, type: .withResponse)
+        } else if (cbCharacteristic.properties.contains(.writeWithoutResponse)){
+            cbCharacteristic.service?.peripheral?.writeValue(data, for: cbCharacteristic, type: .withoutResponse)
+        } else {
+            //we can't throw here... report this somehow...
         }
     }
     

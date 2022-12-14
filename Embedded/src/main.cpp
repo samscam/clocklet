@@ -94,9 +94,6 @@ OpenWeatherMap *weatherClient;
 #include "Weather/Rainbows.h"
 Rainbows rainbows;
 
-
-
-
 // Global Notification queues
 QueueHandle_t bluetoothConnectedQueue;
 QueueHandle_t prefsChangedQueue;
@@ -105,13 +102,18 @@ QueueHandle_t locationChangedQueue;
 QueueHandle_t networkChangedQueue;
 QueueHandle_t networkStatusQueue;
 QueueHandle_t firmwareUpdateQueue;
+QueueHandle_t godModeQueue;
+
+// God Mode
+GodModeSettings godModeSettings;
 
 // Firmware updater
 FirmwareUpdates *firmwareUpdates;
 
-
+// Update scheduler
 UpdateScheduler updateScheduler = UpdateScheduler();
 
+// Bluetooth implementation
 BlueStuff *blueStuff;
 
 // SETUP  --------------------------------------
@@ -169,7 +171,7 @@ void setup() {
   networkChangedQueue = xQueueCreate(1, sizeof(bool));
   networkStatusQueue =  xQueueCreate(1, sizeof(wl_status_t));
   firmwareUpdateQueue = xQueueCreate(1, sizeof(FirmwareUpdateStatus));
-
+  godModeQueue = xQueueCreate(1, sizeof(GodModeSettings));
 
   // Analog input for light pin
   analogReadResolution(12);
@@ -201,7 +203,7 @@ void setup() {
 
   locationManager = new LocationManager(locationChangedQueue);
 
-  blueStuff = new BlueStuff(bluetoothConnectedQueue,prefsChangedQueue,networkChangedQueue,networkStatusQueue,locationManager);
+  blueStuff = new BlueStuff(bluetoothConnectedQueue,prefsChangedQueue,networkChangedQueue,networkStatusQueue,godModeQueue,locationManager);
   blueStuff->startBlueStuff();
 
 
@@ -299,7 +301,7 @@ void loop() {
   // ... weather
   bool weatherDidChange = false;
   xQueueReceive(weatherChangedQueue, &weatherDidChange, (TickType_t)0 );
-  if (weatherDidChange){
+  if (weatherDidChange && !godModeSettings.enabled){
     ESP_LOGI(TAG,"Weather did change");
     display.setWeather(weatherClient->horizonWeather);
     rainbows.setWeather(weatherClient->rainbowWeather);
@@ -353,6 +355,21 @@ void loop() {
       ESP.restart();
       break;
   }
+
+  // ... God Mode
+
+  if (xQueueReceive(godModeQueue, &godModeSettings, (TickType_t)0 )){
+    if (godModeSettings.enabled){
+      display.setWeather(godModeSettings.weather);
+    } else {
+      display.setWeather(weatherClient->horizonWeather);
+      rainbows.setWeather(weatherClient->rainbowWeather);
+    }
+  }
+  
+
+
+  // TOUCH SENSOR (Doesn't work)
 
   #if defined(TOUCH_SENSOR)
   // Check for touches... (This doesn't work on the clockbrain ... but it doesn't need to work!)

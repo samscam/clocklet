@@ -70,13 +70,23 @@ struct ClockDetailsView: View {
                         if let technicalService = clock.technicalService,
                            let deviceInfoService = clock.deviceInfoService {
                             NavigationLink(destination:
-                                            ClockTechnicalView().environmentObject(technicalService)
-                                .environmentObject(deviceInfoService)){
+                                            ClockTechnicalView()
+                                .environmentObject(technicalService)
+                                .environmentObject(deviceInfoService)
+                            ){
                                     ConfigItemView(icon: Image(systemName:"wrench") ,
                                                    title: "Technical stuff", disclosure: true){
                                         EmptyView()
                                     }
                                 }.buttonStyle(PlainButtonStyle())
+                        }
+                        
+                        if let godModeService = clock.godModeService {
+                            NavigationLink(destination:
+                                    GodModeView().environmentObject(godModeService)
+                            ){
+                                ConfigItemView(icon: Image(systemName: "hand.point.down"), title: "God Mode", disclosure: true){EmptyView()}
+                            }
                         }
                     }
                     

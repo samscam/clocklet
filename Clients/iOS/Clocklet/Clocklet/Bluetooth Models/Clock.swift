@@ -155,6 +155,7 @@ class Clock: Peripheral, Identifiable, AdvertisementMatcher {
     @Service("68D924A1-C1B2-497B-AC16-FD1D98EDB41F") var networkService: NetworkService?
     @Service("87888F3E-C1BF-4832-9823-F19C73328D30") var locationService: LocationService?
     @Service("28C65464-311E-4ABF-B6A0-D03B0BAA2815") var settingsService: SettingsService?
+    @Service("03205794-6A59-42E5-9B8D-BB3879716FD5") var godModeService: GodModeService?
     
     
     static var advertisedServiceUUIDs = ["68D924A1-C1B2-497B-AC16-FD1D98EDB41F"]
@@ -193,5 +194,6 @@ class Clock: Peripheral, Identifiable, AdvertisementMatcher {
         let imageName = "r\(hwRev)-\(caseColor)"
         return UIImage(named:imageName) ?? UIImage(named:"r0-bones")!
     }
+    
 
 }

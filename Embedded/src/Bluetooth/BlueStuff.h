@@ -12,6 +12,7 @@
 #include "BTNetworkService.h"
 #include "BTLocationService.h"
 #include "BTTechnicalService.h"
+#include "BTGodModeService.h"
 
 #include "../Location/LocationManager.h"
 #include "../Utilities/Task.h"
@@ -24,6 +25,7 @@ public:
                 QueueHandle_t preferencesChangedQueue,
                 QueueHandle_t networkChangedQueue,
                 QueueHandle_t networkStatusQueue,
+                QueueHandle_t godModeQueue,
                 LocationManager *locationManager);
     void startBlueStuff();
     void stopBlueStuff();
@@ -58,6 +60,10 @@ private:
 
     BTLocationService *_locationService;
     LocationManager *_locationManager;
+
+    BTGodModeService *_godModeService;
+    QueueHandle_t _godModeQueue;
+
     BLEAdvertisementData _advertisementData;
     BLEAdvertisementData _scanResponseData;
     std::string _mfrdataString;

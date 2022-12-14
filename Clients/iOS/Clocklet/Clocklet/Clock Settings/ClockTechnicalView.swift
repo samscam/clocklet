@@ -9,7 +9,6 @@
 import SwiftUI
 
 struct ClockTechnicalView: View {
-    
     @EnvironmentObject var technicalService: TechnicalService
     @EnvironmentObject var deviceInfoService: DeviceInfoService
     
@@ -90,9 +89,11 @@ struct ClockTechnicalView: View {
                 }
             }
             inDebugBuilds {
-                technicalService.staging.map{ _ in
-                    ConfigItemView(icon: Image(systemName:"ant"), iconColor: .blue, title: "Staging mode") {
-                        Toggle("Use staging builds when updating. Might brick your Clocklet.", isOn: $technicalService.staging ?? false)
+                VStack{
+                    technicalService.staging.map{ _ in
+                        ConfigItemView(icon: Image(systemName:"ant"), iconColor: .blue, title: "Staging mode") {
+                            Toggle("Use staging builds when updating. Might brick your Clocklet.", isOn: $technicalService.staging ?? false)
+                        }
                     }
                 }
             }

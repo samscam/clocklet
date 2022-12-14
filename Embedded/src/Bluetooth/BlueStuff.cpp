@@ -10,14 +10,12 @@
 #include <esp_err.h>
 #include <nvs.h>
 
-
-#include "nimble/nimble/host/services/gatt/include/services/gatt/ble_svc_gatt.h"
-
 #include <esp_log.h>
 #include "Loggery.h"
 
 #include "../ClockletSystem.h"
 
+#include "nimble/nimble/host/services/gatt/include/services/gatt/ble_svc_gatt.h"
 
 #define TAG "BLUESTUFF"
 
@@ -28,11 +26,14 @@ const char * shortName = "Clocklet";
 BlueStuff::BlueStuff(QueueHandle_t bluetoothConnectedQueue,
             QueueHandle_t preferencesChangedQueue,
             QueueHandle_t networkChangedQueue,
-            QueueHandle_t networkStatusQueue, LocationManager *locationManager) {
+            QueueHandle_t networkStatusQueue,
+            QueueHandle_t godModeQueue,
+            LocationManager *locationManager) {
     _bluetoothConnectedQueue = bluetoothConnectedQueue;
     _preferencesChangedQueue =  preferencesChangedQueue;
     _networkChangedQueue = networkChangedQueue;
     _networkStatusQueue = networkStatusQueue;
+    _godModeQueue = godModeQueue;
     _locationManager = locationManager;
 
 
@@ -65,6 +66,7 @@ void BlueStuff::startBlueStuff(){
     _locationService = new BTLocationService(_locationManager,pServer);
     _networkService = new BTNetworkService(pServer, _networkChangedQueue, _networkStatusQueue);
     _preferencesService = new BTPreferencesService(pServer, _preferencesChangedQueue);
+    _godModeService = new BTGodModeService(pServer, _godModeQueue);
 
     // BLE Advertising
     _setupAdvertising();
@@ -124,6 +126,7 @@ void BlueStuff::_setupAdvertising(){
     pAdvertising->setScanResponseData(_scanResponseData);
 
     pAdvertising->start();
+
 }
 void BlueStuff::stopBlueStuff(){
     if (!_bluetoothRunning){
@@ -135,6 +138,8 @@ void BlueStuff::stopBlueStuff(){
     delete(_locationService);
     delete(_networkService);
     delete(_preferencesService);
+    delete(_godModeService);
+
     BLEDevice::deinit(false);
 
 }
