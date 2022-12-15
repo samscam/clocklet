@@ -487,9 +487,9 @@ void Matrix::displayTime(const DateTime& time, Weather weather){
     }
   }
 
-  if (minTmp <= 0.0f){
-    addFrost();
-  }
+  // if (minTmp <= 0.0f){
+  //   addFrost();
+  // }
 
   if (weather.thunder){
     addLightening();
