@@ -38,11 +38,12 @@ bool WeatherClient::fetchWeather(){
     }
 
     
-    HTTPnihClient *nihClient = new HTTPnihClient();
+    
+    HTTPnihClient nihClient;
 
     Stream *stream = nullptr;
     char* url = constructURL();
-    int result = nihClient->get(url,NULL,&stream);
+    int result = nihClient.get(url, &stream);
     free(url);
 
     bool parseResult = false;
@@ -58,8 +59,6 @@ bool WeatherClient::fetchWeather(){
     } else {
       ESP_LOGE(TAG, "Weather Parsing failed");
     }
-
-    delete nihClient;
 
     return parseResult;
 

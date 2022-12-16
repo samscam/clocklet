@@ -31,16 +31,13 @@ HTTPClient* HTTPnihClient::getHttpClient(){
 // Pass it an empty stream pointer to process the stream when it has been through the headers
 // Delete the client when done with the stream or if it errors
 
-int HTTPnihClient::get(const char *url, const char *certificate, Stream **stream, int depth){
+int HTTPnihClient::get(const char *url, Stream **stream, int depth){
 
     if (depth > MAX_REDIRECT_DEPTH){
         ESP_LOGE(TAG, "Maximum redirects exceeded");
         return HTTPNIH_TOO_MANY_REDIRECTS;
     }
 
-    if (certificate != NULL){
-        _wifiClient->setCACert(certificate);
-    }
     
     ESP_LOGV(TAG, "BEGIN");
 

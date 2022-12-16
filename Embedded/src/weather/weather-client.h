@@ -38,6 +38,7 @@ public:
   virtual void setTimeHorizon(uint8_t hours) {};
 
   ClockLocation _currentLocation;
+
   
   virtual char* constructURL() { return nullptr; };
   virtual const char* certificate() { return nullptr; };

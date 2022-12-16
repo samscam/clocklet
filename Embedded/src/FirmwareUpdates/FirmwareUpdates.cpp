@@ -86,19 +86,17 @@ bool FirmwareUpdates::checkForUpdates(bool useStaging) {
         url = "https://api.github.com/repos/samscam/clocklet/releases/latest";
     }
 
-    HTTPnihClient *nihClient = new HTTPnihClient();
+    HTTPnihClient nihClient;
     Stream* stream = nullptr;
 
     bool parseResult = false;
 
-    int result = nihClient->get(url,NULL,&stream);
+    int result = nihClient.get(url,&stream);
     if (result == 200){
         if (stream){
             parseResult = _parseGithubReleases(stream,useStaging);
         }
     }
-
-    delete nihClient;
 
     return parseResult;
 }
@@ -229,11 +227,11 @@ bool FirmwareUpdates::_downloadOTAUpdate(const char * url)
 {
     ESP_LOGI(TAG, "About to download from %s",url);
     
-    HTTPnihClient nihClient = HTTPnihClient();
+    HTTPnihClient nihClient;
     Stream* stream = nullptr;
     
     
-    int result = nihClient.get(url,NULL,&stream);
+    int result = nihClient.get(url,&stream);
 
     if (result != 200) {
         return false;

@@ -12,7 +12,7 @@ class HTTPnihClient {
         HTTPnihClient();
         ~HTTPnihClient();
 
-        int get(const char* url, const char *certificate, Stream **stream, int depth = 0);
+        int get(const char* url, Stream **stream, int depth = 0);
         HTTPClient* getHttpClient();
     private:
 
