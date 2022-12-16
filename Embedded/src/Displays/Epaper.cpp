@@ -66,9 +66,9 @@ void EpaperDisplay::setSecondaryTime(DateTime time, const char *identifier) {
 
 // Implementation is optional
 void EpaperDisplay::setWeather(Weather weather) {
-  weather_string = weather.summary;
+  weather_string = weather.synopsis;
   needsDisplay = true;
-  pageString(weather.summary);
+  pageString(weather.synopsis);
 }
 
 // Show a message - but what kind of message?

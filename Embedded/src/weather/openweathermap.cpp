@@ -14,7 +14,7 @@ char* OpenWeatherMap::constructURL(){
   char *buffer;
   buffer = (char *) malloc(sizeof(char) * 8192 ); // Oddly, by allocating MORE to this, we end up leaking less. :/
   asprintf(&buffer,OWM_PATH,_currentLocation.lat,_currentLocation.lng,OPENWEATHERMAP_APIKEY);
-  ESP_LOGE(TAG, "%s", buffer);
+  ESP_LOGI(TAG, "%s", buffer);
   return buffer;
 }
 
@@ -69,7 +69,7 @@ Weather OpenWeatherMap::_parseWeatherBlock(JsonObject block){
   Weather result = defaultWeather;
 
   result.type = block["weather"][0]["id"];
-  // result.summary = block["weather"]["description"];
+  // result.synopsis = block["weather"]["description"];
 
 
   result.precipChance = block["pop"];

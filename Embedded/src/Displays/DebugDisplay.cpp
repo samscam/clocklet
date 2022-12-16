@@ -19,7 +19,7 @@ void DebugDisplay::setTime(DateTime time) {
 
 // Implementation is optional
 void DebugDisplay::setWeather(Weather weather) {
-  Serial.println((String)"*** WEATHER: " + weather.summary);
+  Serial.println((String)"*** WEATHER: " + weather.synopsis);
 }
 
 // Show a message - but what kind of message?

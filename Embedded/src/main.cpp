@@ -426,7 +426,7 @@ void updateDisplayPreferences(){
     display.setTimeStyle(decimal);
   }
 
-  brightnessAdjust = preferences.getFloat("brightness",0.5);
+  brightnessAdjust = preferences.getFloat("brightness",0.5f);
   autoBrightness = preferences.getBool("autoBrightness",true);
 
   preferences.end();

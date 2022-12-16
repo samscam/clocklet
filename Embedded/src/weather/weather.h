@@ -6,7 +6,7 @@ enum PrecipType {
 };
 
 struct Weather {
-  const char* summary;
+  char synopsis[255];
   int type; // The raw type identifier which is used internally by metoffice
   float precipChance;
 	float precipIntensity;
@@ -22,7 +22,7 @@ struct Weather {
 
   inline
   Weather& operator+=(const Weather rhs){
-    summary = rhs.summary;
+    // strncpy(rhs.synopsis, synopsis, 255);
     precipChance = max(precipChance, rhs.precipChance);
     precipIntensity = max(precipIntensity, rhs.precipIntensity);
     precipType = max(precipType, rhs.precipType);
@@ -43,7 +43,7 @@ struct Weather {
 };
 
 static const Weather defaultWeather = {
-  .summary = "No weather yet",
+  {.synopsis = "No weather yet"},
   .type = 0,
   .precipChance = 0.0f,
   .precipIntensity = 0.0f,

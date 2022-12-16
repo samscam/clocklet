@@ -92,7 +92,7 @@ Weather DarkSky::_parseWeatherBlock(JsonObject block){
   Weather result = defaultWeather;
 
   result.type = 0;// root["daily"]["data"][0]["icon"];
-  result.summary = block["summary"];
+  // strncpy(result.synopsis,block["summary"],255);
   result.precipChance = block["precipProbability"];
   result.precipIntensity = block["precipIntensity"];
 
@@ -118,7 +118,7 @@ Weather DarkSky::_parseWeatherBlock(JsonObject block){
   result.cloudCover = block["cloudCover"];
   result.pressure = block["pressure"];
 
-  if (stristr(result.summary,"thunder")){
+  if (stristr(result.synopsis,"thunder")){
     result.thunder = true;
   } else {
     result.thunder = false;
