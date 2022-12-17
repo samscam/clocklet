@@ -10,6 +10,9 @@
 #include <esp_err.h>
 #include <nvs.h>
 
+
+#include "nimble/nimble/host/services/gatt/include/services/gatt/ble_svc_gatt.h"
+
 #include <esp_log.h>
 #include "Loggery.h"
 
@@ -66,6 +69,10 @@ void BlueStuff::startBlueStuff(){
     // BLE Advertising
     _setupAdvertising();
     
+    // Force update to overcome attribute caching on iOS
+    // when a service or characteristic has changed
+    ble_svc_gatt_changed(0x0001, 0xffff);
+
     pServer->start();
 
     LOGMEM;
