@@ -18,9 +18,10 @@ public:
 private:
     
     BLEService *_sv_godmode;
-    BLECharacteristic *_ch_godmode;
+    BLECharacteristic *_ch_enabled;
+    BLECharacteristic *_ch_weather;
 
     QueueHandle_t _godModeQueue;
 
-    GodModeSettings _godModeSettings;
+    GodModeSettings _godModeSettings = {};
 };
