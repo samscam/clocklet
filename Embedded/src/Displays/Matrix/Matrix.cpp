@@ -414,15 +414,10 @@ void Matrix::displayTime(const DateTime& time, Weather weather){
   }
 
 
-  float precip = weather.precipChance * 100;
+
   float minTmp = weather.minTmp;
 
-  // PRECIPITATION --------
 
-  // We are shaving off anything under a 20% chance of rain and calling that zero
-  precip = precip - 20;
-  precip = precip < 0 ? 0 : precip;
-  fract8 rainChance = (precip * 255) / 80.0;
 
 
 
@@ -470,19 +465,28 @@ void Matrix::displayTime(const DateTime& time, Weather weather){
       break;
   }
 
-  if (rainChance > 0) {
+  // PRECIPITATION --------
+
+  // Intensity is somewhere in the range of 0 to 80 mm/hour but we are going to top out at 30
+  double precip = (weather.precipIntensity / 30.0) * 255.0;
+
+  precip = max(precip,0.0);
+  precip = min(precip,255.0);
+
+  fract8 intensity = fract8(precip);
+  if (intensity > 0) {
     switch (weather.precipType) {
       case Drizzle:
-        addDrizzle(rainChance, CRGB::Blue);
+        addDrizzle(intensity, CRGB::Blue);
         break;
       case Rain:
-        addRain(rainChance, CRGB::Blue);
+        addRain(intensity, CRGB::Blue);
         break;
       case Sleet:
-        addRain(rainChance, CRGB::Gray);
+        addRain(intensity, CRGB::Gray);
         break;
       case Snow:
-        addSnow(rainChance);
+        addSnow(intensity);
         break;
     }
   }
@@ -760,7 +764,7 @@ void Matrix::fillDigits_gradient(CRGB startColour, CRGB endColour, uint16_t star
 void Matrix::addDrizzle( fract8 drizzleIntensity, CRGB colour)
 {
   // Fade down previous drops
-  nscale8(rainLayer,NUM_LEDS,180);
+  nscale8(rainLayer,NUM_LEDS,220);
   
   rainFrame++;
   // Render the leading droplets into the layer
