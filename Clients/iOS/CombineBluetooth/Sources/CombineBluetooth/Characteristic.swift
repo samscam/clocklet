@@ -20,10 +20,7 @@ internal protocol CharacteristicWrapper: AnyObject, HasUUID {
     var cbCharacteristic: CBCharacteristic? { get set }
 }
 
-
-
 @propertyWrapper
-@dynamicMemberLookup
 public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, ObservableObject, InnerObservable {
 
     public let uuid: CBUUID
@@ -45,14 +42,6 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Obse
         }
     }
     
-    public subscript<T>(dynamicMember keyPath: KeyPath<Value?, T>) -> T {
-        wrappedValue[keyPath: keyPath]
-    }
-    public subscript<T>(dynamicMember keyPath: WritableKeyPath<Value?, T>) -> T {
-        get { wrappedValue[keyPath: keyPath] }
-        set { wrappedValue[keyPath: keyPath] = newValue }
-    }
-    
     private func updateNotifyState(){
         
         if let cbCharacteristic = cbCharacteristic{
@@ -66,7 +55,7 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Obse
         
         // Throttling here for the benefit of sliders - so if values are changed rapidly they aren't sent too fast
         _sendQueue
-            .throttle(for: 0.1, scheduler: RunLoop.main, latest: true)
+            .throttle(for: .milliseconds(200), scheduler: DispatchQueue.main, latest: true)
             .sink { (value) in
                 self.writeValueToPeipheral(value: value)
             }.store(in: &bag)
@@ -102,7 +91,7 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Obse
             
         let data = value.data
         guard data.count <= 512 else {
-            print("Characteristic data for \(self.uuid) is too long: \(data.count) bytes")
+            NSLog("Characteristic data for \(self.uuid) is too long: \(data.count) bytes")
             return
         }
         
