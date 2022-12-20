@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<playground version='6.0' target-platform='macos' buildActiveScheme='true'>
+<playground version='6.0' target-platform='ios' buildActiveScheme='true' executeOnSourceChanges='true'>
     <pages>
-        <page name='Untitled Page'/>
-        <page name='CustomPub'/>
+        <page name='Observable structs'/>
+        <page name='Basic Setup'/>
+        <page name='More random junk'/>
+        <page name='Random Junk'/>
     </pages>
 </playground>
