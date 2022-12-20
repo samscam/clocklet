@@ -9,52 +9,27 @@
 import Foundation
 import CombineBluetooth
 import Combine
+import SwiftUI
 
 class GodModeService: ServiceProtocol {
     
     var bag = Set<AnyCancellable>()
     
-    required init(){
-        godModeSettings = GodModeSettings()
-        
-        $enabled.sink { [weak self] newVal in
-            self?.godModeSettings?.enabled = newVal
-        }.store(in: &bag)
-        
-        $minTmp.sink { [weak self] newVal in
-            self?.godModeSettings?.weather.minTmp = Float(newVal)
-        }.store(in: &bag)
-        
-        $maxTmp.sink { [weak self] newVal in
-            self?.godModeSettings?.weather.maxTmp = Float(newVal)
-        }.store(in: &bag)
-    }
+    required init(){}
     
-    @Characteristic("603B79B2-568A-4AFF-8B9A-08DF689C9D49") var godModeSettings: GodModeSettings?
+    @Characteristic("603B79B2-568A-4AFF-8B9A-08DF689C9D49") var enabled: Bool?
+    @Characteristic("CAA822A1-4CFB-4F7B-8169-3EB56DEADA13") var weather: Weather?
     
-    
-    @Published var enabled: Bool = false
-    @Published var minTmp: Double = 0
-    @Published var maxTmp: Double = 0
-    
-    struct GodModeSettings: Codable, JSONCharacteristic {
-        var enabled: Bool = false
-        var weather: Weather = Weather()
-    }
 
-    struct Weather: Codable {
-        var type: Int = 0
-        var precipChance: Float = 0
-        var precipIntensity: Float = 0
-        var precipType: PrecipType = .rain
-        var maxTmp: Float = 0
-        var minTmp: Float = 0
-        var currentTmp: Float = 0
-        var thunder: Bool = false
-        var windSpeed: Float = 0
-        var cloudCover: Float = 0
-        var pressure: Float = 0
-        var rainbows: Bool = false
+    struct Weather: Codable, JSONCharacteristic {
+        var precipChance: Float
+        var precipIntensity: Float
+        var precipType: PrecipType
+        var maxTmp: Float
+        var minTmp: Float
+        var windSpeed: Float
+        var thunder: Bool
+        var rainbows: Bool
     }
 
     enum PrecipType: Int, Codable, CaseIterable, Identifiable {
@@ -78,3 +53,69 @@ class GodModeService: ServiceProtocol {
 
 }
 
+extension Float {
+    var beaufortDescription: String{
+        switch self {
+        case 0..<0.5:
+            return "Calm"
+        case 0.5..<1.5:
+            return "Light air"
+        case 1.5..<3.3:
+            return "Light breeze"
+        case 3.3..<5.5:
+            return "Gentle breeze"
+        case 5.5..<8:
+            return "Moderate breeze"
+        case 8..<10.7:
+            return "Fresh breeze"
+        case 10.7..<13.8:
+            return "Strong breeze"
+        case 13.8..<17.1:
+            return "High wind"
+        case 17.1..<20.7:
+            return "Gale"
+        case 20.7..<24.4:
+            return "Severe gale"
+        case 24.4..<28.4:
+            return "Storm"
+        case 28.4..<32.6:
+            return "Violent storm"
+        case 32.6...:
+            return "Hurricane"
+        default:
+            return "BONKERS"
+        }
+    }
+    var beaufortNumber: Int{
+        switch self {
+        case 0..<0.5:
+            return 0
+        case 0.5..<1.5:
+            return 1
+        case 1.5..<3.3:
+            return 2
+        case 3.3..<5.5:
+            return 3
+        case 5.5..<8:
+            return 4
+        case 8..<10.7:
+            return 5
+        case 10.7..<13.8:
+            return 6
+        case 13.8..<17.1:
+            return 7
+        case 17.1..<20.7:
+            return 8
+        case 20.7..<24.4:
+            return 9
+        case 24.4..<28.4:
+            return 10
+        case 28.4..<32.6:
+            return 11
+        case 32.6...:
+            return 12
+        default:
+            return 13
+        }
+    }
+}

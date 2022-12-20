@@ -40,6 +40,15 @@ struct ClockDetailsView: View {
                         if let settingsService = clock.settingsService {
                             ClockSettingsView().environmentObject(settingsService)
                         }
+                        
+                        if let godModeService = clock.godModeService {
+                            NavigationLink(destination:
+                                    GodModeView().environmentObject(godModeService)
+                            ){
+                                ConfigItemView(icon: Image(systemName: "hand.point.down"), title: "God Mode", disclosure: true){EmptyView()}
+                            }.buttonStyle(PlainButtonStyle())
+                        }
+                        
                         if let networkService = clock.networkService {
                             NavigationLink(destination: NetworkDetailView().environmentObject(networkService)){
                                 NetworkSummaryView().environmentObject(NetworkSummaryViewModel(networkService))
@@ -81,13 +90,7 @@ struct ClockDetailsView: View {
                                 }.buttonStyle(PlainButtonStyle())
                         }
                         
-                        if let godModeService = clock.godModeService {
-                            NavigationLink(destination:
-                                    GodModeView().environmentObject(godModeService)
-                            ){
-                                ConfigItemView(icon: Image(systemName: "hand.point.down"), title: "God Mode", disclosure: true){EmptyView()}
-                            }
-                        }
+
                     }
                     
                 case .connecting:
@@ -110,7 +113,7 @@ struct ClockDetailsView: View {
                     
                 case .disconnected(let error):
                     if let error = error {
-                        ErrorView(error: error)
+                        ErrorView(error)
                     }
                     Button("Reconnect") {
                         self.clock.connect()
@@ -129,27 +132,7 @@ struct ClockDetailsView: View {
     }
 }
 
-struct ErrorView: View {
-    let error: Error
-    var body: some View {
-        HStack(spacing:10){
-            Image(systemName: "exclamationmark.triangle").resizable().scaledToFit().frame(maxWidth:50)
-            Text(error.localizedDescription)
-                .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth:.infinity)
-                
-        }.padding()
-            .background(
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(Color.init(hue: 0.12, saturation: 0.6, brightness: 1))
-                    
-            )
-            .padding()
-        
-        Spacer(minLength:30)
-    }
-}
+
 
 extension ContentSizeCategory{
     static func allCases() -> [ContentSizeCategory]{

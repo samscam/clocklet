@@ -29,9 +29,9 @@ struct RoundyButtonStyle: ButtonStyle {
     
 }
 
-extension Text {
+extension View {
     func lozenge() -> some View{
-        return self.foregroundColor(.white)
+        return self.foregroundColor(.primary)
         .padding()
         .background(Capsule().fill(Color.accentColor))
     }

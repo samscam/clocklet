@@ -31,6 +31,7 @@
 		22350E83233D359E00452BDF /* NetworkCharacteristics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22350E82233D359E00452BDF /* NetworkCharacteristics.swift */; };
 		2236E4D528E8F35600B45171 /* LocationDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2236E4D428E8F35600B45171 /* LocationDetailsViewModel.swift */; };
 		2241E52523DD0ABB00ACE8A7 /* LocationProxyTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2241E52423DD0ABB00ACE8A7 /* LocationProxyTestView.swift */; };
+		22485422295275A2005EF026 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22485421295275A2005EF026 /* ErrorView.swift */; };
 		224C538F234F6CDD00A68928 /* ClockListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224C538E234F6CDD00A68928 /* ClockListView.swift */; };
 		224C5391234FAE7300A68928 /* ClockDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224C5390234FAE7300A68928 /* ClockDetailsView.swift */; };
 		22551952235870240056B9CD /* LocationSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22551951235870240056B9CD /* LocationSummaryView.swift */; };
@@ -41,7 +42,6 @@
 		22604281236E40F800710F37 /* LocationProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22604280236E40F800710F37 /* LocationProxy.swift */; };
 		22748BD22945492B0003385A /* GodModeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22748BD12945492B0003385A /* GodModeService.swift */; };
 		22748BD429454CF70003385A /* GodModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22748BD329454CF70003385A /* GodModeView.swift */; };
-		22748BD629454D700003385A /* GodModeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22748BD529454D700003385A /* GodModeViewModel.swift */; };
 		227CC3062367925D00D7770D /* PropertiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227CC3052367925D00D7770D /* PropertiesView.swift */; };
 		22836EB4228629750020B46F /* ClockletApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22836EB3228629750020B46F /* ClockletApp.swift */; };
 		22836EBE2286297C0020B46F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 22836EBC2286297C0020B46F /* LaunchScreen.storyboard */; };
@@ -95,6 +95,7 @@
 		22350E82233D359E00452BDF /* NetworkCharacteristics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkCharacteristics.swift; sourceTree = "<group>"; };
 		2236E4D428E8F35600B45171 /* LocationDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDetailsViewModel.swift; sourceTree = "<group>"; };
 		2241E52423DD0ABB00ACE8A7 /* LocationProxyTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProxyTestView.swift; sourceTree = "<group>"; };
+		22485421295275A2005EF026 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		224C538E234F6CDD00A68928 /* ClockListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockListView.swift; sourceTree = "<group>"; };
 		224C5390234FAE7300A68928 /* ClockDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockDetailsView.swift; sourceTree = "<group>"; };
 		22551951235870240056B9CD /* LocationSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSummaryView.swift; sourceTree = "<group>"; };
@@ -106,7 +107,6 @@
 		2265C29E24C0BC2500F17506 /* autoversioning.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = autoversioning.sh; sourceTree = "<group>"; };
 		22748BD12945492B0003385A /* GodModeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GodModeService.swift; sourceTree = "<group>"; };
 		22748BD329454CF70003385A /* GodModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GodModeView.swift; sourceTree = "<group>"; };
-		22748BD529454D700003385A /* GodModeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GodModeViewModel.swift; sourceTree = "<group>"; };
 		227CC3052367925D00D7770D /* PropertiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertiesView.swift; sourceTree = "<group>"; };
 		2282626527B5AF2300134065 /* CombineBluetooth */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = CombineBluetooth; path = ../CombineBluetooth; sourceTree = "<group>"; };
 		22836EB0228629750020B46F /* Clocklet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clocklet.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -262,6 +262,7 @@
 				227CC3052367925D00D7770D /* PropertiesView.swift */,
 				2241E52423DD0ABB00ACE8A7 /* LocationProxyTestView.swift */,
 				22DC8A6924CBAD7300DF0551 /* RoundyButtonStyle.swift */,
+				22485421295275A2005EF026 /* ErrorView.swift */,
 			);
 			path = "Shared Views";
 			sourceTree = "<group>";
@@ -303,7 +304,6 @@
 				22B2D0B224943B3500D570E2 /* ClockSettingsView.swift */,
 				22B488F224C505040079873B /* ClockTechnicalView.swift */,
 				22748BD329454CF70003385A /* GodModeView.swift */,
-				22748BD529454D700003385A /* GodModeViewModel.swift */,
 			);
 			path = "Clock Settings";
 			sourceTree = "<group>";
@@ -461,12 +461,12 @@
 				22551952235870240056B9CD /* LocationSummaryView.swift in Sources */,
 				22DC8A6A24CBAD7300DF0551 /* RoundyButtonStyle.swift in Sources */,
 				228DF25F234FB41E00480588 /* NetworkSummaryView.swift in Sources */,
+				22485422295275A2005EF026 /* ErrorView.swift in Sources */,
 				229F3C68235EF82200EEA785 /* Clock.swift in Sources */,
 				222271A5232B887100508ADA /* ClockSummaryView.swift in Sources */,
 				229F3C6A235F427100EEA785 /* LocationService.swift in Sources */,
 				222D5AC324D5C69500D2FFB5 /* LocationDetailsView.swift in Sources */,
 				22748BD22945492B0003385A /* GodModeService.swift in Sources */,
-				22748BD629454D700003385A /* GodModeViewModel.swift in Sources */,
 				22BB977424C20CED0035D682 /* MockClock.swift in Sources */,
 				22350E83233D359E00452BDF /* NetworkCharacteristics.swift in Sources */,
 				22748BD429454CF70003385A /* GodModeView.swift in Sources */,
