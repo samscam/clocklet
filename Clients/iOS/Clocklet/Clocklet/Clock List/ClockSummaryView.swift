@@ -33,7 +33,7 @@ struct ClockSummaryView: View {
                     .shadow(color: colorScheme == .light ? .white : .black, radius: 2, x: 0, y: 0).padding(.top, 100)
             }
             Spacer()
-        }
+        }.frame(maxWidth:700)
 
     }
  

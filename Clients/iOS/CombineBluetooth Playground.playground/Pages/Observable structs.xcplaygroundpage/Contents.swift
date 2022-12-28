@@ -15,7 +15,7 @@ public func ??<T>(lhs: Binding<Optional<T>>, rhs: T) -> Binding<T> {
 }
 
 @available(iOS 13,*)
-public func ??(lhs: Binding<Optional<String>>, rhs: String) -> Binding<String>{
+public func ??<T:StringProtocol>(lhs: Binding<Optional<T>>, rhs: T) -> Binding<T>{
     Binding(
         get: { lhs.wrappedValue ?? rhs },
         set: {

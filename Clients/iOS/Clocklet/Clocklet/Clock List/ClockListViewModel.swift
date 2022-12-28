@@ -22,6 +22,7 @@ class ClockListViewModel: ObservableObject {
     @Published var bluetoothState: CBManagerState = .unknown
     @Published var isScanning = true
     @Published var clocks: [Clock] = []
+    @Published var selectedClock: Clock?
     
     var bag = Set<AnyCancellable>()
     

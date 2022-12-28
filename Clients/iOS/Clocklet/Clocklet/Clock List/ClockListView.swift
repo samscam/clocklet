@@ -20,82 +20,140 @@ struct ClockListView: View {
     @EnvironmentObject var clockList: ClockListViewModel
     @State var blurMainView: Bool = false
     
+    @Namespace var clockListNamespace
     
     var body: some View {
-            ZStack{
-                NavigationView{
-                    
-                    VStack{
-                        ScrollView{
-                            VStack(spacing:20){
-                                VStack{
-                                    ForEach(clockList.clocks) { clock in
-                                        NavigationLink(destination:
-                                                        ClockDetailsView().environmentObject(clock)){
-                                            ClockSummaryView()
-                                                .environmentObject(clock)
-                                        }
-                                        .transition(AnyTransition.opacity.animation(.easeInOut(duration: 1.0)))
-                                    }}
-                                
-                                Spacer()
-                            }.padding()
-                        }
-                        
-                        ScanningView().padding(.top, 10)
-                    }
-                    .onAppear {
-                        print("Clocklist onAppear")
-                        self.clockList.disconnectAllDevices()
-                        self.clockList.startScanning()
-                    }.onDisappear(){
-                        print("Clocklist onDisappear")
-                        self.clockList.stopScanning()
-                    }
-                    .navigationBarTitle(Text("Clocklet"))
-                    
+        ZStack{
+            
+            if #available(iOS 16.0, *) {
+                NavigationStack{
+                    contents
                 }
-                .navigationViewStyle(StackNavigationViewStyle()).blur(radius: blurMainView ? 5.0 : 0)
-                
-                if let bluetoothStatusViewModel = clockList.bluetoothStatusViewModel {
-                    BluetoothOverlayView(bluetoothStatus: bluetoothStatusViewModel)
-                        .edgesIgnoringSafeArea(.all).onAppear{
-                            blurMainView = true
-                        }.onDisappear{
-                            blurMainView = false
-                        }
-                } else {
-                    EmptyView()
+            } else {
+                NavigationView{
+                    contents
                 }
             }
+            
+            if let bluetoothStatusViewModel = clockList.bluetoothStatusViewModel {
+                BluetoothOverlayView(bluetoothStatus: bluetoothStatusViewModel)
+                    .edgesIgnoringSafeArea(.all)
+                    .onAppear{
+                        blurMainView = true
+                    }.onDisappear{
+                        blurMainView = false
+                    }
+            }
+        }
+    }
+    
+    
+    var contents: some View{
+        Group{
+            if let selectedClock = clockList.selectedClock {
+                ZStack{
+                    ScrollView{
+                        
+                        ClockSummaryView()
+                            .environmentObject(selectedClock)
+                            .matchedGeometryEffect(id: selectedClock.uuid, in: clockListNamespace)
+                        ClockDetailsView()
+                            .environmentObject(selectedClock)
+                            .transition(.move(edge: .bottom))
+                        Spacer()
+                    }
+                    .safeAreaInset(edge: .top, spacing: 0) {
+                        Rectangle().foregroundColor(.clear).frame(height:40)
+                    }
+                    
+                    VStack{
+                        Image(systemName: "eye")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width:30,height:30)
+                            .matchedGeometryEffect(id: "eye", in: clockListNamespace)
+                            .onTapGesture {
+                                withAnimation{
+                                    clockList.selectedClock = nil
+                                }
+                            }
+                        Spacer()
+                    }
+                }
+            } else {
+                ZStack{
+                    
+                    ScrollView{
+                        ForEach(clockList.clocks) { clock in
+                            ClockSummaryView()
+                                .environmentObject(clock)
+                                .matchedGeometryEffect(id: clock.uuid, in: clockListNamespace)
+                                .onTapGesture {
+                                    withAnimation{
+                                        clockList.selectedClock = clock
+                                    }
+                                }
+                                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 1.0)))
+                               
+                        }
+                        
+                    }
+                    .safeAreaInset(edge: .top, spacing: 0) {
+                        Rectangle().foregroundColor(.clear).frame(height:100)
+                    }
+                    VStack{
+                        scanningView
+                        Spacer()
+                    }
+                }
+                .onAppear {
+                    print("Clocklist onAppear")
+                    DispatchQueue.main.asyncAfter(deadline: .now()+0.5){
+                        self.clockList.disconnectAllDevices()
+                    }
+                    self.clockList.startScanning()
+                }.onDisappear(){
+                    print("Clocklist onDisappear")
+                    self.clockList.stopScanning()
+                }
+                
+            }
+        }
+        .navigationBarHidden(true)
+        .blur(radius: blurMainView ? 5.0 : 0)
         
     }
     
-}
-
-struct ScanningView: View{
-    @EnvironmentObject var clockList: ClockListViewModel
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
     
-    var body: some View{
+    var scanningView: some View{
         VStack{
             if clockList.bluetoothState == .poweredOn {
-                    Image(systemName: clockList.isScanning ? "eye" : "eye.slash")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 40 , height: 50, alignment: .center)
-                        .scaleEffect(clockList.isScanning ? 2 : 1)
-                        .opacity(clockList.isScanning ? 1.0 : 0.5)
-                        .animation(.spring(response: 1,dampingFraction: 0.3, blendDuration: 0), value: clockList.isScanning)
-                
-                if clockList.isScanning {
-                    Text("Looking for Clocklets")
-                }
+                Image(systemName: "eye" )
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 40 , height: 50, alignment: .center)
+                    .scaleEffect(clockList.isScanning ? 2 : 1)
+                    .opacity(clockList.isScanning ? 1.0 : 0.5)
+                    .animation(.spring(response: 1,dampingFraction: 0.3, blendDuration: 0), value: clockList.isScanning)
+                    .matchedGeometryEffect(id: "eye", in: clockListNamespace)
+                Group{
+                    if clockList.isScanning {
+                        Text("Looking for Clocklets")
+                            .frame(maxWidth:.infinity)
+                    }
+                }.transition(.scale)
             }
-        }.onTapGesture {
+            Rectangle()
+                .frame(maxWidth:.infinity,maxHeight:0)
+        }
+        .frame(height:120)
+        .background(LinearGradient(colors: [Color(UIColor.systemBackground),.clear], startPoint: .top, endPoint: .bottom))
+        .onTapGesture {
             self.clockList.toggleScanning()
-        }.animation(.easeInOut, value: clockList.isScanning)
+        }
+        .animation(.easeInOut, value: clockList.isScanning)
         
     }
 }
@@ -144,7 +202,7 @@ struct ClockListView_Previews: PreviewProvider {
             
         }
         
-
+        
         
     }
 }

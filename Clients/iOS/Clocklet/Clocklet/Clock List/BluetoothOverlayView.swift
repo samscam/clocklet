@@ -36,7 +36,7 @@ struct BluetoothOverlayView: View{
                 }
 
             }.padding()
-            .frame(maxWidth:.infinity)
+                .frame(maxWidth:.infinity,maxHeight: .infinity)
             .background(Color(UIColor.systemBackground).opacity(0.6))
         }
         
@@ -50,7 +50,8 @@ struct BluetoothOverlayView_Previews: PreviewProvider {
             ForEach(CBManagerState.allCases){ cbState in
                 BluetoothOverlayView(bluetoothStatus: BluetoothStatusViewModel(state: cbState))
             }.previewLayout(.sizeThatFits)
-        }.background(Color.green)
+        }
+        .background(Color.green)
     }
 }
 

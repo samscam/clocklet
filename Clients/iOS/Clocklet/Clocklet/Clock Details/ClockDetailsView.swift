@@ -18,118 +18,133 @@ struct ClockDetailsView: View {
     @State var animating: Bool = false
     
     var body: some View {
-        ScrollView{
-            VStack(){
-                Image(uiImage:clock.caseImage)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: nil, height: 200, alignment: .center)
-                switch clock.state {
-                case .connected:
-                    
-                    switch clock.isConfigured {
+                VStack{
+                    switch clock.state {
+                    case .connected:
                         
-                    case .unknown:
-                        Text("Fetching details...").font(.largeTitle)
-                    case .notConfigured:
-                        
-                        ClockConfiguratorView().environmentObject(clock)
-                        
-                        
-                    case .configured:
-                        if let settingsService = clock.settingsService {
-                            ClockSettingsView().environmentObject(settingsService)
-                        }
-                        
-                        if let godModeService = clock.godModeService {
-                            NavigationLink(destination:
-                                    GodModeView().environmentObject(godModeService)
-                            ){
-                                ConfigItemView(icon: Image(systemName: "hand.point.down"), title: "God Mode", disclosure: true){EmptyView()}
-                            }.buttonStyle(PlainButtonStyle())
-                        }
-                        
-                        if let networkService = clock.networkService {
-                            NavigationLink(destination: NetworkDetailView().environmentObject(networkService)){
-                                NetworkSummaryView().environmentObject(NetworkSummaryViewModel(networkService))
-                            }.buttonStyle(PlainButtonStyle())
-                        }
-                        
-                        if let locationService = clock.locationService {
-                            Group{
+                        switch clock.isConfigured {
+                            
+                        case .unknown:
+                            statusView
+                            Text("Fetching details...").font(.largeTitle)
+                        case .notConfigured:
+                            
+                            ClockConfiguratorView().environmentObject(clock)
+                            
+                            
+                        case .configured:
+                            if let settingsService = clock.settingsService {
+                                ClockSettingsView().environmentObject(settingsService)
+                            }
+                            
+                            if let godModeService = clock.godModeService {
                                 NavigationLink(destination:
-                                                LocationDetailsView()
-                                    .environmentObject(LocationDetailsViewModel(locationService: locationService))
-                                    .environmentObject(clock),
-                                               isActive: $showLocationDetails)
-                                {
-                                    if (locationService.isConfigured == .configured){
-                                        LocationSummaryView(showLocationDetails:$showLocationDetails).environmentObject(locationService)
-                                    } else {
-                                        EmptyView()
-                                    }
-                                    
+                                                GodModeView().environmentObject(godModeService)
+                                ){
+                                    ConfigItemView(icon: Image(systemName: "hand.point.right"), title: "God Mode", disclosure: true){EmptyView()}
                                 }.buttonStyle(PlainButtonStyle())
-                                if (locationService.isConfigured != .configured){
-                                    LocationSummaryView(showLocationDetails:$showLocationDetails).environmentObject(locationService)
+                            }
+                            
+                            if let networkService = clock.networkService {
+                                NavigationLink(destination: NetworkDetailView().environmentObject(networkService)){
+                                    NetworkSummaryView().environmentObject(NetworkSummaryViewModel(networkService))
+                                }.buttonStyle(PlainButtonStyle())
+                            }
+                            
+                            if let locationService = clock.locationService {
+                                Group{
+                                    NavigationLink(destination:
+                                                    LocationDetailsView()
+                                        .environmentObject(LocationDetailsViewModel(locationService: locationService))
+                                        .environmentObject(clock),
+                                                   isActive: $showLocationDetails)
+                                    {
+                                        if (locationService.isConfigured == .configured){
+                                            LocationSummaryView(showLocationDetails:$showLocationDetails).environmentObject(locationService)
+                                        } else {
+                                            EmptyView()
+                                        }
+                                        
+                                    }.buttonStyle(PlainButtonStyle())
+                                    if (locationService.isConfigured != .configured){
+                                        LocationSummaryView(showLocationDetails:$showLocationDetails).environmentObject(locationService)
+                                    }
                                 }
                             }
-                        }
-                        
-                        if let technicalService = clock.technicalService,
-                           let deviceInfoService = clock.deviceInfoService {
-                            NavigationLink(destination:
-                                            ClockTechnicalView()
-                                .environmentObject(technicalService)
-                                .environmentObject(deviceInfoService)
-                            ){
+                            
+                            if let technicalService = clock.technicalService,
+                               let deviceInfoService = clock.deviceInfoService {
+                                NavigationLink(destination:
+                                                ClockTechnicalView()
+                                    .environmentObject(technicalService)
+                                    .environmentObject(deviceInfoService)
+                                ){
                                     ConfigItemView(icon: Image(systemName:"wrench") ,
                                                    title: "Technical stuff", disclosure: true){
                                         EmptyView()
                                     }
                                 }.buttonStyle(PlainButtonStyle())
+                            }
+                            
+                            
                         }
                         
-
+                    case .connecting:
+                        VStack{
+                            Image(systemName:clock.state.iconSystemName)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 200, height: 200, alignment: .center)
+                                .foregroundColor(clock.state.color)
+                                .scaleEffect(animating ? 0.5 : 1)
+                                .task{
+                                    withAnimation(.linear(duration: 0.5)
+                                        .repeatForever(autoreverses: true)) {
+                                            animating.toggle()
+                                        }
+                                    
+                                }
+                            Text(clock.state.description).bold()
+                        }.padding().frame(maxWidth: .infinity)
+                        
+                    case .disconnected(let error):
+                        if let error = error {
+                            ErrorView(error)
+                        }
+                        Button("Reconnect") {
+                            self.clock.connect()
+                        }.buttonStyle(RoundyButtonStyle())
                     }
                     
-                case .connecting:
-                    VStack{
-                        Image(systemName:clock.state.iconSystemName)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 200, height: 200, alignment: .center)
-                            .foregroundColor(clock.state.color)
-                            .scaleEffect(animating ? 0.5 : 1)
-                            .task{
-                                withAnimation(.linear(duration: 0.5)
-                                    .repeatForever(autoreverses: true)) {
-                                        animating.toggle()
-                                    }
-                                
-                            }
-                        Text(clock.state.description).bold()
-                    }.padding().frame(maxWidth: .infinity)
-                    
-                case .disconnected(let error):
-                    if let error = error {
-                        ErrorView(error)
-                    }
-                    Button("Reconnect") {
-                        self.clock.connect()
-                    }.buttonStyle(RoundyButtonStyle())
                 }
-                
+                .padding()
+                .navigationBarHidden(true)
+//                .navigationBarTitle( Text(clock.name), displayMode:.automatic)
+//                .navigationBarItems(trailing: Image(systemName:clock.state.iconSystemName).foregroundColor(clock.state.color))
+                .onAppear {
+                    self.clock.connect()
+                }
             }
-            .padding()
-            
-            
-        }.navigationBarTitle( Text(clock.name), displayMode:.automatic)
-            .navigationBarItems(trailing: Image(systemName:clock.state.iconSystemName).foregroundColor(clock.state.color))
-            .onAppear {
-                self.clock.connect()
-            }
+    
+    var statusView: some View {
+        VStack{
+            Image(systemName:clock.state.iconSystemName)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 200, height: 200, alignment: .center)
+                .foregroundColor(clock.state.color)
+                .scaleEffect(animating ? 0.5 : 1)
+                .task{
+                    withAnimation(.linear(duration: 0.5)
+                        .repeatForever(autoreverses: true)) {
+                            animating.toggle()
+                        }
+                    
+                }
+            Text(clock.state.description).bold()
+        }.padding().frame(maxWidth: .infinity)
     }
+
 }
 
 
