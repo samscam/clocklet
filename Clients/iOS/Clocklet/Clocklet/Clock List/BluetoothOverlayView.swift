@@ -8,14 +8,13 @@
 
 import SwiftUI
 import CoreBluetooth
-
-
+import CombineBluetooth
+import Combine
 
 struct BluetoothOverlayView: View{
     
-    var bluetoothStatus: BluetoothStatusViewModel
+    @ObservedObject var bluetoothStatus: BluetoothStatusViewModel
     
-    //    @EnvironmentObject var clockList: ClockList
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
     
@@ -29,8 +28,9 @@ struct BluetoothOverlayView: View{
                     
                     .foregroundColor(Color(UIColor.systemFill))
                     .frame(width: 150, height: 150, alignment: .center)
-                
-                Text(bluetoothStatus.message).bold().multilineTextAlignment(.center).padding()
+                if let message = bluetoothStatus.message {
+                    Text(message).bold().multilineTextAlignment(.center).padding()
+                }
                 if let buttonText = bluetoothStatus.buttonText, let closure = bluetoothStatus.buttonClosure {
                     Button(buttonText, action: closure).buttonStyle(RoundyButtonStyle())
                 }
@@ -45,55 +45,82 @@ struct BluetoothOverlayView: View{
 }
 
 struct BluetoothOverlayView_Previews: PreviewProvider {
+    static let central = Central()
     static var previews: some View {
-        Group{
-            ForEach(CBManagerState.allCases){ cbState in
-                BluetoothOverlayView(bluetoothStatus: BluetoothStatusViewModel(state: cbState))
-            }.previewLayout(.sizeThatFits)
-        }
-        .background(Color.green)
+        BluetoothOverlayView(bluetoothStatus: BluetoothStatusViewModel(central: central))
+            .onAppear{
+                var delay: Double = 5
+                for state in CBManagerState.allCases {
+                    DispatchQueue.main.asyncAfter(deadline: .now()+delay){
+                        central.state = state
+                    }
+                    delay = delay + 5
+                }
+            }
+            .background(Color.green)
+            .previewLayout(.fixed(width:400,height:500))
     }
 }
 
-struct BluetoothStatusViewModel {
-    var image: Image
-    var message: String
-    var showSettingsButton: Bool = false
-    var buttonText: String? = nil
-    var buttonClosure: (()->())? = nil
+class BluetoothStatusViewModel: ObservableObject {
+    @Published var image: Image = Image("bluetooth-logo")
+    @Published var message: String?
+    @Published var showSettingsButton: Bool = false
+    @Published var buttonText: String? = nil
+    @Published var buttonClosure: (()->())? = nil
     
-    init(state: CBManagerState){
-        switch state{
+    private var bag = Set<AnyCancellable>()
+    
+    init(central: Central?){
+        
+        central?.$state.sink { [weak self] state in
+            switch state{
 
-        case .poweredOn:
-            image = Image(systemName: "eye")
-            message = "Bluetooth is fine"
-
-        case .unknown:
-            image = Image(systemName:"questionmark.diamond")
-            message = "Checking Bluetooth"
-        case .poweredOff:
-            image = Image("bluetooth-logo")
-            message = "Bluetooth is switched off.\nPlease go into Bluetooth settings and switch it on."
-        case .unauthorized:
-            image = Image("bluetooth-logo")
-            message = "Clocklet is not authorised to use Bluetooth on your phone. Please open settings and switch it on."
-            buttonText = "Open Settings"
-            buttonClosure = {
-                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:], completionHandler: nil)
+            case .poweredOn:
+                self?.image = Image(systemName: "eye")
+                self?.message = "Bluetooth is fine"
+                self?.buttonText = nil
+                self?.buttonClosure = nil
+            case .unknown:
+                self?.image = Image(systemName:"questionmark.diamond")
+                self?.message = "Checking Bluetooth"
+                self?.buttonText = nil
+                self?.buttonClosure = nil
+            case .poweredOff:
+                self?.image = Image("bluetooth-logo")
+                self?.message = "Bluetooth is switched off.\nPlease go into Bluetooth settings and switch it on."
+                self?.buttonText = nil
+                self?.buttonClosure = nil
+            case .unauthorized:
+                self?.image = Image("bluetooth-logo")
+                self?.message = "Clocklet is not authorised to use Bluetooth on your phone. Please open settings and switch it on."
+                self?.buttonText = "Open Settings"
+                self?.buttonClosure = {
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    } else {
+                        print("Failed to create settings url :/")
+                    }
+                }
+                self?.showSettingsButton = true
+            case .unsupported:
+                self?.image = Image(systemName:"bolt.slash.fill")
+                self?.message = "Bluetooth is unsupported on this device. Really sorry but you're going to have to find another way to configure your Clocklet."
+                self?.buttonText = nil
+                self?.buttonClosure = nil
+            case .resetting:
+                self?.image = Image("bluetooth-logo")
+                self?.message = "Bluetooth is resetting..."
+                self?.buttonText = nil
+                self?.buttonClosure = nil
+            default:
+                self?.image = Image(systemName:"questionmark.diamond")
+                self?.message = "Unexpected Bluetooth Status :/"
+                self?.buttonText = nil
+                self?.buttonClosure = nil
             }
-            showSettingsButton = true
-        case .unsupported:
-            image = Image(systemName:"bolt.slash.fill")
-            message = "Bluetooth is unsupported on this device. Really sorry but you're going to have to find another way to configure your Clocklet."
-        case .resetting:
-            image = Image("bluetooth-logo")
-            message = "Bluetooth is resetting..."
-            
-        default:
-            image = Image(systemName:"questionmark.diamond")
-            message = "Unexpected Bluetooth Status :/"
-        }
+        }.store(in: &bag)
+        
     }
 }
 

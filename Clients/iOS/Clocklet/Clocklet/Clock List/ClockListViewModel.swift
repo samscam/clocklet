@@ -17,12 +17,12 @@ import CoreBluetooth
 
 class ClockListViewModel: ObservableObject {
     
-    @Published var bluetoothStatusViewModel: BluetoothStatusViewModel?
-    
-    @Published var bluetoothState: CBManagerState = .unknown
+    @Published var showBluetoothOverlay: Bool = false
     @Published var isScanning = true
     @Published var clocks: [Clock] = []
     @Published var selectedClock: Clock?
+    
+    let bluetoothStatusViewModel: BluetoothStatusViewModel
     
     var bag = Set<AnyCancellable>()
     
@@ -33,20 +33,21 @@ class ClockListViewModel: ObservableObject {
     
     init(central: Central?){
         self.central = central
+        self.bluetoothStatusViewModel = BluetoothStatusViewModel(central: central)
+        
         self._cancellableScanning = central?.$isScanning.assign(to: \.isScanning, on: self)
-        central?.$state.assign(to: \.bluetoothState, on: self).store(in: &bag)
         
-        
-        $bluetoothState.map{ (state) -> BluetoothStatusViewModel? in
-            if state == .poweredOn {
-                return nil
+        central?.$state
+            .map{ newState in
+                switch newState {
+                case .poweredOn, .unknown:
+                    return false
+                default:
+                    return true
+                }
             }
-            
-            return BluetoothStatusViewModel(state:state)
-            
-        }.assign(to: \.bluetoothStatusViewModel, on: self)
-        .store(in: &bag)
-        
+            .assign(to: \.showBluetoothOverlay, on: self)
+            .store(in: &bag)
     }
     
     deinit{

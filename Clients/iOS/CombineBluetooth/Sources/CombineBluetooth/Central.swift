@@ -11,6 +11,8 @@ public class Central: NSObject, ObservableObject {
     private let _cbCentralManager: CBCentralManager
     
     @Published public var state: CBManagerState = .unknown
+    @Published public var authState: CBManagerAuthorization = .notDetermined
+    
     @Published var connections: [UUID:Connection] = [:]
     @Published public var isScanning: Bool = false
     
@@ -22,6 +24,7 @@ public class Central: NSObject, ObservableObject {
         
         _cbCentralManager.delegate = self
         state = _cbCentralManager.state
+        authState = CBManager.authorization
     }
     
     public func discoverPeripherals<T: PeripheralProtocol & AdvertisementMatcher>(matching peripheralType: T.Type) -> AnyPublisher<[T],Never> {
@@ -104,6 +107,7 @@ public class Central: NSObject, ObservableObject {
 extension Central: CBCentralManagerDelegate {
     public func centralManagerDidUpdateState(_ central: CBCentralManager) {
         state = central.state
+        authState = CBManager.authorization
     }
     
     public func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi: NSNumber) {

@@ -23,8 +23,15 @@ struct ClockListView: View {
     @Namespace var clockListNamespace
     
     var body: some View {
-        ZStack{
-            
+        if clockList.showBluetoothOverlay {
+            BluetoothOverlayView(bluetoothStatus: clockList.bluetoothStatusViewModel)
+                .edgesIgnoringSafeArea(.all)
+                .onAppear{
+                    blurMainView = true
+                }.onDisappear{
+                    blurMainView = false
+                }
+        } else {
             if #available(iOS 16.0, *) {
                 NavigationStack{
                     contents
@@ -33,16 +40,6 @@ struct ClockListView: View {
                 NavigationView{
                     contents
                 }
-            }
-            
-            if let bluetoothStatusViewModel = clockList.bluetoothStatusViewModel {
-                BluetoothOverlayView(bluetoothStatus: bluetoothStatusViewModel)
-                    .edgesIgnoringSafeArea(.all)
-                    .onAppear{
-                        blurMainView = true
-                    }.onDisappear{
-                        blurMainView = false
-                    }
             }
         }
     }
@@ -129,7 +126,7 @@ struct ClockListView: View {
     
     var scanningView: some View{
         VStack{
-            if clockList.bluetoothState == .poweredOn {
+
                 Image(systemName: "eye" )
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -144,7 +141,6 @@ struct ClockListView: View {
                             .frame(maxWidth:.infinity)
                     }
                 }.transition(.scale)
-            }
             Rectangle()
                 .frame(maxWidth:.infinity,maxHeight:0)
         }
@@ -164,7 +160,7 @@ struct ClockListView_Previews: PreviewProvider {
     
     static let clockList: ClockListViewModel = {
         let clockList = ClockListViewModel(central:nil)
-        clockList.bluetoothState = .poweredOn
+        clockList.showBluetoothOverlay = false
         clockList.isScanning = false
         clockList.clocks = [
         ]
