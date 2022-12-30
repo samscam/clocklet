@@ -31,8 +31,8 @@ public:
     void stopBlueStuff();
 
     // BLE callbacks
-    void onConnect(NimBLEServer* server);
-    void onDisconnect(NimBLEServer* server);
+    void onConnect(NimBLEServer* server, ble_gap_conn_desc* desc);
+    void onDisconnect(NimBLEServer* server, ble_gap_conn_desc* desc);
 
     void wifiEvent(WiFiEvent_t event);
 

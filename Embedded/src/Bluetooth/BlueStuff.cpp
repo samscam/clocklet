@@ -54,7 +54,6 @@ void BlueStuff::startBlueStuff(){
     LOGMEM;
 
     NimBLEDevice::init(_deviceName);
-    
     NimBLEDevice::setSecurityIOCap(BLE_HS_IO_NO_INPUT_OUTPUT);
     NimBLEDevice::setSecurityAuth(BLE_SM_PAIR_AUTHREQ_BOND | BLE_SM_PAIR_AUTHREQ_MITM | BLE_SM_PAIR_AUTHREQ_SC);
 
@@ -144,13 +143,20 @@ void BlueStuff::stopBlueStuff(){
 
 }
 
-void BlueStuff::onConnect(NimBLEServer* server) {
+void BlueStuff::onConnect(NimBLEServer* server, ble_gap_conn_desc* desc) {
     ESP_LOGI(TAG,"Bluetooth client connected");
     bool change = true;
+
+    // NimBLEConnInfo info = server->getPeerInfo(NimBLEAddress(desc->peer_id_addr));
+    // info.getConnInterval();
+
+    server->setDataLen(desc->conn_handle,0x00FB);
+    uint16_t mtu = server->getPeerMTU(desc->conn_handle);
+    ESP_LOGI(TAG,"Bluetooth MTU %d",mtu);
     xQueueSend(_bluetoothConnectedQueue, &change, (TickType_t) 0);
 }
 
-void BlueStuff::onDisconnect(NimBLEServer* server) {
+void BlueStuff::onDisconnect(NimBLEServer* server, ble_gap_conn_desc* desc) {
     ESP_LOGI(TAG,"Bluetooth client disconnected");
     bool change = false;
     xQueueSend(_bluetoothConnectedQueue, &change, (TickType_t) 0);
