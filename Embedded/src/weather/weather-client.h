@@ -9,8 +9,6 @@
 #include "../UpdateScheduler.h"
 
 #include <RTClib.h>
-#define WEATHER_HTTP_TIMEOUT 20  // max respone time from server
-#define WEATHER_MAX_CONTENT_SIZE 16384       // max size of the HTTP response
 
 class WeatherClient: public UpdateJob {
 
