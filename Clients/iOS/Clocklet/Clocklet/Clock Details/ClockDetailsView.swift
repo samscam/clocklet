@@ -17,6 +17,8 @@ struct ClockDetailsView: View {
     @State var showLocationDetails: Bool = false
     @State var animating: Bool = false
     
+    @Environment(\.scenePhase) var scenePhase
+    
     var body: some View {
                 VStack{
                     switch clock.state {
@@ -119,10 +121,19 @@ struct ClockDetailsView: View {
                 }
                 .padding()
                 .navigationBarHidden(true)
-//                .navigationBarTitle( Text(clock.name), displayMode:.automatic)
-//                .navigationBarItems(trailing: Image(systemName:clock.state.iconSystemName).foregroundColor(clock.state.color))
                 .onAppear {
                     self.clock.connect()
+                }
+                .onChange(of: scenePhase) { newPhase in
+                    switch newPhase {
+                    case .active:
+                        self.clock.connect()
+                    case .inactive, .background:
+                        self.clock.disconnect()
+                    default:
+                        break
+                    }
+                    
                 }
             }
     
