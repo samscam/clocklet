@@ -14,11 +14,10 @@ HTTPnihClient::HTTPnihClient(){
     _wifiClient = new WiFiClientSecure();
     _wifiClient->setCACertBundle(rootca_crt_bundle_start);
 
-
 }
 
 HTTPnihClient::~HTTPnihClient(){
-    ESP_LOGV(TAG,"Removing HTTPnihClient");
+    ESP_LOGI(TAG,"Removing HTTPnihClient");
     delete _httpClient;
     delete _wifiClient;
 }

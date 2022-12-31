@@ -7,7 +7,7 @@
 #define timeS_TO_MicroS(xTimeInSeconds) (((int64_t) xTimeInSeconds) * ((int64_t) 1000000))
 
 enum UpdateFrequency: int64_t{
-    ten = 10,
+    tensecs = 10,
     minutely = 60,
     hourly = 60*60,
     daily = 60*60*24,

@@ -202,16 +202,14 @@ void setup() {
 
 
   locationManager = new LocationManager(locationChangedQueue);
+  ClockLocation currentLocation = locationManager->getLocation();
 
   blueStuff = new BlueStuff(bluetoothConnectedQueue,prefsChangedQueue,networkChangedQueue,networkStatusQueue,godModeQueue,locationManager);
   blueStuff->startBlueStuff();
 
 
-  ClockLocation currentLocation = locationManager->getLocation();
-
   weatherClient = new OpenWeatherMap();
   weatherClient->weatherChangedQueue = weatherChangedQueue;
-
   weatherClient->setLocation(currentLocation);
   weatherClient->setTimeHorizon(12);
   updateScheduler.addJob(weatherClient,hourly);
@@ -224,22 +222,24 @@ void setup() {
   // Initialise I2c stuff (DS3231)
   #if defined(TIME_DS3231)
 
-  #if defined(CLOCKBRAIN)
-  Wire.begin(22, 21); // Got the damn pins the wrong way round on clockbrain
-  #else
-  Wire.begin();
+    #if defined(CLOCKBRAIN)
+    Wire.begin(22, 21); // Got the damn pins the wrong way round on clockbrain
+    #else
+    Wire.begin();
+    #endif
+
+    if (!ds3231.begin()){
+      ESP_LOGE(TAG,"Could not connect to DS3231");
+    }
+
+    timeSync = new TimeSync(&ds3231, &rtc); // << deliberately leaking these here - should really go smart pointers
+    timeSync->performUpdate();
+    updateScheduler.addJob(timeSync,hourly);
+    
   #endif
 
-  if (!ds3231.begin()){
-    ESP_LOGE(TAG,"Could not connect to DS3231");
-  }
-
-  #endif
 
 
-  timeSync = new TimeSync(&ds3231, &rtc); // << deliberately leaking these here - should really go smart pointers
-  timeSync->performUpdate();
-  updateScheduler.addJob(timeSync,hourly);
 
   // Start the internal RTC and NTP sync
   rtc.begin();
