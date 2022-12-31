@@ -4,9 +4,15 @@
 
 #define TAG "UPDATES"
 
+#if defined(SPI_RAM)
 UpdateScheduler::UpdateScheduler():Task("UpdateScheduler", 20480,  5){
     this->setCore(0);
 }
+#else
+UpdateScheduler::UpdateScheduler():Task("UpdateScheduler", 8192,  5){
+    this->setCore(0);
+}
+#endif
 
 void UpdateScheduler::run(void *data) {
     

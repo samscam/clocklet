@@ -106,12 +106,10 @@ bool FirmwareUpdates::checkForUpdates(bool useStaging) {
 bool FirmwareUpdates::_parseGithubReleases(Stream *stream, bool useStaging){
     // Parse JSON object
 
-
-
-    #if defined(CLOCKBRAIN)
+    #if defined(SPI_RAM)
     SpiRamJsonDocument doc(512*1024);
     #else
-    DynamicJsonDocument doc(64*1024);
+    DynamicJsonDocument doc(8*1024);
     #endif
     
     DeserializationError error = deserializeJson(doc, *stream);
@@ -185,7 +183,7 @@ bool FirmwareUpdates::_parseGithubReleases(Stream *stream, bool useStaging){
 
     #if defined(CLOCKBRAIN)
     const char* assetName = "clockbrain.bin";
-    #else
+    #elif defined(FEATHER)
     const char* assetName = "feather.bin";
     #endif
     

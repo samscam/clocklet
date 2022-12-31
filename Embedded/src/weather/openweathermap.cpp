@@ -35,10 +35,10 @@ void OpenWeatherMap::setLocation(ClockLocation location){
 bool OpenWeatherMap::readReponseContent(Stream *stream, size_t contentLength) {
   ESP_LOGI(TAG,"Content length is %d",contentLength);
   // Allocate a temporary memory pool
-  #if defined(CLOCKBRAIN)
+  #if defined(SPI_RAM)
   SpiRamJsonDocument root(64*1024); // woo a whole 64k
   #else
-  DynamicJsonDocument root(32*1024);
+  DynamicJsonDocument root(24*1024);//contentLength+48);
   #endif
   
   auto error = deserializeJson(root,*stream);
