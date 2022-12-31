@@ -40,7 +40,7 @@ public:
   
   virtual char* constructURL() { return nullptr; };
 
-  virtual bool readReponseContent(Stream *stream) { return false; };
+  virtual bool readReponseContent(Stream *stream, size_t contentLength) { return false; };
   
 private:
 

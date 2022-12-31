@@ -16,7 +16,7 @@ public:
   virtual ~OpenWeatherMap() {};
   
   // Overrides
-  bool readReponseContent(Stream *stream);
+  bool readReponseContent(Stream *stream, size_t contentLength);
   void setTimeHorizon(uint8_t hours);
   void setLocation(ClockLocation location);
   char* constructURL();

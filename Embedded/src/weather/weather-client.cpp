@@ -49,7 +49,8 @@ bool WeatherClient::fetchWeather(){
     bool parseResult = false;
     if (result == 200){
       if (stream){
-        parseResult = readReponseContent(stream);
+        size_t contentLength = nihClient.getHttpClient()->getSize();
+        parseResult = readReponseContent(stream, contentLength);
       }
     } 
 

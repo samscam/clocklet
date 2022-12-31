@@ -1,5 +1,6 @@
 #include "openweathermap.h"
 #include <SpiRamJsonAllocator.h>
+#include "Loggery.h"
 
 #define TAG "OWM"
 
@@ -31,8 +32,8 @@ void OpenWeatherMap::setLocation(ClockLocation location){
   this->setNeedsUpdate();
 }
 
-bool OpenWeatherMap::readReponseContent(Stream *stream) {
-
+bool OpenWeatherMap::readReponseContent(Stream *stream, size_t contentLength) {
+  ESP_LOGI(TAG,"Content length is %d",contentLength);
   // Allocate a temporary memory pool
   #if defined(CLOCKBRAIN)
   SpiRamJsonDocument root(64*1024); // woo a whole 64k
