@@ -39,7 +39,6 @@ public:
 
   
   virtual char* constructURL() { return nullptr; };
-  virtual const char* certificate() { return nullptr; };
 
   virtual bool readReponseContent(Stream *stream) { return false; };
   

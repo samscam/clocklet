@@ -20,7 +20,6 @@ public:
   void setTimeHorizon(uint8_t hours);
   void setLocation(ClockLocation location);
   char* constructURL();
-  const char* certificate();
 
 private:
 

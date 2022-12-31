@@ -17,9 +17,6 @@ char* OpenWeatherMap::constructURL(){
   return buffer;
 }
 
-const char* OpenWeatherMap::certificate(){
-  return NULL;
-}
 
 void OpenWeatherMap::setTimeHorizon(uint8_t hours){
   _timeHorizon = hours;
