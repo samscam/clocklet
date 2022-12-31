@@ -12,7 +12,6 @@ OpenWeatherMap::OpenWeatherMap() : WeatherClient() {
 
 char* OpenWeatherMap::constructURL(){
   char *buffer;
-  buffer = (char *) malloc(sizeof(char) * 8192 ); // Oddly, by allocating MORE to this, we end up leaking less. :/
   asprintf(&buffer,OWM_PATH,_currentLocation.lat,_currentLocation.lng,OPENWEATHERMAP_APIKEY);
   ESP_LOGI(TAG, "%s", buffer);
   return buffer;
