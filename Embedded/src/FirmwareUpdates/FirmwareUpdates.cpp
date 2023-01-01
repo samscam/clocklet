@@ -59,13 +59,14 @@ bool FirmwareUpdates::performUpdate(){
         ESP_LOGI(TAG,"Firmware update check complete");
         return true;
     } else {
-        ESP_LOGE(TAG,"Update check failed");
+        ESP_LOGE(TAG,"Update check failed, should retry");
         return false;
     }
 
 }
 
-
+// should return TRUE if we do not want to retry...
+// otherwise false...
 bool FirmwareUpdates::checkForUpdates(bool useStaging) {
     
     if (!reconnect()){
@@ -102,12 +103,13 @@ bool FirmwareUpdates::checkForUpdates(bool useStaging) {
 }
 
 
-
+// should return TRUE if we do not want to retry...
+// otherwise false...
 bool FirmwareUpdates::_parseGithubReleases(Stream *stream, bool useStaging){
     // Parse JSON object
 
     #if defined(SPI_RAM)
-    SpiRamJsonDocument doc(512*1024);
+    SpiRamJsonDocument doc(64*1024);
     #else
     DynamicJsonDocument doc(8*1024);
     #endif
@@ -148,8 +150,9 @@ bool FirmwareUpdates::_parseGithubReleases(Stream *stream, bool useStaging){
     semver_t local = {};
     if ( semver_parse(VERSION, &local)){
         ESP_LOGE(TAG, "Failed to parse local version");
-        return false;
+        return true;
     }
+
     ESP_LOGI(TAG, "Local firmware is %s", VERSION);
 
     // Compare that to the local version
@@ -170,7 +173,7 @@ bool FirmwareUpdates::_parseGithubReleases(Stream *stream, bool useStaging){
     // Fish out the binary url
     if (rel["assets"][0].isNull()){
         ESP_LOGE(TAG, "Assets section not found in payload");
-        return false;
+        return true;
     }
     
     // Iterate through the assets until we find something with the right name
@@ -197,12 +200,12 @@ bool FirmwareUpdates::_parseGithubReleases(Stream *stream, bool useStaging){
 
     if (!assetFound){
         ESP_LOGE(TAG, "Correct asset for this device not found");
-        return false;
+        return true;
     }
 
     if (selectedAsset["browser_download_url"].isNull()){
         ESP_LOGE(TAG, "Download URL not found in payload");
-        return false;
+        return true;
     }
     const char * __downloadURL = selectedAsset["browser_download_url"];
 
