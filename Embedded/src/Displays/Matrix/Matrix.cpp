@@ -467,13 +467,12 @@ void Matrix::displayTime(const DateTime& time, Weather weather){
 
   // PRECIPITATION --------
 
-  // Intensity is somewhere in the range of 0 to 80 mm/hour but we are going to top out at 30
-  double precip = (weather.precipIntensity / 30.0) * 255.0;
-
+  // Intensity is somewhere in the range of 0 to 80 mm/hour but we are going to top out at 20
+  double precip = (weather.precipIntensity / 20.0) * 255.0;
   precip = max(precip,0.0);
   precip = min(precip,255.0);
-
   fract8 intensity = fract8(precip);
+  
   if (intensity > 0) {
     switch (weather.precipType) {
       case Drizzle:

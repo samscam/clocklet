@@ -185,21 +185,25 @@ void RGBDigit::displayTime(const DateTime& time, Weather weather){
 
   // PRECIPITATION --------
 
-  // We are shaving off anything under a 25% chance of rain and calling that zero
-  precip = precip - 25;
-  precip = precip < 0 ? 0 : precip;
-  fract8 rainRate = (precip * 255) / 75.0;
+  // Intensity is somewhere in the range of 0 to 80 mm/hour but we are going to top out at 20
+  double precip = (weather.precipIntensity / 20.0) * 255.0;
+  precip = max(precip,0.0);
+  precip = min(precip,255.0);
+  fract8 intensity = fract8(precip);
 
-  if (rainRate > 0) {
+  if (intensity > 0) {
     switch (weather.precipType) {
       case Snow:
-        addSnow(rainRate);
+        addSnow(intensity);
+        break;
+      case Drizzle:
+        addRain(intensity, CRGB::Blue);
         break;
       case Rain:
-        addRain(rainRate, CRGB::Blue);
+        addRain(intensity, CRGB::Blue);
         break;
       case Sleet:
-        addRain(rainRate, CRGB::White);
+        addRain(intensity, CRGB::White);
         break;
     }
   }
