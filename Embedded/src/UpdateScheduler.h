@@ -24,7 +24,7 @@ class UpdateJob {
         
         void update(int64_t startTime);
         void setNeedsUpdate();
-
+        const char* name;
         UpdateFrequency frequency;
     private:
         
@@ -38,7 +38,7 @@ public:
     UpdateScheduler();
     void run(void *data);
 
-    void addJob(UpdateJob *job, UpdateFrequency freq);
+    void addJob(UpdateJob *job, const char* name, UpdateFrequency freq);
 
 private:
     std::vector<UpdateJob*> _jobs;

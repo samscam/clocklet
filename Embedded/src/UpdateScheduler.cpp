@@ -4,6 +4,8 @@
 
 #define TAG "UPDATES"
 
+#define MAX_RETRIES 5
+
 #if defined(SPI_RAM)
 UpdateScheduler::UpdateScheduler():Task("UpdateScheduler", 20480,  5){
     this->setCore(0);
@@ -32,8 +34,9 @@ void UpdateScheduler::run(void *data) {
     
 }
 
-void UpdateScheduler::addJob(UpdateJob *job, UpdateFrequency freq){
-    job->frequency = freq; //not sure this is working :/
+void UpdateScheduler::addJob(UpdateJob *job, const char* name, UpdateFrequency freq){
+    job->frequency = freq;
+    job->name = name;
     _jobs.push_back(job);
 }
 
@@ -48,23 +51,37 @@ void UpdateJob::update(int64_t startTime){
         return;
     }
 
+    ESP_LOGI(TAG, "Running job: %s",name);
     // Must be time, let's try it
     LOGMEM;
-    if (this->performUpdate()){
-        ESP_LOGI(TAG, "Job frequency: %lld - in micros %lld",frequency,timeS_TO_MicroS(frequency));
-        ESP_LOGI(TAG, "Start: %lld",startTime);
-        nextUpdateTime = esp_timer_get_time() + timeS_TO_MicroS(frequency);
-        ESP_LOGI(TAG, "Nextupdate: %lld",nextUpdateTime);
+    bool updateResult = this->performUpdate();
+    LOGMEM;
+
+    nextUpdateTime = esp_timer_get_time() + timeS_TO_MicroS(frequency);
+    
+    if (updateResult){
         retryCount = 0;
+        ESP_LOGI(TAG, "Job %s ok - Nextupdate: %lld",name, nextUpdateTime);
         return;
     }
-    LOGMEM;
+
     // The update failed - try again - backoff at 10 seconds per retry
     retryCount++;
-    nextUpdateTime = startTime + timeS_TO_MicroS(retryCount * 10);
-    ESP_LOGI(TAG, "Start: %lld",startTime);
-    ESP_LOGI(TAG, "Retry %d backing off to %d",retryCount, retryCount*10);
-    ESP_LOGI(TAG, "Nextupdate: %lld",nextUpdateTime);
+
+    if (retryCount >= MAX_RETRIES){
+        //bail after max updates and run at normal frequency
+        retryCount = 0;
+        ESP_LOGI(TAG, "Job %s has exceeded max retries %d ... ",name,retryCount);
+        ESP_LOGI(TAG, "Nextupdate: %lld",nextUpdateTime);
+        return;
+    } else {
+        nextUpdateTime = startTime + timeS_TO_MicroS(retryCount * 10);
+        ESP_LOGI(TAG, "Retrying %s : %d backing off to %d",name,retryCount, retryCount*10);
+        ESP_LOGI(TAG, "Nextupdate: %lld",nextUpdateTime);
+        return;
+    }
+
+
 }
 
 void UpdateJob::setNeedsUpdate(){

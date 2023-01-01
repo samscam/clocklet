@@ -212,7 +212,7 @@ void setup() {
   weatherClient->weatherChangedQueue = weatherChangedQueue;
   weatherClient->setLocation(currentLocation);
   weatherClient->setTimeHorizon(12);
-  updateScheduler.addJob(weatherClient,hourly);
+  updateScheduler.addJob(weatherClient,"weather",hourly);
 
   rainbows.setLocation(currentLocation);
 
@@ -234,7 +234,7 @@ void setup() {
 
     timeSync = new TimeSync(&ds3231, &rtc); // << deliberately leaking these here - should really go smart pointers
     timeSync->performUpdate();
-    updateScheduler.addJob(timeSync,hourly);
+    updateScheduler.addJob(timeSync,"timesync",hourly);
     
   #endif
 
@@ -246,7 +246,7 @@ void setup() {
 
   // Firmware updatedr
   firmwareUpdates = new FirmwareUpdates(firmwareUpdateQueue);
-  updateScheduler.addJob(firmwareUpdates,daily);
+  updateScheduler.addJob(firmwareUpdates,"firmware",daily);
 
   // Start Update Scheduler
   updateScheduler.start();
