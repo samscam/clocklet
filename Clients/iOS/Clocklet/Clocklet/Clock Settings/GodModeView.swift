@@ -121,6 +121,11 @@ struct GodModeView: View {
             set: { godModeService.weather?.precipIntensity = $0 }
         )
         
+        let precipChance = Binding (
+            get: { return (godModeService.weather?.precipChance ?? 0.0) * 100.0 },
+            set: { godModeService.weather?.precipChance = ($0/100.0) }
+        )
+        
         return Group{
             Divider()
             Spacer()
@@ -137,15 +142,32 @@ struct GodModeView: View {
             Text("Intensity (mm/h)").bold()
             HStack{
                 Slider(value: precipIntensity,
-                       in: 0...50,step:1
+                       in: 0...10
                 ) {
                     Text("Precipitation Intensity")
                 } minimumValueLabel: {
                     Text("0")
                 } maximumValueLabel: {
-                    Text("80")
+                    Text("10")
                 }
                 Text("\(Int(precipIntensity.wrappedValue))")
+                    .bold()
+                    .frame(width:50)
+                    .lozenge().accentColor(.cyan)
+                    
+            }
+            Text("Chance (%)").bold()
+            HStack{
+                Slider(value: precipChance,
+                       in: 0...100
+                ) {
+                    Text("Precipitation Intensity")
+                } minimumValueLabel: {
+                    Text("0")
+                } maximumValueLabel: {
+                    Text("100")
+                }
+                Text("\(Int(precipChance.wrappedValue))")
                     .bold()
                     .frame(width:50)
                     .lozenge().accentColor(.cyan)

@@ -127,9 +127,9 @@ private:
 
   void regenerateHeatPalette(float minTemp, float maxTemp);
 
-  void addRain( fract8 chanceOfRain, CRGB colour);
-  void addSnow( fract8 chanceOfSnow );
-  void addDrizzle( fract8 drizzleIntensity, CRGB colour);
+  void addRain( fract8 precipChance, fract8 precipIntensity, CRGB colour);
+  void addSnow( fract8 precipChance, fract8 precipIntensity );
+  void addDrizzle( fract8 precipChance, CRGB colour);
   
   void addLightening();
   void addFrost();
@@ -154,6 +154,7 @@ private:
 
   bool rainbows = false;
 
+  
   uint8_t rainFrame = 0;
   bool rainDrops[ROWS][COLUMNS] = {{0}} ;
   CRGB rainLayer[NUM_LEDS];
