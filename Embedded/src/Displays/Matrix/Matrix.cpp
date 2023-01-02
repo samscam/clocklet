@@ -782,7 +782,7 @@ void Matrix::addDrizzle( fract8 precipChance, CRGB colour)
 
   // And composite on the raindrops
   for(int i = 0; i < NUM_LEDS; i++) {
-    leds[i].nscale8(255-(rainLayer[i].b * 0.6));
+    leds[i].nscale8( 255 - scale8(rainLayer[i].b, 140) );
     leds[i] += rainLayer[i] ; 
   }
 }
@@ -828,7 +828,7 @@ void Matrix::addRain( fract8 precipChance, fract8 precipIntensity, CRGB colour)
 
   // And composite on the raindrops
   for(int i = 0; i < NUM_LEDS; i++) {
-    leds[i].nscale8( 255 - scale8(rainLayer[i].b, 140 ));
+    leds[i].nscale8( 255 - scale8( rainLayer[i].b, 140 ));
     leds[i] += rainLayer[i] ; 
   }
 }
