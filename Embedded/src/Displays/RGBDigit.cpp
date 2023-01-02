@@ -180,15 +180,14 @@ void RGBDigit::displayTime(const DateTime& time, Weather weather){
   }
 
 
-  float precip = weather.precipChance * 100;
   float minTmp = weather.minTmp;
 
   // PRECIPITATION --------
 
   // Intensity is somewhere in the range of 0 to 80 mm/hour but we are going to top out at 20
-  double precip = (weather.precipIntensity / 20.0) * 255.0;
-  precip = max(precip,0.0);
-  precip = min(precip,255.0);
+  float precip = (weather.precipIntensity / 20.0f) * 255.0f;
+  precip = max(precip,0.0f);
+  precip = min(precip,255.0f);
   fract8 intensity = fract8(precip);
 
   if (intensity > 0) {
