@@ -112,7 +112,6 @@ public class Characteristic<Value: DataConvertible>: CharacteristicWrapper, Obse
     
     public func invalidate(){
         cbCharacteristic = nil
-        wrappedValue = nil
     }
     
     // READING VALUES FROM REMOTE

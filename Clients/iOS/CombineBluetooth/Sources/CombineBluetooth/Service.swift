@@ -112,13 +112,14 @@ public class Service<Value:ServiceProtocol>: ServiceWrapper, Publisher, Observab
     }
     
     public func didDiscover(){
-        self.wrappedValue = .init()
+        if (self.wrappedValue == nil){
+            self.wrappedValue = .init()
+        }
     }
     
     public func didInvalidate(){
         wrappedValue?.characteristicWrappers.forEach{ $0.invalidate() }
         self.cbService = nil
-        self.wrappedValue = nil
     }
     
     
