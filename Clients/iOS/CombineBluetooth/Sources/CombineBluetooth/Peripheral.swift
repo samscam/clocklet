@@ -9,12 +9,26 @@ public protocol AdvertisementMatcher: InnerPeripheralProtocol{
 /**
  When the central searches for devices, it will match the uuids mentioned in the incoming advertisement packets against the ones in this list.
 */
-    static var advertisedServiceUUIDs: [String] { get }
+    static var advertisedServiceUUIDs: [String]? { get }
+    static var advertisedManufacturer: String? { get }
 }
 
 public extension AdvertisementMatcher {
-    static var advertisedUUIDs: Set<CBUUID> {
-        return Set(Self.advertisedServiceUUIDs.map{ CBUUID(string:$0) })
+    static var advertisedUUIDs: Set<CBUUID>? {
+        guard let uuids = Self.advertisedServiceUUIDs else {
+            return nil
+        }
+        return Set(uuids.map{ CBUUID(string:$0) })
+    }
+}
+
+public extension AdvertisementMatcher {
+    static func matches(_ adData: AdvertisementData)->Bool{
+        var matches = true
+        if let matchUUIDs = advertisedUUIDs, let peripheralAdvertisedUUIDs = adData.serviceUUIDs {
+            if matchUUIDs.isDisjoint(with: peripheralAdvertisedUUIDs) { matches = false }
+        }
+        return matches
     }
 }
 
@@ -81,6 +95,7 @@ open class Peripheral: PeripheralProtocol, ObservableObject {
         
         findInnerObservables()
     }
+    
     
     public func connect(){
         switch state {
@@ -153,10 +168,19 @@ public extension InnerPeripheralProtocol {
 
     // To make Peripherals work as ObservableObjects, just like each @Service is @Published we cascade the objectWillChange notifications down the tree. Note that it will only see the @Services at the final level of subclassing, so you can't subclass a Peripheral twice.
     internal func findInnerObservables(){
-        self.innerObservables.forEach { (inner) in
-            inner.objectWillChange.sink { _ in
-                self.objectWillChange.send()
-            }.store(in: &bag)
-        }
+      self.innerObservables.forEach { [weak self] (inner) in
+        guard let self = self else { return }
+          inner.objectWillChange.sink { _ in
+              self.objectWillChange.send()
+          }.store(in: &self.bag)
+      }
     }
+}
+
+extension Peripheral: CustomDebugStringConvertible{
+    public var debugDescription: String {
+        return "\(name) \(advertisementData?.localName ?? "--") \(advertisementData?.manufacturerData?.manufacturerIdString ?? "--")"
+    }
+    
+    
 }

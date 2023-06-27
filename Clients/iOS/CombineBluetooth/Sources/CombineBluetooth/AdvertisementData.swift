@@ -28,12 +28,17 @@ public struct AdvertisementData{
 
 public struct ManufacturerData {
     init?(_ data: Data){
-        guard data.count >= 3 else {
+        guard data.count >= 2 else {
             return nil
         }
+        
         // first two bytes are the manufacturer
         let mfr = data[0...1]
         self.manufacturerId = mfr
+        
+        guard data.count >= 3 else {
+            return
+        }
         
         // The rest is arbitrary
         let res = data[2...]
@@ -42,4 +47,8 @@ public struct ManufacturerData {
     }
     public var manufacturerId: Data?
     public var residual: Data?
+    
+    public var manufacturerIdString: String? {
+        return manufacturerId?.map { String(format: "%02hhx", $0) }.joined()
+    }
 }

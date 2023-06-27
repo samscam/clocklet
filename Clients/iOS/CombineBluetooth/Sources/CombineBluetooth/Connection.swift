@@ -34,20 +34,12 @@ public class Connection: NSObject{
         
         // Discover a suitable peripheral class...
         // Hoping this happens on first shot through...
-        if let advertiseduuids = adData.serviceUUIDs {
-            
-            print("Advertised uuids for \(name): \(advertiseduuids)")
-            
-            
-            if let firstKnownPeripheral = knownPeripheralTypes
-                .first(where: { (peripheralType) -> Bool in
-                    return peripheralType.advertisedUUIDs == advertiseduuids
-                }) {
-                print("🏴‍☠️ Found \(firstKnownPeripheral)")
-                let actualPeripheral = firstKnownPeripheral.init(uuid: cbPeripheral.identifier, name: name, connection: self)
-                actualPeripheral.advertisementData = adData
-                self.peripheral = actualPeripheral
-            }
+        if let firstKnownPeripheral = knownPeripheralTypes
+            .first(where: { $0.matches(adData) }) {
+            print("🏴‍☠️ Found \(firstKnownPeripheral)")
+            let actualPeripheral = firstKnownPeripheral.init(uuid: cbPeripheral.identifier, name: name, connection: self)
+            actualPeripheral.advertisementData = adData
+            self.peripheral = actualPeripheral
         }
     }
     

@@ -3,6 +3,7 @@ import Combine
 import PlaygroundSupport
 import CombineBluetooth
 
+
 PlaygroundPage.current.needsIndefiniteExecution = true
 
 var bag = Set<AnyCancellable>()
@@ -10,10 +11,13 @@ var bag = Set<AnyCancellable>()
 /// Create a model for the peripheral, composed of a bunch of services
 class ThingWithInfo: Peripheral, AdvertisementMatcher {
 
-    static var advertisedServiceUUIDs: [String] = ["180A"]
-
+    static var advertisedServiceUUIDs: [String]? = nil // ["68D924A1-C1B2-497B-AC16-FD1D98EDB41F"]
+    static var advertisedManufacturer: String? = nil
+    
     @Service("180A") var deviceInfoService: DeviceInfoService?
-
+    deinit{
+        print("Deinited thing with info")
+    }
 }
 
 /// Create models for each Service
@@ -29,11 +33,35 @@ class DeviceInfoService: ServiceProtocol {
 
 
 let central = Central()
-var connectionPub = central.discoverConnections(for: ThingWithInfo.self)
 
-connectionPub.sink { (connections) in
-    print(connections)
+central.$state.sink { newState in
+    print(newState.rawValue)
 }.store(in: &bag)
+
+central.$authState.sink { newState in
+    print("Auth state: \(newState.rawValue)")
+}.store(in: &bag)
+
+
+let peripherals = central.discoverPeripherals(matching: ThingWithInfo.self)
+
+peripherals
+    .timeout(.seconds(5), scheduler: DispatchQueue.main)
+    .collect()
+    .sink { peripherals in
+    print("Discovered: ----")
+    for peripheral in peripherals {
+        print(peripheral)
+    }
+}.store(in: &bag)
+
+
+//var fakeThing: ThingWithInfo? = ThingWithInfo(uuid: UUID(), name: "hello")
+//fakeThing?.deviceInfoService = .init()
+//fakeThing?.deviceInfoService?.manufacturerName = "hello"
+//
+
+
 
 
 //

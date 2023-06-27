@@ -56,20 +56,25 @@ public class Service<Value:ServiceProtocol>: ServiceWrapper, Publisher, Observab
         // Set up passing of objectWillChange notifications
         // This feels a bit of an odd arrangement as both the wrapper (this thing) and the wrapped value (the definition of the service, conforming to ServiceProtocol) conform to ObservableObject
         // The ServiceProtocol doesn't have a way of monitoring its own @Characteristics for changes, so it's done here
-        _subject.sink{ newValue in
-            self.objectWillChange.send()
-            self.innerBag.removeAll()
+        _subject.sink{ [weak self] newValue in
+            self?.objectWillChange.send()
+            self?.innerBag.removeAll()
             if let serviceValue = newValue {
                 serviceValue.innerObservables.forEach{ characteristicWrapper in
-                    characteristicWrapper.objectWillChange.sink{_ in
-                        self.objectWillChange.send()
-                        serviceValue.objectWillChange.send()
-                    }.store(in: &self.innerBag)
+                    if let self = self {
+                        characteristicWrapper.objectWillChange.sink{ [weak self] _ in
+                            self?.objectWillChange.send()
+                            serviceValue.objectWillChange.send()
+                        }.store(in: &self.innerBag)
+                    }
                 }
             }
-            }.store(in: &bag)
+        }.store(in: &bag)
     }
     
+    deinit{
+      Swift.print("Service wrapper deinited")
+    }
     
     public var projectedValue: Service {
         return self
