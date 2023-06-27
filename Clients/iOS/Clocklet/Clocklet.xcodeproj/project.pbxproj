@@ -64,6 +64,16 @@
 		22BB977424C20CED0035D682 /* MockClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BB977324C20CED0035D682 /* MockClock.swift */; };
 		22DC8A6A24CBAD7300DF0551 /* RoundyButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22DC8A6924CBAD7300DF0551 /* RoundyButtonStyle.swift */; };
 		22DEF6552504267500149B8A /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22DEF6542504267500149B8A /* Utils.swift */; };
+		22FA7F402970CBAF00F3285E /* ClockletMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FA7F3F2970CBAF00F3285E /* ClockletMacApp.swift */; };
+		22FA7F422970CBAF00F3285E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FA7F412970CBAF00F3285E /* ContentView.swift */; };
+		22FA7F442970CBB700F3285E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 22FA7F432970CBB700F3285E /* Assets.xcassets */; };
+		22FA7F472970CBB700F3285E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 22FA7F462970CBB700F3285E /* Preview Assets.xcassets */; };
+		22FA7F522970CBB800F3285E /* ClockletMacTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FA7F512970CBB800F3285E /* ClockletMacTests.swift */; };
+		22FA7F5C2970CBB800F3285E /* ClockletMacUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FA7F5B2970CBB800F3285E /* ClockletMacUITests.swift */; };
+		22FA7F5E2970CBB800F3285E /* ClockletMacUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FA7F5D2970CBB800F3285E /* ClockletMacUITestsLaunchTests.swift */; };
+		22FA7F692970CC2200F3285E /* CombineBluetooth in Frameworks */ = {isa = PBXBuildFile; productRef = 22FA7F682970CC2200F3285E /* CombineBluetooth */; };
+		22FA7F6B2970CC3200F3285E /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22FA7F6A2970CC3200F3285E /* CoreLocation.framework */; };
+		22FA7F6D2970CC3B00F3285E /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22FA7F6C2970CC3B00F3285E /* CoreBluetooth.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -80,6 +90,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 22836EAF228629750020B46F;
 			remoteInfo = Clockses;
+		};
+		22FA7F4E2970CBB800F3285E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 22836EA8228629750020B46F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 22FA7F3C2970CBAF00F3285E;
+			remoteInfo = ClockletMac;
+		};
+		22FA7F582970CBB800F3285E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 22836EA8228629750020B46F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 22FA7F3C2970CBAF00F3285E;
+			remoteInfo = ClockletMac;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -133,6 +157,19 @@
 		22BE0A3F235DE4EA00EB8780 /* Clock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clock.swift; sourceTree = "<group>"; };
 		22DC8A6924CBAD7300DF0551 /* RoundyButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundyButtonStyle.swift; sourceTree = "<group>"; };
 		22DEF6542504267500149B8A /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		22FA7F3D2970CBAF00F3285E /* ClockletMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClockletMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		22FA7F3F2970CBAF00F3285E /* ClockletMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockletMacApp.swift; sourceTree = "<group>"; };
+		22FA7F412970CBAF00F3285E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		22FA7F432970CBB700F3285E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		22FA7F462970CBB700F3285E /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		22FA7F482970CBB700F3285E /* ClockletMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ClockletMac.entitlements; sourceTree = "<group>"; };
+		22FA7F4D2970CBB800F3285E /* ClockletMacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClockletMacTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		22FA7F512970CBB800F3285E /* ClockletMacTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockletMacTests.swift; sourceTree = "<group>"; };
+		22FA7F572970CBB800F3285E /* ClockletMacUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClockletMacUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		22FA7F5B2970CBB800F3285E /* ClockletMacUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockletMacUITests.swift; sourceTree = "<group>"; };
+		22FA7F5D2970CBB800F3285E /* ClockletMacUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockletMacUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		22FA7F6A2970CC3200F3285E /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/CoreLocation.framework; sourceTree = DEVELOPER_DIR; };
+		22FA7F6C2970CC3B00F3285E /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/CoreBluetooth.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -148,6 +185,30 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		22836EC12286297C0020B46F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		22FA7F3A2970CBAF00F3285E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				22FA7F6D2970CC3B00F3285E /* CoreBluetooth.framework in Frameworks */,
+				22FA7F6B2970CC3200F3285E /* CoreLocation.framework in Frameworks */,
+				22FA7F692970CC2200F3285E /* CombineBluetooth in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		22FA7F4A2970CBB800F3285E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		22FA7F542970CBB800F3285E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -191,6 +252,9 @@
 				22836EB2228629750020B46F /* Clocklet */,
 				22836EC72286297C0020B46F /* ClockletTests */,
 				2265C29D24C0BC0A00F17506 /* Scripts */,
+				22FA7F3E2970CBAF00F3285E /* ClockletMac */,
+				22FA7F502970CBB800F3285E /* ClockletMacTests */,
+				22FA7F5A2970CBB800F3285E /* ClockletMacUITests */,
 				22836EB1228629750020B46F /* Products */,
 				22836ED522862AAB0020B46F /* Frameworks */,
 			);
@@ -201,6 +265,9 @@
 			children = (
 				22836EB0228629750020B46F /* Clocklet.app */,
 				22836EC42286297C0020B46F /* ClockletTests.xctest */,
+				22FA7F3D2970CBAF00F3285E /* ClockletMac.app */,
+				22FA7F4D2970CBB800F3285E /* ClockletMacTests.xctest */,
+				22FA7F572970CBB800F3285E /* ClockletMacUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -236,7 +303,9 @@
 		22836ED522862AAB0020B46F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				22FA7F6C2970CC3B00F3285E /* CoreBluetooth.framework */,
 				2214DCE124FD763E00BFA51C /* CoreLocation.framework */,
+				22FA7F6A2970CC3200F3285E /* CoreLocation.framework */,
 				2214DCDF24FD763100BFA51C /* MapKit.framework */,
 				22836ED622862AAC0020B46F /* CoreBluetooth.framework */,
 			);
@@ -324,6 +393,43 @@
 			path = "Bluetooth Models";
 			sourceTree = "<group>";
 		};
+		22FA7F3E2970CBAF00F3285E /* ClockletMac */ = {
+			isa = PBXGroup;
+			children = (
+				22FA7F3F2970CBAF00F3285E /* ClockletMacApp.swift */,
+				22FA7F412970CBAF00F3285E /* ContentView.swift */,
+				22FA7F432970CBB700F3285E /* Assets.xcassets */,
+				22FA7F482970CBB700F3285E /* ClockletMac.entitlements */,
+				22FA7F452970CBB700F3285E /* Preview Content */,
+			);
+			path = ClockletMac;
+			sourceTree = "<group>";
+		};
+		22FA7F452970CBB700F3285E /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				22FA7F462970CBB700F3285E /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		22FA7F502970CBB800F3285E /* ClockletMacTests */ = {
+			isa = PBXGroup;
+			children = (
+				22FA7F512970CBB800F3285E /* ClockletMacTests.swift */,
+			);
+			path = ClockletMacTests;
+			sourceTree = "<group>";
+		};
+		22FA7F5A2970CBB800F3285E /* ClockletMacUITests */ = {
+			isa = PBXGroup;
+			children = (
+				22FA7F5B2970CBB800F3285E /* ClockletMacUITests.swift */,
+				22FA7F5D2970CBB800F3285E /* ClockletMacUITestsLaunchTests.swift */,
+			);
+			path = ClockletMacUITests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -366,13 +472,69 @@
 			productReference = 22836EC42286297C0020B46F /* ClockletTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		22FA7F3C2970CBAF00F3285E /* ClockletMac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 22FA7F652970CBB800F3285E /* Build configuration list for PBXNativeTarget "ClockletMac" */;
+			buildPhases = (
+				22FA7F392970CBAF00F3285E /* Sources */,
+				22FA7F3A2970CBAF00F3285E /* Frameworks */,
+				22FA7F3B2970CBAF00F3285E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ClockletMac;
+			packageProductDependencies = (
+				22FA7F682970CC2200F3285E /* CombineBluetooth */,
+			);
+			productName = ClockletMac;
+			productReference = 22FA7F3D2970CBAF00F3285E /* ClockletMac.app */;
+			productType = "com.apple.product-type.application";
+		};
+		22FA7F4C2970CBB800F3285E /* ClockletMacTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 22FA7F662970CBB800F3285E /* Build configuration list for PBXNativeTarget "ClockletMacTests" */;
+			buildPhases = (
+				22FA7F492970CBB800F3285E /* Sources */,
+				22FA7F4A2970CBB800F3285E /* Frameworks */,
+				22FA7F4B2970CBB800F3285E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				22FA7F4F2970CBB800F3285E /* PBXTargetDependency */,
+			);
+			name = ClockletMacTests;
+			productName = ClockletMacTests;
+			productReference = 22FA7F4D2970CBB800F3285E /* ClockletMacTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		22FA7F562970CBB800F3285E /* ClockletMacUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 22FA7F672970CBB800F3285E /* Build configuration list for PBXNativeTarget "ClockletMacUITests" */;
+			buildPhases = (
+				22FA7F532970CBB800F3285E /* Sources */,
+				22FA7F542970CBB800F3285E /* Frameworks */,
+				22FA7F552970CBB800F3285E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				22FA7F592970CBB800F3285E /* PBXTargetDependency */,
+			);
+			name = ClockletMacUITests;
+			productName = ClockletMacUITests;
+			productReference = 22FA7F572970CBB800F3285E /* ClockletMacUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		22836EA8228629750020B46F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1120;
+				LastSwiftUpdateCheck = 1420;
 				LastUpgradeCheck = 1400;
 				ORGANIZATIONNAME = "Spotlight Kid Ltd";
 				TargetAttributes = {
@@ -385,6 +547,17 @@
 					22836EC32286297C0020B46F = {
 						CreatedOnToolsVersion = 10.2.1;
 						TestTargetID = 22836EAF228629750020B46F;
+					};
+					22FA7F3C2970CBAF00F3285E = {
+						CreatedOnToolsVersion = 14.2;
+					};
+					22FA7F4C2970CBB800F3285E = {
+						CreatedOnToolsVersion = 14.2;
+						TestTargetID = 22FA7F3C2970CBAF00F3285E;
+					};
+					22FA7F562970CBB800F3285E = {
+						CreatedOnToolsVersion = 14.2;
+						TestTargetID = 22FA7F3C2970CBAF00F3285E;
 					};
 				};
 			};
@@ -404,6 +577,9 @@
 				22836EAF228629750020B46F /* Clocklet */,
 				22836EC32286297C0020B46F /* ClockletTests */,
 				2265C2A024C0BC6000F17506 /* Autoversioning */,
+				22FA7F3C2970CBAF00F3285E /* ClockletMac */,
+				22FA7F4C2970CBB800F3285E /* ClockletMacTests */,
+				22FA7F562970CBB800F3285E /* ClockletMacUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -419,6 +595,29 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		22836EC22286297C0020B46F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		22FA7F3B2970CBAF00F3285E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				22FA7F472970CBB700F3285E /* Preview Assets.xcassets in Resources */,
+				22FA7F442970CBB700F3285E /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		22FA7F4B2970CBB800F3285E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		22FA7F552970CBB800F3285E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -501,6 +700,32 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		22FA7F392970CBAF00F3285E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				22FA7F422970CBAF00F3285E /* ContentView.swift in Sources */,
+				22FA7F402970CBAF00F3285E /* ClockletMacApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		22FA7F492970CBB800F3285E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				22FA7F522970CBB800F3285E /* ClockletMacTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		22FA7F532970CBB800F3285E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				22FA7F5C2970CBB800F3285E /* ClockletMacUITests.swift in Sources */,
+				22FA7F5E2970CBB800F3285E /* ClockletMacUITestsLaunchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -513,6 +738,16 @@
 			isa = PBXTargetDependency;
 			target = 22836EAF228629750020B46F /* Clocklet */;
 			targetProxy = 22836EC52286297C0020B46F /* PBXContainerItemProxy */;
+		};
+		22FA7F4F2970CBB800F3285E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 22FA7F3C2970CBAF00F3285E /* ClockletMac */;
+			targetProxy = 22FA7F4E2970CBB800F3285E /* PBXContainerItemProxy */;
+		};
+		22FA7F592970CBB800F3285E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 22FA7F3C2970CBAF00F3285E /* ClockletMac */;
+			targetProxy = 22FA7F582970CBB800F3285E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -665,7 +900,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Clocklet/Clocklet.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = 9M28MQ9SZC;
 				INFOPLIST_FILE = "$(SRCROOT)/Clocklet/Info.plist";
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
@@ -675,8 +909,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = uk.co.spotlightkid.clocklet;
 				PRODUCT_NAME = Clocklet;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
@@ -690,7 +926,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Clocklet/Clocklet.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = 9M28MQ9SZC;
 				INFOPLIST_FILE = "$(SRCROOT)/Clocklet/Info.plist";
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
@@ -700,8 +935,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = uk.co.spotlightkid.clocklet;
 				PRODUCT_NAME = Clocklet;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
@@ -751,6 +988,154 @@
 			};
 			name = Release;
 		};
+		22FA7F5F2970CBB800F3285E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = ClockletMac/ClockletMac.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"ClockletMac/Preview Content\"";
+				DEVELOPMENT_TEAM = 9M28MQ9SZC;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Spotlight Kid Ltd. All rights reserved.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.spotlightkit.ClockletMac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		22FA7F602970CBB800F3285E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = ClockletMac/ClockletMac.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"ClockletMac/Preview Content\"";
+				DEVELOPMENT_TEAM = 9M28MQ9SZC;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Spotlight Kid Ltd. All rights reserved.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.spotlightkit.ClockletMac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		22FA7F612970CBB800F3285E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9M28MQ9SZC;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.spotlightkit.ClockletMacTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ClockletMac.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ClockletMac";
+			};
+			name = Debug;
+		};
+		22FA7F622970CBB800F3285E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9M28MQ9SZC;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.spotlightkit.ClockletMacTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ClockletMac.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ClockletMac";
+			};
+			name = Release;
+		};
+		22FA7F632970CBB800F3285E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9M28MQ9SZC;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.spotlightkit.ClockletMacUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = ClockletMac;
+			};
+			name = Debug;
+		};
+		22FA7F642970CBB800F3285E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9M28MQ9SZC;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.spotlightkit.ClockletMacUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = ClockletMac;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -790,10 +1175,41 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		22FA7F652970CBB800F3285E /* Build configuration list for PBXNativeTarget "ClockletMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				22FA7F5F2970CBB800F3285E /* Debug */,
+				22FA7F602970CBB800F3285E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		22FA7F662970CBB800F3285E /* Build configuration list for PBXNativeTarget "ClockletMacTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				22FA7F612970CBB800F3285E /* Debug */,
+				22FA7F622970CBB800F3285E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		22FA7F672970CBB800F3285E /* Build configuration list for PBXNativeTarget "ClockletMacUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				22FA7F632970CBB800F3285E /* Debug */,
+				22FA7F642970CBB800F3285E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		229AD7B9236CE745006BEB07 /* CombineBluetooth */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CombineBluetooth;
+		};
+		22FA7F682970CC2200F3285E /* CombineBluetooth */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = CombineBluetooth;
 		};
