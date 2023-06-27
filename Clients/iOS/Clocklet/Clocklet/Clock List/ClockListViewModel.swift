@@ -59,7 +59,7 @@ class ClockListViewModel: ObservableObject {
             return
         }
         _cancellableClocks = central
-            .discoverConnections(for: Clock.self)
+            .discoverConnections(matching: Clock.self)
             .timeout(10, scheduler: DispatchQueue.main)
             .map{ $0.compactMap{ $0.peripheral as? Clock } }
             .assign(to: \.clocks, on: self)
