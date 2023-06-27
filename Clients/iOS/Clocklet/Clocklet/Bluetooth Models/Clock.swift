@@ -63,13 +63,9 @@ extension ManufacturerData {
 
 }
 
-class Clock: Peripheral, Identifiable, AdvertisementMatcher {
+class Clock: Peripheral {
+    
 
-    
-    var id: UUID {
-        return uuid
-    }
-    
     
     private var _caseColor: CaseColor?
     var caseColor: CaseColor {
@@ -157,9 +153,6 @@ class Clock: Peripheral, Identifiable, AdvertisementMatcher {
     @Service("28C65464-311E-4ABF-B6A0-D03B0BAA2815") var settingsService: SettingsService?
     @Service("03205794-6A59-42E5-9B8D-BB3879716FD5") var godModeService: GodModeService?
     
-    
-    static var advertisedServiceUUIDs = ["68D924A1-C1B2-497B-AC16-FD1D98EDB41F"]
-    
     @Published var isConfigured: ConfigState = .unknown
 
 
@@ -195,5 +188,18 @@ class Clock: Peripheral, Identifiable, AdvertisementMatcher {
         return UIImage(named:imageName) ?? UIImage(named:"r0-bones")!
     }
     
+
+}
+
+extension Clock: Identifiable {
+  var id: UUID {
+      return uuid
+  }
+}
+
+extension Clock: AdvertisementMatcher {
+  static let advertisedServiceUUIDs: [String]? = ["68D924A1-C1B2-497B-AC16-FD1D98EDB41F"]
+  
+  static let advertisedManufacturer: String? = nil
 
 }
