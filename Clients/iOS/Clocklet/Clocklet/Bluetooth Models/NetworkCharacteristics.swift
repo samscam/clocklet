@@ -72,7 +72,7 @@ enum WifiStatus: Int, Codable, CaseIterable, Identifiable {
     case noShield = 255
 }
 
-extension IPv4Address: Decodable {
+extension IPv4Address: @retroactive Decodable {
     
     enum IpCodingError: Error {
         case invalidAddress
@@ -89,7 +89,7 @@ extension IPv4Address: Decodable {
     }
 }
 
-extension IPv4Address: Encodable {
+extension IPv4Address: @retroactive Encodable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(self.debugDescription)

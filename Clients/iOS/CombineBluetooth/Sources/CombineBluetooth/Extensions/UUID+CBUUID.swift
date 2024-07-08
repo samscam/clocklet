@@ -1,7 +1,7 @@
 import Foundation
 import CoreBluetooth
 
-extension UUID: ExpressibleByStringLiteral{
+extension UUID: @retroactive ExpressibleByStringLiteral, @retroactive ExpressibleByExtendedGraphemeClusterLiteral {
     public init(stringLiteral value: String) {
         self.init(uuidString: value)!
     }

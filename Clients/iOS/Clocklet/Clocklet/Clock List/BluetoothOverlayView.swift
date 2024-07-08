@@ -126,7 +126,7 @@ class BluetoothStatusViewModel: ObservableObject {
 
 
 
-extension CBManagerState: CaseIterable, Identifiable{
+extension CBManagerState: @retroactive CaseIterable, @retroactive Identifiable{
     
     public var id: Int {
         return self.rawValue

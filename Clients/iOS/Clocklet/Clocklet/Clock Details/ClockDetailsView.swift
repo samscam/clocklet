@@ -235,7 +235,7 @@ extension ConnectionState{
     }
 }
 
-extension ConnectionState: CustomStringConvertible {
+extension ConnectionState: @retroactive CustomStringConvertible {
     
     public var description: String {
         switch self {
