@@ -32,6 +32,7 @@ struct NetworkDetailView: View {
                                 Text(currentNetwork.ip?.debugDescription ?? "No ip address")
                                 Text("\(currentNetwork.channel)")
                             }
+                            Spacer()
                         }
                     }
                 }
