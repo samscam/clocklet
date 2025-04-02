@@ -35,7 +35,7 @@ struct ConfigItemView<Content:View>: View {
                     .scaledToFit()
                     .frame(width: 40, height: 40, alignment: .center)
                     .foregroundColor(self.iconColor ?? Color("Black-ish"))
-                Text(title).font(.title).bold().lineLimit(4).foregroundColor(Color("Black-ish"))
+                Text(title).font(.title2).bold().lineLimit(4).foregroundColor(Color("Black-ish"))
                 Spacer()
                 if (disclosure){
                     Image(systemName: "chevron.right")
