@@ -77,13 +77,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		2265C2AB24C0BE9B00F17506 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 22836EA8228629750020B46F /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2265C2A024C0BC6000F17506;
-			remoteInfo = Autoversioning;
-		};
 		22836EC52286297C0020B46F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 22836EA8228629750020B46F /* Project object */;
@@ -444,7 +437,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				2265C2AC24C0BE9B00F17506 /* PBXTargetDependency */,
 			);
 			name = Clocklet;
 			packageProductDependencies = (
@@ -731,11 +723,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		2265C2AC24C0BE9B00F17506 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 2265C2A024C0BC6000F17506 /* Autoversioning */;
-			targetProxy = 2265C2AB24C0BE9B00F17506 /* PBXContainerItemProxy */;
-		};
 		22836EC62286297C0020B46F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 22836EAF228629750020B46F /* Clocklet */;
@@ -918,6 +905,7 @@
 					"@executable_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 1.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = uk.co.spotlightkid.clocklet;
 				PRODUCT_NAME = Clocklet;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -946,6 +934,7 @@
 					"@executable_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 1.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = uk.co.spotlightkid.clocklet;
 				PRODUCT_NAME = Clocklet;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
