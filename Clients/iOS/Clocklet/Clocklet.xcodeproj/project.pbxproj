@@ -896,9 +896,6 @@
 				DEVELOPMENT_TEAM = 9M28MQ9SZC;
 				INFOPLIST_FILE = "$(SRCROOT)/Clocklet/Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
-				INFOPLIST_PREFIX_HEADER = $BUILT_PRODUCTS_DIR/revision.prefix;
-				INFOPLIST_PREPROCESS = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -925,9 +922,6 @@
 				DEVELOPMENT_TEAM = 9M28MQ9SZC;
 				INFOPLIST_FILE = "$(SRCROOT)/Clocklet/Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
-				INFOPLIST_PREFIX_HEADER = $BUILT_PRODUCTS_DIR/revision.prefix;
-				INFOPLIST_PREPROCESS = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
