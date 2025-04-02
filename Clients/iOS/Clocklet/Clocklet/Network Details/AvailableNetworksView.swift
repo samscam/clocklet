@@ -84,11 +84,12 @@ struct AvailableNetworkView: View {
             
             
             NetworkStatusIconView(network: network)
-            
-            Text(network.ssid).font(.headline).bold().lineLimit(2)
-            
+            VStack(alignment:.leading){
+                Text(network.ssid).font(.headline).bold().lineLimit(2)
+                Text(network.enctype.description).font(.caption)
+            }
             Spacer()
-            
+           
             encryptionIcon(enctype: network.enctype).resizable().scaledToFit().frame(width: 30, height: 40, alignment: .center)
             
         }.padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
