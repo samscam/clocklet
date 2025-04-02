@@ -11,10 +11,10 @@ This project is the firmware and client apps for clocks made by @samscam includi
 * Timekeeping: ESP32 (DS3231 as backup)
 * Synchronisation: NTP
 * Microcontroller: ESP32 Wrover on custom "Clockbrain" board
-* Weather source: Darksky (expect this to be changed very soon)
+* Weather source: OpenWeatherMap
 
 ### Old Clocklet / Clocky
-Earlier prototypes used RGBDigit (WS2812B) 7-segment display and Adafruit Feather Huzzah32. These run a bit glitchy.
+Earlier prototypes used RGBDigit (WS2812B) 7-segment display and Adafruit Feather Huzzah32.
 
 ### Mrs Clockety
 * Display: Waveshare epaper 2.9inch https://www.waveshare.com/2.9inch-e-paper-module.htm
@@ -53,7 +53,7 @@ You can connect to the clocklet's serial port from a computer with various tools
 
 The important thing to note is that the baud rate of the serial connection is `115200`.
 
-The Clocklet serial port on Mac and Linux will generally be available as `/dev/cu.SLAB_USBtoUART` - you can do an `ls /dev/cu.*` before and after plugging it in to eliminate possibilities.
+The Clocklet serial port on Mac and Linux will be available as something like `/dev/cu.SLAB_USBtoUART` - you can do an `ls /dev/cu.*` before and after plugging it in to eliminate possibilities.
 
 Then open it up in your tool of choice:
 `screen /dev/cu.SLAB_USBtoUART 115200`
@@ -64,7 +64,7 @@ Then open it up in your tool of choice:
 1) Install `esptool`
 
 On MacOS this can be done with homebrew: `brew install esptool`
-On Linuxes it's probably available from `apt-get install esptool` or whatever package manager you're using.
+On Linuxes it's probably available from `apt install esptool` or whatever package manager you're using.
 
 2) Download the bin file of the firmware image you want from the releases section on here.
 
@@ -84,7 +84,7 @@ While we are here you can also use esptool to just erase settings (equivalent of
 
 ## Client App (iOS)
 
-*Requires Xcode 14*
+*Requires Xcode 16*
 To build, open via the workspace rather than the Xcode Project.
 
 Contains an experimental library for gluing CoreBluetooth to Combine and SwiftUI via PropertyWrappers called "CombineBluetooth". This may get spun out into a separate project in the future - but for ease of development right now it's in here.
