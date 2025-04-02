@@ -106,15 +106,31 @@ enum AuthMode: Int, Codable, CustomStringConvertible {
         case .wpa2psk: return "WPA2"
         case .wpawpa2psk: return "WPA / WPA2"
         case .wpa2enterprise: return "WPA2 Enterprise"
+        case .wpa3: return "WPA3"
+        case .wpa23: return "WPA2 / WPA3"
         case .unknown: return "Unknown security"
         }
     }
     
     case open = 0
-    case wep
-    case wpapsk
-    case wpa2psk
-    case wpawpa2psk
-    case wpa2enterprise
+    case wep = 1
+    case wpapsk = 2
+    case wpa2psk = 3
+    case wpawpa2psk = 4
+    case wpa2enterprise = 5
+    case wpa3 = 6
+    case wpa23 = 7
     case unknown = 255
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let intValue = try container.decode(Int.self)
+    
+        if Self.init(rawValue: intValue) != nil {
+            self.init(rawValue: intValue)!
+        } else {
+            print("Unexpected network type \(intValue)")
+            self.init(rawValue: 255)!
+        }
+    }
 }

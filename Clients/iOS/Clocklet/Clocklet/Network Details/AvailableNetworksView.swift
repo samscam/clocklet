@@ -102,7 +102,7 @@ struct AvailableNetworkView: View {
             image = Image(systemName:"arrow.left.and.right.circle")
         case .unknown:
             image = Image(systemName:"questionmark.circle")
-        case .wep, .wpa2enterprise, .wpa2psk, .wpapsk, .wpawpa2psk:
+        default:
             image = Image(systemName:"lock.circle")
         }
         return image
