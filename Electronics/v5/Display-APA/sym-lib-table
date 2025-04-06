@@ -1,0 +1,6 @@
+(sym_lib_table
+  (lib (name Display-rescue)(type Legacy)(uri ${KIPRJMOD}/Display-rescue.lib)(options "")(descr ""))
+  (lib (name dk_Logic-Translators-Level-Shifters)(type Legacy)(uri ${KIPRJMOD}/../libs/digikey-kicad-library/digikey-symbols/dk_Logic-Translators-Level-Shifters.lib)(options "")(descr ""))
+  (lib (name dk_Logic-Buffers-Drivers-Receivers-Transceivers)(type Legacy)(uri ${KIPRJMOD}/../libs/digikey-kicad-library/digikey-symbols/dk_Logic-Buffers-Drivers-Receivers-Transceivers.lib)(options "")(descr ""))
+  (lib (name _Custom)(type Legacy)(uri /Users/sam/Projects/Clocks/Electronics/Clockbrain/libs/Custom/_Custom.lib)(options "")(descr ""))
+)

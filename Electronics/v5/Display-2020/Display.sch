@@ -1,0 +1,444 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L Connector_Generic:Conn_02x04_Odd_Even J1
+U 1 1 5DE07705
+P 1400 950
+F 0 "J1" H 1400 550 50  0000 C CNN
+F 1 "Conn_02x07" V 1500 900 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_2x04_P2.54mm_Vertical" H 1400 950 50  0001 C CNN
+F 3 "~" H 1400 950 50  0001 C CNN
+F 4 "200-TLW10406TD" H 1400 950 50  0001 C CNN "Mouser Ref"
+	1    1400 950 
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR02
+U 1 1 5DE081EB
+P 1200 1050
+F 0 "#PWR02" H 1200 900 50  0001 C CNN
+F 1 "+5V" V 1200 1200 50  0000 L CNN
+F 2 "" H 1200 1050 50  0001 C CNN
+F 3 "" H 1200 1050 50  0001 C CNN
+	1    1200 1050
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:GND #PWR01
+U 1 1 5DE088FC
+P 1200 850
+F 0 "#PWR01" H 1200 600 50  0001 C CNN
+F 1 "GND" V 1205 722 50  0000 R CNN
+F 2 "" H 1200 850 50  0001 C CNN
+F 3 "" H 1200 850 50  0001 C CNN
+	1    1200 850 
+	0    1    1    0   
+$EndComp
+$Comp
+L Display-rescue:TouchPad-Connector T1
+U 1 1 5E295350
+P 2650 1850
+F 0 "T1" H 2392 2175 50  0000 C CNN
+F 1 "TouchPad" H 2392 2084 50  0000 C CNN
+F 2 "_Custom:Touch_Pad" H 2650 1850 50  0001 C CNN
+F 3 "" H 2650 1850 50  0001 C CNN
+	1    2650 1850
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3.3V #PWR0101
+U 1 1 5E2967DA
+P 1200 950
+F 0 "#PWR0101" H 1200 800 50  0001 C CNN
+F 1 "+3.3V" V 1200 1050 50  0000 L CNN
+F 2 "" H 1200 950 50  0001 C CNN
+F 3 "" H 1200 950 50  0001 C CNN
+	1    1200 950 
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:+3.3V #PWR0102
+U 1 1 5E296992
+P 5500 1050
+F 0 "#PWR0102" H 5500 900 50  0001 C CNN
+F 1 "+3.3V" H 5515 1223 50  0000 C CNN
+F 2 "" H 5500 1050 50  0001 C CNN
+F 3 "" H 5500 1050 50  0001 C CNN
+	1    5500 1050
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2150 1050 1700 1050
+$Comp
+L Device:R R2
+U 1 1 5E509569
+P 4150 1350
+F 0 "R2" H 4220 1396 50  0000 L CNN
+F 1 "12k" H 4220 1305 50  0000 L CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 4080 1350 50  0001 C CNN
+F 3 "~" H 4150 1350 50  0001 C CNN
+F 4 "71-CRCW060312K0FKEAC" H 4150 1350 50  0001 C CNN "Mouser Ref"
+	1    4150 1350
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0103
+U 1 1 5E509EEB
+P 4150 1500
+F 0 "#PWR0103" H 4150 1250 50  0001 C CNN
+F 1 "GND" H 4155 1327 50  0000 C CNN
+F 2 "" H 4150 1500 50  0001 C CNN
+F 3 "" H 4150 1500 50  0001 C CNN
+	1    4150 1500
+	1    0    0    -1  
+$EndComp
+Text Label 2000 850  2    50   ~ 0
+CLK
+Text Label 2000 950  2    50   ~ 0
+DATA
+Text Label 2000 1150 2    50   ~ 0
+Touch
+Text Label 2000 1050 2    50   ~ 0
+ALS
+Wire Wire Line
+	2100 1750 1750 1750
+Text Label 1800 1750 0    50   ~ 0
+Touch
+Text Label 3600 1200 0    50   ~ 0
+ALS
+Wire Wire Line
+	2800 3300 2800 3450
+Wire Wire Line
+	2800 3700 2800 3650
+Wire Wire Line
+	3700 3450 4000 3450
+Wire Wire Line
+	3700 3650 4000 3650
+Text Label 2850 3450 0    50   ~ 0
+DATA
+Text Label 2850 3650 0    50   ~ 0
+CLK
+Wire Wire Line
+	3400 3250 3400 3100
+Wire Wire Line
+	3400 3100 3800 3100
+Wire Wire Line
+	3800 3100 3800 3200
+Connection ~ 3400 3100
+Wire Wire Line
+	3400 3100 3400 3000
+$Comp
+L Device:C_Small C1
+U 1 1 5E5DD02D
+P 3800 3300
+F 0 "C1" H 3892 3346 50  0000 L CNN
+F 1 "0.1µF" H 3892 3255 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 3800 3300 50  0001 C CNN
+F 3 "~" H 3800 3300 50  0001 C CNN
+F 4 "710-885012206071" H 3800 3300 50  0001 C CNN "Mouser Ref"
+F 5 "== 16" H 3800 3300 50  0001 C CNN "Notes"
+	1    3800 3300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3800 3400 3800 3950
+Wire Wire Line
+	3800 3950 3400 3950
+Wire Wire Line
+	3400 3950 3400 3850
+Wire Wire Line
+	3400 3950 3400 4150
+Connection ~ 3400 3950
+$Comp
+L power:+5V #PWR0108
+U 1 1 5E5DE6D8
+P 3400 3000
+F 0 "#PWR0108" H 3400 2850 50  0001 C CNN
+F 1 "+5V" H 3415 3173 50  0000 C CNN
+F 2 "" H 3400 3000 50  0001 C CNN
+F 3 "" H 3400 3000 50  0001 C CNN
+	1    3400 3000
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0109
+U 1 1 5E5DEE4C
+P 3400 4150
+F 0 "#PWR0109" H 3400 3900 50  0001 C CNN
+F 1 "GND" H 3405 3977 50  0000 C CNN
+F 2 "" H 3400 4150 50  0001 C CNN
+F 3 "" H 3400 4150 50  0001 C CNN
+	1    3400 4150
+	1    0    0    -1  
+$EndComp
+Text Label 3900 3650 0    50   ~ 0
+Clock
+Text Label 3900 3450 0    50   ~ 0
+Data
+Wire Wire Line
+	1700 1150 2150 1150
+$Comp
+L _Custom:APDS-9005 U2
+U 1 1 5E62AF87
+P 4950 1150
+F 0 "U2" H 4950 735 50  0000 C CNN
+F 1 "APDS-9005" H 4950 826 50  0000 C CNN
+F 2 "_Custom:APDS-9005" H 4950 1150 50  0001 C CNN
+F 3 "" H 4950 1150 50  0001 C CNN
+F 4 "630-APDS-9005-020" H 4950 1150 50  0001 C CNN "Mouser Ref"
+	1    4950 1150
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	5500 1050 5500 1200
+Wire Wire Line
+	4400 1200 4150 1200
+Connection ~ 4150 1200
+$Comp
+L _Custom:SK9822-EC20 D1
+U 1 1 5E5AEDE8
+P 3400 3550
+F 0 "D1" H 3500 3800 50  0000 C CNN
+F 1 "SK9822-EC20" H 3600 3300 50  0000 C CNN
+F 2 "_Custom:SK9822-2020" H 3450 3250 50  0001 L TNN
+F 3 "http://www.led-color.com/upload/201506/APA102%20LED.pdf" H 3500 3175 50  0001 L TNN
+	1    3400 3550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2800 3650 3100 3650
+Wire Wire Line
+	2800 3450 3100 3450
+Wire Wire Line
+	1700 850  2150 850 
+Wire Wire Line
+	1700 950  2150 950 
+Wire Wire Line
+	1200 1150 650  1150
+Text Label 850  1150 0    50   ~ 0
+DispT
+$Comp
+L Mechanical:MountingHole H8
+U 1 1 5E853785
+P 2100 6250
+F 0 "H8" H 2200 6296 50  0000 L CNN
+F 1 "MountingHole" H 2200 6205 50  0000 L CNN
+F 2 "MountingHole:MountingHole_2.5mm" H 2100 6250 50  0001 C CNN
+F 3 "~" H 2100 6250 50  0001 C CNN
+	1    2100 6250
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H7
+U 1 1 5E8530F7
+P 2100 5950
+F 0 "H7" H 2200 5996 50  0000 L CNN
+F 1 "MountingHole" H 2200 5905 50  0000 L CNN
+F 2 "MountingHole:MountingHole_2.5mm" H 2100 5950 50  0001 C CNN
+F 3 "~" H 2100 5950 50  0001 C CNN
+	1    2100 5950
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H6
+U 1 1 5E852E1C
+P 2100 5650
+F 0 "H6" H 2200 5696 50  0000 L CNN
+F 1 "MountingHole" H 2200 5605 50  0000 L CNN
+F 2 "MountingHole:MountingHole_2.5mm" H 2100 5650 50  0001 C CNN
+F 3 "~" H 2100 5650 50  0001 C CNN
+	1    2100 5650
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H5
+U 1 1 5E852A3D
+P 2100 5350
+F 0 "H5" H 2200 5396 50  0000 L CNN
+F 1 "MountingHole" H 2200 5305 50  0000 L CNN
+F 2 "MountingHole:MountingHole_2.5mm" H 2100 5350 50  0001 C CNN
+F 3 "~" H 2100 5350 50  0001 C CNN
+	1    2100 5350
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H4
+U 1 1 5E6FC0DB
+P 1200 6250
+F 0 "H4" H 1300 6296 50  0000 L CNN
+F 1 "MountingHole" H 1300 6205 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3" H 1200 6250 50  0001 C CNN
+F 3 "~" H 1200 6250 50  0001 C CNN
+	1    1200 6250
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H3
+U 1 1 5E6FBDB6
+P 1200 5950
+F 0 "H3" H 1300 5996 50  0000 L CNN
+F 1 "MountingHole" H 1300 5905 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3" H 1200 5950 50  0001 C CNN
+F 3 "~" H 1200 5950 50  0001 C CNN
+	1    1200 5950
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H2
+U 1 1 5E6FB9B0
+P 1200 5650
+F 0 "H2" H 1300 5696 50  0000 L CNN
+F 1 "MountingHole" H 1300 5605 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3" H 1200 5650 50  0001 C CNN
+F 3 "~" H 1200 5650 50  0001 C CNN
+	1    1200 5650
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H1
+U 1 1 5E6F979C
+P 1200 5350
+F 0 "H1" H 1300 5396 50  0000 L CNN
+F 1 "MountingHole" H 1300 5305 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3" H 1200 5350 50  0001 C CNN
+F 3 "~" H 1200 5350 50  0001 C CNN
+	1    1200 5350
+	1    0    0    -1  
+$EndComp
+Connection ~ 4150 1500
+$Comp
+L Device:C_Small C2
+U 1 1 5E9D32C3
+P 3750 1350
+F 0 "C2" H 3842 1396 50  0000 L CNN
+F 1 "10µF" H 3842 1305 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 3750 1350 50  0001 C CNN
+F 3 "~" H 3750 1350 50  0001 C CNN
+F 4 "80-C0603C106M8PACTU" H 3750 1350 50  0001 C CNN "Mouser Ref"
+	1    3750 1350
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3550 1200 3750 1200
+Wire Wire Line
+	3750 1500 4150 1500
+Wire Wire Line
+	3750 1500 3750 1450
+Wire Wire Line
+	3750 1250 3750 1200
+Connection ~ 3750 1200
+Wire Wire Line
+	3750 1200 4150 1200
+Wire Wire Line
+	1450 2300 1450 2350
+Wire Wire Line
+	1450 2350 1150 2350
+Connection ~ 1450 2350
+Wire Wire Line
+	1450 2350 1450 2400
+$Comp
+L power:+3.3V #PWR0104
+U 1 1 5E9F95DA
+P 1450 2100
+F 0 "#PWR0104" H 1450 1950 50  0001 C CNN
+F 1 "+3.3V" H 1465 2273 50  0000 C CNN
+F 2 "" H 1450 2100 50  0001 C CNN
+F 3 "" H 1450 2100 50  0001 C CNN
+	1    1450 2100
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0105
+U 1 1 5E9F9D05
+P 1450 2600
+F 0 "#PWR0105" H 1450 2350 50  0001 C CNN
+F 1 "GND" H 1455 2427 50  0000 C CNN
+F 2 "" H 1450 2600 50  0001 C CNN
+F 3 "" H 1450 2600 50  0001 C CNN
+	1    1450 2600
+	1    0    0    -1  
+$EndComp
+Text Label 1350 2350 2    50   ~ 0
+DispT
+$Comp
+L Mechanical:Fiducial FID1
+U 1 1 5EA15DD4
+P 3250 5350
+F 0 "FID1" H 3335 5396 50  0000 L CNN
+F 1 "Fiducial" H 3335 5305 50  0000 L CNN
+F 2 "Fiducial:Fiducial_1mm_Mask2mm" H 3250 5350 50  0001 C CNN
+F 3 "~" H 3250 5350 50  0001 C CNN
+	1    3250 5350
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:Fiducial FID2
+U 1 1 5EA1626C
+P 3250 5650
+F 0 "FID2" H 3335 5696 50  0000 L CNN
+F 1 "Fiducial" H 3335 5605 50  0000 L CNN
+F 2 "Fiducial:Fiducial_1mm_Mask2mm" H 3250 5650 50  0001 C CNN
+F 3 "~" H 3250 5650 50  0001 C CNN
+	1    3250 5650
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:Fiducial FID3
+U 1 1 5EA164E7
+P 3250 5950
+F 0 "FID3" H 3335 5996 50  0000 L CNN
+F 1 "Fiducial" H 3335 5905 50  0000 L CNN
+F 2 "Fiducial:Fiducial_1mm_Mask2mm" H 3250 5950 50  0001 C CNN
+F 3 "~" H 3250 5950 50  0001 C CNN
+	1    3250 5950
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:Fiducial FID4
+U 1 1 5EA16685
+P 3250 6250
+F 0 "FID4" H 3335 6296 50  0000 L CNN
+F 1 "Fiducial" H 3335 6205 50  0000 L CNN
+F 2 "Fiducial:Fiducial_1mm_Mask2mm" H 3250 6250 50  0001 C CNN
+F 3 "~" H 3250 6250 50  0001 C CNN
+	1    3250 6250
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R_Small R3
+U 1 1 5E9F7DBD
+P 1450 2500
+F 0 "R3" H 1509 2546 50  0000 L CNN
+F 1 "4.99k" H 1509 2455 50  0000 L CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" H 1450 2500 50  0001 C CNN
+F 3 "~" H 1450 2500 50  0001 C CNN
+F 4 "71-CRCW06034K99FKEAC" H 1450 2500 50  0001 C CNN "Mouser Ref"
+	1    1450 2500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R_Small R1
+U 1 1 5E9F7D47
+P 1450 2200
+F 0 "R1" H 1509 2246 50  0000 L CNN
+F 1 "10k" H 1509 2155 50  0000 L CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" H 1450 2200 50  0001 C CNN
+F 3 "~" H 1450 2200 50  0001 C CNN
+F 4 "71-CRCW060310K0FKEAC" H 1450 2200 50  0001 C CNN "Mouser Ref"
+	1    1450 2200
+	1    0    0    -1  
+$EndComp
+$EndSCHEMATC
