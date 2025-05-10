@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "_Custom")(type "KiCad")(uri "/Users/sam/Projects/Clocks/Electronics/libs/Custom/_Custom.kicad_sym")(options "")(descr ""))
+)
