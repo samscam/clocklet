@@ -1,0 +1,162 @@
+:root{
+	--background-colour: #f4f4f4;
+	--text-colour: #333;
+
+	--accent-colour: #000000;
+	--text-on-accent-colour: #eee;
+
+	--min-font-size: 16px;
+	--max-font-size: 24px;
+}
+
+body {
+	font-family: Helvetica, Arial, sans-serif;
+	font-weight: 50;
+	color: var(--text-colour);
+	margin: 0;
+	text-align: left;
+	background-color: var(--background-colour);
+}
+
+body{
+	font-size: clamp(var(--min-font-size), 2.5vw, var(--max-font-size)); 
+}
+
+header, section, footer{
+	padding-left: calc(0.06 * 600px);
+	padding-right: calc(0.06 * 600px);
+}
+
+
+@media only screen and (min-width: 600px) {
+	header, section, footer{
+		padding-left: 4vw;
+		padding-right: 4vw;
+	}
+
+	#specs img {
+		display: inline-block;
+		vertical-align: middle;
+		width: 35%;
+	}
+	#specs ul {
+		display: inline-block;
+		vertical-align: middle;
+		width: 60%;
+	}
+}
+
+@media only screen and (min-width: 900px) {
+	header, section, footer{
+		padding-left: calc(0.05 * 900px);
+		padding-right: calc(0.05 * 900px);
+	}
+}
+article,header,section{
+	max-width:900px;
+	margin-left:auto;
+	margin-right:auto;
+	margin-top: 10vw;
+	margin-bottom: 10vw;
+}
+
+a{
+	color: var(--accent-colour);
+	text-decoration: underline;
+	font-weight: 600;
+}
+
+img {
+	max-width: 100%; 
+	max-height: 100%;
+	height: auto;
+}
+h1{
+	font-size: 2.5em;
+	/* text-shadow: 0px 0px 3px #000; */
+}
+
+#specs {
+	font-size: 0.7em;
+	font-weight: 100;
+}
+
+#specs img {
+	max-width: 50%;
+}
+
+#clockRender{
+	position:relative;
+	top:99px;
+	left: 200px;
+}
+
+
+.cell {
+	position:absolute;
+	width:30px;
+	height:50px;
+	background-color:#ff0000;
+	z-index: -5;
+}
+
+.features {
+	display:block;
+}
+ul{
+	list-style: none;
+	text-align: left;
+	margin: 0;
+	/* margin-top: 10vw;
+	margin-bottom: 10vw; */
+	padding: 0;
+	width: 100%;
+}
+li{
+
+	margin: 0;
+	padding: 0;
+	margin-bottom:10px;
+}
+
+
+.status{
+	/* font-size: 1.5em; */
+	margin-top: 30px;
+    animation:blinkingText 20s infinite;
+}
+.rainbow{
+	animation:rainbow 60s infinite;
+}
+@keyframes blinkingText{
+    0%{     color: #333;    }
+    20%{    color: #444; }
+    40%{    color: #555; }
+    60%{    color:#666;  }
+    80%{   color: #555;    }
+}
+
+@keyframes rainbow{
+    0%{     color: hsl(0,100%,40%);    }
+    10%{    color: hsl(36,100%,40%); }
+    20%{    color: hsl(72,100%,40%); }
+    30%{    color: hsl(108,100%,40%);  }
+	40%{   color: hsl(144,100%,40%);    }
+	50%{   color: hsl(180,100%,40%);    }
+	60%{   color: hsl(216,100%,40%);    }
+	70%{   color: hsl(252,100%,40%);    }
+	80%{   color: hsl(288,100%,40%);    }
+	90%{   color: hsl(324,100%,40%);    }
+	100%{   color: hsl(360,100%,40%);    }
+}
+
+.button{
+	display: inline-block;
+	background-color: #BBB;
+	color: #333;
+	padding:10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	text-decoration: none;
+	width: 100%;
+}
