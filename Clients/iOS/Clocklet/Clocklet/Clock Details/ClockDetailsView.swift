@@ -30,65 +30,9 @@ struct ClockDetailsView: View {
                             statusView
                             Text("Fetching details...").font(.largeTitle)
                         case .notConfigured:
-                            
-                            ClockConfiguratorView().environmentObject(clock)
-                            
-                            
+                            ClockConfiguratorView()
                         case .configured:
-                            if let settingsService = clock.settingsService {
-                                ClockSettingsView().environmentObject(settingsService)
-                            }
-                            
-                            if let godModeService = clock.godModeService {
-                                NavigationLink(destination:
-                                                GodModeView().environmentObject(godModeService)
-                                ){
-                                    ConfigItemView(icon: Image(systemName: "hand.point.right"), title: "God Mode", disclosure: true){EmptyView()}
-                                }.buttonStyle(PlainButtonStyle())
-                            }
-                            
-                            if let networkService = clock.networkService {
-                                NavigationLink(destination: NetworkDetailView().environmentObject(networkService)){
-                                    NetworkSummaryView().environmentObject(NetworkSummaryViewModel(networkService))
-                                }.buttonStyle(PlainButtonStyle())
-                            }
-                            
-                            if let locationService = clock.locationService {
-                                Group{
-                                    NavigationLink(destination:
-                                                    LocationDetailsView()
-                                        .environmentObject(LocationDetailsViewModel(locationService: locationService))
-                                        .environmentObject(clock),
-                                                   isActive: $showLocationDetails)
-                                    {
-                                        if (locationService.isConfigured == .configured){
-                                            LocationSummaryView(showLocationDetails:$showLocationDetails).environmentObject(locationService)
-                                        } else {
-                                            EmptyView()
-                                        }
-                                        
-                                    }.buttonStyle(PlainButtonStyle())
-                                    if (locationService.isConfigured != .configured){
-                                        LocationSummaryView(showLocationDetails:$showLocationDetails).environmentObject(locationService)
-                                    }
-                                }
-                            }
-                            
-                            if let technicalService = clock.technicalService,
-                               let deviceInfoService = clock.deviceInfoService {
-                                NavigationLink(destination:
-                                                ClockTechnicalView()
-                                    .environmentObject(technicalService)
-                                    .environmentObject(deviceInfoService)
-                                ){
-                                    ConfigItemView(icon: Image(systemName:"wrench") ,
-                                                   title: "Technical stuff", disclosure: true){
-                                        EmptyView()
-                                    }
-                                }.buttonStyle(PlainButtonStyle())
-                            }
-                            
-                            
+                            configuredView
                         }
                         
                     case .connecting:
@@ -124,8 +68,8 @@ struct ClockDetailsView: View {
                 .onAppear {
                     self.clock.connect()
                 }
-                .onChange(of: scenePhase) { newPhase in
-                    switch newPhase {
+                .onChange(of: scenePhase) {
+                    switch scenePhase {
                     case .active:
                         self.clock.connect()
                     case .inactive, .background:
@@ -156,6 +100,61 @@ struct ClockDetailsView: View {
         }.padding().frame(maxWidth: .infinity)
     }
 
+    
+    var configuredView: some View {
+        Group{
+            if let settingsService = clock.settingsService {
+                ClockSettingsView().environmentObject(settingsService)
+            }
+            
+            if let godModeService = clock.godModeService {
+                NavigationLink(destination:
+                                GodModeView().environmentObject(godModeService)
+                ){
+                    ConfigItemView(icon: Image(systemName: "hand.point.right"), title: "God Mode", disclosure: true){EmptyView()}
+                }.buttonStyle(PlainButtonStyle())
+            }
+            
+            if let networkService = clock.networkService {
+                NavigationLink(destination: NetworkDetailView().environmentObject(networkService)){
+                    NetworkSummaryView().environmentObject(NetworkSummaryViewModel(networkService))
+                }.buttonStyle(PlainButtonStyle())
+            }
+            
+            if let locationService = clock.locationService {
+                Group{
+                    switch locationService.isConfigured {
+                    case .configured:
+                        NavigationLink {
+                            LocationDetailsView()
+                                .environmentObject(LocationDetailsViewModel(locationService: locationService))
+                        } label: {
+                            LocationSummaryView(showLocationDetails:$showLocationDetails).environmentObject(locationService)
+                        }.buttonStyle(PlainButtonStyle())
+                    case .notConfigured, .unknown:
+                        LocationSummaryView(showLocationDetails:$showLocationDetails).environmentObject(locationService)
+                        
+                    }
+                    
+                }
+            }
+            
+            if let technicalService = clock.technicalService,
+               let deviceInfoService = clock.deviceInfoService {
+                NavigationLink(destination:
+                                ClockTechnicalView()
+                    .environmentObject(technicalService)
+                    .environmentObject(deviceInfoService)
+                ){
+                    ConfigItemView(icon: Image(systemName:"wrench") ,
+                                   title: "Technical stuff", disclosure: true){
+                        EmptyView()
+                    }
+                }.buttonStyle(PlainButtonStyle())
+            }
+        }
+    }
+    
 }
 
 
