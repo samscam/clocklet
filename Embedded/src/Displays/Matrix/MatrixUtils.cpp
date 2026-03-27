@@ -1,5 +1,7 @@
 #include "MatrixUtils.h"
 
+#if defined(MATRIX)
+
 #define COLUMNS  17
 #define ROWS 5
 const bool    kMatrixSerpentineLayout = true;
@@ -72,3 +74,5 @@ uint16_t XYsafe( uint8_t x, uint8_t y)
   if( y >= ROWS) return -1;
   return XY(x,y);
 }
+
+#endif

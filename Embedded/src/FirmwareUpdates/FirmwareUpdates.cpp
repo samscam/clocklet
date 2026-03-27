@@ -188,6 +188,8 @@ bool FirmwareUpdates::_parseGithubReleases(Stream *stream, bool useStaging){
     const char* assetName = "clockbrain.bin";
     #elif defined(FEATHER)
     const char* assetName = "feather.bin";
+    #elif defined(EPAPER)
+    const char* assetName = "epaper.bin";
     #endif
     
     for(JsonVariant vasset : assets){

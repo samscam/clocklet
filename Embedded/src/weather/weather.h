@@ -23,6 +23,7 @@ struct Weather {
   inline
   Weather& operator+=(const Weather rhs){
     // strncpy(rhs.synopsis, synopsis, 255);
+    // synopsis = rhs.synopsis;
     precipChance = max(precipChance, rhs.precipChance);
     precipIntensity = max(precipIntensity, rhs.precipIntensity);
     precipType = max(precipType, rhs.precipType);
@@ -43,7 +44,7 @@ struct Weather {
 };
 
 static const Weather defaultWeather = {
-  {.synopsis = "No weather yet"},
+  // .synopsis = "No weather yet",
   .type = 0,
   .precipChance = 0.0f,
   .precipIntensity = 0.0f,

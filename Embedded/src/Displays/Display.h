@@ -12,6 +12,15 @@ enum TimeStyle {
   twentyFourHour, twelveHour, decimal
 };
 
+enum DeviceState {
+  ok,
+  weatherFail,
+  syncFail,
+  noLocation,
+  noNetwork,
+  bluetooth
+};
+
 // General purpose protocol for clock displays
 class Display {
 public:
@@ -44,6 +53,8 @@ public:
   // Show a status message (which should be sticky on epd)
   virtual void setStatusMessage(const char *stringy) {}
 
+  virtual void setDeviceState(DeviceState state) {}
+
   // Brightness is a float based on ambient light levels
   // from 0 (dark) to 1 (bright)
   virtual void setBrightness(float brightness) {}
@@ -63,3 +74,4 @@ public:
   virtual void setTimeStyle(TimeStyle timeStyle) {}
 
 };
+

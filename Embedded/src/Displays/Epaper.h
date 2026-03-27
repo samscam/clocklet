@@ -29,6 +29,8 @@ public:
 
   void setBatteryLevel(float level);
 
+  void setDeviceState(DeviceState state);
+
   bool showSecondaryTime = true;
 
 private:
@@ -46,7 +48,7 @@ private:
   const char *secondary_identifier = "";
 
   DateTime time;
-
+  
   const char *weather_string = "";
   float batteryLevel = 0;
   bool needsDisplay = false;

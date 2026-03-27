@@ -41,7 +41,7 @@ Matrix display = Matrix();
 #elif defined(EPAPER)
 
 #include "Displays/Epaper.h"
-Display *display = new EpaperDisplay();
+EpaperDisplay display = EpaperDisplay();
 
 #endif
 
@@ -450,9 +450,11 @@ void updateDisplayPreferences(){
 }
 
 void sensibleDelay(int milliseconds){
-
+  #if defined(FastLED)// or fastled
     FastLED.delay(milliseconds);
-
+  #else
+    vTaskDelay(milliseconds / portTICK_PERIOD_MS);
+  #endif // what if we don't
 }
 
 

@@ -24,15 +24,6 @@
 #define MAX_BRIGHTNESS 127
 #define MIN_BRIGHTNESS 4
 
-enum DeviceState {
-  ok,
-  weatherFail,
-  syncFail,
-  noLocation,
-  noNetwork,
-  bluetooth
-};
-
 enum SeparatorStyle {
   none = 0b0,
   point = 0b00001,

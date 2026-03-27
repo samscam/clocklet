@@ -3,6 +3,7 @@
 #include "Epaper.h"
 #include "Fonts/Transport_Medium14pt7b.h"
 #include "Fonts/Transport_Heavy40pt7b.h"
+#include "Fonts/Transport_Heavy48pt7b.h"
 #include "Fonts/Transport_Heavy30pt7b.h"
 #include "Fonts/Transport_Heavy24pt7b.h"
 #include "Fonts/Transport_Medium10pt7b.h"
@@ -76,6 +77,10 @@ void EpaperDisplay::displayMessage(const char *stringy, MessageType messageType)
   pageString(stringy);
 }
 
+void EpaperDisplay::setDeviceState(DeviceState state){
+
+}
+
 void EpaperDisplay::setBatteryLevel(float newLevel){
   batteryLevel=newLevel;
   needsDisplay = true;
@@ -129,33 +134,34 @@ void EpaperDisplay::displayDigital(){
     display.setCursor(x,y);
     display.print(blev);
  
-    y = 10;
+    y = 20;
 
 
     // Main Clock
-    display.setFont(&Transport_Heavy40pt7b);
+    display.setFont(&Transport_Heavy48pt7b);
     display.getTextBounds(time_string, 0, 0, &itemX, &itemY, &itemW, &itemH);
     x = (display.width() - itemW) / 2;
-    y += itemH;
+    // y += itemH;
+    y = (display.height() + itemH) / 2;
     display.setCursor(x,y);
     display.print(time_string);
     
-    y += 6;
-    // Bottom half black
-    display.fillRect(0,y,display.width(),display.height()-y,GxEPD_BLACK);
+    // y += 6;
+    // // Bottom half black
+    // display.fillRect(0,y,display.width(),display.height()-y,GxEPD_BLACK);
 
 
-    y += 4;
+    // y += 4;
 
-        // Weather status
-    display.setFont(&Transport_Medium14pt7b);
-    display.getTextBounds(weather_string, 0, 0, &itemX, &itemY, &itemW, &itemH);
-    x = (display.width() - itemW) / 2;
+    //     // Weather status
+    // display.setFont(&Transport_Medium14pt7b);
+    // display.getTextBounds(weather_string, 0, 0, &itemX, &itemY, &itemW, &itemH);
+    // x = (display.width() - itemW) / 2;
 
-    y += itemH;
-    display.setCursor(x,y);
-    display.setTextColor(GxEPD_WHITE);
-    display.print(weather_string);
+    // y += itemH;
+    // display.setCursor(x,y);
+    // display.setTextColor(GxEPD_WHITE);
+    // display.print(weather_string);
 
 
     // Secondary clock - inverted
@@ -338,6 +344,7 @@ void EpaperDisplay::scrollString(const char *string){
   clear();
   needsDisplay = true;
 }
+
 
 void EpaperDisplay::pageString(const char *string){
 
