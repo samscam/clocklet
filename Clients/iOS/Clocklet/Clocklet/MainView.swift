@@ -16,7 +16,6 @@ struct MainView: View {
         
             switch central.state {
             case .poweredOn:
-//                Text("Clock list")
                 ClockListView()
             default:
                 BluetoothOverlayView()
