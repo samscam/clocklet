@@ -17,188 +17,118 @@ import CoreBluetooth
 
 
 struct ClockListView: View {
-    @EnvironmentObject var clockList: ClockListViewModel
-    @State var blurMainView: Bool = false
+    @EnvironmentObject var central: Central
+    @StateObject var viewModel = ClockListViewModel()
     
     @Namespace var clockListNamespace
     
     var body: some View {
-        if clockList.showBluetoothOverlay {
-            BluetoothOverlayView(bluetoothStatus: clockList.bluetoothStatusViewModel)
-                .edgesIgnoringSafeArea(.all)
-                .onAppear{
-                    blurMainView = true
-                }.onDisappear{
-                    blurMainView = false
-                }
-        } else {
-            if #available(iOS 16.0, *) {
-                NavigationStack{
-                    contents
-                }
-            } else {
-                NavigationView{
-                    contents
-                }
-            }
-        }
-    }
-    
-    
-    var contents: some View{
-        Group{
-            if let selectedClock = clockList.selectedClock {
-                ZStack{
-                    ScrollView{
-                        
-                        ClockSummaryView()
-                            .environmentObject(selectedClock)
-                            .matchedGeometryEffect(id: selectedClock.uuid, in: clockListNamespace)
-                        ClockDetailsView()
-                            .environmentObject(selectedClock)
-                            .transition(.move(edge: .bottom))
-                        Spacer()
+        
+        NavigationStack{
+           
+            ScrollView{
+                
+                VStack(alignment:.center) {
+                    if viewModel.isScanning {
+                        Text("Looking for Clocklets")
+                            .frame(maxWidth:.infinity)
+                            .transition(.scale)
+                            .animation(.easeInOut, value: viewModel.isScanning)
                     }
-                    .safeAreaInset(edge: .top, spacing: 0) {
-                        Rectangle().foregroundColor(.clear).frame(height:40)
-                    }
-                    
-                    VStack{
-                        Image(systemName: "eye")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width:30,height:30)
-                            .matchedGeometryEffect(id: "eye", in: clockListNamespace)
-                            .onTapGesture {
-                                withAnimation{
-                                    clockList.selectedClock = nil
-                                }
-                            }
-                        Spacer()
-                    }
-                }
-            } else {
-                ZStack{
-                    
-                    ScrollView{
-                        ForEach(clockList.clocks) { clock in
+                    ForEach(viewModel.clocks) { clock in
+                        NavigationLink(value:clock){
                             ClockSummaryView()
                                 .environmentObject(clock)
-                                .matchedGeometryEffect(id: clock.uuid, in: clockListNamespace)
-                                .onTapGesture {
-                                    withAnimation{
-                                        clockList.selectedClock = clock
-                                    }
-                                }
-                                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 1.0)))
-                               
-                        }
-                        
+                                .matchedTransitionSource(id: clock.uuid, in: clockListNamespace)
+                        }.transition(.opacity)
                     }
-                    .safeAreaInset(edge: .top, spacing: 0) {
-                        Rectangle().foregroundColor(.clear).frame(height:100)
-                    }
-                    VStack{
-                        scanningView
-                        Spacer()
-                    }
+                    
                 }
-                .onAppear {
-                    print("Clocklist onAppear")
-                    DispatchQueue.main.asyncAfter(deadline: .now()+0.5){
-                        self.clockList.disconnectAllDevices()
-                    }
-                    self.clockList.startScanning()
-                }.onDisappear(){
-                    print("Clocklist onDisappear")
-                    self.clockList.stopScanning()
-                }
-                
+                .padding(.horizontal)
             }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    scanningView
+                }
+            }
+            .navigationDestination(for: Clock.self) { clock in
+                ClockDetailsView()
+                    .navigationTransition(.zoom(sourceID: clock.uuid, in: clockListNamespace))
+                    .environmentObject(clock)
+            }
+            
         }
-        .navigationBarHidden(true)
-        .blur(radius: blurMainView ? 5.0 : 0)
+
+        .onAppear{
+            print("Clocklist onAppear")
+            viewModel.central = central
+            
+                Task{
+                    viewModel.disconnectAllDevices()
+                }
+            withAnimation {
+                viewModel.startScanning()
+            }
+            
+        }
+        .onDisappear(){
+            print("Clocklist onDisappear")
+            self.viewModel.stopScanning()
+        }
         
     }
     
-    @Environment(\.colorScheme) var colorScheme: ColorScheme
+    
     
     
     var scanningView: some View{
         VStack{
-
-                Image(systemName: "eye" )
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 40 , height: 50, alignment: .center)
-                    .scaleEffect(clockList.isScanning ? 2 : 1)
-                    .opacity(clockList.isScanning ? 1.0 : 0.5)
-                    .animation(.spring(response: 1,dampingFraction: 0.3, blendDuration: 0), value: clockList.isScanning)
-                    .matchedGeometryEffect(id: "eye", in: clockListNamespace)
-                Group{
-                    if clockList.isScanning {
-                        Text("Looking for Clocklets")
-                            .frame(maxWidth:.infinity)
-                    }
-                }.transition(.scale)
-            Rectangle()
-                .frame(maxWidth:.infinity,maxHeight:0)
+            
+            Image(systemName: "eye" )
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .scaleEffect(viewModel.isScanning ? 2 : 1)
+                .opacity(viewModel.isScanning ? 1.0 : 0.5)
+                .animation(.spring(response: 1,dampingFraction: 0.3, blendDuration: 0), value: viewModel.isScanning)
         }
-        .frame(height:120)
-        .background(LinearGradient(colors: [Color(UIColor.systemBackground),.clear], startPoint: .top, endPoint: .bottom))
         .onTapGesture {
-            self.clockList.toggleScanning()
+            withAnimation {
+                self.viewModel.toggleScanning()
+            }
+            
         }
-        .animation(.easeInOut, value: clockList.isScanning)
+
         
     }
 }
 
 
-struct ClockListView_Previews: PreviewProvider {
-    
-    
-    static let clockList: ClockListViewModel = {
-        let clockList = ClockListViewModel(central:nil)
-        clockList.showBluetoothOverlay = false
-        clockList.isScanning = false
-        clockList.clocks = [
-        ]
+#Preview {
+    let viewModel = {
+        let viewModel = ClockListViewModel()
         
+        viewModel.showBluetoothOverlay = false
+        viewModel.isScanning = false
+        viewModel.clocks = [
+        ]
         DispatchQueue.main.asyncAfter(deadline: .now()+1) {
-            clockList.isScanning = true
+            viewModel.isScanning = true
         }
         DispatchQueue.main.asyncAfter(deadline: .now()+2) {
-            clockList.clocks.append(Clock("Blackie", .black))
+            viewModel.clocks.append(Clock("Blackie", .black))
         }
         DispatchQueue.main.asyncAfter(deadline: .now()+4) {
-            clockList.clocks.append(Clock("Clockola", .translucent))
+            viewModel.clocks.append(Clock("Clockola", .translucent))
         }
         DispatchQueue.main.asyncAfter(deadline: .now()+6) {
-            clockList.clocks.append(Clock("Boingy", .bluePink))
+            viewModel.clocks.append(Clock("Boingy", .bluePink))
         }
         DispatchQueue.main.asyncAfter(deadline: .now()+7) {
-            clockList.isScanning = false
+            viewModel.isScanning = false
         }
-        return clockList
+        return viewModel
     }()
     
-    
-    init(){
-        
-        
-    }
-    
-    static var previews: some View {
-        Group{
-            ClockListView().environmentObject(clockList)
-                .preferredColorScheme(.dark)
-            ClockListView().environmentObject(clockList)
-                .preferredColorScheme(.light)
-            
-        }
-        
-        
-        
-    }
+    ClockListView().environmentObject(viewModel)
 }

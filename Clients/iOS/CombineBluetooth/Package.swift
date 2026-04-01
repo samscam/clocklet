@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "CombineBluetooth",
     platforms: [
-        .iOS(.v16),
+        .iOS(.v18),
         .macOS(.v13)
         
     ],

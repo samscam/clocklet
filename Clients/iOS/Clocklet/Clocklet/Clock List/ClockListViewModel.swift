@@ -22,32 +22,19 @@ class ClockListViewModel: ObservableObject {
     @Published var clocks: [Clock] = []
     @Published var selectedClock: Clock?
     
-    let bluetoothStatusViewModel: BluetoothStatusViewModel
     
     var bag = Set<AnyCancellable>()
     
-    var _cancellableScanning: Cancellable?
-    var _cancellableClocks: Cancellable?
+    var _cancellableScanning: Cancellable? = nil
+    var _cancellableClocks: Cancellable? = nil
     
-    private var central: Central?
+    var central: Central?{
+        didSet{
+            self._cancellableScanning = central?.$isScanning.assign(to: \.isScanning, on: self)
+        }
+    }
     
-    init(central: Central?){
-        self.central = central
-        self.bluetoothStatusViewModel = BluetoothStatusViewModel(central: central)
-        
-        self._cancellableScanning = central?.$isScanning.assign(to: \.isScanning, on: self)
-        
-        central?.$state
-            .map{ newState in
-                switch newState {
-                case .poweredOn, .unknown:
-                    return false
-                default:
-                    return true
-                }
-            }
-            .assign(to: \.showBluetoothOverlay, on: self)
-            .store(in: &bag)
+    init(){
     }
     
     deinit{
@@ -55,7 +42,7 @@ class ClockListViewModel: ObservableObject {
     }
     
     func startScanning(){
-        guard let central = central else {
+        guard let central else {
             return
         }
         _cancellableClocks = central

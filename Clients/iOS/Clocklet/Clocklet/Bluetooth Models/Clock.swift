@@ -197,6 +197,17 @@ extension Clock: Identifiable {
   }
 }
 
+extension Clock: Hashable {
+    static func == (lhs: Clock, rhs: Clock) -> Bool {
+        lhs.id == rhs.id
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(self.id)
+    }
+
+}
+
 extension Clock: AdvertisementMatcher {
   static let advertisedServiceUUIDs: [String]? = ["68D924A1-C1B2-497B-AC16-FD1D98EDB41F"]
   

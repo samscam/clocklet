@@ -11,11 +11,17 @@ import CombineBluetooth
 
 @main
 struct ClockletApp: App{
-    @StateObject private var clockList = ClockListViewModel(central:Central())
+    
+    @StateObject private var central = Central()
+
     
     var body: some Scene {
         WindowGroup{
-            ClockListView().environmentObject(clockList)
+            MainView().environmentObject(central)
         }
     }
+}
+
+extension EnvironmentValues {
+    @Entry var central: Central? = nil
 }

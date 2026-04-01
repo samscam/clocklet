@@ -44,7 +44,6 @@
 		22748BD429454CF70003385A /* GodModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22748BD329454CF70003385A /* GodModeView.swift */; };
 		227CC3062367925D00D7770D /* PropertiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227CC3052367925D00D7770D /* PropertiesView.swift */; };
 		22836EB4228629750020B46F /* ClockletApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22836EB3228629750020B46F /* ClockletApp.swift */; };
-		22836EBE2286297C0020B46F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 22836EBC2286297C0020B46F /* LaunchScreen.storyboard */; };
 		22836EC92286297C0020B46F /* ClockletTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22836EC82286297C0020B46F /* ClockletTests.swift */; };
 		22836ED722862AAC0020B46F /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22836ED622862AAC0020B46F /* CoreBluetooth.framework */; };
 		228A1C8E2462BB6C00033937 /* SettingsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228A1C8D2462BB6C00033937 /* SettingsService.swift */; };
@@ -64,6 +63,7 @@
 		22BB977424C20CED0035D682 /* MockClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BB977324C20CED0035D682 /* MockClock.swift */; };
 		22DC8A6A24CBAD7300DF0551 /* RoundyButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22DC8A6924CBAD7300DF0551 /* RoundyButtonStyle.swift */; };
 		22DEF6552504267500149B8A /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22DEF6542504267500149B8A /* Utils.swift */; };
+		22E463C82F79E62C00FDC4E6 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E463C72F79E62600FDC4E6 /* MainView.swift */; };
 		22FA7F402970CBAF00F3285E /* ClockletMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FA7F3F2970CBAF00F3285E /* ClockletMacApp.swift */; };
 		22FA7F422970CBAF00F3285E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FA7F412970CBAF00F3285E /* ContentView.swift */; };
 		22FA7F442970CBB700F3285E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 22FA7F432970CBB700F3285E /* Assets.xcassets */; };
@@ -128,7 +128,6 @@
 		2282626527B5AF2300134065 /* CombineBluetooth */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = CombineBluetooth; path = ../CombineBluetooth; sourceTree = "<group>"; };
 		22836EB0228629750020B46F /* Clocklet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clocklet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22836EB3228629750020B46F /* ClockletApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockletApp.swift; sourceTree = "<group>"; };
-		22836EBD2286297C0020B46F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		22836EBF2286297C0020B46F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		22836EC42286297C0020B46F /* ClockletTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClockletTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		22836EC82286297C0020B46F /* ClockletTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockletTests.swift; sourceTree = "<group>"; };
@@ -150,6 +149,7 @@
 		22BE0A3F235DE4EA00EB8780 /* Clock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clock.swift; sourceTree = "<group>"; };
 		22DC8A6924CBAD7300DF0551 /* RoundyButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundyButtonStyle.swift; sourceTree = "<group>"; };
 		22DEF6542504267500149B8A /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		22E463C72F79E62600FDC4E6 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		22FA7F3D2970CBAF00F3285E /* ClockletMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClockletMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22FA7F3F2970CBAF00F3285E /* ClockletMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockletMacApp.swift; sourceTree = "<group>"; };
 		22FA7F412970CBAF00F3285E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -269,6 +269,8 @@
 			isa = PBXGroup;
 			children = (
 				222500C924AE451D00B5872A /* Clocklet.entitlements */,
+				22836EB3228629750020B46F /* ClockletApp.swift */,
+				22E463C72F79E62600FDC4E6 /* MainView.swift */,
 				22E2D988233A944500B4FCFD /* Bluetooth Models */,
 				228DF2622350701800480588 /* Business */,
 				228DF2642350703700480588 /* Clock List */,
@@ -278,7 +280,6 @@
 				229076B423646E6100074A35 /* Network Details */,
 				228DF2632350702F00480588 /* Shared Views */,
 				222500CA24AE452A00B5872A /* Assets.xcassets */,
-				22836EBC2286297C0020B46F /* LaunchScreen.storyboard */,
 				22836EBF2286297C0020B46F /* Info.plist */,
 			);
 			path = Clocklet;
@@ -308,7 +309,6 @@
 		228DF2622350701800480588 /* Business */ = {
 			isa = PBXGroup;
 			children = (
-				22836EB3228629750020B46F /* ClockletApp.swift */,
 				22604280236E40F800710F37 /* LocationProxy.swift */,
 				22A034E1248DA52800FA7370 /* GeocoderProxy.swift */,
 				22DEF6542504267500149B8A /* Utils.swift */,
@@ -583,7 +583,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				222500CB24AE452B00B5872A /* Assets.xcassets in Resources */,
-				22836EBE2286297C0020B46F /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -671,6 +670,7 @@
 				228DF261234FDF6400480588 /* ClockListViewModel.swift in Sources */,
 				22585259235694A0005C9696 /* ConfigItemView.swift in Sources */,
 				22B488F324C505040079873B /* ClockTechnicalView.swift in Sources */,
+				22E463C82F79E62C00FDC4E6 /* MainView.swift in Sources */,
 				22A034E2248DA52800FA7370 /* GeocoderProxy.swift in Sources */,
 				22B488F524C5F0220079873B /* DeviceInfoService.swift in Sources */,
 				224C538F234F6CDD00A68928 /* ClockListView.swift in Sources */,
@@ -739,17 +739,6 @@
 			targetProxy = 22FA7F582970CBB800F3285E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		22836EBC2286297C0020B46F /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				22836EBD2286297C0020B46F /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		2265C2A224C0BC6000F17506 /* Debug */ = {
@@ -902,7 +891,7 @@
 				ENABLE_RESOURCE_ACCESS_LOCATION = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Clocklet/Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -932,7 +921,7 @@
 				ENABLE_RESOURCE_ACCESS_LOCATION = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Clocklet/Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

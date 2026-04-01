@@ -16,7 +16,6 @@ struct ClockSummaryView: View {
     
     var body: some View {
         VStack{
-            Spacer()
             ZStack{
                 Image(uiImage:clock.caseImage).renderingMode(.original).resizable().aspectRatio(contentMode: .fit)
                 
@@ -32,7 +31,6 @@ struct ClockSummaryView: View {
                     .foregroundColor(.primary)
                     .shadow(color: colorScheme == .light ? .white : .black, radius: 2, x: 0, y: 0).padding(.top, 100)
             }
-            Spacer()
         }.frame(maxWidth:700)
 
     }

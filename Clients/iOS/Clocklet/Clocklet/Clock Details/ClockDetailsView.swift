@@ -18,68 +18,74 @@ struct ClockDetailsView: View {
     @State var animating: Bool = false
     
     @Environment(\.scenePhase) var scenePhase
+    @Environment(\.dismiss) var dismiss
+    
+//    @Namespace var clockListNamespace
     
     var body: some View {
-                VStack{
-                    switch clock.state {
-                    case .connected:
+        ScrollView{
+            VStack{
+                ClockSummaryView()
+                
+                switch clock.state {
+                case .connected:
+                    
+                    switch clock.isConfigured {
                         
-                        switch clock.isConfigured {
-                            
-                        case .unknown:
-                            statusView
-                            Text("Fetching details...").font(.largeTitle)
-                        case .notConfigured:
-                            ClockConfiguratorView()
-                        case .configured:
-                            configuredView
-                        }
-                        
-                    case .connecting:
-                        VStack{
-                            Image(systemName:clock.state.iconSystemName)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 200, height: 200, alignment: .center)
-                                .foregroundColor(clock.state.color)
-                                .scaleEffect(animating ? 0.5 : 1)
-                                .task{
-                                    withAnimation(.linear(duration: 0.5)
-                                        .repeatForever(autoreverses: true)) {
-                                            animating.toggle()
-                                        }
-                                    
-                                }
-                            Text(clock.state.description).bold()
-                        }.padding().frame(maxWidth: .infinity)
-                        
-                    case .disconnected(let error):
-                        if let error = error {
-                            ErrorView(error)
-                        }
-                        Button("Reconnect") {
-                            self.clock.connect()
-                        }.buttonStyle(RoundyButtonStyle())
+                    case .unknown:
+                        statusView
+                        Text("Fetching details...").font(.largeTitle)
+                    case .notConfigured:
+                        ClockConfiguratorView()
+                    case .configured:
+                        configuredView
                     }
                     
-                }
-                .padding()
-                .navigationBarHidden(true)
-                .onAppear {
-                    self.clock.connect()
-                }
-                .onChange(of: scenePhase) {
-                    switch scenePhase {
-                    case .active:
+                case .connecting:
+                    VStack{
+                        Image(systemName:clock.state.iconSystemName)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+//                            .frame(width: 200, height: 200, alignment: .center)
+                            .foregroundColor(clock.state.color)
+                            .scaleEffect(animating ? 0.5 : 1)
+                            .task{
+                                withAnimation(.linear(duration: 0.5)
+                                    .repeatForever(autoreverses: true)) {
+                                        animating.toggle()
+                                    }
+                                
+                            }
+                        Text(clock.state.description).bold()
+                    }.frame(maxWidth: .infinity)
+                    
+                case .disconnected(let error):
+                    if let error = error {
+                        ErrorView(error)
+                    }
+                    Button("Reconnect") {
                         self.clock.connect()
-                    case .inactive, .background:
-                        self.clock.disconnect()
-                    default:
-                        break
-                    }
-                    
+                    }.buttonStyle(RoundyButtonStyle())
                 }
+                
             }
+            .padding(.horizontal)
+        }
+        .onAppear {
+            self.clock.connect()
+        }
+        .onChange(of: scenePhase) {
+            switch scenePhase {
+            case .active:
+                self.clock.connect()
+            case .inactive, .background:
+                self.clock.disconnect()
+            default:
+                break
+            }
+            
+        }
+    }
     
     var statusView: some View {
         VStack{
@@ -99,7 +105,7 @@ struct ClockDetailsView: View {
             Text(clock.state.description).bold()
         }.padding().frame(maxWidth: .infinity)
     }
-
+    
     
     var configuredView: some View {
         Group{
@@ -165,56 +171,7 @@ extension ContentSizeCategory{
     }
 }
 
-struct ClockDetailsView_Previews: PreviewProvider {
-    enum RandomError: Error{
-        case random
-        var localizedDescription: String { return "Some random error" }
-        
-    }
 
-    static let clock: Clock = {
-        let clock = Clock("Foop",.tequilla)
-        clock.hwRev = 5
-        clock.state = .disconnected(error: RandomError.random)
-        return clock
-    }()
-    
-    static let connectedClock: Clock = {
-        let clock = Clock("Foop",.gold)
-        clock.state = .connected
-        clock.hwRev = 5
-        clock.isConfigured = .configured
-        clock.settingsService = SettingsService()
-
-        clock.settingsService?.brightness = 0.5
-        clock.settingsService?.autoBrightness = false
-        
-        clock.settingsService?.availableTimeStyles = ["fish","thingy"]
-        clock.settingsService?.timeStyle = "fish"
-        
-        clock.technicalService = TechnicalService()
-        clock.deviceInfoService = DeviceInfoService()
-        clock.locationService = LocationService()
-        clock.locationService?.isConfigured = .notConfigured
-        
-        return clock
-    }()
-    
-    static var previews: some View {
-        Group{
-            NavigationView{
-                ClockDetailsView().environmentObject(clock)
-            }
-            NavigationView{
-                ClockDetailsView().environmentObject(connectedClock)
-            }
-        }
-
-        
-    }
-    
-    
-}
 
 extension ConnectionState{
     var iconSystemName: String {
@@ -244,3 +201,77 @@ extension ConnectionState: @retroactive CustomStringConvertible {
         }
     }
 }
+
+#Preview("Working") {
+    @Previewable let clock: Clock = {
+        let clock = Clock("Foop",.gold)
+        clock.state = .connected
+        clock.hwRev = 5
+        clock.isConfigured = .configured
+        clock.settingsService = SettingsService()
+        
+        clock.settingsService?.brightness = 0.5
+        clock.settingsService?.autoBrightness = false
+        
+        clock.settingsService?.availableTimeStyles = ["fish","thingy"]
+        clock.settingsService?.timeStyle = "fish"
+        
+        clock.technicalService = TechnicalService()
+        clock.deviceInfoService = DeviceInfoService()
+        clock.locationService = LocationService()
+        clock.locationService?.isConfigured = .notConfigured
+        
+        return clock
+    }()
+    NavigationStack{
+        ClockDetailsView().environmentObject(clock)
+    }
+}
+
+enum RandomError: Error{
+    case random
+    var localizedDescription: String { return "Some random error" }
+
+}
+
+#Preview("Error") {
+    @Previewable let clock: Clock = {
+        let clock = Clock("Foop",.tequilla)
+        clock.hwRev = 5
+        clock.state = .disconnected(error: RandomError.random)
+        return clock
+    }()
+    NavigationStack{
+        ClockDetailsView().environmentObject(clock)
+    }
+}
+//
+//struct ClockDetailsView_Previews: PreviewProvider {
+//    enum RandomError: Error{
+//        case random
+//        var localizedDescription: String { return "Some random error" }
+//        
+//    }
+//    
+//    static let clock: Clock = {
+//        let clock = Clock("Foop",.tequilla)
+//        clock.hwRev = 5
+//        clock.state = .disconnected(error: RandomError.random)
+//        return clock
+//    }()
+//    
+//    static let connectedClock: Clock =
+//    
+//    static var previews: some View {
+//        Group{
+//            NavigationView{
+//                ClockDetailsView().environmentObject(clock)
+//            }
+//            NavigationView{
+//                ClockDetailsView().environmentObject(connectedClock)
+//            }
+//        }
+//        
+//        
+//    }
+//}
