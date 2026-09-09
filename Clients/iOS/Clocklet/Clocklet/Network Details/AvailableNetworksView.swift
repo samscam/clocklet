@@ -33,7 +33,6 @@ struct AvailableNetworksView: View {
                     Text("Other network...").italic().padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
                 }.buttonStyle(PlainButtonStyle())
                 
-
             }
 
         }
@@ -110,25 +109,28 @@ struct AvailableNetworkView: View {
     }
 }
 
-struct AvailableNetworksView_Previews: PreviewProvider {
+
+
+#Preview{
     
-    static let popover = false
-    static var fakeNetworkService: NetworkService {
+    let fakeNetworkService: NetworkService  = {
         let networkService = NetworkService()
         
         let network1 = AvailableNetwork(ssid: "Whyfly? Taketrain!", enctype: .open, rssi: -93, channel: 4, bssid:"whyfly")
-        let network2 = AvailableNetwork(ssid: "Pretty wi for a fi guy", enctype: .wep, rssi: -85, channel: 4, bssid:"prettywi")
+        let network2 = AvailableNetwork(ssid: "Pretty wi for a fi guy", enctype: .wpa23, rssi: -85, channel: 4, bssid:"prettywi")
         let network3 = AvailableNetwork(ssid: "Broccoli", enctype: .unknown, rssi: -73, channel: 4, bssid:"brocc")
         
-        let network5 = AvailableNetwork(ssid: "Pretty wi for a fi guy", enctype: .wep, rssi: -63, channel: 4, bssid:"wowoow")
+        let network5 = AvailableNetwork(ssid: "Pretty wi for a fi guy", enctype: .wpa2enterprise, rssi: -63, channel: 4, bssid:"wowoow")
         networkService.scannedNetworks = [network1,network2,network3,network5]
         
         return networkService
-    }
+    }()
     
-    static var previews: some View {
-        VStack{
-            AvailableNetworksView().environmentObject(fakeNetworkService)
+    NavigationView{
+        ScrollView{
+            VStack{
+                AvailableNetworksView().environmentObject(fakeNetworkService)
+            }.padding()
         }
     }
 }
