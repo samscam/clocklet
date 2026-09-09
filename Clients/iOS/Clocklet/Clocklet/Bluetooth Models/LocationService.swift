@@ -12,6 +12,7 @@ import CombineBluetooth
 import Combine
 import CoreLocation
 
+
 class LocationService: ServiceProtocol {
     
     private let locationProxy = LocationProxy()
@@ -41,12 +42,13 @@ class LocationService: ServiceProtocol {
     @Characteristic("C8C7FF91-531A-4306-A68A-435374CB12A9") var currentLocation: ClockLocation?
     
     func setCurrentLocation(){
-
-        locationProxy.locationPublisher.flatMap{ location in
-            GeocoderProxy.futureReversePublisher(location)
+        
+        
+        locationProxy.locationPublisher.tryAwaitMap{ location in
+            try await GeocoderProxy.reverseGeocode(location)
         }
         .sink(receiveCompletion: { _ in
-            
+            print("Completion")
         }){ [weak self] (placemark) in
             if let lat = placemark.location?.coordinate.latitude,
                let lng = placemark.location?.coordinate.longitude,
@@ -95,3 +97,21 @@ struct ClockLocation: Codable, JSONCharacteristic, CustomStringConvertible{
 }
 
 
+extension Publisher {
+  public func tryAwaitMap<T>(_ transform: @escaping (Self.Output) async throws -> T) -> Publishers.FlatMap<Future<T, Error>, Self> {
+    flatMap { value in
+      Future { promise in
+        Task {
+          do {
+            let result = try await transform(value)
+            promise(.success(result))
+          }
+          catch {
+            promise(.failure(error))
+          }
+        }
+      }
+    }
+  }
+  
+}

@@ -16,19 +16,23 @@ enum GeocoderExtensionError: Error{
 
 struct GeocoderProxy {
     
-    static func futureReversePublisher(_ location: CLLocation) -> AnyPublisher<CLPlacemark, Error> {
-        return Future { promise in
-            CLGeocoder().reverseGeocodeLocation(location) { (placemarks, error) in
-                if let error = error {
-                    promise(.failure(error))
+    static func reverseGeocode(_ location: CLLocation) async throws -> CLPlacemark {
+        
+        try await withCheckedThrowingContinuation { continuation in
+            CLGeocoder().reverseGeocodeLocation(location) { placemarks, error in
+                if let error {
+                    continuation.resume(throwing: error)
                     return
                 }
                 if let firstPlace = placemarks?.first {
-                    promise(.success(firstPlace))
+                    continuation.resume(returning: firstPlace)
                     return
                 }
-                promise(.failure(GeocoderExtensionError.noResults))
+                
+                continuation.resume(throwing: GeocoderExtensionError.noResults)
+                return
             }
-        }.eraseToAnyPublisher()
+        }
     }
+    
 }
